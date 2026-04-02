@@ -57,8 +57,10 @@ export function validateEnv(): Env {
     return env;
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const missingVars = error.errors.map((err) => {
-        return `  - ${err.path.join(".")}: ${err.message}`;
+      const issues = error.issues ?? [];
+      const missingVars = issues.map((issue) => {
+        const path = issue.path.length ? issue.path.join(".") : "(root)";
+        return `  - ${path}: ${issue.message}`;
       });
 
       throw new Error(
