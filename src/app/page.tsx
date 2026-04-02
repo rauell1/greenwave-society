@@ -16,6 +16,7 @@ import {
   Heart,
   Globe,
   ArrowRight,
+  Linkedin,
   Menu,
   X,
   Mail,
@@ -592,14 +593,14 @@ const team = [
     name: "Elyjoy Maina",
     role: "Co-Founder & Executive Director",
     bio: "Passionate about youth empowerment and environmental conservation. Leading Greenwave Society's vision of creating sustainable change through community-driven initiatives.",
-    image: "https://ui-avatars.com/api/?name=Elyjoy+Maina&background=166534&color=fff&size=200&font-size=0.35&bold=true",
+    image: "/images/elyjoy-maina.svg",
     linkedin: "https://www.linkedin.com/in/elyjoy-maina-044370244",
   },
   {
     name: "Martin Kyalo",
     role: "Co-Founder & Programs Director",
     bio: "Dedicated to designing and implementing impactful environmental programs. Bringing together communities, volunteers, and partners to achieve shared conservation goals.",
-    image: "https://ui-avatars.com/api/?name=Martin+Kyalo&background=166534&color=fff&size=200&font-size=0.35&bold=true",
+    image: "/images/martin-kyalo.svg",
     linkedin: "https://www.linkedin.com/in/martin-kyalo-9373982b7/",
   },
 ];
@@ -627,11 +628,12 @@ function Team() {
             <FadeIn key={member.name} delay={i * 0.15}>
               <Card className="h-full text-center border-border/50 hover:shadow-lg transition-shadow group">
                 <CardContent className="p-6 sm:p-8 flex flex-col items-center">
-                  <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-4 border-primary/20 group-hover:border-primary/40 transition-colors shadow-lg">
+                  <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-4 border-primary/25 ring-1 ring-emerald-100 bg-gradient-to-b from-emerald-50 to-white group-hover:border-primary/50 transition-all shadow-lg flex items-center justify-center">
                     <img
                       src={member.image}
                       alt={member.name}
-                      className="w-full h-full object-cover"
+                      loading="lazy"
+                      className="w-full h-full object-cover text-emerald-900"
                     />
                   </div>
                   <h3 className="mt-4 sm:mt-5 text-lg sm:text-xl font-bold">{member.name}</h3>
@@ -647,7 +649,7 @@ function Team() {
                       className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
                       aria-label={`${member.name} LinkedIn`}
                     >
-                      <ExternalLink className="w-3.5 h-3.5" />
+                      <Linkedin className="w-3.5 h-3.5" />
                     </a>
                   </div>
                 </CardContent>
