@@ -593,12 +593,14 @@ const team = [
     role: "Co-Founder & Executive Director",
     bio: "Passionate about youth empowerment and environmental conservation. Leading Greenwave Society's vision of creating sustainable change through community-driven initiatives.",
     image: "https://ui-avatars.com/api/?name=Elyjoy+Maina&background=166534&color=fff&size=200&font-size=0.35&bold=true",
+    linkedin: "https://www.linkedin.com/in/elyjoy-maina-044370244",
   },
   {
     name: "Martin Kyalo",
     role: "Co-Founder & Programs Director",
     bio: "Dedicated to designing and implementing impactful environmental programs. Bringing together communities, volunteers, and partners to achieve shared conservation goals.",
     image: "https://ui-avatars.com/api/?name=Martin+Kyalo&background=166534&color=fff&size=200&font-size=0.35&bold=true",
+    linkedin: "https://www.linkedin.com/in/martin-kyalo-9373982b7/",
   },
 ];
 
@@ -639,7 +641,7 @@ function Team() {
                   </p>
                   <div className="mt-4 flex gap-3">
                     <a
-                      href="https://www.linkedin.com/in/elyjoy-maina-044370244"
+                      href={member.linkedin}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
