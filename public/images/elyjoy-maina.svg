@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ecfdf3" />
+      <stop offset="100%" stop-color="#c7f9cc" />
+    </linearGradient>
+    <linearGradient id="ring" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f9f6a" />
+      <stop offset="100%" stop-color="#0c7a54" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#g)" />
+  <circle cx="200" cy="200" r="170" fill="white" stroke="url(#ring)" stroke-width="12" />
+  <text
+    x="200"
+    y="205"
+    text-anchor="middle"
+    font-family="Inter, Arial, sans-serif"
+    font-size="46"
+    fill="#0f5132"
+    font-weight="700"
+  >
+    Elyjoy
+  </text>
+  <text
+    x="200"
+    y="255"
+    text-anchor="middle"
+    font-family="Inter, Arial, sans-serif"
+    font-size="40"
+    fill="#0f5132"
+    font-weight="600"
+  >
+    Maina
+  </text>
+</svg>
