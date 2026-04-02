@@ -14,10 +14,18 @@ model ContactSubmission {
   interest  String   @default("general")
   message   String
   createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([createdAt])
+  @@index([interest])
+  @@map("contact_submissions")
 }
 
 model NewsletterSubscriber {
   id        String   @id @default(cuid())
   email     String   @unique
   createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@map("newsletter_subscribers")
 }

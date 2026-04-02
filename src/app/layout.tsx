@@ -1,7 +1,24 @@
+/**
+ * Root Layout
+ *
+ * The root layout wraps all pages and provides global configuration.
+ * Includes environment validation, fonts, and global components.
+ */
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
+
+// Validate environment variables at startup
+if (typeof window === "undefined") {
+  try {
+    require("@/lib/env").validateEnv();
+  } catch (error) {
+    console.error(error);
+    process.exit(1);
+  }
+}
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,7 +46,7 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Greenwave Society" }],
   icons: {
-    icon: "/images/favicon.svg",
+    icon: "/logo.svg",
   },
   openGraph: {
     title: "Greenwave Society | Empowering Youth & Conserving the Environment",
