@@ -6,7 +6,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { rateLimit, getRateLimitHeaders } from "@/lib/rate-limit";
 import { contactFormSchema, validateInput, containsSuspiciousPatterns } from "@/lib/validation";
@@ -41,6 +41,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { name, email, interest, message } = validation.data;
+    const db = getDb();
 
     // Check for suspicious patterns
     if (

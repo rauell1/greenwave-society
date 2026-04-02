@@ -47,13 +47,20 @@ const envSchema = z.object({
 
 export type Env = z.infer<typeof envSchema>;
 
+let cachedEnv: Env | null = null;
+
 /**
  * Validates environment variables and returns typed env object
  * @throws {Error} If validation fails
  */
 export function validateEnv(): Env {
+  if (cachedEnv) {
+    return cachedEnv;
+  }
+
   try {
     const env = envSchema.parse(process.env);
+    cachedEnv = env;
     return env;
   } catch (error) {
     if (error instanceof z.ZodError) {

@@ -6,7 +6,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { rateLimit, getRateLimitHeaders } from "@/lib/rate-limit";
 import { newsletterSchema, validateInput } from "@/lib/validation";
@@ -41,6 +41,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { email } = validation.data;
+    const db = getDb();
 
     // Check if already subscribed
     const existing = await db.newsletterSubscriber.findUnique({

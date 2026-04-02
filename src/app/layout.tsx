@@ -10,16 +10,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 
-// Validate environment variables at startup
-if (typeof window === "undefined") {
-  try {
-    require("@/lib/env").validateEnv();
-  } catch (error) {
-    console.error(error);
-    process.exit(1);
-  }
-}
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
