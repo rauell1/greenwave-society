@@ -269,9 +269,9 @@ function Hero() {
               </Button>
               <Button
                 asChild
-                variant="outline"
+                variant="secondary"
                 size="lg"
-                className="rounded-full border-white/30 text-white hover:bg-white/10 hover:text-white px-6 sm:px-8 text-sm sm:text-base"
+                className="rounded-full bg-white text-emerald-700 border-white shadow-md hover:bg-emerald-50 px-6 sm:px-8 text-sm sm:text-base"
               >
                 <a href="#about">Learn More</a>
               </Button>
@@ -576,7 +576,9 @@ function Impact() {
                 <p className="text-2xl sm:text-3xl font-bold text-white">
                   <CountUp target={s.value} suffix={s.suffix} />
                 </p>
-                <p className="mt-1 text-xs sm:text-sm text-white/65">{s.label}</p>
+                <p className="mt-1 text-xs sm:text-sm text-white/90 font-semibold">
+                  {s.label}
+                </p>
               </div>
             </FadeIn>
           ))}
@@ -593,14 +595,16 @@ const team = [
     name: "Elyjoy Maina",
     role: "Co-Founder & Executive Director",
     bio: "Passionate about youth empowerment and environmental conservation. Leading Greenwave Society's vision of creating sustainable change through community-driven initiatives.",
-    image: "/images/elyjoy-maina.svg",
+    image:
+      "https://ui-avatars.com/api/?name=Elyjoy+Maina&background=166534&color=fff&size=200&font-size=0.35&bold=true",
     linkedin: "https://www.linkedin.com/in/elyjoy-maina-044370244",
   },
   {
     name: "Martin Kyalo",
     role: "Co-Founder & Programs Director",
     bio: "Dedicated to designing and implementing impactful environmental programs. Bringing together communities, volunteers, and partners to achieve shared conservation goals.",
-    image: "/images/martin-kyalo.svg",
+    image:
+      "https://ui-avatars.com/api/?name=Martin+Kyalo&background=166534&color=fff&size=200&font-size=0.35&bold=true",
     linkedin: "https://www.linkedin.com/in/martin-kyalo-9373982b7/",
   },
 ];
@@ -628,7 +632,7 @@ function Team() {
             <FadeIn key={member.name} delay={i * 0.15}>
               <Card className="h-full text-center border-border/50 hover:shadow-lg transition-shadow group">
                 <CardContent className="p-6 sm:p-8 flex flex-col items-center">
-                  <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-4 border-primary/25 ring-1 ring-emerald-100 bg-gradient-to-b from-emerald-50 to-white group-hover:border-primary/50 transition-all shadow-lg flex items-center justify-center">
+                  <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-4 border-primary/20 group-hover:border-primary/40 transition-colors shadow-lg">
                     <img
                       src={member.image}
                       alt={member.name}
