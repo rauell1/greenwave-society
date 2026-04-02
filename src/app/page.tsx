@@ -278,21 +278,21 @@ function Hero() {
           </FadeIn>
 
           <FadeIn delay={0.65}>
-            <div className="mt-8 sm:mt-12 flex items-center gap-6 sm:gap-8">
+            <div className="mt-8 sm:mt-12 flex flex-wrap items-center gap-4 sm:gap-8">
               <div>
                 <p className="text-2xl sm:text-3xl font-bold text-white">
                   <CountUp target={500} suffix="+" />
                 </p>
                 <p className="text-xs sm:text-sm text-white/60">Youth Reached</p>
               </div>
-              <div className="w-px h-10 bg-white/20" />
+              <div className="hidden sm:block w-px h-10 bg-white/20" />
               <div>
                 <p className="text-2xl sm:text-3xl font-bold text-white">
                   <CountUp target={25} suffix="+" />
                 </p>
                 <p className="text-xs sm:text-sm text-white/60">Communities</p>
               </div>
-              <div className="w-px h-10 bg-white/20" />
+              <div className="hidden sm:block w-px h-10 bg-white/20" />
               <div>
                 <p className="text-2xl sm:text-3xl font-bold text-white">
                   <CountUp target={10000} suffix="+" />
@@ -354,7 +354,7 @@ function About() {
         <div className="grid lg:grid-cols-2 gap-10 sm:gap-16 items-center">
           {/* Image */}
           <FadeIn direction="left">
-            <div className="relative">
+            <div className="relative overflow-hidden sm:overflow-visible">
               <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
                 <img
                   src="/images/about.png"
@@ -363,8 +363,8 @@ function About() {
                 />
               </div>
               {/* Decorative element */}
-              <div className="absolute -bottom-4 -right-4 w-24 h-24 sm:w-32 sm:h-32 bg-primary/10 rounded-2xl -z-10" />
-              <div className="absolute -top-4 -left-4 w-16 h-16 sm:w-24 sm:h-24 bg-gold/20 rounded-2xl -z-10" />
+              <div className="hidden sm:block absolute -bottom-4 -right-4 w-24 h-24 sm:w-32 sm:h-32 bg-primary/10 rounded-2xl -z-10" />
+              <div className="hidden sm:block absolute -top-4 -left-4 w-16 h-16 sm:w-24 sm:h-24 bg-gold/20 rounded-2xl -z-10" />
             </div>
           </FadeIn>
 
@@ -867,7 +867,7 @@ function Contact() {
                     </div>
                     <div>
                       <p className="text-sm font-medium">Email</p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-muted-foreground break-all">
                         info@greenwavesociety.org
                       </p>
                     </div>
@@ -1224,7 +1224,7 @@ function Footer() {
               <li>
                 <a
                   href="mailto:info@greenwavesociety.org"
-                  className="text-sm text-zinc-400 hover:text-emerald-400 transition-colors flex items-center gap-2"
+                  className="text-sm text-zinc-400 hover:text-emerald-400 transition-colors flex items-center gap-2 break-all"
                 >
                   <Mail className="w-3.5 h-3.5" /> info@greenwavesociety.org
                 </a>
@@ -1249,7 +1249,7 @@ function Footer() {
                   href="https://linktr.ee/greenwavesociety"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-zinc-400 hover:text-emerald-400 transition-colors flex items-center gap-2"
+                  className="text-sm text-zinc-400 hover:text-emerald-400 transition-colors flex items-center gap-2 break-all"
                 >
                   <Globe className="w-3.5 h-3.5" /> linktr.ee/greenwavesociety
                 </a>
