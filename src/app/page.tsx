@@ -472,8 +472,8 @@ const programs = [
     image: "/images/program-agriculture.png",
     icon: <Sprout className="w-6 h-6" />,
     title: "Sustainability Programs",
-    desc: "We promote sustainable farming practices through community gardens, urban agriculture initiatives, and training on organic farming techniques. These programs enhance food security while protecting the environment.",
-    tags: ["Urban Farming", "Food Security", "Organic Methods"],
+    desc: "We lead sustainability programs through urban planning initiatives and ecosystem design projects that help communities build greener, more resilient neighborhoods.",
+    tags: ["Urban Planning", "Ecosystem Design", "Resilient Communities"],
   },
 ];
 
