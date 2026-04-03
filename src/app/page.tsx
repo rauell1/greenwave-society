@@ -450,7 +450,7 @@ const programs = [
   {
     image: "/images/program-education.png",
     icon: <GraduationCap className="w-6 h-6" />,
-    title: "Environmental Education",
+    title: "Climate Action and Advocacy SDGs Training",
     desc: "We deliver hands-on workshops and training sessions that teach young people about ecology, sustainability, waste management, and climate science. Our education programs equip the next generation with knowledge to make informed environmental decisions.",
     tags: ["Workshops", "School Programs", "Climate Literacy"],
   },
@@ -471,7 +471,7 @@ const programs = [
   {
     image: "/images/program-agriculture.png",
     icon: <Sprout className="w-6 h-6" />,
-    title: "Sustainable Agriculture",
+    title: "Sustainability Programs",
     desc: "We promote sustainable farming practices through community gardens, urban agriculture initiatives, and training on organic farming techniques. These programs enhance food security while protecting the environment.",
     tags: ["Urban Farming", "Food Security", "Organic Methods"],
   },
@@ -547,11 +547,11 @@ function Programs() {
 
 function Impact() {
   const stats = [
-    { icon: <Users className="w-7 h-7" />, value: 500, suffix: "+", label: "Youth Empowered" },
+    { icon: <Users className="w-7 h-7" />, value: 1000, suffix: "+", label: "Youth Empowered" },
     { icon: <TreePine className="w-7 h-7" />, value: 10000, suffix: "+", label: "Trees Planted" },
-    { icon: <Globe className="w-7 h-7" />, value: 25, suffix: "+", label: "Communities Served" },
-    { icon: <Calendar className="w-7 h-7" />, value: 50, suffix: "+", label: "Events Organized" },
-    { icon: <GraduationCap className="w-7 h-7" />, value: 30, suffix: "+", label: "Workshops Delivered" },
+    { icon: <Globe className="w-7 h-7" />, value: 5, suffix: "+", label: "Communities Served" },
+    { icon: <Calendar className="w-7 h-7" />, value: 5, suffix: "+", label: "Events Organized" },
+    { icon: <GraduationCap className="w-7 h-7" />, value: 4, suffix: "+", label: "Workshops Delivered" },
     { icon: <Recycle className="w-7 h-7" />, value: 5, suffix: " tons", label: "Waste Recycled" },
   ];
 
@@ -690,14 +690,14 @@ const activities = [
     mediaUrl: "https://photos.app.goo.gl/bwhvJHBHeFEgnAin9",
   },
   {
-    title: "Post Maandamano Follow-Up",
+    title: "Ngong Hike",
     desc: "Additional highlights from the 1st project activities conducted on 6/7/2024.",
     date: "6 Jul 2024",
     type: "Community",
     mediaUrl: "https://photos.app.goo.gl/aPp6qoR1sftX1ckc7",
   },
   {
-    title: "Hike at Ngong Hills",
+    title: "Valentines Day Picnic",
     desc: "Outdoor team activity focused on wellness, environmental appreciation, and member bonding.",
     date: "Dec 2024",
     type: "Wellness",
@@ -711,14 +711,14 @@ const activities = [
     mediaUrl: "https://photos.app.goo.gl/ep2HVgur2hmVzTNAA",
   },
   {
-    title: "Still Valentine's Day",
+    title: "Departmental Hang Out",
     desc: "Additional Valentine's Day moments highlighting peer support and youth wellbeing activities.",
     date: "14 Feb 2025",
     type: "Community",
     mediaUrl: "https://photos.app.goo.gl/zZqqv3SGCCxqBBAo8",
   },
   {
-    title: "Greenwave Departmental Hangout",
+    title: "Kangemi Restoration Program",
     desc: "Cross-department hangout to strengthen collaboration, planning, and team cohesion.",
     date: "Jul 2025",
     type: "Team Building",
