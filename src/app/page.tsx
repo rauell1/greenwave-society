@@ -25,7 +25,6 @@ import {
   Send,
   ChevronUp,
   Instagram,
-  Twitter,
   Facebook,
   ExternalLink,
   Sprout,
@@ -949,14 +948,14 @@ function Contact() {
                 <div className="flex gap-3">
                   {[
                     {
-                      href: "https://instagram.com/green_wavesociety",
+                      href: "https://www.instagram.com/greenwavesociety",
                       icon: <Instagram className="w-5 h-5" />,
                       label: "Instagram",
                     },
                     {
                       href: "https://x.com/greenwaveke",
-                      icon: <Twitter className="w-5 h-5" />,
-                      label: "X / Twitter",
+                      icon: <X className="w-5 h-5" />,
+                      label: "X",
                     },
                     {
                       href: "https://www.facebook.com/share/19byoMf2Re/",
@@ -964,7 +963,7 @@ function Contact() {
                       label: "Facebook",
                     },
                     {
-                      href: "https://tiktok.com/@greenwave.society",
+                      href: "https://www.tiktok.com/@greenwavesociety",
                       icon: <ExternalLink className="w-5 h-5" />,
                       label: "TikTok",
                     },
@@ -1190,10 +1189,10 @@ function Footer() {
             </p>
             <div className="mt-4 flex gap-3">
               {[
-                { href: "https://instagram.com/green_wavesociety", icon: <Instagram className="w-4 h-4" />, label: "Instagram" },
-                { href: "https://x.com/greenwaveke", icon: <Twitter className="w-4 h-4" />, label: "X" },
+                { href: "https://www.instagram.com/greenwavesociety", icon: <Instagram className="w-4 h-4" />, label: "Instagram" },
+                { href: "https://x.com/greenwaveke", icon: <X className="w-4 h-4" />, label: "X" },
                 { href: "https://www.facebook.com/share/19byoMf2Re/", icon: <Facebook className="w-4 h-4" />, label: "Facebook" },
-                { href: "https://tiktok.com/@greenwave.society", icon: <ExternalLink className="w-4 h-4" />, label: "TikTok" },
+                { href: "https://www.tiktok.com/@greenwavesociety", icon: <ExternalLink className="w-4 h-4" />, label: "TikTok" },
                 { href: "https://linktr.ee/greenwavesociety", icon: <Globe className="w-4 h-4" />, label: "Linktree" },
               ].map((s) => (
                 <a
