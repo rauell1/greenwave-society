@@ -329,23 +329,23 @@ function About() {
   const values = [
     {
       icon: <Leaf className="w-6 h-6" />,
-      title: "Environmental Conservation",
-      desc: "Protecting and restoring ecosystems through tree planting, waste management, and conservation education.",
+      title: "Climate & Ecosystem Protection",
+      desc: "We advance SDG 13, 14, and 15 through restoration, biodiversity protection, and practical conservation action in local communities.",
     },
     {
       icon: <Users className="w-6 h-6" />,
-      title: "Youth Empowerment",
-      desc: "Building the capacity of young people with skills, knowledge, and opportunities to lead change in their communities.",
+      title: "Youth Leadership & Inclusion",
+      desc: "We empower youth aged 15-35 with education, mentorship, and equitable opportunities aligned with SDG 4, 5, 8, and 10.",
     },
     {
       icon: <Heart className="w-6 h-6" />,
-      title: "Community Impact",
-      desc: "Creating lasting, positive change through collaborative partnerships and grassroots engagement.",
+      title: "Community-Led Development",
+      desc: "We support SDG 6 and 11 through local action on water stewardship, sustainable communities, and grassroots project leadership.",
     },
     {
       icon: <Globe className="w-6 h-6" />,
-      title: "Global Goals",
-      desc: "Contributing to the UN Sustainable Development Goals through local, action-oriented programs.",
+      title: "Global Partnerships & Accountability",
+      desc: "Through SDG 17 partnerships, IFRS-aligned transparency, and strong governance, we scale sustainable impact responsibly.",
     },
   ];
 
@@ -379,26 +379,24 @@ function About() {
             </FadeIn>
             <FadeIn delay={0.1}>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
-                Empowering Youth Holistically to Be{" "}
-                <span className="text-primary">Changemakers</span>
+                Mission, Vision &{" "}
+                <span className="text-primary">Global Alignment</span>
               </h2>
             </FadeIn>
             <FadeIn delay={0.2}>
               <p className="mt-4 sm:mt-6 text-muted-foreground text-base sm:text-lg leading-relaxed">
-                Greenwave Society is a Kenyan non-profit organization that empowers
-                young people to conserve the environment and become agents of
-                sustainable change in their communities. We believe that when youth
-                are equipped with the right tools, knowledge, and opportunities,
-                they can transform the world around them.
+                Greenwave Society's mission is to accelerate climate action, empower
+                youth as global changemakers, and foster sustainable community
+                development through international cooperation, advocacy, and
+                localized action.
               </p>
             </FadeIn>
             <FadeIn delay={0.3}>
               <p className="mt-3 sm:mt-4 text-muted-foreground text-base sm:text-lg leading-relaxed">
-                Through environmental conservation programs, community outreach,
-                education, and youth empowerment initiatives, we create a ripple
-                effect of positive impact that extends far beyond individual
-                participants.
-              </p>
+                Our vision is a resilient world where humanity and planetary
+                boundaries exist in harmony, achieved through practical delivery of
+                the 2030 Agenda for Sustainable Development.
+            </p>
             </FadeIn>
             <FadeIn delay={0.4}>
               <Button asChild className="mt-6 sm:mt-8 rounded-full" size="lg">
@@ -670,28 +668,60 @@ function Team() {
 
 const activities = [
   {
-    title: "Community Tree-Planting Drive",
-    desc: "Mobilized over 100 volunteers for a massive tree-planting event across 3 communities, planting 2,000+ indigenous trees.",
-    date: "Mar 2025",
-    type: "Conservation",
-  },
-  {
-    title: "Youth Leadership Summit",
-    desc: "Hosted a 2-day summit bringing together young changemakers from across Kenya to share ideas and build leadership skills.",
-    date: "Jan 2025",
-    type: "Empowerment",
-  },
-  {
-    title: "Environmental Education Workshop",
-    desc: "Delivered interactive workshops on climate change, waste management, and sustainable living to over 200 students.",
-    date: "Nov 2024",
+    title: "Maangani Primary and Secondary Schools",
+    desc: "1st project launched post maandamano with school-focused engagement and community support.",
+    date: "6 Jul 2024",
     type: "Education",
+    mediaUrl: "https://photos.app.goo.gl/bwhvJHBHeFEgnAin9",
   },
   {
-    title: "River Clean-Up Campaign",
-    desc: "Led a community clean-up along local waterways, removing over 1 ton of plastic waste and restoring natural habitats.",
-    date: "Sep 2024",
-    type: "Conservation",
+    title: "Post Maandamano Follow-Up",
+    desc: "Additional highlights from the 1st project activities conducted on 6/7/2024.",
+    date: "6 Jul 2024",
+    type: "Community",
+    mediaUrl: "https://photos.app.goo.gl/aPp6qoR1sftX1ckc7",
+  },
+  {
+    title: "Hike at Ngong Hills",
+    desc: "Outdoor team activity focused on wellness, environmental appreciation, and member bonding.",
+    date: "Dec 2024",
+    type: "Wellness",
+    mediaUrl: "https://photos.app.goo.gl/goGFiHwXDiDobrmK6",
+  },
+  {
+    title: "Valentine's Day Picnic",
+    desc: "Mental health awareness session and community picnic for youth connection and support.",
+    date: "14 Feb 2025",
+    type: "Mental Health",
+    mediaUrl: "https://photos.app.goo.gl/ep2HVgur2hmVzTNAA",
+  },
+  {
+    title: "Still Valentine's Day",
+    desc: "Additional Valentine's Day moments highlighting peer support and youth wellbeing activities.",
+    date: "14 Feb 2025",
+    type: "Community",
+    mediaUrl: "https://photos.app.goo.gl/zZqqv3SGCCxqBBAo8",
+  },
+  {
+    title: "Greenwave Departmental Hangout",
+    desc: "Cross-department hangout to strengthen collaboration, planning, and team cohesion.",
+    date: "Jul 2025",
+    type: "Team Building",
+    mediaUrl: "https://photos.app.goo.gl/CxjV1qY33ZYosmyK7",
+  },
+  {
+    title: "Mentorship at Kangemi Vocational Centre",
+    desc: "Mentorship engagement in Kangemi focused on youth growth, guidance, and career readiness.",
+    date: "May 2025",
+    type: "Mentorship",
+    mediaUrl: "https://photos.app.goo.gl/8jsuqcjCEGeWoHb16",
+  },
+  {
+    title: "Featured Video Story",
+    desc: "Highlights from Greenwave community work and activities in video format.",
+    date: "2025",
+    type: "Media",
+    mediaUrl: "https://youtu.be/Bhy13UQbjQw?si=YsJ8C9V0cGA5Z4_X",
   },
 ];
 
@@ -730,9 +760,15 @@ function Activities() {
                   <h3 className="text-base sm:text-lg font-semibold group-hover:text-primary transition-colors">
                     {a.title}
                   </h3>
-                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                    {a.desc}
-                  </p>
+                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{a.desc}</p>
+                  <a
+                    href={a.mediaUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+                  >
+                    View media <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
                 </CardContent>
               </Card>
             </FadeIn>
