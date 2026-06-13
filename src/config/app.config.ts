@@ -13,7 +13,7 @@ export const APP_CONFIG = {
   tagline: "Empowering Youth to Be Changemakers",
 
   // URLs and endpoints
-  url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+  url: process.env.NEXT_PUBLIC_APP_URL || "https://greenwave.rauell.systems",
   apiUrl: process.env.NEXT_PUBLIC_API_URL || "/api",
 
   // Contact information
