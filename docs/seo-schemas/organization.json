@@ -1,0 +1,35 @@
+{
+  "@context": "https://schema.org",
+  "@type": "NGO",
+  "@id": "https://greenwavesociety.org/#organization",
+  "name": "Greenwave Society",
+  "url": "https://greenwavesociety.org",
+  "logo": {
+    "@type": "ImageObject",
+    "url": "https://greenwavesociety.org/logo.svg",
+    "width": "180",
+    "height": "180"
+  },
+  "description": "Greenwave Society holistically empowers young people to conserve the environment and build sustainable communities in Kenya.",
+  "address": {
+    "@type": "PostalAddress",
+    "addressCountry": "KE",
+    "addressLocality": "Nairobi",
+    "postalCode": "00100"
+  },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+254700519130",
+    "contactType": "General Inquiries",
+    "email": "info@greenwavesociety.org",
+    "availableLanguage": ["English", "Swahili"]
+  },
+  "sameAs": [
+    "https://instagram.com/green_wavesociety",
+    "https://x.com/greenwaveke",
+    "https://www.facebook.com/share/19byoMf2Re/",
+    "https://tiktok.com/@greenwave.society",
+    "https://linktr.ee/greenwavesociety",
+    "https://www.linkedin.com/in/elyjoy-maina-044370244"
+  ]
+}

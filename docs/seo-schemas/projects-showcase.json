@@ -1,0 +1,65 @@
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "@id": "https://rauell.com/#projects-list",
+  "name": "Rauell Kyalo's Sustainability & Engineering Projects",
+  "description": "A showcase of technical engineering and climate-focused software applications created by Rauell Kyalo.",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "item": {
+        "@type": "SoftwareApplication",
+        "@id": "https://safaricharge.org/#application",
+        "name": "Safaricharge",
+        "url": "https://safaricharge.org",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web",
+        "description": "An intelligent charging optimization and grid integration platform designed for electric vehicle charging infrastructure in Kenya.",
+        "creator": {
+          "@id": "https://rauell.com/#person"
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "KES"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "item": {
+        "@type": "SoftwareApplication",
+        "@id": "https://roamenergy.co/#application",
+        "name": "Roam Energy",
+        "url": "https://roamenergy.co",
+        "applicationCategory": "UtilityApplication",
+        "operatingSystem": "Web",
+        "description": "A smart energy modeling, sizing, and analytics application for solar, battery, and hybrid energy installations in East Africa.",
+        "creator": {
+          "@id": "https://rauell.com/#person"
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "KES"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "item": {
+        "@type": "NGO",
+        "@id": "https://greenwavesociety.org/#organization",
+        "name": "Greenwave Society",
+        "url": "https://greenwavesociety.org",
+        "description": "A youth-led environmental conservation and climate action advocacy NGO in Kenya.",
+        "founder": {
+          "@id": "https://rauell.com/#person"
+        }
+      }
+    }
+  ]
+}

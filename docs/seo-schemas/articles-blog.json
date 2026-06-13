@@ -1,0 +1,27 @@
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://greenwavesociety.org/blog/youth-leadership-climate-action-kenya"
+  },
+  "headline": "Why Youth Leadership is the Key to Kenya's Climate Action Strategy",
+  "description": "An in-depth analysis of how youth-led initiatives (SDG 13) are driving grassroots environmental restoration and sustainability programs across Nairobi and Machakos.",
+  "image": "https://greenwavesociety.org/images/blog/youth-leadership.png",
+  "author": {
+    "@type": "Person",
+    "name": "Rauell Kyalo",
+    "url": "https://rauell.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Greenwave Society",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://greenwavesociety.org/logo.svg"
+    }
+  },
+  "datePublished": "2026-06-13",
+  "dateModified": "2026-06-13",
+  "articleBody": "Greenwave Society's mission is to accelerate climate action, empower youth as global changemakers, and foster sustainable community development..."
+}

@@ -1,0 +1,90 @@
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "@id": "https://greenwavesociety.org/impact/#activities-list",
+  "name": "Greenwave Society Community & Restoration Activities",
+  "description": "A list of recent ecological restoration, climate training, and volunteer events conducted by Greenwave Society in Kenya.",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "item": {
+        "@type": "Event",
+        "name": "Maangani Schools Sustainability Launch",
+        "startDate": "2024-07-06T09:00:00+03:00",
+        "endDate": "2024-07-06T16:00:00+03:00",
+        "eventStatus": "https://schema.org/EventScheduled",
+        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+        "location": {
+          "@type": "Place",
+          "name": "Maangani Primary & Secondary Schools",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Machakos County",
+            "addressCountry": "KE"
+          }
+        },
+        "description": "School-focused environmental engagement and tree-planting outreach launched post-maandamano, supporting community green spaces.",
+        "organizer": {
+          "@type": "NGO",
+          "name": "Greenwave Society",
+          "url": "https://greenwavesociety.org"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "item": {
+        "@type": "Event",
+        "name": "Ngong Hills Conservation Hike",
+        "startDate": "2024-07-06T07:00:00+03:00",
+        "endDate": "2024-07-06T15:00:00+03:00",
+        "eventStatus": "https://schema.org/EventScheduled",
+        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+        "location": {
+          "@type": "Place",
+          "name": "Ngong Hills Forest Reserve",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Kajiado County",
+            "addressCountry": "KE"
+          }
+        },
+        "description": "Ecosystem exploration, wellness hike, and clean-up activities to restore waste management at Ngong Hills trails.",
+        "organizer": {
+          "@type": "NGO",
+          "name": "Greenwave Society",
+          "url": "https://greenwavesociety.org"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "item": {
+        "@type": "Event",
+        "name": "Kangemi Restoration & Mentorship Program",
+        "startDate": "2025-05-15T09:00:00+03:00",
+        "endDate": "2025-05-15T16:00:00+03:00",
+        "eventStatus": "https://schema.org/EventScheduled",
+        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+        "location": {
+          "@type": "Place",
+          "name": "Kangemi Vocational Centre",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Kangemi, Nairobi",
+            "addressCountry": "KE"
+          }
+        },
+        "description": "Mentorship engagement at Kangemi Vocational Centre focused on youth career readiness, green skills, and community restoration.",
+        "organizer": {
+          "@type": "NGO",
+          "name": "Greenwave Society",
+          "url": "https://greenwavesociety.org"
+        }
+      }
+    }
+  ]
+}

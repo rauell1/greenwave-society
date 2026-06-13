@@ -88,8 +88,8 @@ export function validateInput<T>(
     return { success: true, data: parsed };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const firstError = error.errors[0];
-      return { success: false, error: firstError.message };
+      const firstError = error.issues[0];
+      return { success: false, error: firstError?.message || "Invalid input" };
     }
     return { success: false, error: "Invalid input" };
   }

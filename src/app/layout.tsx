@@ -1,15 +1,9 @@
-/**
- * Root Layout
- *
- * The root layout wraps all pages and provides global configuration.
- * Includes environment validation, fonts, and global components.
- */
-
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Analytics } from "@vercel/analytics/next";
+import { APP_CONFIG } from "@/config/app.config";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,34 +16,61 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Greenwave Society | Empowering Youth & Conserving the Environment",
-  description:
-    "Greenwave Society empowers youth holistically to be changemakers and conserve the environment. Environmental conservation and climate action in Kenya and beyond.",
+  metadataBase: new URL(APP_CONFIG.url),
+  title: {
+    default: "Greenwave Society | Empowering Youth & Conserving the Environment",
+    template: "%s | Greenwave Society",
+  },
+  description: APP_CONFIG.description,
   keywords: [
     "Greenwave Society",
     "youth empowerment",
     "environmental conservation",
-    "climate action",
-    "Kenya",
+    "climate action Kenya",
     "sustainability",
     "community outreach",
-    "nonprofit",
+    "nonprofit Kenya",
+    "Maangani Primary School project",
+    "Ngong Hike conservation",
+    "Elyjoy Maina",
+    "Martin Kyalo",
   ],
   authors: [{ name: "Greenwave Society" }],
+  creator: "Rauell Kyalo",
   icons: {
     icon: "/logo.svg",
   },
+  alternates: {
+    canonical: "./",
+  },
+  verification: {
+    google: "YopMsxRCWbWYZU_ANAhcwd6ggCeArux5CR37WuXqXXA",
+    other: {
+      "msvalidate.01": "66CE208CF02793B41D19362E121494C6",
+    },
+  },
   openGraph: {
     title: "Greenwave Society | Empowering Youth & Conserving the Environment",
-    description:
-      "Greenwave Society empowers youth holistically to be changemakers and conserve the environment.",
+    description: APP_CONFIG.description,
+    url: APP_CONFIG.url,
+    siteName: "Greenwave Society",
+    images: [
+      {
+        url: "/images/hero.png",
+        width: 1200,
+        height: 630,
+        alt: "Greenwave Society environmental action",
+      },
+    ],
+    locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "Greenwave Society",
-    description:
-      "Empowering Youth & Communities | Environmental Conservation and Climate Action",
+    description: APP_CONFIG.description,
+    images: ["/images/hero.png"],
+    creator: "@greenwaveke",
   },
 };
 
@@ -58,8 +79,43 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // JSON-LD Organization Structured Data
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "NGO",
+    "name": "Greenwave Society",
+    "url": APP_CONFIG.url,
+    "logo": `${APP_CONFIG.url}/logo.svg`,
+    "description": APP_CONFIG.description,
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "KE",
+      "addressLocality": "Nairobi",
+    },
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": APP_CONFIG.contact.phone,
+      "contactType": "General inquiries",
+      "email": APP_CONFIG.contact.email,
+    },
+    "sameAs": [
+      APP_CONFIG.social.instagram,
+      APP_CONFIG.social.twitter,
+      APP_CONFIG.social.facebook,
+      APP_CONFIG.social.tiktok,
+      APP_CONFIG.social.linktree,
+      APP_CONFIG.social.linkedin,
+    ],
+  };
+
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >

@@ -6,7 +6,6 @@
  */
 
 import { PrismaClient } from "@prisma/client";
-import { APP_CONFIG } from "@/config/app.config";
 import { logger } from "./logger";
 import { validateEnv } from "./env";
 

@@ -1,0 +1,44 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "@id": "https://rauell.com/#person",
+  "name": "Rauell Kyalo",
+  "givenName": "Rauell",
+  "familyName": "Kyalo",
+  "jobTitle": "Senior Software Engineer & Sustainability Architect",
+  "url": "https://rauell.com",
+  "description": "Senior Software Engineer and founder of green energy and climate initiatives, focusing on EV smart grid integration and community restoration in East Africa.",
+  "image": "https://rauell.com/avatar.jpg",
+  "sameAs": [
+    "https://github.com/rauell1",
+    "https://linkedin.com/in/rauell-kyalo",
+    "https://x.com/rauell1"
+  ],
+  "knowsAbout": [
+    "Next.js Development",
+    "Technical SEO",
+    "Renewable Energy Systems",
+    "EV Charging Infrastructure",
+    "Ecosystem Restoration",
+    "TypeScript",
+    "Node.js",
+    "Database Optimization"
+  ],
+  "knowsLanguage": [
+    {
+      "@type": "Language",
+      "name": "English",
+      "alternateName": "en"
+    },
+    {
+      "@type": "Language",
+      "name": "Swahili",
+      "alternateName": "sw"
+    }
+  ],
+  "gender": "http://schema.org/Male",
+  "nationality": {
+    "@type": "Country",
+    "name": "Kenya"
+  }
+}
