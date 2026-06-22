@@ -1,8 +1,6 @@
 import { Suspense } from "react";
 import { Mail, Phone, MapPin, Instagram, Facebook, Globe } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { FadeIn } from "@/components/ui/fade-in";
 import { ContactForm } from "@/components/sections/ContactForm";
 import { NewsletterForm } from "@/components/sections/NewsletterForm";
@@ -26,98 +24,110 @@ function TikTokIcon({ className = "w-5 h-5" }: { className?: string }) {
 
 export function Contact() {
   return (
-    <section id="contact" className="py-16 sm:py-24 bg-muted/50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <FadeIn className="text-center max-w-3xl mx-auto">
-          <Badge variant="secondary" className="mb-3 sm:mb-4">
-            <MapPin className="w-3.5 h-3.5 mr-1.5" />
+    <section id="contact" className="py-24 sm:py-32 bg-secondary/15 relative overflow-hidden">
+      {/* Background vector accents */}
+      <div className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-primary/5 blur-3xl -z-10" />
+
+      <div className="max-w-7xl mx-auto px-6 sm:px-8">
+        <FadeIn className="text-center max-w-3xl mx-auto mb-16 sm:mb-24">
+          <Badge variant="secondary" className="mb-4 px-4 py-1.5 bg-primary/10 text-primary border border-primary/20 rounded-full">
+            <MapPin className="w-3.5 h-3.5 mr-1.5 text-gold" />
             Get in Touch
           </Badge>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
-            Contact <span className="text-primary">Us</span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black tracking-tight text-foreground leading-tight">
+            Contact <span className="italic font-normal text-primary">Us</span>
           </h2>
-          <p className="mt-4 sm:mt-6 text-muted-foreground text-base sm:text-lg">
-            Have a question, want to volunteer, or interested in partnering with us?
-            We would love to hear from you.
+          <p className="mt-4 text-muted-foreground text-sm sm:text-base max-w-xl mx-auto">
+            Have a question, want to volunteer, or interested in partnering with us? We would love to hear from you.
           </p>
         </FadeIn>
 
-        <div className="mt-10 sm:mt-16 grid lg:grid-cols-5 gap-8 sm:gap-12">
+        <div className="grid lg:grid-cols-5 gap-12 sm:gap-16 items-start">
           {/* Contact Info */}
           <FadeIn direction="left" className="lg:col-span-2">
-            <div className="space-y-6 sm:space-y-8">
+            <div className="space-y-8 sm:space-y-10">
               <div>
-                <h3 className="text-lg font-semibold mb-4">Reach Out To Us</h3>
+                <h3 className="font-serif font-black text-xl text-foreground mb-6">Reach Out To Us</h3>
                 <div className="space-y-4">
                   <a
                     href={`mailto:${APP_CONFIG.contact.email}`}
-                    className="flex items-center gap-3 p-3 rounded-xl hover:bg-background transition-colors group"
+                    className="flex items-start gap-4 py-3 group border-b border-primary/10 transition-colors duration-300"
                   >
-                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                    <div className="text-primary group-hover:text-gold transition-colors duration-300 mt-1">
                       <Mail className="w-5 h-5" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium">Email</p>
-                      <p className="text-sm text-muted-foreground break-all">
+                      <span className="font-mono text-[10px] uppercase tracking-widest text-gold block mb-0.5">
+                        Email Address
+                      </span>
+                      <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors break-all">
                         {APP_CONFIG.contact.email}
                       </p>
                     </div>
                   </a>
+
                   <a
                     href={`https://wa.me/${APP_CONFIG.contact.whatsapp}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 p-3 rounded-xl hover:bg-background transition-colors group"
+                    className="flex items-start gap-4 py-3 group border-b border-primary/10 transition-colors duration-300"
                   >
-                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                    <div className="text-primary group-hover:text-gold transition-colors duration-300 mt-1">
                       <Phone className="w-5 h-5" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium">WhatsApp</p>
-                      <p className="text-sm text-muted-foreground">{APP_CONFIG.contact.phone}</p>
+                      <span className="font-mono text-[10px] uppercase tracking-widest text-gold block mb-0.5">
+                        WhatsApp Call / Text
+                      </span>
+                      <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+                        {APP_CONFIG.contact.phone}
+                      </p>
                     </div>
                   </a>
-                  <div className="flex items-center gap-3 p-3 rounded-xl">
-                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+
+                  <div className="flex items-start gap-4 py-3 border-b border-primary/10">
+                    <div className="text-primary mt-1">
                       <MapPin className="w-5 h-5" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium">Location</p>
-                      <p className="text-sm text-muted-foreground">{APP_CONFIG.contact.location}</p>
+                      <span className="font-mono text-[10px] uppercase tracking-widest text-gold block mb-0.5">
+                        Primary Office
+                      </span>
+                      <p className="text-sm font-medium text-foreground">
+                        {APP_CONFIG.contact.location}
+                      </p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <Separator />
-
               <div>
-                <h3 className="text-lg font-semibold mb-3">Follow Us</h3>
-                <div className="flex gap-3">
+                <h3 className="font-mono text-[10px] uppercase tracking-widest text-gold font-semibold mb-4">Follow Us</h3>
+                <div className="flex flex-wrap gap-2.5">
                   {[
                     {
                       href: APP_CONFIG.social.instagram,
-                      icon: <Instagram className="w-5 h-5" />,
+                      icon: <Instagram className="w-4 h-4" />,
                       label: "Instagram",
                     },
                     {
                       href: APP_CONFIG.social.twitter,
-                      icon: <TwitterIcon className="w-5 h-5" />,
+                      icon: <TwitterIcon className="w-4 h-4" />,
                       label: "Twitter",
                     },
                     {
                       href: APP_CONFIG.social.facebook,
-                      icon: <Facebook className="w-5 h-5" />,
+                      icon: <Facebook className="w-4 h-4" />,
                       label: "Facebook",
                     },
                     {
                       href: APP_CONFIG.social.tiktok,
-                      icon: <TikTokIcon className="w-5 h-5" />,
+                      icon: <TikTokIcon className="w-4 h-4" />,
                       label: "TikTok",
                     },
                     {
                       href: APP_CONFIG.social.linktree,
-                      icon: <Globe className="w-5 h-5" />,
+                      icon: <Globe className="w-4 h-4" />,
                       label: "Linktree",
                     },
                   ].map((s) => (
@@ -126,7 +136,7 @@ export function Contact() {
                       href={s.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
+                      className="w-10 h-10 rounded-full border border-primary/20 bg-background flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all duration-300"
                       aria-label={s.label}
                     >
                       {s.icon}
@@ -136,9 +146,9 @@ export function Contact() {
               </div>
 
               {/* Newsletter */}
-              <div>
-                <h3 className="text-lg font-semibold mb-3">Subscribe to Newsletter</h3>
-                <p className="text-sm text-muted-foreground mb-3">
+              <div className="pt-4">
+                <h3 className="font-mono text-[10px] uppercase tracking-widest text-gold font-semibold mb-2">Subscribe to Newsletter</h3>
+                <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
                   Stay updated on our latest events, programs, and impact stories.
                 </p>
                 <NewsletterForm />
@@ -146,22 +156,23 @@ export function Contact() {
             </div>
           </FadeIn>
 
-          {/* Contact Form */}
+          {/* Contact Form Container */}
           <FadeIn direction="right" className="lg:col-span-3">
-            <Card className="border-border/50">
-              <CardContent className="p-5 sm:p-6 lg:p-8">
-                <Suspense fallback={
-                  <div className="space-y-4 animate-pulse">
-                    <div className="h-10 bg-muted rounded w-3/4"></div>
-                    <div className="h-10 bg-muted rounded w-1/2"></div>
-                    <div className="h-32 bg-muted rounded"></div>
-                    <div className="h-10 bg-muted rounded w-1/4"></div>
-                  </div>
-                }>
-                  <ContactForm />
-                </Suspense>
-              </CardContent>
-            </Card>
+            <div className="bg-background rounded-[2rem] border border-primary/20 p-6 sm:p-8 lg:p-10 shadow-[0_20px_50px_oklch(var(--primary)/4%)] relative">
+              <div className="absolute -top-3.5 left-8 bg-gold text-white font-mono text-[9px] tracking-widest uppercase py-1 px-3 rounded-full">
+                Form
+              </div>
+              <Suspense fallback={
+                <div className="space-y-6 animate-pulse">
+                  <div className="h-12 bg-secondary/30 rounded w-3/4"></div>
+                  <div className="h-12 bg-secondary/30 rounded w-1/2"></div>
+                  <div className="h-36 bg-secondary/30 rounded"></div>
+                  <div className="h-12 bg-secondary/30 rounded w-1/4"></div>
+                </div>
+              }>
+                <ContactForm />
+              </Suspense>
+            </div>
           </FadeIn>
         </div>
       </div>

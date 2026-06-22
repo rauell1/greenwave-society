@@ -1,108 +1,128 @@
 import Link from "next/link";
 import { Leaf, Users, Heart, Globe, Target, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FadeIn } from "@/components/ui/fade-in";
 
 export function About() {
   const values = [
     {
-      icon: <Leaf className="w-6 h-6" />,
+      icon: <Leaf className="w-5 h-5" />,
       title: "Climate & Ecosystem Protection",
       desc: "We advance SDG 13, 14, and 15 through restoration, biodiversity protection, and practical conservation action in local communities.",
     },
     {
-      icon: <Users className="w-6 h-6" />,
+      icon: <Users className="w-5 h-5" />,
       title: "Youth Leadership & Inclusion",
       desc: "We empower youth aged 15-35 with education, mentorship, and equitable opportunities aligned with SDG 4, 5, 8, and 10.",
     },
     {
-      icon: <Heart className="w-6 h-6" />,
+      icon: <Heart className="w-5 h-5" />,
       title: "Community-Led Development",
       desc: "We support SDG 6 and 11 through local action on water stewardship, sustainable communities, and grassroots project leadership.",
     },
     {
-      icon: <Globe className="w-6 h-6" />,
+      icon: <Globe className="w-5 h-5" />,
       title: "Global Partnerships & Accountability",
       desc: "Through SDG 17 partnerships, IFRS-aligned transparency, and strong governance, we scale sustainable impact responsibly.",
     },
   ];
 
   return (
-    <section id="about" className="py-16 sm:py-24 bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-10 sm:gap-16 items-center">
-          {/* Image */}
-          <FadeIn direction="left">
-            <div className="relative overflow-hidden sm:overflow-visible">
-              <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
-                <img
-                  src="/images/about.png"
-                  alt="Youth in community discussion"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              {/* Decorative element */}
-              <div className="hidden sm:block absolute -bottom-4 -right-4 w-24 h-24 sm:w-32 sm:h-32 bg-primary/10 rounded-2xl -z-10" />
-              <div className="hidden sm:block absolute -top-4 -left-4 w-16 h-16 sm:w-24 sm:h-24 bg-primary/20 rounded-2xl -z-10" />
-            </div>
-          </FadeIn>
+    <section id="about" className="py-24 sm:py-32 bg-background relative overflow-hidden">
+      {/* Decorative foliage accent */}
+      <div className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-primary/5 blur-3xl -z-10" />
 
-          {/* Content */}
-          <div>
+      <div className="max-w-7xl mx-auto px-6 sm:px-8">
+        <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          
+          {/* Editorial Image Panel */}
+          <div className="lg:col-span-5 relative">
+            <FadeIn direction="right">
+              <div className="relative overflow-visible">
+                {/* Custom geometric shape border */}
+                <div className="absolute -inset-4 rounded-[2.5rem] border border-primary/20 -z-10 rotate-2" />
+                <div className="aspect-[4/5] rounded-[2rem] overflow-hidden shadow-[0_20px_50px_oklch(var(--primary)/12%)]">
+                  <img
+                    src="/images/about.png"
+                    alt="Youth in community discussion"
+                    className="w-full h-full object-cover grayscale-[20%] hover:grayscale-0 transition-all duration-500"
+                  />
+                </div>
+              </div>
+            </FadeIn>
+          </div>
+
+          {/* Content Panel */}
+          <div className="lg:col-span-7">
             <FadeIn>
-              <Badge variant="secondary" className="mb-3 sm:mb-4">
+              <Badge variant="secondary" className="mb-4 px-4 py-1.5 bg-primary/10 text-primary border border-primary/20 rounded-full">
                 <Target className="w-3.5 h-3.5 mr-1.5" />
                 Our Mission
               </Badge>
             </FadeIn>
             <FadeIn delay={0.1}>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
-                Mission, Vision &{" "}
-                <span className="text-primary">Global Alignment</span>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black tracking-tight text-foreground leading-tight">
+                Mission, Vision & <span className="text-primary italic font-normal">Global Alignment</span>
               </h2>
             </FadeIn>
+            
+            {/* Custom Blockquote Style Statement */}
             <FadeIn delay={0.2}>
-              <p className="mt-4 sm:mt-6 text-muted-foreground text-base sm:text-lg leading-relaxed">
-                Greenwave Society's mission is to accelerate climate action, empower
-                youth as global changemakers, and foster sustainable community
-                development through international cooperation, advocacy, and
-                localized action.
-              </p>
+              <div className="mt-6 border-l-4 border-primary pl-6 py-2">
+                <p className="font-serif italic text-lg sm:text-xl text-muted-foreground leading-relaxed">
+                  "Accelerating climate action, empowering youth as global changemakers, and fostering sustainable community development through international cooperation, advocacy, and localized action."
+                </p>
+              </div>
             </FadeIn>
+
             <FadeIn delay={0.3}>
-              <p className="mt-3 sm:mt-4 text-muted-foreground text-base sm:text-lg leading-relaxed">
+              <p className="mt-6 text-muted-foreground text-sm sm:text-base leading-relaxed">
                 Our vision is a resilient world where humanity and planetary
                 boundaries exist in harmony, achieved through practical delivery of
                 the 2030 Agenda for Sustainable Development.
               </p>
             </FadeIn>
+            
             <FadeIn delay={0.4}>
-              <Button asChild className="mt-6 sm:mt-8 rounded-full" size="lg">
+              <Button asChild className="mt-8 rounded-xl bg-primary text-primary-foreground font-semibold px-6 py-6 shadow-md" size="lg">
                 <Link href="/programs">
                   Explore Our Programs <ArrowRight className="ml-2 w-4 h-4" />
                 </Link>
               </Button>
             </FadeIn>
           </div>
+
         </div>
 
-        {/* Values */}
-        <div className="mt-16 sm:mt-24 grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          {values.map((v, i) => (
-            <FadeIn key={v.title} delay={i * 0.1}>
-              <Card className="h-full border-border/50 hover:border-primary/30 hover:shadow-md transition-all group">
-                <CardContent className="p-5 sm:p-6">
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+        {/* Minimalist Typographical Core Values (Anti-AI card style) */}
+        <div className="mt-24 pt-16 border-t border-border/80">
+          <FadeIn className="text-center max-w-xl mx-auto mb-16">
+            <h3 className="text-2xl font-serif font-black tracking-tight text-foreground">
+              Our Core Strategic Pillars
+            </h3>
+            <p className="text-xs uppercase tracking-wider font-bold text-muted-foreground mt-2">
+              Aligned directly with the United Nations Sustainable Development Goals
+            </p>
+          </FadeIn>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {values.map((v, i) => (
+              <FadeIn key={v.title} delay={i * 0.1}>
+                <div className="flex flex-col h-full group">
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 shadow-[0_4px_12px_oklch(var(--primary)/8%)]">
                     {v.icon}
                   </div>
-                  <h3 className="mt-3 sm:mt-4 text-base sm:text-lg font-semibold">{v.title}</h3>
-                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{v.desc}</p>
-                </CardContent>
-              </Card>
-            </FadeIn>
-          ))}
+                  <h4 className="mt-5 text-base sm:text-lg font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
+                    {v.title}
+                  </h4>
+                  <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+                    {v.desc}
+                  </p>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
         </div>
       </div>
     </section>

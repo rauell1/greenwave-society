@@ -3,8 +3,6 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { Send, Leaf } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 
 export function ContactForm() {
@@ -45,91 +43,102 @@ export function ContactForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
-      <div className="grid sm:grid-cols-2 gap-4">
-        <div>
+    <form onSubmit={handleSubmit} className="space-y-8 sm:space-y-10">
+      <div className="grid sm:grid-cols-2 gap-8 sm:gap-10">
+        <div className="flex flex-col">
           <label
             htmlFor="name"
-            className="block text-sm font-medium mb-1.5"
+            className="font-mono text-[10px] uppercase tracking-widest text-gold font-semibold mb-1"
           >
             Full Name
           </label>
-          <Input
+          <input
             id="name"
+            type="text"
             required
-            placeholder="Your name"
+            placeholder="e.g. Jane Doe"
             value={formData.name}
             onChange={(e) =>
               setFormData({ ...formData, name: e.target.value })
             }
+            className="w-full bg-transparent border-b border-primary/25 py-3 text-foreground placeholder:text-muted-foreground/35 focus:border-primary focus:outline-none transition-colors duration-300 font-sans text-sm"
           />
         </div>
-        <div>
+        <div className="flex flex-col">
           <label
             htmlFor="email"
-            className="block text-sm font-medium mb-1.5"
+            className="font-mono text-[10px] uppercase tracking-widest text-gold font-semibold mb-1"
           >
             Email Address
           </label>
-          <Input
+          <input
             id="email"
             type="email"
             required
-            placeholder="your@email.com"
+            placeholder="e.g. jane@example.com"
             value={formData.email}
             onChange={(e) =>
               setFormData({ ...formData, email: e.target.value })
             }
+            className="w-full bg-transparent border-b border-primary/25 py-3 text-foreground placeholder:text-muted-foreground/35 focus:border-primary focus:outline-none transition-colors duration-300 font-sans text-sm"
           />
         </div>
       </div>
 
-      <div>
+      <div className="flex flex-col">
         <label
           htmlFor="interest"
-          className="block text-sm font-medium mb-1.5"
+          className="font-mono text-[10px] uppercase tracking-widest text-gold font-semibold mb-1"
         >
           I am interested in
         </label>
-        <select
-          id="interest"
-          value={formData.interest}
-          onChange={(e) =>
-            setFormData({ ...formData, interest: e.target.value })
-          }
-          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        >
-          <option value="general">General Inquiry</option>
-          <option value="volunteer">Volunteering</option>
-          <option value="partner">Partnership</option>
-          <option value="donate">Donations</option>
-          <option value="media">Media / Press</option>
-        </select>
+        <div className="relative">
+          <select
+            id="interest"
+            value={formData.interest}
+            onChange={(e) =>
+              setFormData({ ...formData, interest: e.target.value })
+            }
+            className="w-full bg-transparent border-b border-primary/25 py-3 pr-8 text-foreground focus:border-primary focus:outline-none transition-colors duration-300 font-sans text-sm appearance-none cursor-pointer"
+          >
+            <option value="general" className="bg-background text-foreground">General Inquiry</option>
+            <option value="volunteer" className="bg-background text-foreground">Volunteering</option>
+            <option value="partner" className="bg-background text-foreground">Partnership</option>
+            <option value="donate" className="bg-background text-foreground">Donations</option>
+            <option value="media" className="bg-background text-foreground">Media / Press</option>
+          </select>
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-primary/70">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
       </div>
 
-      <div>
+      <div className="flex flex-col">
         <label
           htmlFor="message"
-          className="block text-sm font-medium mb-1.5"
+          className="font-mono text-[10px] uppercase tracking-widest text-gold font-semibold mb-1"
         >
           Message
         </label>
-        <Textarea
+        <textarea
           id="message"
           required
           placeholder="Tell us how you would like to get involved..."
-          rows={5}
+          rows={4}
           value={formData.message}
           onChange={(e) =>
             setFormData({ ...formData, message: e.target.value })
           }
+          className="w-full bg-transparent border-b border-primary/25 py-3 text-foreground placeholder:text-muted-foreground/35 focus:border-primary focus:outline-none transition-colors duration-300 font-sans text-sm resize-none"
         />
       </div>
 
       <Button
         type="submit"
         size="lg"
-        className="w-full sm:w-auto rounded-full"
+        className="w-full sm:w-auto rounded-full bg-primary hover:bg-primary/90 text-white font-semibold shadow-md px-8 py-6 group transition-all duration-300"
         disabled={formState === "loading"}
       >
         {formState === "loading" ? (
@@ -139,7 +148,7 @@ export function ContactForm() {
           </span>
         ) : formState === "success" ? (
           <span className="flex items-center gap-2">
-            <Leaf className="w-4 h-4" /> Message Sent!
+            <Leaf className="w-4 h-4 text-gold animate-bounce" /> Message Sent!
           </span>
         ) : formState === "error" ? (
           <span className="flex items-center gap-2 text-red-200">
@@ -147,7 +156,7 @@ export function ContactForm() {
           </span>
         ) : (
           <span className="flex items-center gap-2">
-            <Send className="w-4 h-4" /> Send Message
+            <Send className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" /> Send Message
           </span>
         )}
       </Button>

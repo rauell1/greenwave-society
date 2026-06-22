@@ -1,71 +1,81 @@
 import Link from "next/link";
 import { HandHeart, ArrowRight, Leaf } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FadeIn } from "@/components/ui/fade-in";
 
 export function VolunteerCTA() {
   return (
-    <section id="volunteer" className="py-16 sm:py-24 bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <FadeIn>
-          <Card className="overflow-hidden border-0 shadow-2xl">
-            <div className="grid lg:grid-cols-2">
-              {/* Left: Image */}
-              <div className="relative h-64 lg:h-auto">
-                <img
-                  src="/images/program-conservation.png"
-                  alt="Volunteers cleaning riverbank"
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent to-background/50 hidden lg:block" />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent lg:hidden" />
+    <section id="volunteer" className="py-24 sm:py-32 bg-background relative overflow-hidden">
+      {/* Decorative leaf blur accent */}
+      <div className="absolute bottom-0 right-0 translate-x-1/4 translate-y-1/4 w-[35rem] h-[35rem] rounded-full bg-primary/5 blur-3xl pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto px-6 sm:px-8">
+        <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          
+          {/* Left Column: Image with offset frame */}
+          <div className="lg:col-span-5 relative order-last lg:order-first">
+            <FadeIn direction="right">
+              <div className="relative">
+                {/* Decorative background outline frame */}
+                <div className="absolute -inset-4 rounded-[3rem] border border-primary/20 -z-10 -rotate-2" />
+                <div className="aspect-[4/5] sm:aspect-[3/2] lg:aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_oklch(var(--primary)/8%)]">
+                  <img
+                    src="/images/program-conservation.png"
+                    alt="Volunteers cleaning riverbank and planting trees"
+                    className="w-full h-full object-cover grayscale-[15%] hover:grayscale-0 transition-all duration-500"
+                  />
+                </div>
+              </div>
+            </FadeIn>
+          </div>
+
+          {/* Right Column: Editorial Callout */}
+          <div className="lg:col-span-7">
+            <FadeIn>
+              <Badge className="mb-4 bg-primary/10 text-primary border border-primary/20 hover:bg-primary/15 px-3 py-1.5 rounded-full">
+                <HandHeart className="w-3.5 h-3.5 mr-1.5 text-gold" />
+                Get Involved
+              </Badge>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black tracking-tight text-foreground leading-tight">
+                Become a <span className="italic font-normal text-primary">Volunteer</span> Today
+              </h2>
+              <p className="mt-6 text-muted-foreground text-sm sm:text-base leading-relaxed">
+                Join our growing network of passionate volunteers and help make a
+                real difference in your community. Whether you want to plant trees,
+                lead workshops, or support our operations, there is a place for you
+                at Greenwave Society.
+              </p>
+
+              {/* High-end list structure */}
+              <div className="mt-8 grid sm:grid-cols-2 gap-4">
+                {[
+                  "Flexible volunteering opportunities",
+                  "Training and mentorship provided",
+                  "Connect with like-minded changemakers",
+                  "Make a measurable environmental impact",
+                ].map((item) => (
+                  <div key={item} className="flex items-start gap-3">
+                    <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                      <Leaf className="w-3 h-3 text-primary" />
+                    </div>
+                    <span className="text-sm text-muted-foreground font-sans">{item}</span>
+                  </div>
+                ))}
               </div>
 
-              {/* Right: Content */}
-              <CardContent className="p-6 sm:p-8 lg:p-10 flex flex-col justify-center">
-                <Badge className="mb-3 sm:mb-4 w-fit bg-primary/10 text-primary border-primary/20 hover:bg-primary/15">
-                  <HandHeart className="w-3.5 h-3.5 mr-1.5" />
-                  Get Involved
-                </Badge>
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
-                  Become a Volunteer Today
-                </h2>
-                <p className="mt-3 sm:mt-4 text-muted-foreground text-sm sm:text-base leading-relaxed">
-                  Join our growing network of passionate volunteers and help make a
-                  real difference in your community. Whether you want to plant trees,
-                  lead workshops, or support our operations, there is a place for you
-                  at Greenwave Society.
-                </p>
+              <div className="mt-10">
+                <Button asChild size="lg" className="rounded-full bg-primary hover:bg-primary/90 text-white font-semibold shadow-md px-8 py-6 group">
+                  <Link href="/contact?interest=volunteer">
+                    Sign Up to Volunteer 
+                    <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform animate-pulse" />
+                  </Link>
+                </Button>
+              </div>
+            </FadeIn>
+          </div>
 
-                <div className="mt-5 sm:mt-6 space-y-3">
-                  {[
-                    "Flexible volunteering opportunities",
-                    "Training and mentorship provided",
-                    "Connect with like-minded changemakers",
-                    "Make a measurable environmental impact",
-                  ].map((item) => (
-                    <div key={item} className="flex items-center gap-2">
-                      <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                        <Leaf className="w-3 h-3 text-primary" />
-                      </div>
-                      <span className="text-sm text-muted-foreground">{item}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-6 sm:mt-8">
-                  <Button asChild size="lg" className="rounded-full w-full sm:w-auto">
-                    <Link href="/contact?interest=volunteer">
-                      Sign Up to Volunteer <ArrowRight className="ml-2 w-4 h-4" />
-                    </Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </div>
-          </Card>
-        </FadeIn>
+        </div>
       </div>
     </section>
   );

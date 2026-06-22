@@ -6,52 +6,105 @@ import { IMPACT_STATS } from "@/config/app.config";
 
 export function Impact() {
   const stats = [
-    { icon: <Users className="w-7 h-7" />, value: IMPACT_STATS.youthReached, suffix: "+", label: "Youth Empowered" },
-    { icon: <TreePine className="w-7 h-7" />, value: IMPACT_STATS.treesPlanted, suffix: "+", label: "Trees Planted" },
-    { icon: <Globe className="w-7 h-7" />, value: IMPACT_STATS.communitiesServed, suffix: "+", label: "Communities Served" },
-    { icon: <Calendar className="w-7 h-7" />, value: IMPACT_STATS.eventsOrganized, suffix: "+", label: "Events Organized" },
-    { icon: <GraduationCap className="w-7 h-7" />, value: IMPACT_STATS.workshopsDelivered, suffix: "+", label: "Workshops Delivered" },
-    { icon: <Recycle className="w-7 h-7" />, value: IMPACT_STATS.wasteRecycled, suffix: " tons", label: "Waste Recycled" },
+    {
+      icon: <Users className="w-5 h-5" />,
+      value: IMPACT_STATS.youthReached,
+      suffix: "+",
+      label: "Youth Empowered",
+      desc: "Engaged in hands-on climate education, mentorship, and leadership initiatives."
+    },
+    {
+      icon: <TreePine className="w-5 h-5" />,
+      value: IMPACT_STATS.treesPlanted,
+      suffix: "+",
+      label: "Trees Planted",
+      desc: "Reforested across schools, community parks, and local ecological zones."
+    },
+    {
+      icon: <Globe className="w-5 h-5" />,
+      value: IMPACT_STATS.communitiesServed,
+      suffix: "+",
+      label: "Communities Served",
+      desc: "Local areas empowered with sanitation, education, and restoration programs."
+    },
+    {
+      icon: <Calendar className="w-5 h-5" />,
+      value: IMPACT_STATS.eventsOrganized,
+      suffix: "+",
+      label: "Events Organized",
+      desc: "From community clean-ups to youth leadership summits and conservation hikes."
+    },
+    {
+      icon: <GraduationCap className="w-5 h-5" />,
+      value: IMPACT_STATS.workshopsDelivered,
+      suffix: "+",
+      label: "Workshops Delivered",
+      desc: "Practical curriculum sessions focusing on environmental literacy and the UN SDGs."
+    },
+    {
+      icon: <Recycle className="w-5 h-5" />,
+      value: IMPACT_STATS.wasteRecycled,
+      suffix: " tons",
+      label: "Waste Recycled",
+      desc: "Diverted from local landfills through youth-led collection and sorting programs."
+    },
   ];
 
   return (
-    <section id="impact" className="py-16 sm:py-24 bg-primary text-primary-foreground relative overflow-hidden">
-      {/* Pattern background */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-0 left-0 w-64 h-64 rounded-full bg-white/20 -translate-x-1/2 -translate-y-1/2" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-white/10 translate-x-1/3 translate-y-1/3" />
-        <div className="absolute top-1/2 left-1/2 w-48 h-48 rounded-full bg-white/15 -translate-x-1/2 -translate-y-1/2" />
-      </div>
+    <section id="impact" className="py-24 sm:py-32 bg-primary text-primary-foreground relative overflow-hidden">
+      {/* Subtle top light overlay */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white via-transparent to-transparent" />
+      
+      <div className="relative max-w-7xl mx-auto px-6 sm:px-8">
+        <div className="grid lg:grid-cols-12 gap-8 lg:gap-16 items-end mb-16 sm:mb-24">
+          <div className="lg:col-span-8">
+            <FadeIn>
+              <Badge className="mb-4 bg-white/10 text-white border-white/20 hover:bg-white/15 px-3 py-1 text-xs tracking-wider uppercase rounded-full">
+                <Award className="w-3.5 h-3.5 mr-1.5 text-gold" />
+                Our Impact
+              </Badge>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black tracking-tight text-white leading-tight">
+                Our Work in <span className="italic font-normal text-gold">Numbers</span>
+              </h2>
+            </FadeIn>
+          </div>
+          <div className="lg:col-span-4">
+            <FadeIn delay={0.1}>
+              <p className="text-white/75 text-sm sm:text-base leading-relaxed border-l border-white/25 pl-6">
+                Every action we take creates a ripple effect of change. Here is the
+                measurable progress we have achieved together with our communities.
+              </p>
+            </FadeIn>
+          </div>
+        </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <FadeIn className="text-center max-w-3xl mx-auto">
-          <Badge className="mb-3 sm:mb-4 bg-white/15 text-white border-white/20 hover:bg-white/20">
-            <Award className="w-3.5 h-3.5 mr-1.5" />
-            Our Impact
-          </Badge>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white">
-            Making a Real Difference
-          </h2>
-          <p className="mt-4 sm:mt-6 text-white/75 text-base sm:text-lg">
-            Every action we take creates a ripple effect of change. Here is the
-            impact we have made together with our partners and volunteers.
-          </p>
-        </FadeIn>
-
-        <div className="mt-10 sm:mt-16 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6">
+        {/* Asymmetric border-connected grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 border-t border-l border-white/10">
           {stats.map((s, i) => (
-            <FadeIn key={s.label} delay={i * 0.08}>
-              <div className="text-center p-4 sm:p-6 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/10 hover:bg-white/15 transition-colors">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white/10 flex items-center justify-center mx-auto mb-3 sm:mb-4 text-white">
-                  {s.icon}
+            <FadeIn 
+              key={s.label} 
+              delay={i * 0.05} 
+              className="p-8 sm:p-10 border-r border-b border-white/10 flex flex-col justify-between group hover:bg-white/[0.02] transition-colors duration-300 min-h-[220px]"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-8">
+                  <span className="text-xs uppercase tracking-widest text-white/40 font-mono">
+                    [ 0{i + 1} ]
+                  </span>
+                  <div className="text-gold/70 group-hover:text-gold transition-colors duration-300">
+                    {s.icon}
+                  </div>
                 </div>
-                <p className="text-2xl sm:text-3xl font-bold text-white">
+                <div className="text-5xl sm:text-6xl font-serif font-black text-white tracking-tight leading-none mb-4 group-hover:translate-x-1 origin-left transition-transform duration-300">
                   <CountUp target={s.value} suffix={s.suffix} />
-                </p>
-                <p className="mt-1 text-xs sm:text-sm text-white/90 font-semibold">
+                </div>
+                <h3 className="text-sm font-semibold tracking-wider uppercase text-white/95 mb-3">
                   {s.label}
-                </p>
+                </h3>
               </div>
+              <p className="text-xs sm:text-sm text-white/60 leading-relaxed font-sans">
+                {s.desc}
+              </p>
             </FadeIn>
           ))}
         </div>

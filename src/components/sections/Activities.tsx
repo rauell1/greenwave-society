@@ -1,6 +1,5 @@
 import { Calendar, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { FadeIn } from "@/components/ui/fade-in";
 
 const activities = [
@@ -64,52 +63,83 @@ const activities = [
 
 export function Activities() {
   return (
-    <section className="py-16 sm:py-24 bg-muted/50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <FadeIn className="text-center max-w-3xl mx-auto">
-          <Badge variant="secondary" className="mb-3 sm:mb-4">
-            <Calendar className="w-3.5 h-3.5 mr-1.5" />
+    <section id="activities" className="py-24 sm:py-32 bg-secondary/20 relative overflow-hidden">
+      {/* Decorative background shape */}
+      <div className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-[40rem] h-[40rem] rounded-full bg-primary/5 blur-3xl pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto px-6 sm:px-8">
+        <FadeIn className="text-center max-w-3xl mx-auto mb-20 sm:mb-28">
+          <Badge variant="secondary" className="mb-4 px-4 py-1.5 bg-primary/10 text-primary border border-primary/20 rounded-full">
+            <Calendar className="w-3.5 h-3.5 mr-1.5 text-gold" />
             Recent Activities
           </Badge>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
-            What We Have Been <span className="text-primary">Up To</span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black tracking-tight text-foreground leading-tight">
+            What We Have Been <span className="italic font-normal text-primary">Up To</span>
           </h2>
-          <p className="mt-4 sm:mt-6 text-muted-foreground text-base sm:text-lg">
-            From community clean-ups to leadership summits, our recent activities
-            showcase the breadth of our impact.
+          <p className="mt-4 text-muted-foreground text-sm sm:text-base max-w-xl mx-auto">
+            From conservation training in schools to eco-restoration and wellness picnics, our journey is marked by active engagement.
           </p>
         </FadeIn>
 
-        <div className="mt-10 sm:mt-16 grid sm:grid-cols-2 gap-4 sm:gap-6">
-          {activities.map((a, i) => (
-            <FadeIn key={a.title} delay={i * 0.1}>
-              <Card className="h-full border-border/50 hover:shadow-md hover:border-primary/30 transition-all group">
-                <CardContent className="p-5 sm:p-6">
-                  <div className="flex items-center justify-between mb-3">
-                    <Badge
-                      variant="outline"
-                      className="text-xs border-primary/20 text-primary"
-                    >
+        {/* Timeline container */}
+        <div className="relative max-w-4xl mx-auto">
+          {/* Vertical dashed line */}
+          <div className="absolute left-4 md:left-[144px] top-2 bottom-2 w-[1px] border-l border-dashed border-primary/30" />
+
+          <div className="space-y-16">
+            {activities.map((a, i) => (
+              <FadeIn key={a.title} delay={i * 0.08}>
+                <div className="relative md:grid md:grid-cols-[120px_1fr] md:gap-12 pl-10 md:pl-0 group">
+                  {/* Left Column: Date & Type (Desktop) */}
+                  <div className="hidden md:block text-right">
+                    <span className="font-mono text-xs text-gold uppercase tracking-widest block pt-1.5">
+                      {a.date}
+                    </span>
+                    <Badge variant="outline" className="mt-2 text-[10px] uppercase tracking-wider border-primary/20 text-primary bg-primary/5 rounded-md px-2.5 py-0.5">
                       {a.type}
                     </Badge>
-                    <span className="text-xs text-muted-foreground">{a.date}</span>
                   </div>
-                  <h3 className="text-base sm:text-lg font-semibold group-hover:text-primary transition-colors">
-                    {a.title}
-                  </h3>
-                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{a.desc}</p>
-                  <a
-                    href={a.mediaUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
-                  >
-                    View media <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
-                </CardContent>
-              </Card>
-            </FadeIn>
-          ))}
+
+                  {/* Center Column: Node Bullet */}
+                  <div className="absolute left-3.5 md:left-[140.5px] top-1.5 -translate-x-1/2 flex items-center justify-center">
+                    <div className="w-3.5 h-3.5 rounded-full bg-primary ring-4 ring-primary/10 group-hover:scale-125 transition-transform duration-300" />
+                  </div>
+
+                  {/* Right Column: Content Card */}
+                  <div className="flex-1 bg-background rounded-[1.5rem] border border-primary/10 p-6 sm:p-8 hover:shadow-[0_20px_50px_oklch(var(--primary)/5%)] transition-all duration-300 group-hover:border-primary/20">
+                    {/* Date and Tag for Mobile */}
+                    <div className="flex flex-wrap items-center gap-3 mb-3 md:hidden">
+                      <span className="font-mono text-xs text-gold uppercase tracking-widest">
+                        {a.date}
+                      </span>
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                        {a.type}
+                      </span>
+                    </div>
+
+                    <h3 className="text-xl font-serif font-black text-foreground group-hover:text-primary transition-colors duration-300">
+                      {a.title}
+                    </h3>
+                    <p className="mt-3 text-sm text-muted-foreground leading-relaxed font-sans">
+                      {a.desc}
+                    </p>
+                    
+                    <div className="mt-5 flex items-center">
+                      <a
+                        href={a.mediaUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary hover:underline hover:gap-2 transition-all duration-300"
+                      >
+                        Explore Event Media
+                        <ExternalLink className="w-3.5 h-3.5 text-gold" />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
         </div>
       </div>
     </section>

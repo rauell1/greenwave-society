@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 export function NewsletterForm() {
@@ -29,19 +28,21 @@ export function NewsletterForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2">
-      <Input
-        type="email"
-        required
-        placeholder="Your email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        className="flex-1 h-10 text-sm bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-500 focus-visible:ring-emerald-500"
-      />
+    <form onSubmit={handleSubmit} className="flex items-end gap-3 w-full">
+      <div className="relative flex-1">
+        <input
+          type="email"
+          required
+          placeholder="your@email.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full bg-transparent border-b border-primary/25 py-2 text-sm text-foreground placeholder:text-muted-foreground/35 focus:border-primary focus:outline-none transition-colors duration-300 font-sans"
+        />
+      </div>
       <Button
         type="submit"
         size="sm"
-        className="rounded-full shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white"
+        className="rounded-full bg-primary hover:bg-primary/90 text-white font-semibold px-5 py-2 shadow-sm shrink-0"
         disabled={state === "loading"}
       >
         {state === "success" ? "Subscribed!" : state === "loading" ? "..." : "Join"}
