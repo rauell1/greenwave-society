@@ -25,17 +25,22 @@ interface LogEntry {
 
 class Logger {
   private serviceName: string;
+  private baseContext: LogContext;
 
-  constructor(serviceName: string = "greenwave-society") {
+  constructor(serviceName: string = "greenwave-society", baseContext: LogContext = {}) {
     this.serviceName = serviceName;
+    this.baseContext = baseContext;
   }
 
   private formatLog(level: LogLevel, message: string, context?: LogContext, error?: Error): LogEntry {
+    const mergedContext = { ...this.baseContext, ...context };
+    const hasContext = Object.keys(mergedContext).length > 0;
+
     const entry: LogEntry = {
       timestamp: new Date().toISOString(),
       level,
       message,
-      ...(context && { context: { ...context, service: this.serviceName } }),
+      ...(hasContext && { context: { ...mergedContext, service: this.serviceName } }),
     };
 
     if (error) {
@@ -65,7 +70,10 @@ class Logger {
       };
 
       console.log(`${levelEmoji[level]} [${level.toUpperCase()}] ${message}`);
-      if (context) console.log("  Context:", context);
+      const mergedContext = { ...this.baseContext, ...context };
+      if (Object.keys(mergedContext).length > 0) {
+        console.log("  Context:", mergedContext);
+      }
       if (error) {
         console.error("  Error:", error.message);
         if (error.stack) console.error(error.stack);
@@ -95,14 +103,7 @@ class Logger {
    * Create a child logger with additional context
    */
   child(context: LogContext): Logger {
-    const childLogger = new Logger(this.serviceName);
-    const originalLog = childLogger.log.bind(childLogger);
-
-    childLogger.log = (level: LogLevel, message: string, ctx?: LogContext, error?: Error) => {
-      originalLog(level, message, { ...context, ...ctx }, error);
-    };
-
-    return childLogger;
+    return new Logger(this.serviceName, { ...this.baseContext, ...context });
   }
 }
 

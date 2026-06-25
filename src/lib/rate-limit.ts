@@ -56,6 +56,24 @@ class RateLimiter {
     return { allowed: true, remaining: this.maxRequests - entry.count, resetAt: entry.resetAt };
   }
 
+  getRemaining(identifier: string): number {
+    const now = Date.now();
+    const entry = this.store.get(identifier);
+    if (!entry || entry.resetAt < now) {
+      return this.maxRequests;
+    }
+    return Math.max(0, this.maxRequests - entry.count);
+  }
+
+  getResetAt(identifier: string): number | null {
+    const now = Date.now();
+    const entry = this.store.get(identifier);
+    if (!entry || entry.resetAt < now) {
+      return null;
+    }
+    return entry.resetAt;
+  }
+
   destroy(): void {
     clearInterval(this.cleanupInterval);
     this.store.clear();
@@ -139,22 +157,13 @@ export async function rateLimit(request: NextRequest): Promise<NextResponse | nu
  */
 export function getRateLimitHeaders(request: NextRequest): Record<string, string> {
   const identifier = getClientIdentifier(request);
-  const entry = rateLimiter["store"].get(identifier);
-
-  if (!entry) {
-    return {
-      "X-RateLimit-Limit": APP_CONFIG.rateLimit.maxRequests.toString(),
-      "X-RateLimit-Remaining": APP_CONFIG.rateLimit.maxRequests.toString(),
-    };
-  }
+  const remaining = rateLimiter.getRemaining(identifier);
+  const resetAt = rateLimiter.getResetAt(identifier);
 
   return {
     "X-RateLimit-Limit": APP_CONFIG.rateLimit.maxRequests.toString(),
-    "X-RateLimit-Remaining": Math.max(
-      0,
-      APP_CONFIG.rateLimit.maxRequests - entry.count
-    ).toString(),
-    "X-RateLimit-Reset": entry.resetAt.toString(),
+    "X-RateLimit-Remaining": remaining.toString(),
+    ...(resetAt && { "X-RateLimit-Reset": resetAt.toString() }),
   };
 }
 

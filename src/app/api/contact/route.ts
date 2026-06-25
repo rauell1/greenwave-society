@@ -20,12 +20,24 @@ export async function POST(request: NextRequest) {
     const rateLimitResult = await rateLimit(request);
     if (rateLimitResult) return rateLimitResult;
 
-    // Parse and validate request body
+    // Parse request body
     const body = await request.json().catch(() => null);
     if (!body) {
       requestLogger.warn("Invalid JSON body");
       return NextResponse.json(
         { error: "Invalid request body" },
+        { status: 400 }
+      );
+    }
+
+    // Check for suspicious patterns on the raw inputs before sanitization
+    if (
+      containsSuspiciousPatterns(body.name || "") ||
+      containsSuspiciousPatterns(body.message || "")
+    ) {
+      requestLogger.warn("Suspicious input pattern blocked", { email: body.email });
+      return NextResponse.json(
+        { error: "Invalid input detected" },
         { status: 400 }
       );
     }
@@ -42,18 +54,6 @@ export async function POST(request: NextRequest) {
 
     const { name, email, interest, message } = validation.data;
     const db = getDb();
-
-    // Check for suspicious patterns
-    if (
-      containsSuspiciousPatterns(name) ||
-      containsSuspiciousPatterns(message)
-    ) {
-      requestLogger.warn("Suspicious input detected", { email });
-      return NextResponse.json(
-        { error: "Invalid input detected" },
-        { status: 400 }
-      );
-    }
 
     // Save to database
     await db.contactSubmission.create({
