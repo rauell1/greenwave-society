@@ -31,7 +31,7 @@ export const APP_CONFIG = {
     facebook: "https://www.facebook.com/share/19byoMf2Re/",
     tiktok: "https://tiktok.com/@greenwave.society",
     linktree: "https://linktr.ee/greenwavesociety",
-    linkedin: "https://www.linkedin.com/in/elyjoy-maina-044370244",
+    linkedin: "https://www.linkedin.com/in/martin-kyalo-9373982b7/",
   },
 
   // Feature flags

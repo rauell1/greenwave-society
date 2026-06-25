@@ -4,16 +4,8 @@ import { FadeIn } from "@/components/ui/fade-in";
 
 const team = [
   {
-    name: "Elyjoy Maina",
-    role: "Co-Founder & Executive Director",
-    bio: "Passionate about youth empowerment and environmental conservation. Leading Greenwave Society's vision of creating sustainable change through community-driven initiatives.",
-    image:
-      "https://ui-avatars.com/api/?name=Elyjoy+Maina&background=1f4731&color=fff&size=400&font-size=0.35&bold=true",
-    linkedin: "https://www.linkedin.com/in/elyjoy-maina-044370244",
-  },
-  {
     name: "Martin Kyalo",
-    role: "Co-Founder & Programs Director",
+    role: "Founder & Programs Director",
     bio: "Dedicated to designing and implementing impactful environmental programs. Bringing together communities, volunteers, and partners to achieve shared conservation goals.",
     image:
       "https://ui-avatars.com/api/?name=Martin+Kyalo&background=1f4731&color=fff&size=400&font-size=0.35&bold=true",
@@ -43,7 +35,7 @@ export function Team() {
           <div className="lg:col-span-6">
             <FadeIn delay={0.1}>
               <p className="text-muted-foreground text-sm sm:text-base leading-relaxed lg:border-l lg:border-primary/25 lg:pl-6">
-                Our dedicated co-founders work tirelessly to design, implement, and govern
+                Our dedicated founder works tirelessly to design, implement, and govern
                 impactful programs that empower youth and secure environmental resilience across Kenya.
               </p>
             </FadeIn>
@@ -57,7 +49,7 @@ export function Team() {
                 <div className="relative w-full aspect-[4/5] sm:max-w-sm rounded-[2rem] overflow-hidden border border-primary/25 bg-secondary/15 p-3 transition-transform duration-500 group-hover:-translate-y-2">
                   {/* Floating role badge */}
                   <div className="absolute top-6 right-6 z-10 bg-gold text-white font-mono text-[10px] tracking-widest uppercase py-1.5 px-3.5 rounded-full shadow-md">
-                    Co-Founder
+                    Founder
                   </div>
                   
                   {/* Portrait frame */}

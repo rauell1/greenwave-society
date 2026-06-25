@@ -5,8 +5,8 @@ import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
 
 export const metadata: Metadata = {
-  title: "Meet the Team | Founders & Directors",
-  description: "Meet the leadership team behind Greenwave Society, including Co-Founders Elyjoy Maina (Executive Director) and Martin Kyalo (Programs Director), directing environmental conservation in Kenya.",
+  title: "Meet the Team | Founder & Leadership",
+  description: "Meet the leadership team behind Greenwave Society, including Founder Martin Kyalo (Programs Director), directing environmental conservation in Kenya.",
   alternates: {
     canonical: "/team",
   },

@@ -39,7 +39,6 @@ export const metadata: Metadata = {
     "nonprofit Kenya",
     "Maangani Primary School project",
     "Ngong Hike conservation",
-    "Elyjoy Maina",
     "Martin Kyalo",
   ],
   authors: [{ name: "Greenwave Society" }],
