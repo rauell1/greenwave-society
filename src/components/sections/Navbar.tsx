@@ -40,10 +40,12 @@ export function Navbar() {
       }`}
     >
       <nav className="max-w-7xl mx-auto flex items-center justify-between px-6 sm:px-8 h-12">
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center shadow-[0_4px_12px_oklch(var(--primary)/20%)] group-hover:rotate-6 transition-transform duration-300">
-            <Leaf className="w-4.5 h-4.5 text-primary-foreground" />
-          </div>
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <img
+            src="/logo.png"
+            alt="Greenwave Society Logo"
+            className="w-10 h-10 object-contain group-hover:scale-105 transition-transform duration-300"
+          />
           <span className="text-xl font-serif font-black tracking-tight text-foreground">
             Green<span className="text-primary font-normal">wave</span>
           </span>

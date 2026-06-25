@@ -26,10 +26,12 @@ export function Footer() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10">
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center">
-                <Leaf className="w-5 h-5 text-white" />
-              </div>
+            <div className="flex items-center gap-2.5 mb-4">
+              <img
+                src="/logo.png"
+                alt="Greenwave Society Logo"
+                className="w-10 h-10 object-contain"
+              />
               <span className="text-lg font-bold">
                 Green<span className="text-emerald-400">wave</span>
               </span>

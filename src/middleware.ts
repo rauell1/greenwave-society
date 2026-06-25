@@ -112,6 +112,6 @@ export const config = {
      * - favicon.ico (favicon file)
      * - public assets
      */
-    "/((?!_next/static|_next/image|favicon.ico|images|logo.svg|robots.txt).*)",
+    "/((?!_next/static|_next/image|favicon.ico|images|logo.png|logo.svg|robots.txt).*)",
   ],
 };

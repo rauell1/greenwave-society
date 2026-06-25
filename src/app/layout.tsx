@@ -44,7 +44,7 @@ export const metadata: Metadata = {
   authors: [{ name: "Greenwave Society" }],
   creator: "Rauell Kyalo",
   icons: {
-    icon: "/logo.svg",
+    icon: "/logo.png",
   },
   alternates: {
     canonical: "./",
@@ -91,7 +91,7 @@ export default function RootLayout({
     "@type": "NGO",
     "name": "Greenwave Society",
     "url": APP_CONFIG.url,
-    "logo": `${APP_CONFIG.url}/logo.svg`,
+    "logo": `${APP_CONFIG.url}/logo.png`,
     "description": APP_CONFIG.description,
     "address": {
       "@type": "PostalAddress",
