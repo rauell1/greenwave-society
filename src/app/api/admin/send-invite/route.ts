@@ -1,12 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { getAdminSession } from "@/lib/admin-auth";
 import { getDb } from "@/lib/db";
 import { sendSigningEmail } from "@/lib/email";
 import { logger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
-  const authed = await getAdminSession();
-  if (!authed) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const { valid } = await getAdminSession();
+  if (!valid) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
     const body = await request.json().catch(() => null);
@@ -46,3 +46,4 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Failed to send invite" }, { status: 500 });
   }
 }
+
