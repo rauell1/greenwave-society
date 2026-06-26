@@ -32,33 +32,65 @@ model NewsletterSubscriber {
 }
 
 model ExecutiveLeader {
-  id        String                @id @default(cuid())
-  name      String
-  role      String
-  email     String                @unique
-  createdAt DateTime              @default(now())
-  signature ConstitutionSignature?
+  id         String                  @id @default(cuid())
+  name       String
+  role       String
+  email      String                  @unique
+  createdAt  DateTime                @default(now())
+  signatures ConstitutionSignature[]
 
   @@map("executive_leaders")
 }
 
+model ConstitutionVersion {
+  id          String                  @id @default(cuid())
+  versionTag  String
+  title       String                  @default("Executive Leadership Constitution")
+  content     String                  @db.Text
+  contentType String                  @default("html")
+  status      String                  @default("draft")
+  publishedAt DateTime?
+  createdAt   DateTime                @default(now())
+  updatedAt   DateTime                @updatedAt
+  signatures  ConstitutionSignature[]
+
+  @@index([status])
+  @@map("constitution_versions")
+}
+
 model ConstitutionSignature {
-  id              String          @id @default(cuid())
-  leaderId        String          @unique
-  leader          ExecutiveLeader @relation(fields: [leaderId], references: [id], onDelete: Cascade)
-  version         String          @default("1.0")
-  status          String          @default("pending")
-  token           String          @unique
+  id              String               @id @default(cuid())
+  leaderId        String
+  leader          ExecutiveLeader      @relation(fields: [leaderId], references: [id], onDelete: Cascade)
+  versionId       String?
+  version         ConstitutionVersion? @relation(fields: [versionId], references: [id])
+  versionTag      String               @default("V1")
+  status          String               @default("pending")
+  token           String               @unique
   signedAt        DateTime?
   rejectionReason String?
   ipAddress       String?
   emailSentAt     DateTime?
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
 
+  @@index([leaderId])
   @@index([token])
   @@index([status])
   @@map("constitution_signatures")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String
+  actor     String
+  detail    String?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([action])
+  @@map("audit_logs")
 }
 
 model AdminSession {

@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getAdminSession } from "@/lib/admin-auth";
 import { getDb } from "@/lib/db";
 import { sendSigningEmail } from "@/lib/email";
@@ -17,33 +17,33 @@ export async function POST(request: NextRequest) {
     const db = getDb();
     const leader = await db.executiveLeader.findUnique({
       where: { id: body.leaderId },
-      include: { signature: true },
+      include: { signatures: { orderBy: { createdAt: "desc" }, take: 1 } },
     });
 
     if (!leader) return NextResponse.json({ error: "Leader not found" }, { status: 404 });
-    if (!leader.signature) return NextResponse.json({ error: "No signature record" }, { status: 404 });
+    const sig = leader.signatures[0];
+    if (!sig) return NextResponse.json({ error: "No signature record for this leader" }, { status: 404 });
 
     const sent = await sendSigningEmail({
       to: leader.email,
       name: leader.name,
       role: leader.role,
-      token: leader.signature.token,
+      token: sig.token,
     });
 
     if (sent) {
       await db.constitutionSignature.update({
-        where: { id: leader.signature.id },
+        where: { id: sig.id },
         data: { emailSentAt: new Date() },
       });
     }
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://greenwave.rauell.systems";
-    const signingUrl = `${appUrl}/sign/${leader.signature.token}`;
+    const signingUrl = `${appUrl}/sign/${sig.token}`;
 
-    return NextResponse.json({ success: true, emailSent: sent, signingUrl });
+    return NextResponse.json({ success: true, name: leader.name, emailSent: sent, signingUrl });
   } catch (error) {
     logger.error("Send invite failed", error as Error);
     return NextResponse.json({ error: "Failed to send invite" }, { status: 500 });
   }
 }
-

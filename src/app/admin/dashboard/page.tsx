@@ -10,31 +10,49 @@ export default async function DashboardPage() {
   const { valid, email } = await getAdminSession();
   if (!valid) redirect("/admin");
 
-  const db       = getDb();
+  const db         = getDb();
   const superAdmin = isSuperAdmin(email);
 
+  // Fetch leaders with ALL their signatures (not just one)
   const leaders = await db.executiveLeader.findMany({
-    include:  { signature: true },
-    orderBy:  { createdAt: "asc" },
+    include: {
+      signatures: {
+        orderBy: { createdAt: "desc" },
+      },
+    },
+    orderBy: { createdAt: "asc" },
   });
 
-  const signedCount   = leaders.filter(l => l.signature?.status === "signed").length;
-  const pendingCount  = leaders.filter(l => l.signature?.status === "pending").length;
-  const rejectedCount = leaders.filter(l => l.signature?.status === "rejected").length;
+  // Fetch all constitution versions
+  const versions = await db.constitutionVersion.findMany({
+    orderBy: { createdAt: "desc" },
+    include: {
+      signatures: { select: { status: true, leaderId: true } },
+    },
+  });
 
-  let subscribers:    { id: string; email: string; createdAt: Date }[] = [];
-  let adminUsers:     { id: string; email: string; passwordHash: string | null; createdAt: Date; updatedAt: Date }[] = [];
-  let dbStats:        { table: string; count: number }[] = [];
+  // For the active (published) version, compute signing stats
+  const activeVersion = versions.find(v => v.status === "published");
+  const activeSigs = activeVersion ? activeVersion.signatures : [];
+  const signedCount   = activeSigs.filter(s => s.status === "signed").length;
+  const pendingCount  = activeSigs.filter(s => s.status === "pending").length;
+  const rejectedCount = activeSigs.filter(s => s.status === "rejected").length;
+
+  let subscribers:  { id: string; email: string; createdAt: Date }[] = [];
+  let adminUsers:   { id: string; email: string; passwordHash: string | null; createdAt: Date; updatedAt: Date }[] = [];
+  let dbStats:      { table: string; count: number }[] = [];
+  let auditLogs:    { id: string; action: string; actor: string; detail: string | null; ip: string | null; createdAt: Date }[] = [];
 
   if (superAdmin) {
-    const [subs, users] = await Promise.all([
+    const [subs, users, logs] = await Promise.all([
       db.newsletterSubscriber.findMany({ orderBy: { createdAt: "desc" } }),
       db.adminUser.findMany({ orderBy: { createdAt: "asc" } }),
+      db.auditLog.findMany({ orderBy: { createdAt: "desc" }, take: 100 }),
     ]);
     subscribers = subs;
     adminUsers  = users;
+    auditLogs   = logs;
 
-    // DB table counts via raw queries
     const counts = await Promise.all([
       db.executiveLeader.count(),
       db.constitutionSignature.count(),
@@ -44,18 +62,19 @@ export default async function DashboardPage() {
       db.contactSubmission.count(),
     ]);
     dbStats = [
-      { table: "Executive Leaders",        count: counts[0] },
-      { table: "Constitution Signatures",  count: counts[1] },
-      { table: "Newsletter Subscribers",   count: counts[2] },
-      { table: "Admin Users",              count: counts[3] },
-      { table: "Active Sessions",          count: counts[4] },
-      { table: "Contact Submissions",      count: counts[5] },
+      { table: "Executive Leaders",       count: counts[0] },
+      { table: "Constitution Signatures", count: counts[1] },
+      { table: "Newsletter Subscribers",  count: counts[2] },
+      { table: "Admin Users",             count: counts[3] },
+      { table: "Active Sessions",         count: counts[4] },
+      { table: "Contact Submissions",     count: counts[5] },
     ];
   }
 
   return (
     <ConstitutionDashboard
       leaders={leaders as any}
+      versions={versions as any}
       signedCount={signedCount}
       pendingCount={pendingCount}
       rejectedCount={rejectedCount}
@@ -64,6 +83,7 @@ export default async function DashboardPage() {
       subscribers={subscribers as any}
       adminUsers={adminUsers as any}
       dbStats={dbStats}
+      auditLogs={auditLogs as any}
     />
   );
 }
