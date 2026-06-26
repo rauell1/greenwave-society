@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Environment Variable Validation
  *
  * Validates all required environment variables at application startup.
@@ -24,6 +24,7 @@ const envSchema = z.object({
   CORS_ORIGIN: z.string().optional(),
   SESSION_SECRET: z.string().min(32, "SESSION_SECRET must be at least 32 characters").optional(),
   ADMIN_PASSWORD: z.string().min(8, "ADMIN_PASSWORD must be at least 8 characters").optional(),
+  ADMIN_EMAILS: z.string().optional(),
 
   // Feature Flags
   ENABLE_RATE_LIMITING: z.string().transform(val => val === "true").optional(),
@@ -72,7 +73,7 @@ export function validateEnv(): Env {
       });
 
       throw new Error(
-        `❌ Invalid environment variables:\n${missingVars.join("\n")}\n\n` +
+        `âŒ Invalid environment variables:\n${missingVars.join("\n")}\n\n` +
           `Please check your .env file. See .env.example for required variables.`
       );
     }
@@ -100,3 +101,4 @@ export function isDevelopment(): boolean {
 export function isTest(): boolean {
   return process.env.NODE_ENV === "test";
 }
+
