@@ -103,7 +103,20 @@ export async function requireAdminSession() {
   }
 }
 
-// â”€â”€ reset token â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── super admin ───────────────────────────────────────────────────────────────
+
+const SUPER_ADMIN_EMAIL = “royokola3@gmail.com”;
+
+export function isSuperAdmin(email: string | undefined): boolean {
+  return email?.toLowerCase() === SUPER_ADMIN_EMAIL;
+}
+
+export async function getAdminEmail(): Promise<string | undefined> {
+  const { email } = await getAdminSession();
+  return email;
+}
+
+// ── reset token ───────────────────────────────────────────────────────────────
 
 export function generateResetToken(): { token: string; expiry: Date } {
   return {
