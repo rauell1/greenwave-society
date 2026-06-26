@@ -2,7 +2,7 @@
 import { logger } from "./logger";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://greenwave.rauell.systems";
-const FROM    = "Greenwave Society <onboarding@resend.dev>";
+const FROM    = "Greenwave Society <info@rauell.systems>";
 
 function getResend(): Resend | null {
   if (!process.env.RESEND_API_KEY) return null;
@@ -93,3 +93,4 @@ export async function sendPasswordResetEmail(to: string, resetUrl: string): Prom
     return false;
   }
 }
+
