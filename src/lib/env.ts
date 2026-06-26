@@ -23,6 +23,7 @@ const envSchema = z.object({
   RATE_LIMIT_WINDOW_MS: z.string().regex(/^\d+$/).transform(Number).optional(),
   CORS_ORIGIN: z.string().optional(),
   SESSION_SECRET: z.string().min(32, "SESSION_SECRET must be at least 32 characters").optional(),
+  ADMIN_PASSWORD: z.string().min(8, "ADMIN_PASSWORD must be at least 8 characters").optional(),
 
   // Feature Flags
   ENABLE_RATE_LIMITING: z.string().transform(val => val === "true").optional(),

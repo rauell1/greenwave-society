@@ -5,6 +5,7 @@ generator client {
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
+
 }
 
 model ContactSubmission {
@@ -28,4 +29,58 @@ model NewsletterSubscriber {
 
   @@index([createdAt])
   @@map("newsletter_subscribers")
+}
+
+model ExecutiveLeader {
+  id        String                @id @default(cuid())
+  name      String
+  role      String
+  email     String                @unique
+  createdAt DateTime              @default(now())
+  signature ConstitutionSignature?
+
+  @@map("executive_leaders")
+}
+
+model ConstitutionSignature {
+  id              String          @id @default(cuid())
+  leaderId        String          @unique
+  leader          ExecutiveLeader @relation(fields: [leaderId], references: [id], onDelete: Cascade)
+  version         String          @default("1.0")
+  status          String          @default("pending")
+  token           String          @unique
+  signedAt        DateTime?
+  rejectionReason String?
+  ipAddress       String?
+  emailSentAt     DateTime?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([token])
+  @@index([status])
+  @@map("constitution_signatures")
+}
+
+model AdminSession {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  @@index([token])
+  @@index([expiresAt])
+  @@map("admin_sessions")
+}
+
+model AdminUser {
+  id               String    @id @default(cuid())
+  email            String    @unique
+  passwordHash     String?
+  resetToken       String?   @unique
+  resetTokenExpiry DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@index([resetToken])
+  @@map("admin_users")
 }
