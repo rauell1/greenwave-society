@@ -55,7 +55,9 @@ export default function ConstitutionDashboard({ leaders, signedCount, pendingCou
   const [copied, setCopied]           = useState<string | null>(null);
   const [showSetup, setShowSetup]     = useState(leaders.length === 0);
   const [setupEmails, setSetupEmails] = useState<Record<string, string>>({});
-  const [seedLoading, setSeedLoading] = useState(false);
+  const [seedLoading, setSeedLoading]         = useState(false);
+  const [onboardingLoading, setOnboardingLoading] = useState(false);
+  const [onboardingResults, setOnboardingResults] = useState<{ name: string; email: string; status: string }[] | null>(null);
 
   const total  = leaders.length;
   const appUrl = typeof window !== "undefined" ? window.location.origin : "";
@@ -63,6 +65,23 @@ export default function ConstitutionDashboard({ leaders, signedCount, pendingCou
   function notify(msg: string, type: "ok" | "err" = "ok") {
     setToast({ msg, type });
     setTimeout(() => setToast(null), 4000);
+  }
+
+  async function handleSendOnboarding() {
+    setOnboardingLoading(true);
+    setOnboardingResults(null);
+    try {
+      const res  = await fetch("/api/admin/send-onboarding", { method: "POST" });
+      const data = await res.json();
+      if (data.success) {
+        setOnboardingResults(data.results);
+        notify(`Onboarding emails sent: ${data.sent} delivered, ${data.failed} failed.`, data.failed > 0 ? "err" : "ok");
+      } else {
+        notify(data.error ?? "Failed to send onboarding emails.", "err");
+      }
+    } finally {
+      setOnboardingLoading(false);
+    }
   }
 
   async function handleLogout() {
@@ -157,10 +176,45 @@ export default function ConstitutionDashboard({ leaders, signedCount, pendingCou
           </div>
         )}
 
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-[#1A5C38] font-serif">Executive Constitution Signing</h1>
-          <p className="text-gray-600 text-sm mt-1">Version 1.0 &bull; June 2026</p>
+        <div className="mb-6 flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <h1 className="text-2xl font-bold text-[#1A5C38] font-serif">Executive Constitution Signing</h1>
+            <p className="text-gray-600 text-sm mt-1">Version 1.0 &bull; June 2026</p>
+          </div>
+          <button
+            onClick={handleSendOnboarding}
+            disabled={onboardingLoading}
+            className="flex items-center gap-2 bg-white border border-[#1A5C38] text-[#1A5C38] px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-green-50 disabled:opacity-50 transition-colors whitespace-nowrap shadow-sm"
+          >
+            {onboardingLoading ? (
+              <><span className="w-4 h-4 border-2 border-[#1A5C38] border-t-transparent rounded-full animate-spin inline-block" /> Sending...</>
+            ) : (
+              <><span>&#9993;</span> Send Account Setup Invites</>
+            )}
+          </button>
         </div>
+
+        {onboardingResults && (
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm mb-6 overflow-hidden">
+            <div className="px-5 py-3 border-b border-gray-100 flex items-center justify-between">
+              <p className="text-sm font-semibold text-gray-700">Onboarding Email Delivery Report</p>
+              <button onClick={() => setOnboardingResults(null)} className="text-xs text-gray-400 hover:text-gray-600">Dismiss</button>
+            </div>
+            <div className="divide-y divide-gray-50">
+              {onboardingResults.map(r => (
+                <div key={r.email} className="flex items-center justify-between px-5 py-2.5">
+                  <div>
+                    <p className="text-sm font-medium text-gray-800">{r.name}</p>
+                    <p className="text-xs text-gray-400">{r.email}</p>
+                  </div>
+                  <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${r.status === "sent" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-700"}`}>
+                    {r.status === "sent" ? "Delivered" : "Failed"}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-3 gap-4 mb-8">
           {[
