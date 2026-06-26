@@ -5,8 +5,13 @@ const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://greenwave.rauell.sys
 const FROM    = "Greenwave Society <info@rauell.systems>";
 
 function getResend(): Resend | null {
-  if (!process.env.RESEND_API_KEY) return null;
-  return new Resend(process.env.RESEND_API_KEY);
+  const key = process.env.RESEND_API_KEY;
+  if (!key) {
+    console.error("[email] RESEND_API_KEY is not set — emails will not be sent");
+    return null;
+  }
+  console.log("[email] RESEND_API_KEY present, length:", key.length);
+  return new Resend(key);
 }
 
 export interface SigningEmailOptions {
