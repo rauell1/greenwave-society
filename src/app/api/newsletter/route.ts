@@ -1,104 +1,71 @@
-/**
- * Newsletter Subscription API Route
- *
+﻿/**
+ * Newsletter subscription endpoint.
  * Handles newsletter subscriptions with validation, sanitization,
- * rate limiting, and structured logging.
+ * and super-admin notification via Resend.
  */
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 import { logger } from "@/lib/logger";
-import { rateLimit, getRateLimitHeaders } from "@/lib/rate-limit";
-import { newsletterSchema, validateInput } from "@/lib/validation";
+import { Resend } from "resend";
+
+const APP_URL     = process.env.NEXT_PUBLIC_APP_URL ?? "https://greenwave.rauell.systems";
+const FROM        = "Greenwave Society <info@rauell.systems>";
+const SUPER_ADMIN = "royokola3@gmail.com";
+
+function getResend(): Resend | null {
+  return process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+}
 
 export async function POST(request: NextRequest) {
-  const startTime = Date.now();
   const requestLogger = logger.child({ endpoint: "/api/newsletter" });
 
   try {
-    // Apply rate limiting
-    const rateLimitResult = await rateLimit(request);
-    if (rateLimitResult) return rateLimitResult;
+    const body  = await request.json().catch(() => null);
+    const email = (body?.email ?? "").trim().toLowerCase();
 
-    // Parse and validate request body
-    const body = await request.json().catch(() => null);
-    if (!body) {
-      requestLogger.warn("Invalid JSON body");
-      return NextResponse.json(
-        { error: "Invalid request body" },
-        { status: 400 }
-      );
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return NextResponse.json({ success: false, message: "Please provide a valid email address." }, { status: 400 });
     }
 
-    // Validate and sanitize input
-    const validation = validateInput(newsletterSchema, body);
-    if (!validation.success) {
-      requestLogger.warn("Validation failed", { error: validation.error });
-      return NextResponse.json(
-        { error: validation.error },
-        { status: 400 }
-      );
-    }
-
-    const { email } = validation.data;
-    const db = getDb();
-
-    // Check if already subscribed
-    const existing = await db.newsletterSubscriber.findUnique({
-      where: { email },
-    });
+    const db       = getDb();
+    const existing = await db.newsletterSubscriber.findUnique({ where: { email } });
 
     if (existing) {
-      requestLogger.info("Already subscribed", { email });
-      return NextResponse.json(
-        {
-          success: true,
-          message: "You are already subscribed to our newsletter!",
-        },
-        {
-          status: 200,
-          headers: getRateLimitHeaders(request),
-        }
-      );
+      return NextResponse.json({ success: true, message: "You are already subscribed to our newsletter!" });
     }
 
-    // Save to database
-    await db.newsletterSubscriber.create({
-      data: { email },
-    });
+    await db.newsletterSubscriber.create({ data: { id: crypto.randomUUID(), email } });
 
-    const duration = Date.now() - startTime;
-    requestLogger.info("Newsletter subscription successful", {
-      email,
-      duration: `${duration}ms`,
-    });
+    requestLogger.info("Newsletter subscriber added", { email });
 
-    return NextResponse.json(
-      {
-        success: true,
-        message: "Welcome! You have been subscribed to our newsletter.",
-      },
-      {
-        status: 200,
-        headers: getRateLimitHeaders(request),
-      }
-    );
+    // Notify super admin
+    const resend = getResend();
+    if (resend) {
+      resend.emails.send({
+        from:    FROM,
+        to:      SUPER_ADMIN,
+        subject: "New Newsletter Subscriber — Greenwave Society",
+        html: `<div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto">
+          <div style="background:#1A5C38;padding:20px;text-align:center">
+            <p style="color:#fff;font-weight:bold;margin:0;font-size:16px">GREENWAVE SOCIETY</p>
+            <p style="color:#a8d5b5;font-size:12px;margin:4px 0 0">Newsletter Notification</p>
+          </div>
+          <div style="padding:28px">
+            <p style="margin:0 0 12px;font-size:15px;color:#111">A new subscriber has joined the newsletter:</p>
+            <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:16px;margin:0 0 20px">
+              <p style="margin:0;font-size:16px;font-weight:bold;color:#1A5C38">${email}</p>
+              <p style="margin:4px 0 0;font-size:12px;color:#555">Subscribed at ${new Date().toLocaleString("en-KE", { timeZone: "Africa/Nairobi" })} EAT</p>
+            </div>
+            <a href="${APP_URL}/admin/dashboard" style="background:#1A5C38;color:#fff;padding:10px 20px;border-radius:6px;text-decoration:none;font-size:14px;display:inline-block">View Dashboard</a>
+          </div>
+        </div>`,
+      }).catch(() => {});
+    }
+
+    return NextResponse.json({ success: true, message: "Welcome! You have been subscribed to our newsletter." });
   } catch (error) {
-    const duration = Date.now() - startTime;
-    requestLogger.error("Newsletter subscription failed", error as Error, {
-      duration: `${duration}ms`,
-    });
-
-    return NextResponse.json(
-      { error: "Failed to subscribe. Please try again." },
-      { status: 500 }
-    );
+    requestLogger.error("Newsletter subscription failed", error as Error);
+    return NextResponse.json({ success: false, message: "Subscription failed. Please try again." }, { status: 500 });
   }
-}
-
-export async function GET() {
-  return NextResponse.json(
-    { error: "Method not allowed" },
-    { status: 405 }
-  );
 }

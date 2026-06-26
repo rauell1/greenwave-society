@@ -1,4 +1,4 @@
-import { cookies } from "next/headers";
+﻿import { cookies } from "next/headers";
 import { createHmac, randomBytes, scryptSync, timingSafeEqual } from "crypto";
 import { getDb } from "./db";
 
@@ -7,7 +7,7 @@ const SESSION_TTL   = 8 * 60 * 60 * 1000; // 8 hours
 const SCRYPT_PARAMS = { N: 16384, r: 8, p: 1 };
 const KEY_LEN       = 64;
 
-// ── email allow-list ──────────────────────────────────────────────────────
+// â”€â”€ email allow-list â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export function getAllowedEmails(): string[] {
   const raw = process.env.ADMIN_EMAILS ?? "";
@@ -21,7 +21,7 @@ export function isAllowedEmail(email: string): boolean {
   return getAllowedEmails().includes(email.trim().toLowerCase());
 }
 
-// ── password hashing ──────────────────────────────────────────────────────
+// â”€â”€ password hashing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export function hashPassword(password: string): string {
   const salt = randomBytes(16).toString("hex");
@@ -40,7 +40,7 @@ export function verifyPassword(password: string, stored: string): boolean {
   }
 }
 
-// ── session cookie ────────────────────────────────────────────────────────
+// â”€â”€ session cookie â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function signToken(token: string): string {
   const secret = process.env.SESSION_SECRET ?? "greenwave-fallback-secret-change-me-now";
@@ -103,7 +103,7 @@ export async function requireAdminSession() {
   }
 }
 
-// ── reset token ───────────────────────────────────────────────────────────
+// â”€â”€ reset token â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export function generateResetToken(): { token: string; expiry: Date } {
   return {
@@ -111,3 +111,4 @@ export function generateResetToken(): { token: string; expiry: Date } {
     expiry: new Date(Date.now() + 60 * 60 * 1000), // 1 hour
   };
 }
+
