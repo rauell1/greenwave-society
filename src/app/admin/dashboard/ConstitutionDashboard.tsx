@@ -15,6 +15,14 @@ interface Version {
   createdAt: string; signatures: { status: string; leaderId: string }[];
 }
 interface AuditLog { id: string; action: string; actor: string; detail: string | null; createdAt: string; }
+interface Registration {
+  id: string; fullName: string; email: string; phone: string; county: string;
+  occupation: string; organization: string | null; interests: string[];
+  motivation: string; hearAboutUs: string | null; source: string | null;
+  status: string; reviewNote: string | null; reviewedAt: string | null;
+  reviewedBy: string | null; createdAt: string;
+}
+
 interface Props {
   leaders: Leader[]; versions: Version[];
   signedCount: number; pendingCount: number; rejectedCount: number;
@@ -23,6 +31,7 @@ interface Props {
   adminUsers: { id: string; email: string; passwordHash: string | null; createdAt: string }[];
   dbStats: { table: string; count: number }[];
   auditLogs: AuditLog[];
+  registrations: Registration[];
 }
 const fmtDate = (d: string | null) =>
   d ? new Date(d).toLocaleDateString("en-KE", { day: "2-digit", month: "short", year: "numeric" }) : "n/a";
@@ -195,11 +204,15 @@ function VersionEditor({ existing, onSaved, onCancel }: {
 }
 export default function ConstitutionDashboard({
   leaders, versions: initVers, currentEmail, superAdmin,
-  subscribers, adminUsers, dbStats, auditLogs,
+  subscribers, adminUsers, dbStats, auditLogs, registrations: initRegs,
 }: Props) {
   const router                      = useRouter();
-  const [tab, setTab]               = useState<"constitution"|"newsletter"|"accounts"|"activity"|"database">("constitution");
+  const [tab, setTab]               = useState<"constitution"|"registrations"|"newsletter"|"accounts"|"activity"|"database">("constitution");
   const [versions, setVersions]     = useState<Version[]>(initVers);
+  const [regs, setRegs]             = useState<Registration[]>(initRegs);
+  const [reviewing, setReviewing]   = useState<string | null>(null);
+  const [reviewNote, setReviewNote] = useState("");
+  const [regFilter, setRegFilter]   = useState<"all"|"pending"|"approved"|"rejected">("all");
   const [showEditor, setShowEditor] = useState(false);
   const [preview, setPreview]       = useState<Version | null>(null);
   const [publishing, setPublishing] = useState<string | null>(null);
@@ -265,10 +278,36 @@ export default function ConstitutionDashboard({
     a.download = "signatures.csv"; a.click();
   }
 
+  async function reviewRegistration(id: string, action: "approve" | "reject") {
+    setReviewing(id);
+    try {
+      const res  = await fetch(`/api/admin/registrations/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action, reviewNote }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setRegs(r => r.map(x => x.id === id ? { ...x, status: action === "approve" ? "approved" : "rejected", reviewNote } : x));
+        setReviewNote("");
+        showToast(`Application ${action === "approve" ? "approved" : "rejected"}. Email sent.`);
+      } else {
+        showToast(data.error ?? "Failed to update.");
+      }
+    } catch {
+      showToast("Network error.");
+    } finally {
+      setReviewing(null);
+    }
+  }
+
+  const pendingRegCount = regs.filter(r => r.status === "pending").length;
+
   const TABS = [
-    { key: "constitution", label: "Constitution" },
-    { key: "newsletter",   label: "Newsletter" },
-    { key: "accounts",     label: "Accounts" },
+    { key: "constitution",  label: "Constitution" },
+    { key: "registrations", label: `Registrations${pendingRegCount > 0 ? ` (${pendingRegCount})` : ""}` },
+    { key: "newsletter",    label: "Newsletter" },
+    { key: "accounts",      label: "Accounts" },
     ...(superAdmin ? [{ key: "activity", label: "Activity" }, { key: "database", label: "Database" }] : []),
   ] as const;
 
@@ -427,6 +466,101 @@ export default function ConstitutionDashboard({
                 </div>
               )}
             </div>
+          </div>
+        )}
+
+        {tab === "registrations" && (
+          <div className="space-y-4">
+            {/* Filter bar */}
+            <div className="flex items-center gap-3 flex-wrap">
+              {(["all","pending","approved","rejected"] as const).map(f => (
+                <button key={f} onClick={() => setRegFilter(f)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-colors
+                    ${regFilter === f ? "bg-[#1A5C38] text-white" : "bg-white border border-gray-200 text-gray-600 hover:border-gray-400"}`}>
+                  {f} ({regs.filter(r => f === "all" ? true : r.status === f).length})
+                </button>
+              ))}
+              <div className="ml-auto text-xs text-gray-400">{regs.length} total applications</div>
+            </div>
+
+            {/* Cards */}
+            {regs.filter(r => regFilter === "all" ? true : r.status === regFilter).length === 0 ? (
+              <div className="bg-white rounded-2xl border border-gray-200 px-6 py-12 text-center text-gray-400 text-sm">
+                No {regFilter === "all" ? "" : regFilter} applications yet.
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {regs.filter(r => regFilter === "all" ? true : r.status === regFilter).map(reg => (
+                  <div key={reg.id} className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                    <div className="px-6 py-4 flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-3 mb-1">
+                          <p className="font-semibold text-gray-900">{reg.fullName}</p>
+                          {reg.status === "pending"  && <span className="px-2 py-0.5 rounded text-xs font-semibold bg-amber-100 text-amber-800">Pending</span>}
+                          {reg.status === "approved" && <span className="px-2 py-0.5 rounded text-xs font-semibold bg-green-100 text-green-800">Approved</span>}
+                          {reg.status === "rejected" && <span className="px-2 py-0.5 rounded text-xs font-semibold bg-red-100 text-red-700">Rejected</span>}
+                        </div>
+                        <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
+                          <span>{reg.email}</span>
+                          <span>{reg.phone}</span>
+                          <span>{reg.county}</span>
+                          <span className="capitalize">{reg.occupation.replace(/_/g, " ")}</span>
+                          {reg.organization && <span>{reg.organization}</span>}
+                          {reg.source && <span className="text-gray-400">via {reg.source}</span>}
+                          <span className="text-gray-400">{fmtDate(reg.createdAt)}</span>
+                        </div>
+                        {reg.interests.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5 mt-2">
+                            {reg.interests.map(i => (
+                              <span key={i} className="text-xs bg-green-50 text-[#1A5C38] border border-green-200 px-2 py-0.5 rounded-full">{i}</span>
+                            ))}
+                          </div>
+                        )}
+                        <div className="mt-3 text-sm text-gray-700 leading-relaxed bg-gray-50 rounded-lg px-4 py-3">
+                          <p className="text-xs text-gray-400 font-medium mb-1 uppercase tracking-wide">Motivation</p>
+                          {reg.motivation}
+                        </div>
+                        {reg.hearAboutUs && (
+                          <p className="mt-2 text-xs text-gray-400">Heard via: {reg.hearAboutUs}</p>
+                        )}
+                        {reg.reviewNote && (
+                          <p className="mt-2 text-xs text-gray-500 italic">Review note: {reg.reviewNote}</p>
+                        )}
+                        {reg.reviewedBy && (
+                          <p className="mt-1 text-xs text-gray-400">Reviewed by {reg.reviewedBy} on {fmtDate(reg.reviewedAt)}</p>
+                        )}
+                      </div>
+                    </div>
+                    {reg.status === "pending" && (
+                      <div className="px-6 py-3 bg-gray-50 border-t border-gray-100 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                        <input
+                          type="text"
+                          value={reviewing === reg.id ? reviewNote : ""}
+                          onChange={e => setReviewNote(e.target.value)}
+                          onFocus={() => setReviewNote("")}
+                          placeholder="Optional note to include in email..."
+                          className="flex-1 text-xs border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#1A5C38]"
+                        />
+                        <div className="flex gap-2 shrink-0">
+                          <button
+                            onClick={() => reviewRegistration(reg.id, "approve")}
+                            disabled={reviewing === reg.id}
+                            className="bg-[#1A5C38] text-white text-xs px-4 py-2 rounded-lg font-semibold hover:bg-[#154d2f] disabled:opacity-50 transition-colors">
+                            {reviewing === reg.id ? "..." : "Approve"}
+                          </button>
+                          <button
+                            onClick={() => reviewRegistration(reg.id, "reject")}
+                            disabled={reviewing === reg.id}
+                            className="border border-red-300 text-red-600 text-xs px-4 py-2 rounded-lg font-semibold hover:bg-red-50 disabled:opacity-50 transition-colors">
+                            {reviewing === reg.id ? "..." : "Reject"}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

@@ -38,6 +38,11 @@ export default async function DashboardPage() {
   const pendingCount  = activeSigs.filter(s => s.status === "pending").length;
   const rejectedCount = activeSigs.filter(s => s.status === "rejected").length;
 
+  // All admins can see registrations
+  const registrations = await db.memberRegistration.findMany({
+    orderBy: { createdAt: "desc" },
+  });
+
   let subscribers:  { id: string; email: string; createdAt: Date }[] = [];
   let adminUsers:   { id: string; email: string; passwordHash: string | null; createdAt: Date; updatedAt: Date }[] = [];
   let dbStats:      { table: string; count: number }[] = [];
@@ -68,6 +73,7 @@ export default async function DashboardPage() {
       { table: "Admin Users",             count: counts[3] },
       { table: "Active Sessions",         count: counts[4] },
       { table: "Contact Submissions",     count: counts[5] },
+      { table: "Member Registrations",    count: registrations.length },
     ];
   }
 
@@ -84,6 +90,7 @@ export default async function DashboardPage() {
       adminUsers={adminUsers as any}
       dbStats={dbStats}
       auditLogs={auditLogs as any}
+      registrations={registrations as any}
     />
   );
 }

@@ -104,6 +104,33 @@ model AdminSession {
   @@map("admin_sessions")
 }
 
+model MemberRegistration {
+  id               String    @id @default(cuid())
+  fullName         String
+  email            String
+  phone            String
+  county           String
+  occupation       String
+  organization     String?
+  meetsEligibility Boolean   @default(true)
+  interests        String[]
+  motivation       String    @db.Text
+  hearAboutUs      String?
+  source           String?
+  acknowledged     Boolean   @default(true)
+  status           String    @default("pending")
+  reviewNote       String?
+  reviewedAt       DateTime?
+  reviewedBy       String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@index([email])
+  @@index([status])
+  @@index([createdAt])
+  @@map("member_registrations")
+}
+
 model AdminUser {
   id               String    @id @default(cuid())
   email            String    @unique
