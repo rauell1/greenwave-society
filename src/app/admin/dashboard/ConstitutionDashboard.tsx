@@ -211,7 +211,7 @@ export default function ConstitutionDashboard({
   const [versions, setVersions]     = useState<Version[]>(initVers);
   const [regs, setRegs]             = useState<Registration[]>(initRegs);
   const [reviewing, setReviewing]   = useState<string | null>(null);
-  const [reviewNote, setReviewNote] = useState("");
+  const [reviewNotes, setReviewNotes] = useState<Record<string, string>>({});
   const [regFilter, setRegFilter]   = useState<"all"|"pending"|"approved"|"rejected">("all");
   const [showEditor, setShowEditor] = useState(false);
   const [preview, setPreview]       = useState<Version | null>(null);
@@ -284,12 +284,12 @@ export default function ConstitutionDashboard({
       const res  = await fetch(`/api/admin/registrations/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action, reviewNote }),
+        body: JSON.stringify({ action, reviewNote: reviewNotes[id] ?? "" }),
       });
       const data = await res.json();
       if (res.ok) {
-        setRegs(r => r.map(x => x.id === id ? { ...x, status: action === "approve" ? "approved" : "rejected", reviewNote } : x));
-        setReviewNote("");
+        setRegs(r => r.map(x => x.id === id ? { ...x, status: action === "approve" ? "approved" : "rejected", reviewNote: reviewNotes[id] ?? "" } : x));
+        setReviewNotes(n => { const next = { ...n }; delete next[id]; return next; });
         showToast(`Application ${action === "approve" ? "approved" : "rejected"}. Email sent.`);
       } else {
         showToast(data.error ?? "Failed to update.");
@@ -535,9 +535,8 @@ export default function ConstitutionDashboard({
                       <div className="px-6 py-3 bg-gray-50 border-t border-gray-100 flex flex-col sm:flex-row items-start sm:items-center gap-3">
                         <input
                           type="text"
-                          value={reviewing === reg.id ? reviewNote : ""}
-                          onChange={e => setReviewNote(e.target.value)}
-                          onFocus={() => setReviewNote("")}
+                          value={reviewNotes[reg.id] ?? ""}
+                          onChange={e => setReviewNotes(n => ({ ...n, [reg.id]: e.target.value }))}
                           placeholder="Optional note to include in email..."
                           className="flex-1 text-xs border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#1A5C38]"
                         />
