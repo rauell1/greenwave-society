@@ -20,7 +20,8 @@ interface Registration {
   occupation: string; organization: string | null; interests: string[];
   motivation: string; hearAboutUs: string | null; source: string | null;
   status: string; reviewNote: string | null; reviewedAt: string | null;
-  reviewedBy: string | null; createdAt: string;
+  reviewedBy: string | null; memberToken: string | null;
+  lastSeenAt: string | null; loginCount: number; createdAt: string;
 }
 
 interface Props {
@@ -302,6 +303,49 @@ export default function ConstitutionDashboard({
   }
 
   const pendingRegCount = regs.filter(r => r.status === "pending").length;
+  const [timelineId, setTimelineId] = useState<string | null>(null);
+  const [timelineEvents, setTimelineEvents] = useState<{ id: string; event: string; createdAt: string }[]>([]);
+  const [timelineLoading, setTimelineLoading] = useState(false);
+
+  async function openTimeline(reg: Registration) {
+    setTimelineId(reg.id);
+    setTimelineEvents([]);
+    setTimelineLoading(true);
+    try {
+      const res  = await fetch(`/api/admin/registrations/${reg.id}/activity`);
+      const data = await res.json();
+      setTimelineEvents(data.events ?? []);
+    } catch { /* ignore */ }
+    finally { setTimelineLoading(false); }
+  }
+
+  function exportRegCsv() {
+    const rows = [["Full Name","Email","Phone","County","Occupation","Organisation","Status","Source","Registered","Reviewed By","Reviewed At","Visits","Last Seen","Interests"]];
+    regs.forEach(r => rows.push([
+      r.fullName, r.email, r.phone, r.county,
+      r.occupation.replace(/_/g," "), r.organization ?? "",
+      r.status, r.source ?? "",
+      fmtDT(r.createdAt), r.reviewedBy ?? "", fmtDT(r.reviewedAt),
+      String(r.loginCount), fmtDT(r.lastSeenAt),
+      r.interests.join("; "),
+    ]));
+    const csv = rows.map(row => row.map(c => `"${c.replace(/"/g,'""')}"`).join(",")).join("\n");
+    const a   = document.createElement("a");
+    a.href    = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+    a.download = "greenwave_registrations.csv";
+    a.click();
+  }
+
+  function lastSeenLabel(d: string | null): { label: string; online: boolean } {
+    if (!d) return { label: "Never", online: false };
+    const diff = Date.now() - new Date(d).getTime();
+    const online = diff < 2 * 60 * 1000; // within 2 min = online
+    if (online) return { label: "Online now", online: true };
+    if (diff < 60_000) return { label: "Just now", online: false };
+    if (diff < 3_600_000) return { label: `${Math.floor(diff/60000)}m ago`, online: false };
+    if (diff < 86_400_000) return { label: `${Math.floor(diff/3_600_000)}h ago`, online: false };
+    return { label: fmtDate(d), online: false };
+  }
 
   const TABS = [
     { key: "constitution",  label: "Constitution" },
@@ -471,7 +515,78 @@ export default function ConstitutionDashboard({
 
         {tab === "registrations" && (
           <div className="space-y-4">
-            {/* Filter bar */}
+            {/* Timeline drawer */}
+            {timelineId && (
+              <div className="fixed inset-0 bg-black/50 z-50 flex justify-end" onClick={() => setTimelineId(null)}>
+                <div className="bg-white w-full max-w-sm h-full overflow-y-auto shadow-2xl" onClick={e => e.stopPropagation()}>
+                  <div className="bg-[#1A5C38] px-5 py-4 flex items-center justify-between">
+                    <p className="text-white font-semibold text-sm">Member Timeline</p>
+                    <button onClick={() => setTimelineId(null)} className="text-green-200 hover:text-white text-xl leading-none">&times;</button>
+                  </div>
+                  {(() => {
+                    const reg = regs.find(r => r.id === timelineId);
+                    if (!reg) return null;
+                    const ls = lastSeenLabel(reg.lastSeenAt);
+                    return (
+                      <div className="p-5">
+                        <div className="mb-5">
+                          <p className="font-bold text-gray-900">{reg.fullName}</p>
+                          <p className="text-xs text-gray-500">{reg.email}</p>
+                          <div className="flex items-center gap-2 mt-2">
+                            <span className={`w-2 h-2 rounded-full ${ls.online ? "bg-green-500" : "bg-gray-300"}`} />
+                            <span className={`text-xs font-medium ${ls.online ? "text-green-600" : "text-gray-400"}`}>{ls.label}</span>
+                            {reg.loginCount > 0 && <span className="text-xs text-gray-400">{reg.loginCount} visit{reg.loginCount !== 1 ? "s" : ""}</span>}
+                          </div>
+                        </div>
+
+                        {timelineLoading ? (
+                          <div className="flex justify-center py-8">
+                            <div className="w-6 h-6 border-2 border-[#1A5C38] border-t-transparent rounded-full animate-spin" />
+                          </div>
+                        ) : (
+                          <div className="space-y-0">
+                            {/* Static milestones */}
+                            {[
+                              { label: "Applied", ts: reg.createdAt, color: "bg-blue-500" },
+                              ...(reg.reviewedAt ? [{ label: reg.status === "approved" ? "Approved" : "Rejected", ts: reg.reviewedAt, color: reg.status === "approved" ? "bg-green-500" : "bg-red-400" }] : []),
+                            ].map((m, i) => (
+                              <div key={i} className="flex gap-3 pb-4 relative">
+                                <div className="flex flex-col items-center">
+                                  <div className={`w-3 h-3 rounded-full ${m.color} shrink-0 mt-0.5`} />
+                                  <div className="w-px flex-1 bg-gray-200 mt-1" />
+                                </div>
+                                <div className="pb-1">
+                                  <p className="text-sm font-semibold text-gray-800">{m.label}</p>
+                                  <p className="text-xs text-gray-400">{fmtDT(m.ts)}</p>
+                                </div>
+                              </div>
+                            ))}
+                            {/* Activity events */}
+                            {timelineEvents.map((ev, i) => (
+                              <div key={ev.id} className={`flex gap-3 pb-4 relative ${i === timelineEvents.length - 1 ? "" : ""}`}>
+                                <div className="flex flex-col items-center">
+                                  <div className={`w-3 h-3 rounded-full shrink-0 mt-0.5 ${ev.event === "login" ? "bg-[#1A5C38]" : ev.event === "logout" ? "bg-gray-400" : "bg-gray-200"}`} />
+                                  {i < timelineEvents.length - 1 && <div className="w-px flex-1 bg-gray-200 mt-1" />}
+                                </div>
+                                <div className="pb-1">
+                                  <p className="text-sm font-medium text-gray-700 capitalize">{ev.event === "login" ? "Visited portal" : ev.event === "logout" ? "Left site" : "Active"}</p>
+                                  <p className="text-xs text-gray-400">{fmtDT(ev.createdAt)}</p>
+                                </div>
+                              </div>
+                            ))}
+                            {timelineEvents.length === 0 && reg.status === "approved" && (
+                              <p className="text-xs text-gray-400 italic">No portal visits yet.</p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
+                </div>
+              </div>
+            )}
+
+            {/* Toolbar */}
             <div className="flex items-center gap-3 flex-wrap">
               {(["all","pending","approved","rejected"] as const).map(f => (
                 <button key={f} onClick={() => setRegFilter(f)}
@@ -480,84 +595,99 @@ export default function ConstitutionDashboard({
                   {f} ({regs.filter(r => f === "all" ? true : r.status === f).length})
                 </button>
               ))}
-              <div className="ml-auto text-xs text-gray-400">{regs.length} total applications</div>
+              <button onClick={exportRegCsv}
+                className="ml-auto flex items-center gap-1.5 text-xs border border-gray-300 text-gray-600 px-3 py-1.5 rounded-lg hover:border-gray-500 transition-colors bg-white">
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                Export CSV
+              </button>
             </div>
 
-            {/* Cards */}
+            {/* Table */}
             {regs.filter(r => regFilter === "all" ? true : r.status === regFilter).length === 0 ? (
               <div className="bg-white rounded-2xl border border-gray-200 px-6 py-12 text-center text-gray-400 text-sm">
                 No {regFilter === "all" ? "" : regFilter} applications yet.
               </div>
             ) : (
-              <div className="space-y-3">
-                {regs.filter(r => regFilter === "all" ? true : r.status === regFilter).map(reg => (
-                  <div key={reg.id} className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                    <div className="px-6 py-4 flex items-start justify-between gap-4">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-3 mb-1">
-                          <p className="font-semibold text-gray-900">{reg.fullName}</p>
-                          {reg.status === "pending"  && <span className="px-2 py-0.5 rounded text-xs font-semibold bg-amber-100 text-amber-800">Pending</span>}
-                          {reg.status === "approved" && <span className="px-2 py-0.5 rounded text-xs font-semibold bg-green-100 text-green-800">Approved</span>}
-                          {reg.status === "rejected" && <span className="px-2 py-0.5 rounded text-xs font-semibold bg-red-100 text-red-700">Rejected</span>}
-                        </div>
-                        <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
-                          <span>{reg.email}</span>
-                          <span>{reg.phone}</span>
-                          <span>{reg.county}</span>
-                          <span className="capitalize">{reg.occupation.replace(/_/g, " ")}</span>
-                          {reg.organization && <span>{reg.organization}</span>}
-                          {reg.source && <span className="text-gray-400">via {reg.source}</span>}
-                          <span className="text-gray-400">{fmtDate(reg.createdAt)}</span>
-                        </div>
-                        {reg.interests.length > 0 && (
-                          <div className="flex flex-wrap gap-1.5 mt-2">
-                            {reg.interests.map(i => (
-                              <span key={i} className="text-xs bg-green-50 text-[#1A5C38] border border-green-200 px-2 py-0.5 rounded-full">{i}</span>
-                            ))}
-                          </div>
-                        )}
-                        <div className="mt-3 text-sm text-gray-700 leading-relaxed bg-gray-50 rounded-lg px-4 py-3">
-                          <p className="text-xs text-gray-400 font-medium mb-1 uppercase tracking-wide">Motivation</p>
-                          {reg.motivation}
-                        </div>
-                        {reg.hearAboutUs && (
-                          <p className="mt-2 text-xs text-gray-400">Heard via: {reg.hearAboutUs}</p>
-                        )}
-                        {reg.reviewNote && (
-                          <p className="mt-2 text-xs text-gray-500 italic">Review note: {reg.reviewNote}</p>
-                        )}
-                        {reg.reviewedBy && (
-                          <p className="mt-1 text-xs text-gray-400">Reviewed by {reg.reviewedBy} on {fmtDate(reg.reviewedAt)}</p>
-                        )}
-                      </div>
-                    </div>
-                    {reg.status === "pending" && (
-                      <div className="px-6 py-3 bg-gray-50 border-t border-gray-100 flex flex-col sm:flex-row items-start sm:items-center gap-3">
-                        <input
-                          type="text"
-                          value={reviewNotes[reg.id] ?? ""}
-                          onChange={e => setReviewNotes(n => ({ ...n, [reg.id]: e.target.value }))}
-                          placeholder="Optional note to include in email..."
-                          className="flex-1 text-xs border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#1A5C38]"
-                        />
-                        <div className="flex gap-2 shrink-0">
-                          <button
-                            onClick={() => reviewRegistration(reg.id, "approve")}
-                            disabled={reviewing === reg.id}
-                            className="bg-[#1A5C38] text-white text-xs px-4 py-2 rounded-lg font-semibold hover:bg-[#154d2f] disabled:opacity-50 transition-colors">
-                            {reviewing === reg.id ? "..." : "Approve"}
-                          </button>
-                          <button
-                            onClick={() => reviewRegistration(reg.id, "reject")}
-                            disabled={reviewing === reg.id}
-                            className="border border-red-300 text-red-600 text-xs px-4 py-2 rounded-lg font-semibold hover:bg-red-50 disabled:opacity-50 transition-colors">
-                            {reviewing === reg.id ? "..." : "Reject"}
-                          </button>
-                        </div>
-                      </div>
-                    )}
+              <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-gray-50 text-xs font-semibold text-gray-500 uppercase border-b border-gray-100">
+                      <th className="text-left px-5 py-3">Name</th>
+                      <th className="text-left px-5 py-3 hidden md:table-cell">Contact</th>
+                      <th className="text-left px-5 py-3 hidden lg:table-cell">County</th>
+                      <th className="text-left px-5 py-3">Status</th>
+                      <th className="text-left px-5 py-3 hidden sm:table-cell">Registered</th>
+                      <th className="text-left px-5 py-3 hidden lg:table-cell">Last Seen</th>
+                      <th className="text-left px-5 py-3">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {regs.filter(r => regFilter === "all" ? true : r.status === regFilter).map(reg => {
+                      const ls = lastSeenLabel(reg.lastSeenAt);
+                      return (
+                        <tr key={reg.id} className="hover:bg-gray-50 transition-colors">
+                          <td className="px-5 py-3">
+                            <p className="font-semibold text-gray-900">{reg.fullName}</p>
+                            <p className="text-xs text-gray-400 capitalize">{reg.occupation.replace(/_/g," ")}</p>
+                          </td>
+                          <td className="px-5 py-3 hidden md:table-cell">
+                            <p className="text-gray-700">{reg.email}</p>
+                            <p className="text-xs text-gray-400">{reg.phone}</p>
+                          </td>
+                          <td className="px-5 py-3 text-gray-600 hidden lg:table-cell">{reg.county}</td>
+                          <td className="px-5 py-3">
+                            {reg.status === "pending"  && <span className="px-2 py-0.5 rounded text-xs font-semibold bg-amber-100 text-amber-800">Pending</span>}
+                            {reg.status === "approved" && <span className="px-2 py-0.5 rounded text-xs font-semibold bg-green-100 text-green-800">Approved</span>}
+                            {reg.status === "rejected" && <span className="px-2 py-0.5 rounded text-xs font-semibold bg-red-100 text-red-700">Rejected</span>}
+                          </td>
+                          <td className="px-5 py-3 text-xs text-gray-500 hidden sm:table-cell whitespace-nowrap">{fmtDT(reg.createdAt)}</td>
+                          <td className="px-5 py-3 hidden lg:table-cell">
+                            {reg.status === "approved" ? (
+                              <div className="flex items-center gap-1.5">
+                                <span className={`w-2 h-2 rounded-full shrink-0 ${ls.online ? "bg-green-500 animate-pulse" : "bg-gray-300"}`} />
+                                <span className={`text-xs ${ls.online ? "text-green-600 font-medium" : "text-gray-400"}`}>{ls.label}</span>
+                              </div>
+                            ) : <span className="text-xs text-gray-300">n/a</span>}
+                          </td>
+                          <td className="px-5 py-3">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <button onClick={() => openTimeline(reg)}
+                                className="text-xs border border-gray-200 text-gray-500 px-2.5 py-1 rounded-lg hover:border-[#1A5C38] hover:text-[#1A5C38] transition-colors">
+                                Timeline
+                              </button>
+                              {reg.status === "pending" && (
+                                <>
+                                  <button onClick={() => reviewRegistration(reg.id, "approve")} disabled={reviewing === reg.id}
+                                    className="text-xs bg-[#1A5C38] text-white px-2.5 py-1 rounded-lg hover:bg-[#154d2f] disabled:opacity-50 transition-colors">
+                                    {reviewing === reg.id ? "..." : "Approve"}
+                                  </button>
+                                  <button onClick={() => reviewRegistration(reg.id, "reject")} disabled={reviewing === reg.id}
+                                    className="text-xs border border-red-300 text-red-600 px-2.5 py-1 rounded-lg hover:bg-red-50 disabled:opacity-50 transition-colors">
+                                    {reviewing === reg.id ? "..." : "Reject"}
+                                  </button>
+                                </>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+                {/* Note field for pending — shown below table when one is being reviewed */}
+                {regs.some(r => r.status === "pending") && (
+                  <div className="px-5 py-3 bg-gray-50 border-t border-gray-100">
+                    <input
+                      type="text"
+                      value={reviewing ? (reviewNotes[reviewing] ?? "") : ""}
+                      onChange={e => reviewing && setReviewNotes(n => ({ ...n, [reviewing]: e.target.value }))}
+                      placeholder="Optional review note (shown in outcome email to applicant)..."
+                      className="w-full text-xs border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#1A5C38]"
+                    />
                   </div>
-                ))}
+                )}
               </div>
             )}
           </div>

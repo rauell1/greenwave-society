@@ -105,30 +105,48 @@ model AdminSession {
 }
 
 model MemberRegistration {
-  id               String    @id @default(cuid())
+  id               String           @id @default(cuid())
   fullName         String
   email            String
   phone            String
   county           String
   occupation       String
   organization     String?
-  meetsEligibility Boolean   @default(true)
+  meetsEligibility Boolean          @default(true)
   interests        String[]
-  motivation       String    @db.Text
+  motivation       String           @db.Text
   hearAboutUs      String?
   source           String?
-  acknowledged     Boolean   @default(true)
-  status           String    @default("pending")
+  acknowledged     Boolean          @default(true)
+  status           String           @default("pending")
   reviewNote       String?
   reviewedAt       DateTime?
   reviewedBy       String?
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  memberToken      String?          @unique
+  lastSeenAt       DateTime?
+  loginCount       Int              @default(0)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  activity         MemberActivity[]
 
   @@index([email])
   @@index([status])
   @@index([createdAt])
+  @@index([memberToken])
   @@map("member_registrations")
+}
+
+model MemberActivity {
+  id             String             @id @default(cuid())
+  registrationId String
+  member         MemberRegistration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  event          String
+  metadata       String?
+  createdAt      DateTime           @default(now())
+
+  @@index([registrationId])
+  @@index([createdAt])
+  @@map("member_activity")
 }
 
 model AdminUser {

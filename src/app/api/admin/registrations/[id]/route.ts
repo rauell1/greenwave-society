@@ -24,14 +24,17 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return NextResponse.json({ error: "Application already reviewed" }, { status: 409 });
   }
 
+  const memberToken = action === "approve" ? randomBytes(24).toString("hex") : undefined;
+
   const updated = await db.memberRegistration.update({
     where: { id },
     data: {
-      status:     action === "approve" ? "approved" : "rejected",
-      reviewNote: reviewNote?.trim() || null,
-      reviewedAt: new Date(),
-      reviewedBy: email ?? "admin",
-      updatedAt:  new Date(),
+      status:      action === "approve" ? "approved" : "rejected",
+      reviewNote:  reviewNote?.trim() || null,
+      reviewedAt:  new Date(),
+      reviewedBy:  email ?? "admin",
+      updatedAt:   new Date(),
+      ...(memberToken ? { memberToken } : {}),
     },
   });
 
@@ -61,8 +64,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   <div style="background:#fff;padding:28px;border-radius:0 0 12px 12px">
     <p style="font-size:16px;color:#111">Dear ${firstName},</p>
     <p style="font-size:15px;color:#111;line-height:1.8">We are pleased to inform you that your application to join Greenwave Society has been reviewed and <strong style="color:#1A5C38">approved</strong>.</p>
-    <p style="font-size:15px;color:#111;line-height:1.8">Welcome to the Greenwave Society family. You will shortly receive a separate email with instructions to set up your account and access your member dashboard.</p>
+    <p style="font-size:15px;color:#111;line-height:1.8">Welcome to the Greenwave Society family. Use the button below to access your member profile.</p>
     ${reviewNote ? `<div style="margin:20px 0;padding:16px;background:#f0faf4;border-radius:8px;border-left:4px solid #1A5C38"><p style="margin:0;font-size:14px;color:#1A5C38;line-height:1.7">${reviewNote}</p></div>` : ""}
+    <div style="text-align:center;margin:28px 0">
+      <a href="${APP_URL}/member/${memberToken}" style="background:#1A5C38;color:#fff;padding:14px 32px;border-radius:8px;text-decoration:none;font-size:15px;font-weight:bold;display:inline-block">Access My Member Profile</a>
+    </div>
     <p style="font-size:14px;color:#555;line-height:1.8">If you have any questions, please contact us at <a href="mailto:info@greenwavesociety.org" style="color:#1A5C38">info@greenwavesociety.org</a>.</p>
     <p style="font-size:14px;color:#111;margin-top:24px">Yours sincerely,<br/><strong>Greenwave Society Team</strong></p>
   </div>
