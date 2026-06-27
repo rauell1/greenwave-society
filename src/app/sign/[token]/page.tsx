@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
   const db  = getDb();
-  const sig = await db.constitutionSignature.findUnique({ where: { token }, include: { leader: true } });
+  const sig = await db.constitutionSignature.findUnique({ where: { token }, include: { leader: true, version: true } });
   if (!sig) return { title: "Invalid Link" };
   return { title: `Constitution Signing | ${sig.leader.name} | Greenwave Society` };
 }
@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: { params: Promise<{ token: st
 export default async function SigningPage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
   const db  = getDb();
-  const sig = await db.constitutionSignature.findUnique({ where: { token }, include: { leader: true } });
+  const sig = await db.constitutionSignature.findUnique({ where: { token }, include: { leader: true, version: true } });
   if (!sig) notFound();
 
   return (
@@ -26,19 +26,19 @@ export default async function SigningPage({ params }: { params: Promise<{ token:
           <img src="/logo.png" alt="Greenwave Society" className="h-10 w-10 rounded-full" />
           <div>
             <p className="font-bold font-serif tracking-wide">GREENWAVE SOCIETY</p>
-            <p className="text-green-200 text-xs">Executive Leadership Constitution — Signing Portal</p>
+            <p className="text-green-200 text-xs">Executive Leadership Constitution &mdash; Signing Portal</p>
           </div>
         </div>
       </header>
 
       <main className="max-w-4xl mx-auto px-6 py-10">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-[#1A5C38] font-serif">Dear {sig.leader.name},</h1>
-          <p className="text-gray-600 text-sm mt-1">{sig.leader.role}</p>
-          {sig.status !== "pending" ? (
-            <div className={`mt-4 px-5 py-4 rounded-xl border text-sm font-medium ${sig.status === "signed" ? "bg-green-50 border-green-300 text-green-800" : "bg-red-50 border-red-300 text-red-800"}`}>
-              {sig.status === "signed"
-                ? `You signed this Constitution on ${new Date(sig.signedAt!).toLocaleDateString("en-KE", { day: "2-digit", month: "long", year: "numeric" })}. Thank you for your commitment to the Greenwave Society mission.`
+          <h1 className="text-2xl font-bold text-[#1A5C38] font-serif">Dear {sig!.leader.name},</h1>
+          <p className="text-gray-600 text-sm mt-1">{sig!.leader.role}</p>
+          {sig!.status !== "pending" ? (
+            <div className={`mt-4 px-5 py-4 rounded-xl border text-sm font-medium ${sig!.status === "signed" ? "bg-green-50 border-green-300 text-green-800" : "bg-red-50 border-red-300 text-red-800"}`}>
+              {sig!.status === "signed"
+                ? `You signed this Constitution on ${new Date(sig!.signedAt!).toLocaleDateString("en-KE", { day: "2-digit", month: "long", year: "numeric" })}. Thank you for your commitment to the Greenwave Society mission.`
                 : "You declined to sign this Constitution. Your decision has been recorded. Please contact info@greenwavesociety.org if you wish to discuss this further."}
             </div>
           ) : (
@@ -54,10 +54,17 @@ export default async function SigningPage({ params }: { params: Promise<{ token:
         <div className="bg-white rounded-2xl shadow border border-gray-200 mb-8 overflow-hidden">
           <div className="bg-[#1A5C38] px-8 py-6 text-center">
             <p className="text-white font-bold text-xl font-serif tracking-wide">GREENWAVE SOCIETY</p>
-            <p className="text-green-200 text-sm mt-1">EXECUTIVE LEADERSHIP CONSTITUTION</p>
-            <p className="text-green-300 text-xs mt-0.5 italic">Version 1.0 &bull; June 2026 &bull; Nairobi, Kenya</p>
+            <p className="text-green-200 text-sm mt-1">{(sig!.version?.title ?? "EXECUTIVE LEADERSHIP CONSTITUTION").toUpperCase()}</p>
+            <p className="text-green-300 text-xs mt-0.5 italic">{sig!.versionTag} &bull; June 2026 &bull; Nairobi, Kenya</p>
           </div>
 
+          {sig!.version?.content ? (
+            <div
+              className="px-10 py-10"
+              style={{ fontFamily: "Times New Roman, serif", textAlign: "justify", fontSize: "15px", lineHeight: "1.75", color: "#111" }}
+              dangerouslySetInnerHTML={{ __html: sig!.version.content }}
+            />
+          ) : (
           <div className="px-10 py-10 space-y-8" style={{ fontFamily: "Times New Roman, serif", textAlign: "justify", fontSize: "15px", lineHeight: "1.75", color: "#111" }}>
 
             <Sect title="PREAMBLE">
@@ -167,12 +174,13 @@ export default async function SigningPage({ params }: { params: Promise<{ token:
             </Sect>
 
           </div>
+          )}
         </div>
 
-        <SigningActions token={token} status={sig.status} leaderName={sig.leader.name} />
+        <SigningActions token={token} status={sig!.status} leaderName={sig!.leader.name} />
 
         <p className="text-xs text-gray-400 mt-6 text-center">
-          This signing link is unique to {sig.leader.name} and is legally binding upon submission.
+          This signing link is unique to {sig!.leader.name} and is legally binding upon submission.
           Greenwave Society &bull; greenwave.rauell.systems
         </p>
       </main>
@@ -202,7 +210,7 @@ function Bul({ items }: { items: string[] }) {
     <ul style={{ listStyle: "none", padding: 0, margin: "6px 0", display: "flex", flexDirection: "column", gap: "5px" }}>
       {items.map((item, i) => (
         <li key={i} style={{ display: "flex", gap: "10px" }}>
-          <span style={{ color: "#1A5C38", flexShrink: 0 }}>•</span>
+          <span style={{ color: "#1A5C38", flexShrink: 0 }}>&#x2022;</span>
           <span>{item}</span>
         </li>
       ))}
