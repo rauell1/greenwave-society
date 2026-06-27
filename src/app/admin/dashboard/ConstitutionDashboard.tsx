@@ -25,9 +25,9 @@ interface Props {
   auditLogs: AuditLog[];
 }
 const fmtDate = (d: string | null) =>
-  d ? new Date(d).toLocaleDateString("en-KE", { day: "2-digit", month: "short", year: "numeric" }) : "—";
+  d ? new Date(d).toLocaleDateString("en-KE", { day: "2-digit", month: "short", year: "numeric" }) : "n/a";
 const fmtDT = (d: string | null) =>
-  d ? new Date(d).toLocaleString("en-KE", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—";
+  d ? new Date(d).toLocaleString("en-KE", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "n/a";
 
 function StatusBadge({ s }: { s: string }) {
   if (s === "signed")   return <span className="inline-flex px-2 py-0.5 rounded text-xs font-semibold bg-green-100 text-green-800">Signed</span>;
@@ -47,7 +47,7 @@ function PreviewModal({ v, onClose }: { v: Version; onClose: () => void }) {
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between px-6 py-4 border-b">
           <div>
-            <p className="font-bold text-[#1A5C38]">Preview &mdash; {v.versionTag}</p>
+            <p className="font-bold text-[#1A5C38]">Preview: {v.versionTag}</p>
             <p className="text-xs text-gray-500">How leaders will see this on the sign page</p>
           </div>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-700 text-2xl leading-none">&times;</button>
@@ -58,16 +58,55 @@ function PreviewModal({ v, onClose }: { v: Version; onClose: () => void }) {
             <p className="text-green-200 text-sm mt-1">{v.title.toUpperCase()}</p>
             <p className="text-green-300 text-xs mt-0.5 italic">{v.versionTag} &bull; Preview</p>
           </div>
-          <div
-            className="px-10 py-8 prose prose-sm max-w-none"
-            style={{ fontFamily: "Times New Roman,serif", fontSize: "14px", lineHeight: "1.75", color: "#111" }}
-            dangerouslySetInnerHTML={{ __html: v.content }}
-          />
+          {v.content ? (
+            <div
+              className="px-10 py-8"
+              style={{ fontFamily: "Times New Roman,serif", fontSize: "14px", lineHeight: "1.75", color: "#111", textAlign: "justify" }}
+              dangerouslySetInnerHTML={{ __html: v.content }}
+            />
+          ) : (
+            <div className="px-10 py-8 space-y-6" style={{ fontFamily: "Times New Roman,serif", fontSize: "14px", lineHeight: "1.75", color: "#111", textAlign: "justify" }}>
+              <PreviewSect title="PREAMBLE">
+                <p>We, the founding Executive Leaders of Greenwave Society, a Kenya-based non-profit youth organization dedicated to accelerating climate action and empowering youth as global changemakers, do hereby establish this Constitution as the governing covenant of our Executive Leadership Team.</p>
+                <p>Guided by our mission to foster sustainable community development through international cooperation, and rooted in the principles of the 2030 Sustainable Development Agenda, we recognize that the strength of our organization begins with the integrity, commitment, and accountability of those who lead it.</p>
+                <p>This Constitution is not merely a procedural document. It is a personal and collective pledge, a declaration that each Executive Leader freely and sincerely commits to the people we serve, to our fellow leaders, and to the planet we are called to protect and restore. By affixing our signatures hereto, we bind ourselves to the obligations, standards, and values set forth in this instrument.</p>
+              </PreviewSect>
+              <PreviewSect title="ARTICLE I: NAME, NATURE, AND REGISTERED CONTACT">
+                <p>The organization operating under this Constitution shall be known as the <strong>Greenwave Society</strong> (hereinafter referred to as &ldquo;the Society&rdquo; or &ldquo;the Organization&rdquo;).</p>
+                <p><strong>Type of Organization:</strong> Youth-led Non-Governmental Organization (NGO)</p>
+                <p><strong>Country of Primary Operation:</strong> Kenya</p>
+                <p><strong>Official Website:</strong> greenwave.rauell.systems</p>
+                <p><strong>Email:</strong> info@greenwavesociety.org</p>
+              </PreviewSect>
+              <PreviewSect title="ARTICLE II: MISSION, VISION, AND CORE VALUES">
+                <p><strong>Mission:</strong> To accelerate climate action, empower youth as global changemakers, and foster sustainable community development through international cooperation.</p>
+                <p><strong>Vision:</strong> A world where humanity and planetary ecosystems coexist in harmony, achieved through the full and faithful implementation of the 2030 Sustainable Development Agenda.</p>
+              </PreviewSect>
+              <PreviewSect title="ARTICLE III: EXECUTIVE LEADERSHIP STRUCTURE">
+                <p>The Executive Leadership Team of the Society shall comprise six (6) individuals: Martin Kyalo (CEO), Njeri Njoroge (COO), Eugene Shadrack (CIO), Mark Katana (CSWO), Roy Okola Otieno (Head of Design), Roy John (Design Assistant).</p>
+              </PreviewSect>
+              <PreviewSect title="ARTICLE X: EXECUTIVE COMMITMENT PLEDGE">
+                <blockquote style={{ borderLeft: "4px solid #1A5C38", paddingLeft: "1.25rem", fontStyle: "italic", color: "#444" }}>
+                  &ldquo;I commit to serve the mission of Greenwave Society with integrity, consistency, and purpose. I will attend every scheduled Executive Meeting, communicate proactively and in advance when genuinely unable to attend, and at all times uphold the values, ethical standards, and accountability obligations set forth in this Constitution.&rdquo;
+                </blockquote>
+              </PreviewSect>
+              <p className="text-xs text-gray-400 text-center pt-2 border-t border-gray-100">Full constitution articles V through IX appear on the actual sign page.</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
+function PreviewSect({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <h2 style={{ fontWeight: "bold", fontSize: "12px", color: "#1A5C38", borderBottom: "2px solid #1A5C38", paddingBottom: "3px", marginBottom: "10px", letterSpacing: "0.04em" }}>{title}</h2>
+      <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>{children}</div>
+    </div>
+  );
+}
+
 function VersionEditor({ existing, onSaved, onCancel }: {
   existing: Version[];
   onSaved: (v: Version) => void;
@@ -186,7 +225,7 @@ export default function ConstitutionDashboard({
     try {
       const res = await fetch("/api/admin/constitution/" + id + "/publish", { method: "POST" });
       const d   = await res.json();
-      if (res.ok) { showToast(d.versionTag + " published — invites sent!"); router.refresh(); }
+      if (res.ok) { showToast(d.versionTag + " published. Invites sent!"); router.refresh(); }
       else showToast(d.error ?? "Failed to publish");
     } catch { showToast("Network error"); } finally { setPublishing(null); }
   }
@@ -338,7 +377,7 @@ export default function ConstitutionDashboard({
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <h2 className="font-bold text-gray-900">
-                  Leader Signatures{activeVer && <span className="ml-2 text-sm font-normal text-gray-400">&mdash; {activeVer.versionTag}</span>}
+                  Leader Signatures{activeVer && <span className="ml-2 text-sm font-normal text-gray-400">({activeVer.versionTag})</span>}
                 </h2>
                 <button onClick={exportCSV} className="text-xs border border-gray-300 text-gray-600 px-3 py-1.5 rounded-lg hover:border-[#1A5C38] hover:text-[#1A5C38] transition-colors">Export CSV</button>
               </div>
@@ -360,13 +399,13 @@ export default function ConstitutionDashboard({
                             <td className="px-6 py-4"><p className="font-medium text-gray-900">{l.name}</p><p className="text-xs text-gray-500">{l.role}</p></td>
                             <td className="px-6 py-4">{s ? <StatusBadge s={s.status} /> : <span className="text-xs text-gray-400">No invite</span>}</td>
                             <td className="px-6 py-4 text-xs text-gray-500">{fmtDate(s?.signedAt ?? null)}</td>
-                            <td className="px-6 py-4 text-xs text-gray-500">{s?.ipAddress ?? "—"}</td>
+                            <td className="px-6 py-4 text-xs text-gray-500">{s?.ipAddress ?? "n/a"}</td>
                             <td className="px-6 py-4 text-xs text-gray-500">{fmtDate(s?.emailSentAt ?? null)}</td>
                             <td className="px-6 py-4">
                               <div className="flex gap-2 flex-wrap">
                                 {s && <>
-                                  <button onClick={() => { navigator.clipboard.writeText(window.location.origin + "/sign/" + s.token); showToast("Link copied!"); }}
-                                    className="text-xs border border-gray-200 text-gray-500 px-2 py-1 rounded hover:border-gray-400 transition-colors">Copy Link</button>
+                                  <button onClick={() => window.open("/sign/" + s.token, "_blank")}
+                                    className="text-xs border border-gray-200 text-gray-500 px-2 py-1 rounded hover:border-gray-400 transition-colors">View</button>
                                   <button onClick={() => sendInvite(l.id)} disabled={loadingId === l.id}
                                     className="text-xs border border-[#1A5C38] text-[#1A5C38] px-2 py-1 rounded hover:bg-[#1A5C38] hover:text-white disabled:opacity-50 transition-colors">
                                     {loadingId === l.id ? "..." : "Resend"}
