@@ -12,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/impact",
     "/team",
     "/contact",
+    "/join",
   ];
 
   return routes.map((route) => ({

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Mail, Phone, MapPin, Globe, Instagram, Facebook, Heart, Leaf } from "lucide-react";
+import { Mail, Phone, MapPin, Globe, Instagram, Facebook, Heart } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { APP_CONFIG } from "@/config/app.config";
 

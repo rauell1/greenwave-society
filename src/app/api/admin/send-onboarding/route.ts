@@ -25,7 +25,7 @@ function buildHtml(leader: { name: string; role: string; email: string }, today:
 <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08)">
   <tr>
     <td style="background:#1A5C38;padding:32px;text-align:center">
-      <img src="${APP_URL}/logo.png" alt="Greenwave Society" height="64" style="display:block;margin:0 auto 12px;border-radius:50%"/>
+      <img src="${APP_URL}/logo.png" alt="Greenwave Society" height="64" style="display:block;margin:0 auto 12px;border-radius:12px"/>
       <p style="color:#ffffff;font-size:20px;font-weight:bold;margin:0;letter-spacing:2px">GREENWAVE SOCIETY</p>
       <p style="color:#a8d5b5;font-size:13px;margin:6px 0 0">Executive Leadership Digital Infrastructure</p>
     </td>

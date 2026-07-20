@@ -40,7 +40,7 @@ export default function ResetPasswordForm({ token }: { token: string }) {
     <div className="min-h-screen flex items-center justify-center bg-[oklch(0.975_0.015_85)]">
       <div className="w-full max-w-sm bg-white rounded-2xl shadow-lg overflow-hidden">
         <div className="bg-[#1A5C38] px-8 py-8 flex flex-col items-center gap-3">
-          <Image src="/logo.png" alt="Greenwave Society" width={64} height={64} className="rounded-full" />
+          <Image src="/logo.png" alt="Greenwave Society" width={64} height={64} className="rounded-2xl object-contain" />
           <p className="text-white font-bold text-lg tracking-wide font-serif">GREENWAVE SOCIETY</p>
           <p className="text-green-200 text-sm">Set New Password</p>
         </div>
