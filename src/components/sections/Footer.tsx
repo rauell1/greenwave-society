@@ -33,7 +33,7 @@ export function Footer() {
                 className="w-10 h-10 object-contain group-hover:scale-105 transition-transform duration-300"
               />
               <span className="text-xl font-serif font-black tracking-tight text-white">
-                Green<span className="text-emerald-400 font-normal">wave</span>
+                Green<span className="text-emerald-400 font-normal">wave</span> <span className="font-normal text-zinc-400">Society</span>
               </span>
             </Link>
             <p className="text-sm text-zinc-400 leading-relaxed max-w-xs">

@@ -47,7 +47,7 @@ export function Navbar() {
             className="w-10 h-10 object-contain group-hover:scale-105 transition-transform duration-300"
           />
           <span className="text-xl font-serif font-black tracking-tight text-foreground">
-            Green<span className="text-primary font-normal">wave</span>
+            Green<span className="text-primary font-normal">wave</span> <span className="font-normal text-muted-foreground">Society</span>
           </span>
         </Link>
 
