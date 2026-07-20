@@ -166,7 +166,7 @@ export default function JoinPage() {
       <header className="bg-[#1A5C38] text-white py-5 px-6">
         <div className="max-w-3xl mx-auto flex items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.png" alt="Greenwave Society" className="h-9 w-9 rounded-full" />
+          <img src="/logo.png" alt="Greenwave Society" className="h-9 w-9 rounded-xl object-contain" />
           <div>
             <p className="font-bold font-serif tracking-wide text-sm">GREENWAVE SOCIETY</p>
             <p className="text-green-200 text-xs">Membership Application</p>

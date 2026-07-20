@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 
@@ -364,7 +364,7 @@ export default function ConstitutionDashboard({
         <div className="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="Greenwave Society" className="h-10 w-10 rounded-full" />
+            <img src="/logo.png" alt="Greenwave Society" className="h-10 w-10 rounded-xl object-contain" />
             <div>
               <p className="font-bold font-serif tracking-wide">GREENWAVE SOCIETY</p>
               <p className="text-green-200 text-xs">Admin Dashboard</p>

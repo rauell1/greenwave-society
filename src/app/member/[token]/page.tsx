@@ -102,7 +102,7 @@ export default function MemberPortalPage({ params }: { params: Promise<{ token: 
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="Greenwave Society" className="h-9 w-9 rounded-full" />
+            <img src="/logo.png" alt="Greenwave Society" className="h-9 w-9 rounded-xl object-contain" />
             <div>
               <p className="font-bold font-serif tracking-wide text-sm">GREENWAVE SOCIETY</p>
               <p className="text-green-200 text-xs">Member Portal</p>
