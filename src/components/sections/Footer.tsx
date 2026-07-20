@@ -26,16 +26,16 @@ export function Footer() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10">
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
-            <div className="flex items-center gap-2.5 mb-4">
+            <Link href="/" className="flex items-center gap-2.5 mb-4 group">
               <img
                 src="/logo.png"
                 alt="Greenwave Society Logo"
-                className="w-10 h-10 object-contain"
+                className="w-10 h-10 object-contain group-hover:scale-105 transition-transform duration-300"
               />
-              <span className="text-lg font-bold">
-                Green<span className="text-emerald-400">wave</span>
+              <span className="text-xl font-serif font-black tracking-tight text-white">
+                Green<span className="text-emerald-400 font-normal">wave</span>
               </span>
-            </div>
+            </Link>
             <p className="text-sm text-zinc-400 leading-relaxed max-w-xs">
               Empowering youth holistically to be changemakers and conserve the
               environment. Building a sustainable future, one community at a time.
