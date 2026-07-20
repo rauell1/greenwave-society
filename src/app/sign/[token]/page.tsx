@@ -23,7 +23,7 @@ export default async function SigningPage({ params }: { params: Promise<{ token:
       <header className="bg-[#1A5C38] text-white">
         <div className="max-w-4xl mx-auto px-6 py-5 flex items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.png" alt="Greenwave Society" className="h-10 w-10 rounded-xl object-contain" />
+          <img src="/logo.png" alt="Greenwave Society" className="h-10 w-10 rounded-full" />
           <div>
             <p className="font-bold font-serif tracking-wide">GREENWAVE SOCIETY</p>
             <p className="text-green-200 text-xs">Executive Leadership Constitution &mdash; Signing Portal</p>

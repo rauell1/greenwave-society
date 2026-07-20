@@ -1,4 +1,4 @@
-import { Resend } from "resend";
+﻿import { Resend } from "resend";
 import { logger } from "./logger";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://greenwave.rauell.systems";
@@ -38,7 +38,7 @@ export async function sendSigningEmail(opts: SigningEmailOptions): Promise<boole
       html: `
         <div style="font-family:'Times New Roman',serif;max-width:600px;margin:0 auto;color:#111">
           <div style="background:#1A5C38;padding:24px;text-align:center">
-            <img src="${APP_URL}/logo.png" alt="Greenwave Society" height="60" style="display:block;margin:0 auto 12px;border-radius:10px"/>
+            <img src="${APP_URL}/logo.png" alt="Greenwave Society" height="60" style="display:block;margin:0 auto 12px"/>
             <p style="color:#fff;margin:0;font-size:18px;font-weight:bold">GREENWAVE SOCIETY</p>
           </div>
           <div style="padding:32px">
@@ -78,7 +78,7 @@ export async function sendPasswordResetEmail(to: string, resetUrl: string): Prom
       html: `
         <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto">
           <div style="background:#1A5C38;padding:24px;text-align:center">
-            <img src="${APP_URL}/logo.png" height="52" style="display:block;margin:0 auto 8px;border-radius:10px"/>
+            <img src="${APP_URL}/logo.png" height="52" style="display:block;margin:0 auto 8px"/>
             <p style="color:#fff;font-weight:bold;margin:0">GREENWAVE SOCIETY</p>
           </div>
           <div style="padding:32px">
