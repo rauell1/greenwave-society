@@ -1,5 +1,6 @@
+import Image from "next/image";
 import Link from "next/link";
-import { Mail, Phone, MapPin, Globe, Instagram, Facebook, Heart, Leaf } from "lucide-react";
+import { Mail, Phone, MapPin, Globe, Instagram, Facebook, Heart } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { APP_CONFIG } from "@/config/app.config";
 
@@ -27,9 +28,11 @@ export function Footer() {
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
             <Link href="/" className="flex items-center gap-2.5 mb-4 group">
-              <img
+              <Image
                 src="/logo.png"
                 alt="Greenwave Society Logo"
+                width={40}
+                height={40}
                 className="w-10 h-10 object-contain group-hover:scale-105 transition-transform duration-300"
               />
               <span className="text-xl font-serif font-black tracking-tight text-white">
@@ -74,6 +77,7 @@ export function Footer() {
                 { label: "Our Impact", href: "/impact" },
                 { label: "Our Team", href: "/team" },
                 { label: "Contact", href: "/contact" },
+                { label: "Privacy & Data Rights", href: "/privacy" },
               ].map((l) => (
                 <li key={l.href}>
                   <Link

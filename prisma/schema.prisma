@@ -161,3 +161,60 @@ model AdminUser {
   @@index([resetToken])
   @@map("admin_users")
 }
+
+model ConsentLog {
+  id               String   @id @default(cuid())
+  consentId        String   @unique
+  categories       String   // JSON string of enabled categories (necessary, analytics, marketing, preferences)
+  ipHash           String?
+  countryCode      String?  @default("GLOBAL")
+  consentType      String   @default("opt-in") // opt-in, opt-out, customized
+  consentModeState String?  // GCM v2 state snapshot
+  tcfVector        String?  // IAB TCF 2.3 vector string if enabled
+  userAgent        String?
+  createdAt        DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([countryCode])
+  @@index([consentType])
+  @@map("consent_logs")
+}
+
+model CookieScanResult {
+  id              String   @id @default(cuid())
+  domain          String
+  cookiesDetected String   @db.Text // JSON string of detected cookies & scripts with categories
+  totalTrackers   Int      @default(0)
+  scannedAt       DateTime @default(now())
+
+  @@index([scannedAt])
+  @@map("cookie_scan_results")
+}
+
+model ConsentBannerConfig {
+  id                  String   @id @default("default")
+  themeColor          String   @default("#166534") // Emerald / Greenwave theme
+  layout              String   @default("bottom-bar") // bottom-bar, modal, popup-card
+  position            String   @default("bottom")
+  defaultLang         String   @default("en")
+  consentModeV2       Boolean  @default(true)
+  tcfEnabled          Boolean  @default(true)
+  geoTargeting        Boolean  @default(true)
+  autoBlock           Boolean  @default(true)
+  customCss           String?  @db.Text
+  updatedAt           DateTime @updatedAt
+
+  @@map("consent_banner_config")
+}
+
+model LegalPolicy {
+  id          String   @id @default(cuid())
+  type        String   @unique // privacy, cookie, terms
+  title       String
+  content     String   @db.Text
+  version     String   @default("1.0.0")
+  updatedAt   DateTime @updatedAt
+
+  @@map("legal_policies")
+}
+

@@ -1,10 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Leaf, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
@@ -41,9 +42,12 @@ export function Navbar() {
     >
       <nav className="max-w-7xl mx-auto flex items-center justify-between px-6 sm:px-8 h-12">
         <Link href="/" className="flex items-center gap-2.5 group">
-          <img
+          <Image
             src="/logo.png"
             alt="Greenwave Society Logo"
+            width={40}
+            height={40}
+            priority
             className="w-10 h-10 object-contain group-hover:scale-105 transition-transform duration-300"
           />
           <span className="text-xl font-serif font-black tracking-tight text-foreground">

@@ -18,7 +18,6 @@ export default function SigningActions({ token, status, leaderName }: Props) {
 
   const alreadyActed = status !== "pending";
   const isSigned     = done === "signed" || (alreadyActed && status === "signed");
-  const isRejected   = done === "rejected" || (alreadyActed && status === "rejected");
 
   if (alreadyActed || done) {
     return (

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { HandHeart, ArrowRight, Leaf } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -19,11 +20,13 @@ export function VolunteerCTA() {
               <div className="relative">
                 {/* Decorative background outline frame */}
                 <div className="absolute -inset-4 rounded-[3rem] border border-primary/20 -z-10 -rotate-2" />
-                <div className="aspect-[4/5] sm:aspect-[3/2] lg:aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_oklch(var(--primary)/8%)]">
-                  <img
+                <div className="aspect-[4/5] sm:aspect-[3/2] lg:aspect-[4/5] relative rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_oklch(var(--primary)/8%)]">
+                  <Image
                     src="/images/program-conservation.png"
-                    alt="Volunteers cleaning riverbank and planting trees"
-                    className="w-full h-full object-cover grayscale-[15%] hover:grayscale-0 transition-all duration-500"
+                    alt="Volunteers cleaning riverbank and planting trees in Kenya"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 40vw"
+                    className="object-cover grayscale-[15%] hover:grayscale-0 transition-all duration-500"
                   />
                 </div>
               </div>

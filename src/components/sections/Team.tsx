@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Users, Linkedin, ShieldCheck, Sparkles, Compass, Palette, PenTool } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { FadeIn } from "@/components/ui/fade-in";
@@ -98,12 +99,13 @@ export function Team() {
                   <div className="absolute top-6 right-6 z-10 bg-gold text-white font-mono text-[10px] tracking-widest uppercase py-1.5 px-3.5 rounded-full shadow-md">
                     {founder.tag}
                   </div>
-                  <div className="w-full h-full rounded-[1.5rem] overflow-hidden bg-primary/5">
-                    <img
+                  <div className="relative w-full h-full rounded-[1.5rem] overflow-hidden bg-primary/5">
+                    <Image
                       src={founder.image}
                       alt={founder.name}
-                      loading="lazy"
-                      className="w-full h-full object-cover grayscale-[15%] group-hover:grayscale-0 transition-all duration-500"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 30vw"
+                      className="object-cover grayscale-[15%] group-hover:grayscale-0 transition-all duration-500"
                     />
                   </div>
                 </div>

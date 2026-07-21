@@ -10,9 +10,11 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: "*",
         allow: "/",
         disallow: [
+          "/admin/",
+          "/member/",
+          "/sign/",
           "/api/",
           "/_next/",
-          "/static/",
         ],
       },
     ],
@@ -20,3 +22,4 @@ export default function robots(): MetadataRoute.Robots {
   };
 }
 export const dynamic = "force-static";
+

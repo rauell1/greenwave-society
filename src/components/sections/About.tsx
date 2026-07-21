@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Leaf, Users, Heart, Globe, Target, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -42,11 +43,13 @@ export function About() {
               <div className="relative overflow-visible">
                 {/* Custom geometric shape border */}
                 <div className="absolute -inset-4 rounded-[2.5rem] border border-primary/20 -z-10 rotate-2" />
-                <div className="aspect-[4/5] rounded-[2rem] overflow-hidden shadow-[0_20px_50px_oklch(var(--primary)/12%)]">
-                  <img
+                <div className="aspect-[4/5] relative rounded-[2rem] overflow-hidden shadow-[0_20px_50px_oklch(var(--primary)/12%)]">
+                  <Image
                     src="/images/about.png"
-                    alt="Youth in community discussion"
-                    className="w-full h-full object-cover grayscale-[20%] hover:grayscale-0 transition-all duration-500"
+                    alt="Youth in community environmental discussion in Kenya"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 40vw"
+                    className="object-cover grayscale-[20%] hover:grayscale-0 transition-all duration-500"
                   />
                 </div>
               </div>

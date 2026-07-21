@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Sprout, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -98,19 +99,24 @@ export function Hero() {
               
               {/* Main Image */}
               <div className="absolute top-0 right-4 w-[75%] h-[75%] rounded-[2.5rem] overflow-hidden border-8 border-background shadow-2xl z-10 hover:-translate-y-2 transition-transform duration-500">
-                <img
+                <Image
                   src="/images/hero.png"
-                  alt="Youth volunteers planting trees"
-                  className="w-full h-full object-cover"
+                  alt="Youth volunteers planting trees in Kenya"
+                  fill
+                  priority
+                  sizes="(max-width: 768px) 75vw, 40vw"
+                  className="object-cover"
                 />
               </div>
 
               {/* Staggered overlapping Image */}
               <div className="absolute bottom-4 left-4 w-[60%] h-[60%] rounded-[2rem] overflow-hidden border-8 border-background shadow-xl z-20 hover:-translate-y-2 transition-transform duration-500">
-                <img
+                <Image
                   src="/images/program-conservation.png"
                   alt="Eco conservation restoration work"
-                  className="w-full h-full object-cover"
+                  fill
+                  sizes="(max-width: 768px) 60vw, 30vw"
+                  className="object-cover"
                 />
               </div>
             </FadeIn>

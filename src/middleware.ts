@@ -57,7 +57,9 @@ function getCorsHeaders(origin: string | null): Record<string, string> {
   };
 }
 
-export function middleware(request: NextRequest) {
+import { rateLimit } from "@/lib/rate-limit";
+
+export async function middleware(request: NextRequest) {
   const startTime = Date.now();
   const { pathname } = request.nextUrl;
 
@@ -67,6 +69,26 @@ export function middleware(request: NextRequest) {
       status: 204,
       headers: getCorsHeaders(request.headers.get("origin")),
     });
+  }
+
+  // Rate Limiting for API routes
+  if (pathname.startsWith("/api")) {
+    const isStrictRoute =
+      request.method !== "GET" &&
+      (pathname.startsWith("/api/contact") ||
+        pathname.startsWith("/api/registrations") ||
+        pathname.startsWith("/api/admin") ||
+        pathname.startsWith("/api/newsletter"));
+
+    const rateLimitResult = await rateLimit(request, isStrictRoute ? "strict" : "standard");
+    if (rateLimitResult) {
+      // Add CORS headers to 429 rate limit response
+      const corsHeaders = getCorsHeaders(request.headers.get("origin"));
+      Object.entries(corsHeaders).forEach(([key, value]) => {
+        rateLimitResult.headers.set(key, value);
+      });
+      return rateLimitResult;
+    }
   }
 
   // Get response

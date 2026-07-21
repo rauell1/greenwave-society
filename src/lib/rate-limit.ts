@@ -80,36 +80,35 @@ class RateLimiter {
   }
 }
 
-// Singleton instance
-const rateLimiter = new RateLimiter();
+// Singleton instances for general and strict endpoints
+const standardLimiter = new RateLimiter(
+  APP_CONFIG.rateLimit.maxRequests,
+  APP_CONFIG.rateLimit.windowMs
+);
+
+// Strict limiter for sensitive form posts (e.g. contact, join intake, auth endpoints)
+const strictLimiter = new RateLimiter(15, 15 * 60 * 1000); // 15 requests per 15 minutes
 
 /**
  * Get client identifier from request (IP address)
  */
-function getClientIdentifier(request: NextRequest): string {
+export function getClientIdentifier(request: NextRequest): string {
   // Try to get real IP from various headers (considering proxies/load balancers)
   const forwarded = request.headers.get("x-forwarded-for");
   const realIp = request.headers.get("x-real-ip");
   const cfConnectingIp = request.headers.get("cf-connecting-ip"); // Cloudflare
 
-  const ip = cfConnectingIp || forwarded?.split(",")[0] || realIp || "unknown";
-
+  const ip = cfConnectingIp || forwarded?.split(",")[0]?.trim() || realIp || "unknown";
   return ip;
 }
 
 /**
- * Rate limiting middleware for API routes
- *
- * Usage in API route:
- * ```typescript
- * export async function POST(request: NextRequest) {
- *   const rateLimitResult = await rateLimit(request);
- *   if (rateLimitResult) return rateLimitResult;
- *   // ... rest of handler
- * }
- * ```
+ * Check rate limit for a request with optional tier ("standard" | "strict")
  */
-export async function rateLimit(request: NextRequest): Promise<NextResponse | null> {
+export async function rateLimit(
+  request: NextRequest,
+  tier: "standard" | "strict" = "standard"
+): Promise<NextResponse | null> {
   // Skip rate limiting in development if not explicitly enabled
   if (
     process.env.NODE_ENV === "development" &&
@@ -118,12 +117,14 @@ export async function rateLimit(request: NextRequest): Promise<NextResponse | nu
     return null;
   }
 
-  const identifier = getClientIdentifier(request);
-  const { allowed, remaining, resetAt } = rateLimiter.check(identifier);
+  const limiter = tier === "strict" ? strictLimiter : standardLimiter;
+  const maxLimit = tier === "strict" ? 15 : APP_CONFIG.rateLimit.maxRequests;
+  const identifier = `${tier}_${getClientIdentifier(request)}`;
+  const { allowed, remaining, resetAt } = limiter.check(identifier);
 
   // Add rate limit headers to response
   const headers = {
-    "X-RateLimit-Limit": APP_CONFIG.rateLimit.maxRequests.toString(),
+    "X-RateLimit-Limit": maxLimit.toString(),
     "X-RateLimit-Remaining": remaining.toString(),
     "X-RateLimit-Reset": resetAt.toString(),
   };
@@ -132,6 +133,7 @@ export async function rateLimit(request: NextRequest): Promise<NextResponse | nu
     logger.warn("Rate limit exceeded", {
       identifier,
       path: request.nextUrl.pathname,
+      tier,
     });
 
     return NextResponse.json(
@@ -155,17 +157,23 @@ export async function rateLimit(request: NextRequest): Promise<NextResponse | nu
 /**
  * Create rate limit headers for successful responses
  */
-export function getRateLimitHeaders(request: NextRequest): Record<string, string> {
-  const identifier = getClientIdentifier(request);
-  const remaining = rateLimiter.getRemaining(identifier);
-  const resetAt = rateLimiter.getResetAt(identifier);
+export function getRateLimitHeaders(
+  request: NextRequest,
+  tier: "standard" | "strict" = "standard"
+): Record<string, string> {
+  const limiter = tier === "strict" ? strictLimiter : standardLimiter;
+  const maxLimit = tier === "strict" ? 15 : APP_CONFIG.rateLimit.maxRequests;
+  const identifier = `${tier}_${getClientIdentifier(request)}`;
+  const remaining = limiter.getRemaining(identifier);
+  const resetAt = limiter.getResetAt(identifier);
 
   return {
-    "X-RateLimit-Limit": APP_CONFIG.rateLimit.maxRequests.toString(),
+    "X-RateLimit-Limit": maxLimit.toString(),
     "X-RateLimit-Remaining": remaining.toString(),
     ...(resetAt && { "X-RateLimit-Reset": resetAt.toString() }),
   };
 }
 
 // Export for testing
-export { RateLimiter };
+export { RateLimiter, standardLimiter, strictLimiter };
+

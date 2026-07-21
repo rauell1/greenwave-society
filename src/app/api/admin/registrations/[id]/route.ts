@@ -92,3 +92,34 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   return NextResponse.json({ success: true, registration: updated });
 }
+
+export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { valid, email } = await getAdminSession();
+  if (!valid) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const { id } = await params;
+  const db = getDb();
+  const reg = await db.memberRegistration.findUnique({ where: { id } });
+  if (!reg) return NextResponse.json({ error: "Registration not found" }, { status: 404 });
+
+  const userEmail = reg.email;
+  const userName = reg.fullName;
+
+  // Cascade deletion of member registration & related newsletter/contact data
+  await db.$transaction([
+    db.memberRegistration.delete({ where: { id } }),
+    db.newsletterSubscriber.deleteMany({ where: { email: userEmail } }),
+    db.contactSubmission.deleteMany({ where: { email: userEmail } }),
+  ]);
+
+  await db.auditLog.create({
+    data: {
+      id: randomBytes(12).toString("hex"),
+      action: "ADMIN_MEMBER_DATA_ERASED",
+      actor: email ?? "admin",
+      detail: `Permanently deleted member registration & scrubbed data for ${userName} (ID: ${id}) per privacy compliance request`,
+    },
+  });
+
+  return NextResponse.json({ success: true, message: `Member ${userName} and associated data successfully erased.` });
+}
