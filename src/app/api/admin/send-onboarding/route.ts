@@ -4,7 +4,7 @@ import { Resend } from "resend";
 import { logger } from "@/lib/logger";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://greenwavesociety.org";
-const FROM    = "Greenwave Society <info@greenwavesociety.org>";
+const FROM    = "Greenwave Society <info@rauell.systems>";
 
 const LEADERS = [
   { name: "Martin Kyalo",     role: "Chief Executive Officer (CEO)",                email: "martinkyalo777@gmail.com" },

@@ -10,7 +10,7 @@ import { logger } from "@/lib/logger";
 import { Resend } from "resend";
 
 const APP_URL     = process.env.NEXT_PUBLIC_APP_URL ?? "https://greenwavesociety.org";
-const FROM        = "Greenwave Society <info@greenwavesociety.org>";
+const FROM        = "Greenwave Society <info@rauell.systems>";
 const SUPER_ADMIN = "royokola3@gmail.com";
 
 function getResend(): Resend | null {
