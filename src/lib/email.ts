@@ -2,7 +2,7 @@ import { Resend } from "resend";
 import { logger } from "./logger";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://greenwavesociety.org";
-const FROM    = "Greenwave Society <info@greenwavesociety.org>";
+const FROM    = "Greenwave Society <info@rauell.systems>";
 
 function getResend(): Resend | null {
   const key = process.env.RESEND_API_KEY;
@@ -47,7 +47,7 @@ export async function sendSigningEmail(opts: SigningEmailOptions): Promise<boole
             <div style="text-align:center;margin:32px 0">
               <a href="${signingUrl}" style="background:#1A5C38;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;font-size:16px;display:inline-block">Review &amp; Sign Constitution</a>
             </div>
-            <p style="font-size:13px;color:#555">This link is unique to you. Do not share it. Questions? <a href="mailto:info@greenwavesociety.org">info@greenwavesociety.org</a></p>
+            <p style="font-size:13px;color:#555">This link is unique to you. Do not share it. Questions? <a href="mailto:info@rauell.systems">info@rauell.systems</a></p>
           </div>
           <div style="background:#f4f4f4;padding:16px;text-align:center;font-size:12px;color:#777">
             Greenwave Society &bull; Nairobi, Kenya &bull; greenwavesociety.org

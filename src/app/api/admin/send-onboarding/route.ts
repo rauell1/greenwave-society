@@ -4,7 +4,7 @@ import { Resend } from "resend";
 import { logger } from "@/lib/logger";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://greenwavesociety.org";
-const FROM    = "Greenwave Society <info@greenwavesociety.org>";
+const FROM    = "Greenwave Society <info@rauell.systems>";
 
 const LEADERS = [
   { name: "Martin Kyalo",     role: "Chief Executive Officer (CEO)",                email: "martinkyalo777@gmail.com" },
@@ -82,7 +82,7 @@ function buildHtml(leader: { name: string; role: string; email: string }, today:
     <td style="background:#1A5C38;padding:20px 40px;text-align:center">
       <p style="margin:0;font-size:12px;color:#a8d5b5;line-height:1.8">
         Greenwave Society &bull; Nairobi, Kenya<br/>
-        greenwavesociety.org &bull; info@greenwavesociety.org
+        greenwavesociety.org &bull; info@rauell.systems
       </p>
     </td>
   </tr>

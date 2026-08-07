@@ -4,7 +4,7 @@ import { Resend } from "resend";
 import { randomBytes } from "crypto";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://greenwavesociety.org";
-const FROM    = "Greenwave Society <info@greenwavesociety.org>";
+const FROM    = "Greenwave Society <info@rauell.systems>";
 
 const VALID_OCCUPATIONS = ["student", "employed_private", "employed_public", "self_employed", "unemployed", "other"];
 

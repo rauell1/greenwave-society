@@ -5,7 +5,7 @@ import { Resend } from "resend";
 import { randomBytes } from "crypto";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://greenwavesociety.org";
-const FROM    = "Greenwave Society <info@greenwavesociety.org>";
+const FROM    = "Greenwave Society <info@rauell.systems>";
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { valid, email } = await getAdminSession();
@@ -69,7 +69,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     <div style="text-align:center;margin:28px 0">
       <a href="${APP_URL}/member/${memberToken}" style="background:#1A5C38;color:#fff;padding:14px 32px;border-radius:8px;text-decoration:none;font-size:15px;font-weight:bold;display:inline-block">Access My Member Profile</a>
     </div>
-    <p style="font-size:14px;color:#555;line-height:1.8">If you have any questions, please contact us at <a href="mailto:info@greenwavesociety.org" style="color:#1A5C38">info@greenwavesociety.org</a>.</p>
+    <p style="font-size:14px;color:#555;line-height:1.8">If you have any questions, please contact us at <a href="mailto:info@rauell.systems" style="color:#1A5C38">info@rauell.systems</a>.</p>
     <p style="font-size:14px;color:#111;margin-top:24px">Yours sincerely,<br/><strong>Greenwave Society Team</strong></p>
   </div>
 </div>`
