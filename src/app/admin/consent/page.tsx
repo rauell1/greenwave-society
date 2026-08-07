@@ -38,8 +38,8 @@ export default function AdminConsentPage() {
   // Policy Generator State
   const [policyType, setPolicyType] = React.useState('privacy');
   const [orgName, setOrgName] = React.useState('Greenwave Society');
-  const [webUrl] = React.useState('https://greenwave.org');
-  const [contactEmail, setContactEmail] = React.useState('info@greenwave.org');
+  const [webUrl] = React.useState('https://greenwavesociety.org');
+  const [contactEmail, setContactEmail] = React.useState('info@greenwavesociety.org');
   const [generatedPolicy, setGeneratedPolicy] = React.useState('');
 
   const fetchConsentData = React.useCallback(() => {
@@ -443,7 +443,7 @@ export default function AdminConsentPage() {
                 <div className="p-4 rounded-xl bg-zinc-950 border border-zinc-800 flex items-center justify-between">
                   <div>
                     <span className="text-xs font-semibold text-zinc-400 uppercase">Target Domain</span>
-                    <h3 className="text-lg font-bold text-white">greenwave.org</h3>
+                    <h3 className="text-lg font-bold text-white">greenwavesociety.org</h3>
                   </div>
                   <div className="text-right">
                     <span className="text-xs font-semibold text-zinc-400 uppercase">Last Scanned</span>

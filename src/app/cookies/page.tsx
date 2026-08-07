@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 };
 
 export default function CookiePolicyPage() {
-  const scanData = runClientCookieScan('greenwave.org');
+  const scanData = runClientCookieScan('greenwavesociety.org');
 
   return (
     <div className="min-h-screen flex flex-col bg-zinc-950 text-zinc-100 font-sans">

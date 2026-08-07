@@ -137,7 +137,7 @@ export async function POST(request: Request) {
     }
 
     if (action === 'run-scan') {
-      const scanSummary = runClientCookieScan('greenwave.org');
+      const scanSummary = runClientCookieScan('greenwavesociety.org');
       const savedScan = await db.cookieScanResult.create({
         data: {
           domain: scanSummary.domain,
@@ -152,10 +152,10 @@ export async function POST(request: Request) {
       const { policyType, organizationName, websiteUrl, contactEmail, address, dpoEmail } = body;
       const params = {
         organizationName: organizationName || 'Greenwave Society',
-        websiteUrl: websiteUrl || 'https://greenwave.org',
-        contactEmail: contactEmail || 'info@greenwave.org',
+        websiteUrl: websiteUrl || 'https://greenwavesociety.org',
+        contactEmail: contactEmail || 'info@greenwavesociety.org',
         address: address || 'Nairobi, Kenya',
-        dpoEmail: dpoEmail || 'dpo@greenwave.org',
+        dpoEmail: dpoEmail || 'dpo@greenwavesociety.org',
       };
 
       let content = '';

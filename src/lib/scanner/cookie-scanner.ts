@@ -40,7 +40,7 @@ const KNOWN_TRACKERS: Record<string, { category: 'Necessary' | 'Analytics' | 'Ma
 /**
  * Runs a comprehensive scan on the current document context
  */
-export function runClientCookieScan(domainName = 'greenwave.org'): ScanSummary {
+export function runClientCookieScan(domainName = 'greenwavesociety.org'): ScanSummary {
   const scannedItems: ScannedItem[] = [];
 
   // 1. Scan document cookies
