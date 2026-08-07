@@ -16,6 +16,7 @@ import { CookieFloatingWidget } from './CookieFloatingWidget';
 export function CookieBanner() {
   const [isOpen, setIsOpen] = React.useState(false);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [hasConsented, setHasConsented] = React.useState(false);
   const [currentLang, setCurrentLang] = React.useState('en');
   const [geoInfo, setGeoInfo] = React.useState<GeoLocationInfo>({
     countryCode: 'KE',
@@ -65,6 +66,7 @@ export function CookieBanner() {
     if (stored) {
       setConsentState(stored);
       updateGoogleConsentMode(stored);
+      setHasConsented(true);
       setIsOpen(false);
     } else {
       setIsOpen(true);
@@ -87,6 +89,7 @@ export function CookieBanner() {
     setConsentState(finalState);
     saveConsentState(finalState);
     updateGoogleConsentMode(finalState);
+    setHasConsented(true);
     setIsOpen(false);
 
     // Log consent anonymously
@@ -106,7 +109,7 @@ export function CookieBanner() {
 
   return (
     <>
-      <CookieFloatingWidget onClick={() => setIsModalOpen(true)} />
+      {!hasConsented && <CookieFloatingWidget onClick={() => setIsModalOpen(true)} />}
 
       {isOpen && (
         <div className="fixed bottom-0 inset-x-0 z-50 p-4 md:p-6 bg-zinc-950/95 backdrop-blur-xl border-t border-emerald-800/40 text-zinc-100 shadow-2xl transition-all duration-300 animate-in slide-in-from-bottom-5">

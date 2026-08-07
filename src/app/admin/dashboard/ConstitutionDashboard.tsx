@@ -85,7 +85,7 @@ function PreviewModal({ v, onClose }: { v: Version; onClose: () => void }) {
                 <p>The organization operating under this Constitution shall be known as the <strong>Greenwave Society</strong> (hereinafter referred to as &ldquo;the Society&rdquo; or &ldquo;the Organization&rdquo;).</p>
                 <p><strong>Type of Organization:</strong> Youth-led Non-Governmental Organization (NGO)</p>
                 <p><strong>Country of Primary Operation:</strong> Kenya</p>
-                <p><strong>Official Website:</strong> greenwave.rauell.systems</p>
+                <p><strong>Official Website:</strong> greenwavesociety.org</p>
                 <p><strong>Email:</strong> info@greenwavesociety.org</p>
               </PreviewSect>
               <PreviewSect title="ARTICLE II: MISSION, VISION, AND CORE VALUES">

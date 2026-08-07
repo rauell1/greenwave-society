@@ -77,7 +77,7 @@ export default async function SigningPage({ params }: { params: Promise<{ token:
               <p>The organization operating under this Constitution shall be known as the <strong>Greenwave Society</strong> (hereinafter referred to as &ldquo;the Society&rdquo; or &ldquo;the Organization&rdquo;).</p>
               <KV k="Type of Organization" v="Youth-led Non-Governmental Organization (NGO)" />
               <KV k="Country of Primary Operation" v="Kenya" />
-              <KV k="Official Website" v="greenwave.rauell.systems" />
+              <KV k="Official Website" v="greenwavesociety.org" />
               <KV k="Email" v="info@greenwavesociety.org" />
               <KV k="Telephone" v="+254 700 519 130" />
             </Sect>
@@ -181,7 +181,7 @@ export default async function SigningPage({ params }: { params: Promise<{ token:
 
         <p className="text-xs text-gray-400 mt-6 text-center">
           This signing link is unique to {sig!.leader.name} and is legally binding upon submission.
-          Greenwave Society &bull; greenwave.rauell.systems
+          Greenwave Society &bull; greenwavesociety.org
         </p>
       </main>
     </div>

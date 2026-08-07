@@ -1,0 +1,234 @@
+{
+  "columns": [
+    {
+      "column_name": "id",
+      "data_type": "text",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "fullName",
+      "data_type": "text",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "email",
+      "data_type": "text",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "phone",
+      "data_type": "text",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "organization",
+      "data_type": "text",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "role",
+      "data_type": "text",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "willAttend",
+      "data_type": "text",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "takeaway",
+      "data_type": "text",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "accessNeeds",
+      "data_type": "text",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "invitationSource",
+      "data_type": "text",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "photoConsent",
+      "data_type": "boolean",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "createdAt",
+      "data_type": "timestamp with time zone",
+      "is_nullable": "NO"
+    }
+  ],
+  "rows": [
+    {
+      "id": "cms53lxk00001k004l8rkk7ap",
+      "fullName": "Test Attendee",
+      "email": "test@example.com",
+      "phone": "+254700000000",
+      "organization": "Greenwave Society",
+      "role": "Program Officer",
+      "willAttend": "Yes",
+      "takeaway": null,
+      "accessNeeds": null,
+      "invitationSource": null,
+      "photoConsent": true,
+      "createdAt": "2026-07-28T20:18:28.479Z"
+    },
+    {
+      "id": "cms5sbyi70000jw04w8mwow4g",
+      "fullName": "Simon Mbugua",
+      "email": "mbuguasimon261@gmail.com",
+      "phone": "+254791044737",
+      "organization": "Kryptonite outsourcing",
+      "role": "Business Development associate",
+      "willAttend": "Yes",
+      "takeaway": "A bgeneral look into system thinking the said programme and future endevours.",
+      "accessNeeds": "No",
+      "invitationSource": "A colleague or friend",
+      "photoConsent": true,
+      "createdAt": "2026-07-29T07:50:33.580Z"
+    },
+    {
+      "id": "cms5tuwqw0001l2043s4r5wnt",
+      "fullName": "Terryann Wanjohi",
+      "email": "wanjohiterry006@gmail.com",
+      "phone": "0746402544",
+      "organization": "Greenwave society",
+      "role": "Member",
+      "willAttend": "Yes",
+      "takeaway": "Powerful insights and knowledge",
+      "accessNeeds": "N/A",
+      "invitationSource": "Greenwave Society",
+      "photoConsent": true,
+      "createdAt": "2026-07-29T08:33:17.382Z"
+    },
+    {
+      "id": "cms5y6fhs0000l504aw7htiro",
+      "fullName": "Roy Okola Otieno",
+      "email": "royokola3@gmail.com",
+      "phone": "+254726683835",
+      "organization": "Greenwave Society",
+      "role": "Head of Design",
+      "willAttend": "Yes",
+      "takeaway": "Systems Thinking approaches",
+      "accessNeeds": "All good on my end",
+      "invitationSource": "Greenwave Society",
+      "photoConsent": true,
+      "createdAt": "2026-07-29T10:34:13.358Z"
+    },
+    {
+      "id": "cms61lkmz0001k004u0kh59uv",
+      "fullName": "kevin cheruiyot",
+      "email": "cheruiyotkevinrotich@gmail.com",
+      "phone": "+254725142342",
+      "organization": "Water Resources Authority",
+      "role": "Water Resource Management Intern",
+      "willAttend": "Yes",
+      "takeaway": "Understanding systems, narratives and approaches towards functioning systems.",
+      "accessNeeds": "No",
+      "invitationSource": "Greenwave Society",
+      "photoConsent": true,
+      "createdAt": "2026-07-29T12:09:58.712Z"
+    },
+    {
+      "id": "cms623o3g0004k0048dp9oryj",
+      "fullName": "Elkana Kiplangat Rotich",
+      "email": "kiplangatelkana25@gmail.com",
+      "phone": "+254768470638",
+      "organization": "ECO-RESILLIENCE NETWORK",
+      "role": "Volunteer",
+      "willAttend": "Yes",
+      "takeaway": "Enhance my creativity in nature -based solutions to environmental constraints.",
+      "accessNeeds": null,
+      "invitationSource": "A colleague or friend",
+      "photoConsent": true,
+      "createdAt": "2026-07-29T12:24:02.970Z"
+    },
+    {
+      "id": "cms62jsem0000jx04t8oqpkuj",
+      "fullName": "Test User",
+      "email": "royokola3@gmail.com",
+      "phone": "+254700000000",
+      "organization": "Greenwave Society",
+      "role": "Test Registration",
+      "willAttend": "Yes",
+      "takeaway": null,
+      "accessNeeds": null,
+      "invitationSource": null,
+      "photoConsent": true,
+      "createdAt": "2026-07-29T12:36:35.075Z"
+    },
+    {
+      "id": "cms66keyq0001jv047je787d4",
+      "fullName": "Moreen Nyambura",
+      "email": "gichungomoreen@gmail.com",
+      "phone": "0796001875",
+      "organization": "Kypw",
+      "role": "Member",
+      "willAttend": "Yes",
+      "takeaway": "Mostly its ro network",
+      "accessNeeds": null,
+      "invitationSource": "A colleague or friend",
+      "photoConsent": true,
+      "createdAt": "2026-07-29T14:29:02.785Z"
+    },
+    {
+      "id": "cms6a1ihh0002l704nj546kqo",
+      "fullName": "Winnie Anyango",
+      "email": "harlowwinnie24@gmail.com",
+      "phone": "+254715052760",
+      "organization": "Laikipia university",
+      "role": "Student",
+      "willAttend": "Yes",
+      "takeaway": null,
+      "accessNeeds": null,
+      "invitationSource": "A colleague or friend",
+      "photoConsent": true,
+      "createdAt": "2026-07-29T16:06:19.315Z"
+    },
+    {
+      "id": "cms6avdu30001lb04yassbjdz",
+      "fullName": "Neema Cheruto",
+      "email": "cherutoneema253@gmail.com",
+      "phone": "+254748707696",
+      "organization": "Greenwave",
+      "role": "Member",
+      "willAttend": "Yes",
+      "takeaway": null,
+      "accessNeeds": null,
+      "invitationSource": "Greenwave Society",
+      "photoConsent": true,
+      "createdAt": "2026-07-29T16:29:32.998Z"
+    },
+    {
+      "id": "cms6axqrm0003lb04xaw4yc6b",
+      "fullName": "Seline Muhonja",
+      "email": "muhonjaseline053@gmail.com",
+      "phone": "+254791781502",
+      "organization": "JKUAT",
+      "role": "Student",
+      "willAttend": "Yes",
+      "takeaway": null,
+      "accessNeeds": null,
+      "invitationSource": "A colleague or friend",
+      "photoConsent": true,
+      "createdAt": "2026-07-29T16:31:23.074Z"
+    },
+    {
+      "id": "cms77d8m40001lh04olmv9wrd",
+      "fullName": "Just",
+      "email": "jerryodongo30@gmail.com",
+      "phone": "0741100942",
+      "organization": "University Students Leaders Association",
+      "role": "Communication leads and strategist",
+      "willAttend": "Yes",
+      "takeaway": "Association and mutual connection",
+      "accessNeeds": "None",
+      "invitationSource": "50 Percent",
+      "photoConsent": true,
+      "createdAt": "2026-07-30T07:39:13.755Z"
+    }
+  ]
+}

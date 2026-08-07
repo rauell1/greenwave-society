@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
       data:  { resetToken: token, resetTokenExpiry: expiry },
     });
 
-    const appUrl   = process.env.NEXT_PUBLIC_APP_URL ?? "https://greenwave.rauell.systems";
+    const appUrl   = process.env.NEXT_PUBLIC_APP_URL ?? "https://greenwavesociety.org";
     const resetUrl = `${appUrl}/admin/reset-password/${token}`;
 
     const emailSent = await sendPasswordResetEmail(email, resetUrl);

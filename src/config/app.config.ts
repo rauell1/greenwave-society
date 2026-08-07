@@ -13,7 +13,7 @@ export const APP_CONFIG = {
   tagline: "Empowering Youth to Be Changemakers",
 
   // URLs and endpoints
-  url: process.env.NEXT_PUBLIC_APP_URL || "https://greenwave.rauell.systems",
+  url: process.env.NEXT_PUBLIC_APP_URL || "https://greenwavesociety.org",
   apiUrl: process.env.NEXT_PUBLIC_API_URL || "/api",
 
   // Contact information
@@ -58,7 +58,7 @@ export const APP_CONFIG = {
 
   // Security
   security: {
-    corsOrigin: process.env.CORS_ORIGIN?.split(",") || ["http://localhost:3000"],
+    corsOrigin: process.env.CORS_ORIGIN?.split(",") || ["https://greenwavesociety.org"],
     sessionSecret: process.env.SESSION_SECRET || "change-this-in-production",
   },
 } as const;

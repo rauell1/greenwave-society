@@ -23,9 +23,11 @@ model ContactSubmission {
 }
 
 model NewsletterSubscriber {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  createdAt DateTime @default(now())
+  id               String   @id @default(cuid())
+  email            String   @unique
+  active           Boolean  @default(true)
+  unsubscribeToken String?  @unique @map("unsubscribe_token")
+  createdAt        DateTime @default(now())
 
   @@index([createdAt])
   @@map("newsletter_subscribers")
@@ -52,7 +54,7 @@ model ConstitutionVersion {
   publishedAt DateTime?
   createdAt   DateTime                @default(now())
   updatedAt   DateTime                @updatedAt
-  signatures  ConstitutionSignature[]
+  signatures  ConstitutionSignature[] @relation("ConstitutionSignatureVersion")
 
   @@index([status])
   @@map("constitution_versions")
@@ -60,11 +62,12 @@ model ConstitutionVersion {
 
 model ConstitutionSignature {
   id              String               @id @default(cuid())
-  leaderId        String
+  leaderId        String               @unique
   leader          ExecutiveLeader      @relation(fields: [leaderId], references: [id], onDelete: Cascade)
-  versionId       String?
-  version         ConstitutionVersion? @relation(fields: [versionId], references: [id])
-  versionTag      String               @default("V1")
+  versionId           String?
+  constitutionVersion ConstitutionVersion? @relation("ConstitutionSignatureVersion", fields: [versionId], references: [id])
+  versionTag          String               @default("V1")
+  version             String?              // legacy text column retained for existing data
   status          String               @default("pending")
   token           String               @unique
   signedAt        DateTime?
@@ -118,6 +121,7 @@ model MemberRegistration {
   hearAboutUs      String?
   source           String?
   acknowledged     Boolean          @default(true)
+  active           Boolean          @default(true)
   status           String           @default("pending")
   reviewNote       String?
   reviewedAt       DateTime?
@@ -216,5 +220,24 @@ model LegalPolicy {
   updatedAt   DateTime @updatedAt
 
   @@map("legal_policies")
+}
+
+model BaazaRegistration {
+  id               String   @id @default(cuid())
+  fullName         String
+  email            String
+  phone            String
+  organization     String
+  role             String
+  willAttend       String
+  takeaway         String?
+  accessNeeds      String?
+  invitationSource String?
+  photoConsent     Boolean  @default(false)
+  createdAt        DateTime @default(now())
+
+  @@index([email])
+  @@index([createdAt])
+  @@map("baraza_registrations")
 }
 

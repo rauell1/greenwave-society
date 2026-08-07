@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://greenwave.rauell.systems";
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://greenwavesociety.org";
     const signingUrl = `${appUrl}/sign/${sig.token}`;
 
     return NextResponse.json({ success: true, name: leader.name, emailSent: sent, signingUrl });

@@ -218,7 +218,7 @@ export default function MemberPortalPage({ params }: { params: Promise<{ token: 
         <div className="bg-white rounded-2xl border border-gray-100 p-6 text-sm text-gray-600 leading-relaxed">
           <p className="font-semibold text-gray-800 mb-1">What happens next?</p>
           <p>The Greenwave Society team will be in touch with programme updates, events, and opportunities to get involved. Stay connected at{" "}
-            <a href="https://greenwave.rauell.systems" className="text-[#1A5C38] underline">greenwave.rauell.systems</a>.
+            <a href="https://greenwavesociety.org" className="text-[#1A5C38] underline">greenwavesociety.org</a>.
           </p>
         </div>
 

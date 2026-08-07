@@ -1,7 +1,7 @@
 import { Resend } from "resend";
 import { logger } from "./logger";
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://greenwave.rauell.systems";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://greenwavesociety.org";
 const FROM    = "Greenwave Society <info@rauell.systems>";
 
 function getResend(): Resend | null {
@@ -50,7 +50,7 @@ export async function sendSigningEmail(opts: SigningEmailOptions): Promise<boole
             <p style="font-size:13px;color:#555">This link is unique to you. Do not share it. Questions? <a href="mailto:info@greenwavesociety.org">info@greenwavesociety.org</a></p>
           </div>
           <div style="background:#f4f4f4;padding:16px;text-align:center;font-size:12px;color:#777">
-            Greenwave Society &bull; Nairobi, Kenya &bull; greenwave.rauell.systems
+            Greenwave Society &bull; Nairobi, Kenya &bull; greenwavesociety.org
           </div>
         </div>`,
     });

@@ -4,7 +4,7 @@ import { getDb } from "@/lib/db";
 import { Resend } from "resend";
 import { randomBytes } from "crypto";
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://greenwave.rauell.systems";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://greenwavesociety.org";
 const FROM    = "Greenwave Society <info@rauell.systems>";
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -82,7 +82,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     <p style="font-size:16px;color:#111">Dear ${firstName},</p>
     <p style="font-size:15px;color:#111;line-height:1.8">Thank you for your interest in joining Greenwave Society. After careful review, we are unable to approve your application at this time.</p>
     ${reviewNote ? `<div style="margin:20px 0;padding:16px;background:#fef9f0;border-radius:8px;border-left:4px solid #d97706"><p style="margin:0;font-size:14px;color:#555;line-height:1.7">${reviewNote}</p></div>` : ""}
-    <p style="font-size:15px;color:#111;line-height:1.8">We encourage you to stay connected with our work at <a href="${APP_URL}" style="color:#1A5C38">greenwave.rauell.systems</a> and to consider reapplying in future intake cycles.</p>
+    <p style="font-size:15px;color:#111;line-height:1.8">We encourage you to stay connected with our work at <a href="${APP_URL}" style="color:#1A5C38">greenwavesociety.org</a> and to consider reapplying in future intake cycles.</p>
     <p style="font-size:14px;color:#111;margin-top:24px">Kind regards,<br/><strong>Greenwave Society Team</strong></p>
   </div>
 </div>`;

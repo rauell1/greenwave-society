@@ -110,7 +110,7 @@ export function JoinForm() {
         body:    JSON.stringify({
           ...form,
           email:  form.email.toLowerCase().trim(),
-          source: "greenwave.rauell.systems",
+          source: "greenwavesociety.org",
         }),
       });
       const data = await res.json();
@@ -279,7 +279,7 @@ function Step1({ form, set }: { form: FormData; set: <K extends keyof FormData>(
         <div className="mt-6 p-5 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800 leading-relaxed">
           <strong>We appreciate your interest.</strong> Unfortunately our membership programme is currently
           open to individuals aged 15 to 35. We encourage you to follow our work at{" "}
-          <a href="https://greenwave.rauell.systems" className="underline">greenwave.rauell.systems</a>{" "}
+          <a href="https://greenwavesociety.org" className="underline">greenwavesociety.org</a>{" "}
           and explore how you can support us in other ways.
         </div>
       )}
