@@ -5,7 +5,7 @@ import { Resend } from "resend";
 import { randomBytes } from "crypto";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://greenwavesociety.org";
-const FROM    = "Greenwave Society <info@rauell.systems>";
+const FROM    = "Greenwave Society <info@greenwavesociety.org>";
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { valid, email } = await getAdminSession();

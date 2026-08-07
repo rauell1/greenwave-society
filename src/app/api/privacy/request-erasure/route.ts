@@ -3,7 +3,7 @@ import { getDb } from "@/lib/db";
 import { randomBytes } from "crypto";
 import { Resend } from "resend";
 
-const FROM = "Greenwave Society <info@rauell.systems>";
+const FROM = "Greenwave Society <info@greenwavesociety.org>";
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}));
