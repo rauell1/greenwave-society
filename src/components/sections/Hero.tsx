@@ -31,16 +31,14 @@ export function Hero() {
 
             <FadeIn delay={0.2}>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-serif font-black text-foreground leading-[1.05] tracking-tight">
-                Empowering youth <br />
-                to be <span className="text-primary italic font-normal">changemakers</span>
+                Equipping youth <br />
+                to lead, build, and <span className="text-primary italic font-normal">connect</span>
               </h1>
             </FadeIn>
 
             <FadeIn delay={0.35}>
               <p className="mt-6 text-base sm:text-lg text-muted-foreground leading-relaxed max-w-xl">
-                Greenwave Society holistically empowers young people to conserve the
-                environment, build sustainable communities, and create lasting
-                change across Kenya and beyond.
+                Young Kenyans face real challenges — skills gaps, unemployment, and mental health pressures. Greenwave Society bridges those gaps through enterprise training, environmental action, and community-led programmes.
               </p>
             </FadeIn>
 

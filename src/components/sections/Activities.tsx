@@ -5,56 +5,56 @@ import { FadeIn } from "@/components/ui/fade-in";
 const activities = [
   {
     title: "Maangani Primary and Secondary Schools",
-    desc: "1st project launched post maandamano with school-focused engagement and community support.",
+    desc: "Greenwave's first project — a school-focused conservation and education programme delivering hands-on environmental learning and community support to students in Maangani.",
     date: "6 Jul 2024",
     type: "Education",
     mediaUrl: "https://photos.app.goo.gl/bwhvJHBHeFEgnAin9",
   },
   {
     title: "Ngong Hike",
-    desc: "Additional highlights from the 1st project activities conducted on 6/7/2024.",
+    desc: "A community hike through the Ngong Hills bringing youth together around environmental appreciation, physical wellbeing, and connection to Kenya's natural landscape.",
     date: "6 Jul 2024",
     type: "Community",
     mediaUrl: "https://photos.app.goo.gl/aPp6qoR1sftX1ckc7",
   },
   {
-    title: "Valentines Day Picnic",
-    desc: "Outdoor team activity focused on wellness, environmental appreciation, and member bonding.",
+    title: "Wellness Picnic",
+    desc: "An outdoor gathering focused on team wellbeing, member bonding, and grounding the Greenwave community in shared purpose ahead of the year ahead.",
     date: "Dec 2024",
     type: "Wellness",
     mediaUrl: "https://photos.app.goo.gl/goGFiHwXDiDobrmK6",
   },
   {
     title: "Valentine's Day Picnic",
-    desc: "Mental health awareness session and community picnic for youth connection and support.",
+    desc: "A mental health awareness event and community picnic designed to foster peer connection, open conversation, and emotional support among Greenwave youth members.",
     date: "14 Feb 2025",
     type: "Mental Health",
     mediaUrl: "https://photos.app.goo.gl/ep2HVgur2hmVzTNAA",
   },
   {
     title: "Departmental Hang Out",
-    desc: "Additional Valentine's Day moments highlighting peer support and youth wellbeing activities.",
+    desc: "A cross-department team session to strengthen internal collaboration, align on shared goals, and build the relationships that keep Greenwave running effectively.",
     date: "14 Feb 2025",
-    type: "Community",
+    type: "Team Building",
     mediaUrl: "https://photos.app.goo.gl/zZqqv3SGCCxqBBAo8",
   },
   {
-    title: "Kangemi Restoration Program",
-    desc: "Cross-department hangout to strengthen collaboration, planning, and team cohesion.",
+    title: "Kangemi Restoration Programme",
+    desc: "A hands-on ecosystem restoration initiative in Kangemi — bringing youth volunteers together to rehabilitate green spaces, plant trees, and connect environmental action with community pride.",
     date: "Jul 2025",
-    type: "Team Building",
+    type: "Conservation",
     mediaUrl: "https://photos.app.goo.gl/CxjV1qY33ZYosmyK7",
   },
   {
     title: "Mentorship at Kangemi Vocational Centre",
-    desc: "Mentorship engagement in Kangemi focused on youth growth, guidance, and career readiness.",
+    desc: "A mentorship engagement at Kangemi Vocational Centre equipping young people with career guidance, practical skills, and the confidence to navigate employment and enterprise.",
     date: "May 2025",
     type: "Mentorship",
     mediaUrl: "https://photos.app.goo.gl/8jsuqcjCEGeWoHb16",
   },
   {
     title: "Featured Video Story",
-    desc: "Highlights from Greenwave community work and activities in video format.",
+    desc: "A short documentary capturing Greenwave's community work in action — the faces, places, and moments behind the mission.",
     date: "2025",
     type: "Media",
     mediaUrl: "https://youtu.be/Bhy13UQbjQw?si=YsJ8C9V0cGA5Z4_X",
@@ -77,7 +77,7 @@ export function Activities() {
             What We Have Been <span className="italic font-normal text-primary">Up To</span>
           </h2>
           <p className="mt-4 text-muted-foreground text-sm sm:text-base max-w-xl mx-auto">
-            From conservation training in schools to eco-restoration and wellness picnics, our journey is marked by active engagement.
+            From school conservation programmes to vocational mentorship, wellness sessions, and ecosystem restoration — this is what closing the gap looks like in practice.
           </p>
         </FadeIn>
 

@@ -40,8 +40,7 @@ export function Footer() {
               </span>
             </Link>
             <p className="text-sm text-zinc-400 leading-relaxed max-w-xs">
-              Empowering youth holistically to be changemakers and conserve the
-              environment. Building a sustainable future, one community at a time.
+              Equipping young Kenyans to lead, build, and connect — closing the gaps in skills, opportunity, and wellbeing, one community at a time.
             </p>
             <div className="mt-4 flex gap-3">
               {[

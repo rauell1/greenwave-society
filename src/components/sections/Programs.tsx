@@ -6,34 +6,10 @@ import { FadeIn } from "@/components/ui/fade-in";
 const programs = [
   {
     image: "/images/program-education.png",
-    icon: <GraduationCap className="w-5 h-5" />,
-    title: "Climate Action and Advocacy SDGs Training",
-    desc: "We deliver hands-on workshops and training sessions that teach young people about ecology, sustainability, waste management, and climate science. Our education programs equip the next generation with knowledge to make informed environmental decisions.",
-    tags: ["Workshops", "School Programs", "Climate Literacy"],
-    span: "md:col-span-2 lg:col-span-2",
-  },
-  {
-    image: "/images/program-conservation.png",
-    icon: <TreePine className="w-5 h-5" />,
-    title: "Conservation & Restoration",
-    desc: "From tree-planting campaigns to river clean-ups and habitat restoration, our conservation programs directly protect and restore local ecosystems. We mobilize volunteers and partner with communities to conserve natural resources.",
-    tags: ["Tree Planting", "Clean-ups", "Habitat Restoration"],
-    span: "md:col-span-1 lg:col-span-1",
-  },
-  {
-    image: "/images/program-empowerment.png",
-    icon: <HandHeart className="w-5 h-5" />,
-    title: "Youth Empowerment",
-    desc: "We build leadership capacity through mentorship, skills training, and community engagement opportunities. Our programs help youth develop confidence, critical thinking, and project management skills.",
-    tags: ["Leadership", "Mentorship", "Skills Building"],
-    span: "md:col-span-1 lg:col-span-1",
-  },
-  {
-    image: "/images/program-agriculture.png",
-    icon: <Sprout className="w-5 h-5" />,
-    title: "Sustainability Programs",
-    desc: "We lead sustainability programs through urban planning initiatives and ecosystem design projects that help communities build greener, more resilient neighborhoods.",
-    tags: ["Urban Planning", "Ecosystem Design", "Resilient Communities"],
+    icon: <TrendingUp className="w-5 h-5" />,
+    title: "The 50 Percent — Social Enterprise",
+    desc: "Our flagship programme equips young people with the tools to create economic value. Built around five pillars — who we train, how we train, where we train, what skills we build, and why — it addresses unemployment and skills gaps head-on, expanding thinking and adding lasting value to organisations and communities.",
+    tags: ["Flagship", "Social Enterprise", "Skills Training"],
     span: "md:col-span-2 lg:col-span-2",
   },
   {
@@ -46,11 +22,35 @@ const programs = [
   },
   {
     image: "/images/program-education.png",
-    icon: <TrendingUp className="w-5 h-5" />,
-    title: "The 50 Percent — Social Enterprise",
-    desc: "Our flagship social enterprise training programme equips young people with the tools to create economic value. Built around five pillars — who we train, how we train, where we train, what skills we build, and why — the programme expands thinking, addresses unemployment and skills gaps, and adds lasting value to organisations and communities.",
-    tags: ["Social Enterprise", "Skills Training", "Economic Empowerment"],
+    icon: <GraduationCap className="w-5 h-5" />,
+    title: "Climate Action & Advocacy Training",
+    desc: "Hands-on workshops that teach young people ecology, sustainability, and climate science — equipping them with the knowledge to advocate for change and make informed environmental decisions in their communities.",
+    tags: ["Workshops", "School Programs", "Climate Literacy"],
+    span: "md:col-span-1 lg:col-span-1",
+  },
+  {
+    image: "/images/program-conservation.png",
+    icon: <TreePine className="w-5 h-5" />,
+    title: "Conservation & Restoration",
+    desc: "From tree-planting campaigns to river clean-ups and habitat restoration, our conservation programmes directly protect local ecosystems — while giving young people real-world project experience that builds skills and accountability.",
+    tags: ["Tree Planting", "Clean-ups", "Habitat Restoration"],
     span: "md:col-span-2 lg:col-span-2",
+  },
+  {
+    image: "/images/program-empowerment.png",
+    icon: <HandHeart className="w-5 h-5" />,
+    title: "Youth Empowerment & Leadership",
+    desc: "We build leadership capacity through mentorship, vocational skills training, and community engagement. Our programmes help youth develop the confidence, critical thinking, and project management skills that employers and communities need.",
+    tags: ["Leadership", "Mentorship", "Vocational Skills"],
+    span: "md:col-span-2 lg:col-span-2",
+  },
+  {
+    image: "/images/program-agriculture.png",
+    icon: <Sprout className="w-5 h-5" />,
+    title: "Sustainability & Urban Resilience",
+    desc: "Urban planning initiatives and ecosystem design projects that help communities build greener, more resilient neighbourhoods — connecting young people to the infrastructure challenges their generation will solve.",
+    tags: ["Urban Planning", "Ecosystem Design", "Community Resilience"],
+    span: "md:col-span-1 lg:col-span-1",
   },
 ];
 
@@ -68,8 +68,7 @@ export function Programs() {
             Our Programs & <span className="text-primary italic font-normal">Initiatives</span>
           </h2>
           <p className="mt-4 text-muted-foreground text-sm sm:text-base max-w-xl mx-auto">
-            We run a range of programs designed to empower youth and protect the
-            environment, creating a sustainable future for communities across Kenya.
+            Six interconnected programmes — from social enterprise training to environmental action — all working together to equip Kenya's youth with the skills, leadership, and community connection to create lasting change.
           </p>
         </FadeIn>
 

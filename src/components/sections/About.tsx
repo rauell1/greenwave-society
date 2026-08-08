@@ -9,23 +9,23 @@ export function About() {
   const values = [
     {
       icon: <Leaf className="w-5 h-5" />,
-      title: "Climate & Ecosystem Protection",
-      desc: "We advance SDG 13, 14, and 15 through restoration, biodiversity protection, and practical conservation action in local communities.",
+      title: "Environment as the Classroom",
+      desc: "Conservation, restoration, and sustainability work aren't just environmental goals — they're the real-world context where young people build skills, accountability, and belonging. Aligned with SDG 13, 14, and 15.",
     },
     {
       icon: <Users className="w-5 h-5" />,
       title: "Youth Leadership & Inclusion",
-      desc: "We empower youth aged 15–35 to tackle the intersecting crises of skills mismatch, mental health, and unemployment — through education, mentorship, and equitable opportunities aligned with SDG 4, 5, 8, and 10.",
+      desc: "We equip youth aged 15–35 to tackle the intersecting crises of skills mismatch, mental health, and unemployment — through enterprise training, mentorship, and equitable opportunities aligned with SDG 4, 5, 8, and 10.",
     },
     {
       icon: <Heart className="w-5 h-5" />,
-      title: "Community-Led Development",
-      desc: "We support SDG 6 and 11 through local action on water stewardship, sustainable communities, and grassroots project leadership.",
+      title: "Community-Led Wellbeing",
+      desc: "We invest in the mental resilience and holistic wellbeing of every young person we work with — because sustainable communities start with people who are supported, connected, and heard. Aligned with SDG 3, 6, and 11.",
     },
     {
       icon: <Globe className="w-5 h-5" />,
-      title: "Global Partnerships & Accountability",
-      desc: "Through SDG 17 partnerships, IFRS-aligned transparency, and strong governance, we scale sustainable impact responsibly.",
+      title: "Partnerships & Accountability",
+      desc: "Through SDG 17 partnerships, transparent governance, and active connections with organisations like the UN and Google, we scale our impact responsibly and ensure every programme delivers measurable results.",
     },
   ];
 
@@ -74,16 +74,14 @@ export function About() {
             <FadeIn delay={0.2}>
               <div className="mt-6 border-l-4 border-primary pl-6 py-2">
                 <p className="font-serif italic text-lg sm:text-xl text-muted-foreground leading-relaxed">
-                  "Accelerating climate action, empowering youth as global changemakers, and fostering sustainable community development through international cooperation, advocacy, and localized action."
+                  "We exist to close the gaps that hold young Kenyans back — in skills, in opportunity, and in wellbeing — by building leaders who serve their communities and drive lasting change."
                 </p>
               </div>
             </FadeIn>
 
             <FadeIn delay={0.3}>
               <p className="mt-6 text-muted-foreground text-sm sm:text-base leading-relaxed">
-                Our vision is a resilient world where humanity and planetary
-                boundaries exist in harmony, achieved through practical delivery of
-                the 2030 Agenda for Sustainable Development.
+                Our vision is a generation of equipped, confident young Kenyans — leading enterprises, restoring ecosystems, and strengthening communities from the ground up.
               </p>
             </FadeIn>
             
