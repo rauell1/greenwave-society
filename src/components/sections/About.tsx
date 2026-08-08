@@ -15,7 +15,7 @@ export function About() {
     {
       icon: <Users className="w-5 h-5" />,
       title: "Youth Leadership & Inclusion",
-      desc: "We empower youth aged 15-35 with education, mentorship, and equitable opportunities aligned with SDG 4, 5, 8, and 10.",
+      desc: "We empower youth aged 15–35 to tackle the intersecting crises of skills mismatch, mental health, and unemployment — through education, mentorship, and equitable opportunities aligned with SDG 4, 5, 8, and 10.",
     },
     {
       icon: <Heart className="w-5 h-5" />,

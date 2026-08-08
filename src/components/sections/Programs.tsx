@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { GraduationCap, TreePine, HandHeart, Sprout, Recycle } from "lucide-react";
+import { GraduationCap, TreePine, HandHeart, Sprout, Recycle, HeartHandshake, TrendingUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { FadeIn } from "@/components/ui/fade-in";
 
@@ -34,6 +34,22 @@ const programs = [
     title: "Sustainability Programs",
     desc: "We lead sustainability programs through urban planning initiatives and ecosystem design projects that help communities build greener, more resilient neighborhoods.",
     tags: ["Urban Planning", "Ecosystem Design", "Resilient Communities"],
+    span: "md:col-span-2 lg:col-span-2",
+  },
+  {
+    image: "/images/program-empowerment.png",
+    icon: <HeartHandshake className="w-5 h-5" />,
+    title: "Young People Pulse (YPP)",
+    desc: "A youth-volunteer initiative centred on intergenerational connection, mental health awareness, and community accountability. YPP brings together young people to support one another, build shared responsibility, and drive grassroots change across Kenya.",
+    tags: ["Volunteers", "Mental Health", "Intergenerational"],
+    span: "md:col-span-1 lg:col-span-1",
+  },
+  {
+    image: "/images/program-education.png",
+    icon: <TrendingUp className="w-5 h-5" />,
+    title: "The 50 Percent — Social Enterprise",
+    desc: "Our flagship social enterprise training programme equips young people with the tools to create economic value. Built around five pillars — who we train, how we train, where we train, what skills we build, and why — the programme expands thinking, addresses unemployment and skills gaps, and adds lasting value to organisations and communities.",
+    tags: ["Social Enterprise", "Skills Training", "Economic Empowerment"],
     span: "md:col-span-2 lg:col-span-2",
   },
 ];
