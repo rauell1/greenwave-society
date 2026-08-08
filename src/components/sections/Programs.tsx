@@ -21,7 +21,7 @@ const programs = [
     span: "md:col-span-1 lg:col-span-1",
   },
   {
-    image: "/images/program-education.png",
+    image: "/images/program-climate-action.png",
     icon: <GraduationCap className="w-5 h-5" />,
     title: "Climate Action & Advocacy Training",
     desc: "Hands-on workshops that teach young people ecology, sustainability, and climate science, equipping them with the knowledge to advocate for change and make informed environmental decisions in their communities.",
@@ -37,7 +37,7 @@ const programs = [
     span: "md:col-span-2 lg:col-span-2",
   },
   {
-    image: "/images/program-empowerment.png",
+    image: "/images/program-leadership.png",
     icon: <HandHeart className="w-5 h-5" />,
     title: "Youth Empowerment & Leadership",
     desc: "We build leadership capacity through mentorship, vocational skills training, and community engagement. Our programmes help youth develop the confidence, critical thinking, and project management skills that employers and communities need.",

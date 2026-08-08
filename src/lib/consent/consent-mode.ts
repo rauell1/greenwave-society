@@ -27,8 +27,8 @@ export function initGoogleConsentMode(defaultGranted = false) {
   if (typeof window === 'undefined') return;
 
   window.dataLayer = window.dataLayer || [];
-  function gtag(..._args: any[]) {
-    window.dataLayer.push(arguments);
+  function gtag(...args: any[]) {
+    window.dataLayer.push(args);
   }
   window.gtag = gtag;
 
@@ -60,8 +60,8 @@ export function updateGoogleConsentMode(categories: {
   if (typeof window === 'undefined') return;
 
   window.dataLayer = window.dataLayer || [];
-  function gtag(..._args: any[]) {
-    window.dataLayer.push(arguments);
+  function gtag(...args: any[]) {
+    window.dataLayer.push(args);
   }
   if (!window.gtag) window.gtag = gtag;
 

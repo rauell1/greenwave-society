@@ -52,14 +52,16 @@ export default function MemberPortalPage({ params }: { params: Promise<{ token: 
   // Heartbeat + logout ping
   const ping = useCallback((leaving = false) => {
     if (!token || isDeleted) return;
-    navigator.sendBeacon
-      ? navigator.sendBeacon(`/api/member/${token}`, JSON.stringify({ leaving }))
-      : fetch(`/api/member/${token}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ leaving }),
-          keepalive: true,
-        });
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon(`/api/member/${token}`, JSON.stringify({ leaving }));
+    } else {
+      void fetch(`/api/member/${token}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ leaving }),
+        keepalive: true,
+      });
+    }
   }, [token, isDeleted]);
 
   useEffect(() => {
@@ -166,7 +168,6 @@ export default function MemberPortalPage({ params }: { params: Promise<{ token: 
       <header className="bg-[#1A5C38] text-white py-5 px-6">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo.png" alt="Greenwave Society" className="h-9 w-9 rounded-xl object-contain" />
             <div>
               <p className="font-bold font-serif tracking-wide text-sm">GREENWAVE SOCIETY</p>
