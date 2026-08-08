@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Users, Linkedin, ShieldCheck, Sparkles, Compass, Palette, PenTool } from "lucide-react";
+import { Users, Linkedin, Sparkles, Compass, Palette } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { FadeIn } from "@/components/ui/fade-in";
 
@@ -30,14 +30,6 @@ const executives = [
     bio: "Spearheads technological integration and digital transformation, fostering creative solutions to scale climate action and youth engagement.",
     icon: Sparkles,
   },
-  {
-    name: "Mark Katana",
-    role: "Chief Strategy & Well-being Officer (CSWO)",
-    initials: "MK",
-    tag: "Executive",
-    bio: "Guides long-term strategic direction and promotes community well-being, mental resilience, and holistic youth empowerment across all programs.",
-    icon: ShieldCheck,
-  },
 ];
 
 const designTeam = [
@@ -48,14 +40,6 @@ const designTeam = [
     tag: "Design Lead",
     bio: "Directs brand identity, UI/UX design systems, and digital media architecture to amplify Greenwave Society's visual impact and mission awareness.",
     icon: Palette,
-  },
-  {
-    name: "Roy John",
-    role: "Design Assistant",
-    initials: "RJ",
-    tag: "Creative",
-    bio: "Supports media production, creative asset design, and brand collateral development for grassroots campaigns and executive communications.",
-    icon: PenTool,
   },
 ];
 
