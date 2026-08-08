@@ -9,8 +9,8 @@ export const APP_CONFIG = {
   // Application metadata
   name: "Greenwave Society",
   shortName: "Greenwave",
-  description: "Empowering youth holistically to be changemakers and conserve the environment",
-  tagline: "Empowering Youth to Be Changemakers",
+  description: "Greenwave Society equips young Kenyans aged 15-35 to lead, build, and connect, closing the gaps in skills, opportunity, and wellbeing through enterprise training, environmental action, and community-led programmes across Nairobi and Kenya.",
+  tagline: "Equipping Youth to Lead, Build, and Connect",
 
   // URLs and endpoints
   url: process.env.NEXT_PUBLIC_APP_URL || "https://greenwavesociety.org",
