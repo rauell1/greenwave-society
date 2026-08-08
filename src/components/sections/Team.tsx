@@ -136,7 +136,7 @@ export function Team() {
             </div>
           </FadeIn>
 
-          <div className="grid md:grid-cols-3 gap-6 sm:gap-8">
+          <div className="grid md:grid-cols-2 gap-6 sm:gap-8 max-w-3xl mx-auto">
             {executives.map((exec, i) => {
               const IconComp = exec.icon;
               return (
@@ -188,11 +188,11 @@ export function Team() {
             </div>
           </FadeIn>
 
-          <div className="grid md:grid-cols-2 gap-6 sm:gap-8 max-w-4xl mx-auto">
+          <div className="flex justify-center">
             {designTeam.map((member, i) => {
               const IconComp = member.icon;
               return (
-                <FadeIn key={member.name} delay={0.35 + i * 0.1}>
+                <FadeIn key={member.name} delay={0.35 + i * 0.1} className="w-full max-w-sm">
                   <div className="bg-background rounded-2xl border border-primary/20 p-6 flex flex-col justify-between hover:border-primary/40 hover:shadow-md transition-all duration-300 group h-full">
                     <div>
                       <div className="flex items-center justify-between mb-4">
