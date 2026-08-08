@@ -335,7 +335,7 @@ function Step3({ form, set }: { form: FormData; set: <K extends keyof FormData>(
             ))}
           </div>
         </Field>
-        <Field label="School / Organisation / Company" hint="Optional — leave blank if not applicable">
+        <Field label="School / Organisation / Company" hint="Optional. Leave blank if not applicable">
           <input value={form.organization} onChange={e => set("organization", e.target.value)}
             placeholder="e.g. University of Nairobi, Kenya Red Cross..." className={inp} />
         </Field>

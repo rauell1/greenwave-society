@@ -38,7 +38,7 @@ export function Hero() {
 
             <FadeIn delay={0.35}>
               <p className="mt-6 text-base sm:text-lg text-muted-foreground leading-relaxed max-w-xl">
-                Young Kenyans face real challenges — skills gaps, unemployment, and mental health pressures. Greenwave Society bridges those gaps through enterprise training, environmental action, and community-led programmes.
+                Young Kenyans face real challenges: skills gaps, unemployment, and mental health pressures. Greenwave Society bridges those gaps through enterprise training, environmental action, and community-led programmes.
               </p>
             </FadeIn>
 

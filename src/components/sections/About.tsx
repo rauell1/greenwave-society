@@ -10,17 +10,17 @@ export function About() {
     {
       icon: <Leaf className="w-5 h-5" />,
       title: "Environment as the Classroom",
-      desc: "Conservation, restoration, and sustainability work aren't just environmental goals — they're the real-world context where young people build skills, accountability, and belonging. Aligned with SDG 13, 14, and 15.",
+      desc: "Conservation, restoration, and sustainability work aren't just environmental goals. They're the real-world context where young people build skills, accountability, and belonging. Aligned with SDG 13, 14, and 15.",
     },
     {
       icon: <Users className="w-5 h-5" />,
       title: "Youth Leadership & Inclusion",
-      desc: "We equip youth aged 15–35 to tackle the intersecting crises of skills mismatch, mental health, and unemployment — through enterprise training, mentorship, and equitable opportunities aligned with SDG 4, 5, 8, and 10.",
+      desc: "We equip youth aged 15-35 to tackle the intersecting crises of skills mismatch, mental health, and unemployment, through enterprise training, mentorship, and equitable opportunities aligned with SDG 4, 5, 8, and 10.",
     },
     {
       icon: <Heart className="w-5 h-5" />,
       title: "Community-Led Wellbeing",
-      desc: "We invest in the mental resilience and holistic wellbeing of every young person we work with — because sustainable communities start with people who are supported, connected, and heard. Aligned with SDG 3, 6, and 11.",
+      desc: "We invest in the mental resilience and holistic wellbeing of every young person we work with, because sustainable communities start with people who are supported, connected, and heard. Aligned with SDG 3, 6, and 11.",
     },
     {
       icon: <Globe className="w-5 h-5" />,
@@ -74,14 +74,14 @@ export function About() {
             <FadeIn delay={0.2}>
               <div className="mt-6 border-l-4 border-primary pl-6 py-2">
                 <p className="font-serif italic text-lg sm:text-xl text-muted-foreground leading-relaxed">
-                  "We exist to close the gaps that hold young Kenyans back — in skills, in opportunity, and in wellbeing — by building leaders who serve their communities and drive lasting change."
+                  "We exist to close the gaps that hold young Kenyans back, in skills, in opportunity, and in wellbeing, by building leaders who serve their communities and drive lasting change."
                 </p>
               </div>
             </FadeIn>
 
             <FadeIn delay={0.3}>
               <p className="mt-6 text-muted-foreground text-sm sm:text-base leading-relaxed">
-                Our vision is a generation of equipped, confident young Kenyans — leading enterprises, restoring ecosystems, and strengthening communities from the ground up.
+                Our vision is a generation of equipped, confident young Kenyans: leading enterprises, restoring ecosystems, and strengthening communities from the ground up.
               </p>
             </FadeIn>
             

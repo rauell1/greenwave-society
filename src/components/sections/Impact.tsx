@@ -119,7 +119,7 @@ export function Impact() {
               Showcasing the Journey, <span className="italic font-normal text-gold">Not Just the Destination</span>
             </h3>
             <p className="mt-4 text-white/60 text-sm sm:text-base max-w-xl leading-relaxed">
-              Sustained impact requires visibility. We document and share our work — making the story of change accessible, relatable, and ongoing.
+              Sustained impact requires visibility. We document and share our work, making the story of change accessible, relatable, and ongoing.
             </p>
           </FadeIn>
 
@@ -128,17 +128,17 @@ export function Impact() {
               {
                 icon: <Radio className="w-5 h-5" />,
                 title: "Online Dialogues",
-                desc: "We host open conversations that showcase what we do — from community sessions to digital discussions — so our impact is visible and verifiable.",
+                desc: "We host open conversations that showcase what we do, from community sessions to digital discussions, so our impact is visible and verifiable.",
               },
               {
                 icon: <Route className="w-5 h-5" />,
                 title: "Activities Along the Journey",
-                desc: "We document every step: training sessions, planting days, summits, and volunteer drives — building a living record of continuous progress.",
+                desc: "We document every step: training sessions, planting days, summits, and volunteer drives, building a living record of continuous progress.",
               },
               {
                 icon: <Lightbulb className="w-5 h-5" />,
                 title: "Making It Relatable",
-                desc: "We translate complex challenges — skills gaps, mental health crises, unemployment — into stories that resonate with youth, partners, and communities.",
+                desc: "We translate complex challenges like skills gaps, mental health crises and unemployment into stories that resonate with youth, partners, and communities.",
               },
             ].map((item, i) => (
               <FadeIn key={item.title} delay={i * 0.1}>

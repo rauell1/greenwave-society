@@ -5,7 +5,7 @@ import { FadeIn } from "@/components/ui/fade-in";
 const activities = [
   {
     title: "Maangani Primary and Secondary Schools",
-    desc: "Greenwave's first project — a school-focused conservation and education programme delivering hands-on environmental learning and community support to students in Maangani.",
+    desc: "Greenwave's first project, a school-focused conservation and education programme delivering hands-on environmental learning and community support to students in Maangani.",
     date: "6 Jul 2024",
     type: "Education",
     mediaUrl: "https://photos.app.goo.gl/bwhvJHBHeFEgnAin9",
@@ -40,7 +40,7 @@ const activities = [
   },
   {
     title: "Kangemi Restoration Programme",
-    desc: "A hands-on ecosystem restoration initiative in Kangemi — bringing youth volunteers together to rehabilitate green spaces, plant trees, and connect environmental action with community pride.",
+    desc: "A hands-on ecosystem restoration initiative in Kangemi, bringing youth volunteers together to rehabilitate green spaces, plant trees, and connect environmental action with community pride.",
     date: "Jul 2025",
     type: "Conservation",
     mediaUrl: "https://photos.app.goo.gl/CxjV1qY33ZYosmyK7",
@@ -54,7 +54,7 @@ const activities = [
   },
   {
     title: "Featured Video Story",
-    desc: "A short documentary capturing Greenwave's community work in action — the faces, places, and moments behind the mission.",
+    desc: "A short documentary capturing Greenwave's community work in action: the faces, places, and moments behind the mission.",
     date: "2025",
     type: "Media",
     mediaUrl: "https://youtu.be/Bhy13UQbjQw?si=YsJ8C9V0cGA5Z4_X",
@@ -77,7 +77,7 @@ export function Activities() {
             What We Have Been <span className="italic font-normal text-primary">Up To</span>
           </h2>
           <p className="mt-4 text-muted-foreground text-sm sm:text-base max-w-xl mx-auto">
-            From school conservation programmes to vocational mentorship, wellness sessions, and ecosystem restoration — this is what closing the gap looks like in practice.
+            From school conservation programmes to vocational mentorship, wellness sessions, and ecosystem restoration. This is what closing the gap looks like in practice.
           </p>
         </FadeIn>
 

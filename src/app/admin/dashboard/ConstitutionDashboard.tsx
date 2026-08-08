@@ -676,7 +676,7 @@ export default function ConstitutionDashboard({
                     })}
                   </tbody>
                 </table>
-                {/* Note field for pending — shown below table when one is being reviewed */}
+                {/* Note field for pending, shown below table when one is being reviewed */}
                 {regs.some(r => r.status === "pending") && (
                   <div className="px-5 py-3 bg-gray-50 border-t border-gray-100">
                     <input
