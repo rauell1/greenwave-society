@@ -1,6 +1,7 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
 import { isAllowedEmail, generateResetToken } from "@/lib/admin-auth";
 import { sendPasswordResetEmail } from "@/lib/email";
+import { SITE_URL } from "@/lib/email-template";
 import { getDb } from "@/lib/db";
 import { logger } from "@/lib/logger";
 
@@ -27,8 +28,7 @@ export async function POST(request: NextRequest) {
       data:  { resetToken: token, resetTokenExpiry: expiry },
     });
 
-    const appUrl   = process.env.NEXT_PUBLIC_APP_URL ?? "https://greenwavesociety.org";
-    const resetUrl = `${appUrl}/admin/reset-password/${token}`;
+    const resetUrl = `${SITE_URL}/admin/reset-password/${token}`;
 
     const emailSent = await sendPasswordResetEmail(email, resetUrl);
 

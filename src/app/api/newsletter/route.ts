@@ -8,9 +8,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { Resend } from "resend";
+import { brandedEmail, emailButton, escapeHtml, FROM_EMAIL, SITE_URL } from "@/lib/email-template";
 
-const APP_URL     = process.env.NEXT_PUBLIC_APP_URL ?? "https://greenwavesociety.org";
-const FROM        = "Greenwave Society <info@rauell.systems>";
 const SUPER_ADMIN = "royokola3@gmail.com";
 
 function getResend(): Resend | null {
@@ -43,23 +42,16 @@ export async function POST(request: NextRequest) {
     const resend = getResend();
     if (resend) {
       resend.emails.send({
-        from:    FROM,
+        from:    FROM_EMAIL,
         to:      SUPER_ADMIN,
         subject: "New Newsletter Subscriber — Greenwave Society",
-        html: `<div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto">
-          <div style="background:#1A5C38;padding:20px;text-align:center">
-            <p style="color:#fff;font-weight:bold;margin:0;font-size:16px">GREENWAVE SOCIETY</p>
-            <p style="color:#a8d5b5;font-size:12px;margin:4px 0 0">Newsletter Notification</p>
-          </div>
-          <div style="padding:28px">
-            <p style="margin:0 0 12px;font-size:15px;color:#111">A new subscriber has joined the newsletter:</p>
-            <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:16px;margin:0 0 20px">
-              <p style="margin:0;font-size:16px;font-weight:bold;color:#1A5C38">${email}</p>
+        html: brandedEmail({ eyebrow: "Newsletter", title: "New newsletter subscriber", body: `
+            <p style="margin:0 0 12px">A new subscriber has joined the newsletter:</p>
+            <div style="background:#EFF9E9;border:1px solid #CFE6C2;border-radius:10px;padding:16px;margin:0 0 20px">
+              <p style="margin:0;font-size:16px;font-weight:bold;color:#1A5C38">${escapeHtml(email)}</p>
               <p style="margin:4px 0 0;font-size:12px;color:#555">Subscribed at ${new Date().toLocaleString("en-KE", { timeZone: "Africa/Nairobi" })} EAT</p>
             </div>
-            <a href="${APP_URL}/admin/dashboard" style="background:#1A5C38;color:#fff;padding:10px 20px;border-radius:6px;text-decoration:none;font-size:14px;display:inline-block">View Dashboard</a>
-          </div>
-        </div>`,
+            ${emailButton("View Dashboard", `${SITE_URL}/admin/dashboard`)}` }),
       }).catch(() => {});
     }
 

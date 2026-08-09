@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 import { randomBytes } from "crypto";
 import { Resend } from "resend";
+import { brandedEmail, escapeHtml, FROM_EMAIL } from "@/lib/email-template";
 
-const FROM = "Greenwave Society <info@rauell.systems>";
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}));
@@ -60,21 +60,10 @@ export async function POST(req: NextRequest) {
   if (process.env.RESEND_API_KEY) {
     const resend = new Resend(process.env.RESEND_API_KEY);
     await resend.emails.send({
-      from: FROM,
+      from: FROM_EMAIL,
       to: cleanEmail,
       subject: "Data Erasure Request Fulfilled - Greenwave Society",
-      html: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#f5f5f0;padding:24px">
-  <div style="background:#1A5C38;padding:24px;border-radius:12px 12px 0 0;text-align:center">
-    <p style="color:#fff;font-weight:bold;font-size:18px;margin:0">GREENWAVE SOCIETY</p>
-    <p style="color:#a8d5b5;font-size:13px;margin:6px 0 0">Privacy & Compliance Notification</p>
-  </div>
-  <div style="background:#fff;padding:28px;border-radius:0 0 12px 12px">
-    <p style="font-size:16px;color:#111">Hello,</p>
-    <p style="font-size:15px;color:#111;line-height:1.8">In response to your data erasure request, all personal data associated with your email address (<strong>${cleanEmail}</strong>) has been permanently deleted from Greenwave Society's systems.</p>
-    <p style="font-size:14px;color:#555;line-height:1.8">This includes newsletter subscriptions, contact form submissions, and member profile records if applicable.</p>
-    <p style="font-size:14px;color:#111;margin-top:24px">Regards,<br/><strong>Greenwave Society Data Protection Team</strong></p>
-  </div>
-</div>`,
+      html: brandedEmail({ eyebrow: "Privacy & Compliance", title: "Your data erasure request is complete", body: `<p style="margin:0 0 16px">Hello,</p><p style="margin:0 0 16px">All personal data associated with <strong>${escapeHtml(cleanEmail)}</strong> has been permanently deleted from Greenwave Society's active systems.</p><p style="margin:0 0 22px;color:#607068">This includes newsletter subscriptions, contact submissions, and member profile records where applicable.</p><p style="margin:0">Regards,<br><strong>Greenwave Society Data Protection Team</strong></p>` }),
     }).catch(() => null);
   }
 

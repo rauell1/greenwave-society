@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 import { getAdminSession } from "@/lib/admin-auth";
 import { Resend } from "resend";
 import { logger } from "@/lib/logger";
+import { FROM_EMAIL, SITE_URL } from "@/lib/email-template";
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://greenwavesociety.org";
-const FROM    = "Greenwave Society <info@rauell.systems>";
+const APP_URL = SITE_URL;
 
 const LEADERS = [
   { name: "Martin Kyalo",     role: "Chief Executive Officer (CEO)",                email: "martinkyalo777@gmail.com" },
@@ -109,7 +109,7 @@ export async function POST() {
   for (const leader of LEADERS) {
     try {
       const { error } = await resend.emails.send({
-        from:    FROM,
+        from:    FROM_EMAIL,
         to:      leader.email,
         subject: "OFFICIAL NOTICE: Activate Your Executive Dashboard Account — Greenwave Society",
         html:    buildHtml(leader, today),

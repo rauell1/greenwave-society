@@ -13,7 +13,7 @@ export const APP_CONFIG = {
   tagline: "Equipping Youth to Lead, Build, and Connect",
 
   // URLs and endpoints
-  url: process.env.NEXT_PUBLIC_APP_URL || "https://greenwavesociety.org",
+  url: "https://greenwavesociety.org",
   apiUrl: process.env.NEXT_PUBLIC_API_URL || "/api",
 
   // Contact information

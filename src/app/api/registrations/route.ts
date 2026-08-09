@@ -2,9 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 import { Resend } from "resend";
 import { randomBytes } from "crypto";
+import { brandedEmail, emailButton, escapeHtml, FROM_EMAIL, SITE_URL } from "@/lib/email-template";
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://greenwavesociety.org";
-const FROM    = "Greenwave Society <info@rauell.systems>";
 
 const VALID_OCCUPATIONS = ["student", "employed_private", "employed_public", "self_employed", "unemployed", "other"];
 
@@ -73,35 +72,25 @@ export async function POST(req: NextRequest) {
     if (adminEmails.length && process.env.RESEND_API_KEY) {
       const resend = new Resend(process.env.RESEND_API_KEY);
       await resend.emails.send({
-        from: FROM,
+        from: FROM_EMAIL,
         to:      adminEmails,
         subject: `New Membership Application: ${fullName.trim()} (${county})`,
-        html: `
-<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#f5f5f0;padding:24px">
-  <div style="background:#1A5C38;padding:24px;border-radius:12px 12px 0 0;text-align:center">
-    <p style="color:#fff;font-weight:bold;font-size:18px;margin:0">New Membership Application</p>
-    <p style="color:#a8d5b5;font-size:13px;margin:6px 0 0">Greenwave Society</p>
-  </div>
-  <div style="background:#fff;padding:28px;border-radius:0 0 12px 12px">
+        html: brandedEmail({ eyebrow: "Membership", title: "New membership application", body: `
     <table style="width:100%;border-collapse:collapse;font-size:14px">
-      <tr><td style="padding:8px 0;color:#666;width:140px">Name</td><td style="padding:8px 0;font-weight:bold">${fullName.trim()}</td></tr>
-      <tr><td style="padding:8px 0;color:#666">Email</td><td style="padding:8px 0">${email.toLowerCase().trim()}</td></tr>
-      <tr><td style="padding:8px 0;color:#666">Phone</td><td style="padding:8px 0">${phone.trim()}</td></tr>
-      <tr><td style="padding:8px 0;color:#666">County</td><td style="padding:8px 0">${county.trim()}</td></tr>
-      <tr><td style="padding:8px 0;color:#666">Occupation</td><td style="padding:8px 0">${occupation}</td></tr>
-      ${organization ? `<tr><td style="padding:8px 0;color:#666">Organisation</td><td style="padding:8px 0">${organization.trim()}</td></tr>` : ""}
-      <tr><td style="padding:8px 0;color:#666">Interests</td><td style="padding:8px 0">${Array.isArray(interests) ? interests.join(", ") : "None"}</td></tr>
-      ${source ? `<tr><td style="padding:8px 0;color:#666">Source</td><td style="padding:8px 0">${source}</td></tr>` : ""}
+      <tr><td style="padding:8px 0;color:#607068;width:140px">Name</td><td style="padding:8px 0;font-weight:bold">${escapeHtml(fullName.trim())}</td></tr>
+      <tr><td style="padding:8px 0;color:#607068">Email</td><td style="padding:8px 0">${escapeHtml(email.toLowerCase().trim())}</td></tr>
+      <tr><td style="padding:8px 0;color:#607068">Phone</td><td style="padding:8px 0">${escapeHtml(phone.trim())}</td></tr>
+      <tr><td style="padding:8px 0;color:#607068">County</td><td style="padding:8px 0">${escapeHtml(county.trim())}</td></tr>
+      <tr><td style="padding:8px 0;color:#607068">Occupation</td><td style="padding:8px 0">${escapeHtml(occupation)}</td></tr>
+      ${organization ? `<tr><td style="padding:8px 0;color:#607068">Organisation</td><td style="padding:8px 0">${escapeHtml(organization.trim())}</td></tr>` : ""}
+      <tr><td style="padding:8px 0;color:#607068">Interests</td><td style="padding:8px 0">${escapeHtml(Array.isArray(interests) ? interests.join(", ") : "None")}</td></tr>
+      ${source ? `<tr><td style="padding:8px 0;color:#607068">Source</td><td style="padding:8px 0">${escapeHtml(source)}</td></tr>` : ""}
     </table>
-    <div style="margin:20px 0;padding:16px;background:#f9f9f7;border-radius:8px;border-left:4px solid #1A5C38">
+    <div style="margin:20px 0;padding:16px;background:#EFF9E9;border-radius:8px;border-left:4px solid #5FAF2D">
       <p style="margin:0 0 6px;font-size:12px;color:#888;font-weight:bold;text-transform:uppercase">Motivation</p>
-      <p style="margin:0;font-size:14px;color:#333;line-height:1.7">${motivation.trim()}</p>
+      <p style="margin:0;font-size:14px;color:#173126;line-height:1.7">${escapeHtml(motivation.trim())}</p>
     </div>
-    <div style="text-align:center;margin-top:24px">
-      <a href="${APP_URL}/admin/dashboard" style="background:#1A5C38;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:bold">Review in Dashboard</a>
-    </div>
-  </div>
-</div>`,
+    ${emailButton("Review in Dashboard", `${SITE_URL}/admin/dashboard`)}` }),
       }).catch(() => null); // non-fatal
     }
 
@@ -111,4 +100,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   }
 }
-
