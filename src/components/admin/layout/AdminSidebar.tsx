@@ -70,6 +70,12 @@ export default function AdminSidebar({ admin, enabledFeatures }: AdminSidebarPro
       show: isEnabled("communications") && hasPermission(admin, PERMISSIONS.COMMUNICATIONS_READ),
     },
     {
+      title: "Administrators",
+      href: "/admin/users",
+      icon: Users,
+      show: isEnabled("users") && hasPermission(admin, PERMISSIONS.ROLES_MANAGE),
+    },
+    {
       title: "Audit Logs",
       href: "/admin/audit",
       icon: ShieldAlert,
