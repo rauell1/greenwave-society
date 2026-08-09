@@ -2,9 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { Resend } from "resend";
+import { brandedEmail, emailButton, emailNotice, escapeHtml, FROM_EMAIL, SITE_URL } from "@/lib/email-template";
 
-const APP_URL     = process.env.NEXT_PUBLIC_APP_URL ?? "https://greenwavesociety.org";
-const FROM        = "Greenwave Society <info@rauell.systems>";
 const SUPER_ADMIN = "royokola3@gmail.com";
 
 function notifySuperAdmin(opts: {
@@ -16,33 +15,21 @@ function notifySuperAdmin(opts: {
   const isSigned = opts.action === "sign";
   const time     = opts.signedAt.toLocaleString("en-KE", { timeZone: "Africa/Nairobi", dateStyle: "full", timeStyle: "short" });
   resend.emails.send({
-    from: FROM, to: SUPER_ADMIN,
+    from: FROM_EMAIL, to: SUPER_ADMIN,
     subject: isSigned
       ? `Constitution Signed: ${opts.leaderName} — Greenwave Society`
       : `Constitution Declined: ${opts.leaderName} — Greenwave Society`,
-    html: `<div style="font-family:Arial,sans-serif;max-width:540px;margin:0 auto">
-      <div style="background:#1A5C38;padding:20px;text-align:center">
-        <p style="color:#fff;font-weight:bold;margin:0;font-size:16px">GREENWAVE SOCIETY</p>
-        <p style="color:#a8d5b5;font-size:12px;margin:4px 0 0">Constitution Signature Notification</p>
-      </div>
-      <div style="padding:28px">
-        <div style="background:${isSigned ? "#f0fdf4" : "#fef2f2"};border:1px solid ${isSigned ? "#bbf7d0" : "#fecaca"};border-radius:8px;padding:16px;margin:0 0 20px">
-          <p style="margin:0 0 4px;font-size:16px;font-weight:bold;color:${isSigned ? "#166534" : "#991b1b"}">${isSigned ? "&#10003; Constitution Signed" : "&#10007; Constitution Declined"}</p>
-          <p style="margin:0;font-size:12px;color:#555">${time} EAT</p>
-        </div>
+    html: brandedEmail({ eyebrow: "Constitution", title: isSigned ? "Constitution signed" : "Constitution declined", body: `
+        ${emailNotice(`<strong>${isSigned ? "Constitution signed" : "Constitution declined"}</strong><br><span style="font-size:12px">${escapeHtml(time)} EAT</span>`, isSigned ? "green" : "red")}
         <table style="width:100%;border-collapse:collapse;font-size:14px;line-height:2.2">
-          <tr><td style="color:#555;width:130px"><strong>Leader</strong></td><td>${opts.leaderName}</td></tr>
-          <tr><td style="color:#555"><strong>Role</strong></td><td>${opts.leaderRole}</td></tr>
-          <tr><td style="color:#555"><strong>Email</strong></td><td>${opts.leaderEmail}</td></tr>
+          <tr><td style="color:#607068;width:130px"><strong>Leader</strong></td><td>${escapeHtml(opts.leaderName)}</td></tr>
+          <tr><td style="color:#607068"><strong>Role</strong></td><td>${escapeHtml(opts.leaderRole)}</td></tr>
+          <tr><td style="color:#607068"><strong>Email</strong></td><td>${escapeHtml(opts.leaderEmail)}</td></tr>
           <tr><td style="color:#555"><strong>Action</strong></td><td style="font-weight:bold;color:${isSigned ? "#166534" : "#991b1b"}">${isSigned ? "Signed" : "Declined"}</td></tr>
-          <tr><td style="color:#555"><strong>IP</strong></td><td style="font-family:monospace">${opts.ip}</td></tr>
-          ${opts.rejectionReason ? `<tr><td style="color:#555;vertical-align:top"><strong>Reason</strong></td><td style="color:#991b1b">${opts.rejectionReason}</td></tr>` : ""}
+          <tr><td style="color:#555"><strong>IP</strong></td><td style="font-family:monospace">${escapeHtml(opts.ip)}</td></tr>
+          ${opts.rejectionReason ? `<tr><td style="color:#555;vertical-align:top"><strong>Reason</strong></td><td style="color:#991b1b">${escapeHtml(opts.rejectionReason)}</td></tr>` : ""}
         </table>
-        <div style="margin:20px 0 0">
-          <a href="${APP_URL}/admin/dashboard" style="background:#1A5C38;color:#fff;padding:10px 20px;border-radius:6px;text-decoration:none;font-size:14px;display:inline-block">View Dashboard</a>
-        </div>
-      </div>
-    </div>`,
+        ${emailButton("View Dashboard", `${SITE_URL}/admin/dashboard`)}` }),
   }).catch(() => {});
 }
 

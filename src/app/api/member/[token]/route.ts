@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 import { randomBytes } from "crypto";
 import { Resend } from "resend";
+import { brandedEmail, escapeHtml, FROM_EMAIL } from "@/lib/email-template";
 
-const FROM = "Greenwave Society <info@rauell.systems>";
 
 // GET  — called on page load (login ping)
 // POST — called every 30s as heartbeat; body { leaving: true } on beforeunload
@@ -104,28 +104,17 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ t
     const resend = new Resend(process.env.RESEND_API_KEY);
     const firstName = userName.split(" ")[0];
     await resend.emails.send({
-      from: FROM,
+      from: FROM_EMAIL,
       to: userEmail,
       subject: "Confirmation of Data Erasure - Greenwave Society",
-      html: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#f5f5f0;padding:24px">
-  <div style="background:#1A5C38;padding:24px;border-radius:12px 12px 0 0;text-align:center">
-    <p style="color:#fff;font-weight:bold;font-size:18px;margin:0">GREENWAVE SOCIETY</p>
-    <p style="color:#a8d5b5;font-size:13px;margin:6px 0 0">Data Privacy & Compliance</p>
-  </div>
-  <div style="background:#fff;padding:28px;border-radius:0 0 12px 12px">
-    <p style="font-size:16px;color:#111">Dear ${firstName},</p>
-    <p style="font-size:15px;color:#111;line-height:1.8">This email confirms that your Greenwave Society member account and all associated personal data have been permanently erased from our active databases per your request.</p>
-    <p style="font-size:15px;color:#111;line-height:1.8">The following records were purged:</p>
+      html: brandedEmail({ eyebrow: "Data Privacy & Compliance", title: "Your account data has been erased", body: `<p style="margin:0 0 16px">Dear ${escapeHtml(firstName)},</p><p style="margin:0 0 16px">This confirms that your Greenwave Society account and associated personal data have been permanently erased from our active systems.</p><p style="margin:0 0 10px"><strong>Records removed:</strong></p>
     <ul style="font-size:14px;color:#444;line-height:1.8">
       <li>Member profile and registration records</li>
       <li>Portal activity and visit logs</li>
       <li>Newsletter subscription records</li>
       <li>Contact form submissions</li>
     </ul>
-    <p style="font-size:14px;color:#555;line-height:1.8">If you decide to re-join Greenwave Society in the future, you are welcome to submit a new membership application at any time.</p>
-    <p style="font-size:14px;color:#111;margin-top:24px">Kind regards,<br/><strong>Greenwave Society Data Privacy Team</strong></p>
-  </div>
-</div>`,
+    <p style="margin:16px 0 22px;color:#607068">You are welcome to submit a new application if you decide to rejoin in the future.</p><p style="margin:0">Kind regards,<br><strong>Greenwave Society Data Privacy Team</strong></p>` }),
     }).catch(() => null);
   }
 

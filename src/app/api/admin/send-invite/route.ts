@@ -3,6 +3,7 @@ import { getAdminSession } from "@/lib/admin-auth";
 import { getDb } from "@/lib/db";
 import { sendSigningEmail } from "@/lib/email";
 import { logger } from "@/lib/logger";
+import { SITE_URL } from "@/lib/email-template";
 
 export async function POST(request: NextRequest) {
   const { valid } = await getAdminSession();
@@ -38,8 +39,7 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://greenwavesociety.org";
-    const signingUrl = `${appUrl}/sign/${sig.token}`;
+    const signingUrl = `${SITE_URL}/sign/${sig.token}`;
 
     return NextResponse.json({ success: true, name: leader.name, emailSent: sent, signingUrl });
   } catch (error) {

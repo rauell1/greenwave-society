@@ -3,9 +3,8 @@ import { getAdminSession } from "@/lib/admin-auth";
 import { getDb } from "@/lib/db";
 import { Resend } from "resend";
 import { randomBytes } from "crypto";
+import { brandedEmail, CONTACT_EMAIL, emailButton, emailNotice, escapeHtml, FROM_EMAIL, SITE_URL } from "@/lib/email-template";
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://greenwavesociety.org";
-const FROM    = "Greenwave Society <info@rauell.systems>";
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { valid, email } = await getAdminSession();
@@ -50,44 +49,16 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   // Send outcome email
   if (process.env.RESEND_API_KEY) {
     const resend     = new Resend(process.env.RESEND_API_KEY);
-    const firstName  = reg.fullName.split(" ")[0];
+    const firstName  = escapeHtml(reg.fullName.split(" ")[0]);
     const subject    = action === "approve"
       ? "Your Greenwave Society Membership Application has been Approved"
       : "Update on Your Greenwave Society Membership Application";
 
     const html = action === "approve"
-      ? `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#f5f5f0;padding:24px">
-  <div style="background:#1A5C38;padding:24px;border-radius:12px 12px 0 0;text-align:center">
-    <p style="color:#fff;font-weight:bold;font-size:18px;margin:0">GREENWAVE SOCIETY</p>
-    <p style="color:#a8d5b5;font-size:13px;margin:6px 0 0">Membership Application</p>
-  </div>
-  <div style="background:#fff;padding:28px;border-radius:0 0 12px 12px">
-    <p style="font-size:16px;color:#111">Dear ${firstName},</p>
-    <p style="font-size:15px;color:#111;line-height:1.8">We are pleased to inform you that your application to join Greenwave Society has been reviewed and <strong style="color:#1A5C38">approved</strong>.</p>
-    <p style="font-size:15px;color:#111;line-height:1.8">Welcome to the Greenwave Society family. Use the button below to access your member profile.</p>
-    ${reviewNote ? `<div style="margin:20px 0;padding:16px;background:#f0faf4;border-radius:8px;border-left:4px solid #1A5C38"><p style="margin:0;font-size:14px;color:#1A5C38;line-height:1.7">${reviewNote}</p></div>` : ""}
-    <div style="text-align:center;margin:28px 0">
-      <a href="${APP_URL}/member/${memberToken}" style="background:#1A5C38;color:#fff;padding:14px 32px;border-radius:8px;text-decoration:none;font-size:15px;font-weight:bold;display:inline-block">Access My Member Profile</a>
-    </div>
-    <p style="font-size:14px;color:#555;line-height:1.8">If you have any questions, please contact us at <a href="mailto:info@rauell.systems" style="color:#1A5C38">info@rauell.systems</a>.</p>
-    <p style="font-size:14px;color:#111;margin-top:24px">Yours sincerely,<br/><strong>Greenwave Society Team</strong></p>
-  </div>
-</div>`
-      : `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#f5f5f0;padding:24px">
-  <div style="background:#1A5C38;padding:24px;border-radius:12px 12px 0 0;text-align:center">
-    <p style="color:#fff;font-weight:bold;font-size:18px;margin:0">GREENWAVE SOCIETY</p>
-    <p style="color:#a8d5b5;font-size:13px;margin:6px 0 0">Membership Application</p>
-  </div>
-  <div style="background:#fff;padding:28px;border-radius:0 0 12px 12px">
-    <p style="font-size:16px;color:#111">Dear ${firstName},</p>
-    <p style="font-size:15px;color:#111;line-height:1.8">Thank you for your interest in joining Greenwave Society. After careful review, we are unable to approve your application at this time.</p>
-    ${reviewNote ? `<div style="margin:20px 0;padding:16px;background:#fef9f0;border-radius:8px;border-left:4px solid #d97706"><p style="margin:0;font-size:14px;color:#555;line-height:1.7">${reviewNote}</p></div>` : ""}
-    <p style="font-size:15px;color:#111;line-height:1.8">We encourage you to stay connected with our work at <a href="${APP_URL}" style="color:#1A5C38">greenwavesociety.org</a> and to consider reapplying in future intake cycles.</p>
-    <p style="font-size:14px;color:#111;margin-top:24px">Kind regards,<br/><strong>Greenwave Society Team</strong></p>
-  </div>
-</div>`;
+      ? brandedEmail({ eyebrow: "Membership Application", title: "Welcome to Greenwave Society", body: `<p style="margin:0 0 16px">Dear ${firstName},</p><p style="margin:0 0 16px">We are pleased to confirm that your membership application has been <strong style="color:#1A5C38">approved</strong>.</p><p style="margin:0 0 16px">Welcome to the Greenwave Society community. Your member profile is ready below.</p>${reviewNote ? emailNotice(escapeHtml(reviewNote)) : ""}${emailButton("Access My Member Profile", `${SITE_URL}/member/${memberToken}`)}<p style="margin:0 0 22px;color:#607068">Questions? Email <a href="mailto:${CONTACT_EMAIL}" style="color:#1A5C38">${CONTACT_EMAIL}</a>.</p><p style="margin:0">Yours sincerely,<br><strong>Greenwave Society Team</strong></p>` })
+      : brandedEmail({ eyebrow: "Membership Application", title: "An update on your application", body: `<p style="margin:0 0 16px">Dear ${firstName},</p><p style="margin:0 0 16px">Thank you for your interest in Greenwave Society. After careful review, we are unable to approve your application at this time.</p>${reviewNote ? emailNotice(escapeHtml(reviewNote), "amber") : ""}<p style="margin:0 0 22px">Stay connected with our work at <a href="${SITE_URL}" style="color:#1A5C38">greenwavesociety.org</a>, and please consider applying during a future intake.</p><p style="margin:0">Kind regards,<br><strong>Greenwave Society Team</strong></p>` });
 
-    await resend.emails.send({ from: FROM, to: reg.email, subject, html }).catch(() => null);
+    await resend.emails.send({ from: FROM_EMAIL, to: reg.email, subject, html }).catch(() => null);
   }
 
   return NextResponse.json({ success: true, registration: updated });
