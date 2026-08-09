@@ -27,24 +27,16 @@ const rolePermissions = {
 };
 
 async function main() {
-  const permissionRows = new Map();
-  for (const key of permissions) {
-    const row = await db.adminPermission.upsert({ where: { key }, update: {}, create: { key } });
-    permissionRows.set(key, row.id);
-  }
+  await db.adminPermission.createMany({ data: permissions.map((key) => ({ key })), skipDuplicates: true });
+  await db.adminRole.createMany({ data: Object.keys(rolePermissions).map((name) => ({ name, isSystem: true })), skipDuplicates: true });
 
-  const roleRows = new Map();
-  for (const [name, keys] of Object.entries(rolePermissions)) {
-    const role = await db.adminRole.upsert({ where: { name }, update: { isSystem: true }, create: { name, isSystem: true } });
-    roleRows.set(name, role.id);
-    for (const key of keys) {
-      await db.adminRolePermission.upsert({
-        where: { roleId_permissionId: { roleId: role.id, permissionId: permissionRows.get(key) } },
-        update: {},
-        create: { roleId: role.id, permissionId: permissionRows.get(key) },
-      });
-    }
-  }
+  const [permissionList, roleList] = await Promise.all([db.adminPermission.findMany(), db.adminRole.findMany()]);
+  const permissionRows = new Map(permissionList.map((row) => [row.key, row.id]));
+  const roleRows = new Map(roleList.map((row) => [row.name, row.id]));
+  const grants = Object.entries(rolePermissions).flatMap(([name, keys]) => keys.map((key) => ({
+    roleId: roleRows.get(name), permissionId: permissionRows.get(key),
+  })));
+  await db.adminRolePermission.createMany({ data: grants, skipDuplicates: true });
 
   const ownerEmail = (process.env.CMS_OWNER_EMAIL ?? "royokola3@gmail.com").toLowerCase();
   const owner = await db.adminUser.upsert({ where: { email: ownerEmail }, update: { isActive: true }, create: { email: ownerEmail } });
@@ -54,19 +46,16 @@ async function main() {
   });
 
   const admins = await db.adminUser.findMany({ include: { roles: true } });
-  for (const admin of admins) {
-    if (admin.id !== owner.id && admin.roles.length === 0) {
-      await db.adminUserRole.create({ data: { userId: admin.id, roleId: roleRows.get("Administrator") } });
-    }
-  }
+  await db.adminUserRole.createMany({
+    data: admins.filter((admin) => admin.id !== owner.id && admin.roles.length === 0).map((admin) => ({ userId: admin.id, roleId: roleRows.get("Administrator") })),
+    skipDuplicates: true,
+  });
 
-  for (const key of ["content", "pages", "programs", "events", "members", "media", "communications", "users", "audit"]) {
-    await db.cmsFeatureFlag.upsert({
-      where: { key: `cms.${key}` },
-      update: {},
-      create: { key: `cms.${key}`, enabled: key === "audit", description: `CMS ${key} module` },
-    });
-  }
+  const features = ["content", "pages", "programs", "events", "members", "media", "communications", "users", "audit"];
+  await db.cmsFeatureFlag.createMany({
+    data: features.map((key) => ({ key: `cms.${key}`, enabled: key === "audit", description: `CMS ${key} module` })),
+    skipDuplicates: true,
+  });
 }
 
 main().finally(() => db.$disconnect());
