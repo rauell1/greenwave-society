@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { isAllowedEmail, verifyPassword, createAdminSession, setAdminSessionCookie } from "@/lib/admin-auth";
 import { getDb } from "@/lib/db";
 import { logger } from "@/lib/logger";
+import { createHash } from "crypto";
+import { AUDIT_ACTIONS, logAuditEvent } from "@/lib/audit/audit-service";
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,6 +15,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Email and password are required." }, { status: 400 });
     }
     if (!isAllowedEmail(email)) {
+      await logAuditEvent({ action: AUDIT_ACTIONS.AUTH_LOGIN_FAILED, actor: email, outcome: "FAILURE", detail: "Email not authorized" });
       return NextResponse.json({ error: "This email is not authorised to access the admin dashboard." }, { status: 403 });
     }
 
@@ -28,9 +31,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Incorrect password." }, { status: 401 });
     }
 
-    const token = await createAdminSession(email);
+    if (!user.isActive) return NextResponse.json({ error: "This administrator account is disabled." }, { status: 403 });
+
+    const forwardedIp = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+    const ipHash = forwardedIp ? createHash("sha256").update(forwardedIp).digest("hex") : undefined;
+    const token = await createAdminSession(user.id, { userAgent: request.headers.get("user-agent") ?? undefined, ipHash });
     await setAdminSessionCookie(token);
 
+    await logAuditEvent({ action: AUDIT_ACTIONS.AUTH_LOGIN_SUCCEEDED, actor: email, actorUserId: user.id, outcome: "SUCCESS", ip: ipHash });
     logger.info("Admin login successful", { email });
     return NextResponse.json({ success: true });
   } catch (error) {

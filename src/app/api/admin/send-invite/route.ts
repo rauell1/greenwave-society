@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAdminSession } from "@/lib/admin-auth";
+import { authorizeRoute } from "@/lib/auth/route-authorization";
+import { PERMISSIONS } from "@/lib/auth/permissions";
 import { getDb } from "@/lib/db";
 import { sendSigningEmail } from "@/lib/email";
 import { logger } from "@/lib/logger";
 import { SITE_URL } from "@/lib/email-template";
 
 export async function POST(request: NextRequest) {
-  const { valid } = await getAdminSession();
-  if (!valid) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await authorizeRoute(PERMISSIONS.COMMUNICATIONS_SEND);
+  if (!auth.ok) return auth.response;
 
   try {
     const body = await request.json().catch(() => null);

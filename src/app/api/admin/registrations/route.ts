@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
-import { getAdminSession } from "@/lib/admin-auth";
+import { authorizeRoute } from "@/lib/auth/route-authorization";
+import { PERMISSIONS } from "@/lib/auth/permissions";
 import { getDb } from "@/lib/db";
 
 export async function GET() {
-  const { valid } = await getAdminSession();
-  if (!valid) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await authorizeRoute(PERMISSIONS.MEMBERS_READ);
+  if (!auth.ok) return auth.response;
 
   const db = getDb();
   const registrations = await db.memberRegistration.findMany({

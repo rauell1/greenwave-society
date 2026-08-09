@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { getAdminSession } from "@/lib/admin-auth";
+import { authorizeRoute } from "@/lib/auth/route-authorization";
+import { PERMISSIONS } from "@/lib/auth/permissions";
 import { Resend } from "resend";
 import { logger } from "@/lib/logger";
 import { FROM_EMAIL, SITE_URL } from "@/lib/email-template";
@@ -94,8 +95,8 @@ function buildHtml(leader: { name: string; role: string; email: string }, today:
 }
 
 export async function POST() {
-  const { valid } = await getAdminSession();
-  if (!valid) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await authorizeRoute(PERMISSIONS.COMMUNICATIONS_SEND);
+  if (!auth.ok) return auth.response;
 
   if (!process.env.RESEND_API_KEY) {
     return NextResponse.json({ error: "RESEND_API_KEY not configured" }, { status: 500 });

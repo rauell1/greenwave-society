@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAdminSession } from "@/lib/admin-auth";
+import { authorizeRoute } from "@/lib/auth/route-authorization";
+import { PERMISSIONS } from "@/lib/auth/permissions";
 import { getDb } from "@/lib/db";
 import { Resend } from "resend";
 import { randomBytes } from "crypto";
@@ -7,8 +8,9 @@ import { brandedEmail, CONTACT_EMAIL, emailButton, emailNotice, escapeHtml, FROM
 
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { valid, email } = await getAdminSession();
-  if (!valid) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await authorizeRoute(PERMISSIONS.MEMBERS_REVIEW);
+  if (!auth.ok) return auth.response;
+  const email = auth.admin.email;
 
   const { id }                     = await params;
   const { action, reviewNote }     = await req.json();
@@ -65,8 +67,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 }
 
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { valid, email } = await getAdminSession();
-  if (!valid) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await authorizeRoute(PERMISSIONS.MEMBERS_DELETE);
+  if (!auth.ok) return auth.response;
+  const email = auth.admin.email;
 
   const { id } = await params;
   const db = getDb();

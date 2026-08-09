@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAllowedEmail, hashPassword } from "@/lib/admin-auth";
+import { isAllowedEmail, hashPassword, isSuperAdmin } from "@/lib/admin-auth";
 import { getDb } from "@/lib/db";
 import { logger } from "@/lib/logger";
 
@@ -30,11 +30,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Password already set. Use Forgot Password to reset it." }, { status: 409 });
     }
 
-    await db.adminUser.upsert({
+    const admin = await db.adminUser.upsert({
       where:  { email },
       update: { passwordHash: hashPassword(password), updatedAt: new Date() },
       create: { email, passwordHash: hashPassword(password) },
     });
+    const role = await db.adminRole.findUnique({ where: { name: isSuperAdmin(email) ? "Owner" : "Administrator" } });
+    if (role) {
+      await db.adminUserRole.upsert({
+        where: { userId_roleId: { userId: admin.id, roleId: role.id } },
+        update: {}, create: { userId: admin.id, roleId: role.id },
+      });
+    }
 
     logger.info("Admin password set", { email });
     return NextResponse.json({ success: true });

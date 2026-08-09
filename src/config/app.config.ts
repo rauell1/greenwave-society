@@ -40,6 +40,7 @@ export const APP_CONFIG = {
     enableNewsletter: true,
     enableContactForm: true,
     enableDonations: false, // Not yet implemented
+
   },
 
   // Rate limiting
@@ -59,7 +60,7 @@ export const APP_CONFIG = {
   // Security
   security: {
     corsOrigin: process.env.CORS_ORIGIN?.split(",") || ["https://greenwavesociety.org"],
-    sessionSecret: process.env.SESSION_SECRET || "change-this-in-production",
+    sessionSecretConfigured: Boolean(process.env.SESSION_SECRET),
   },
 } as const;
 

@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAdminSession } from "@/lib/admin-auth";
+import { authorizeRoute } from "@/lib/auth/route-authorization";
+import { PERMISSIONS } from "@/lib/auth/permissions";
 import { getDb } from "@/lib/db";
 import { randomBytes } from "crypto";
 import { logger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
-  const authed = await getAdminSession();
-  if (!authed) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await authorizeRoute(PERMISSIONS.ROLES_MANAGE);
+  if (!auth.ok) return auth.response;
 
   try {
     const body = await request.json().catch(() => null);

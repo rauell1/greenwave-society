@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAdminSession, isSuperAdmin } from "@/lib/admin-auth";
+import { authorizeRoute } from "@/lib/auth/route-authorization";
+import { PERMISSIONS } from "@/lib/auth/permissions";
 import { getDb } from "@/lib/db";
 import { randomBytes } from "crypto";
 
 export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string; sigId: string }> }) {
-  const { valid, email } = await getAdminSession();
-  if (!valid || !isSuperAdmin(email)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const auth = await authorizeRoute(PERMISSIONS.ROLES_MANAGE);
+  if (!auth.ok) return auth.response;
+  const email = auth.admin.email;
 
   const { sigId } = await params;
   const db = getDb();
