@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { hashPassword } from "@/lib/admin-auth";
+import { hashPassword, revokeAllUserSessions } from "@/lib/admin-auth";
 import { getDb } from "@/lib/db";
 import { logger } from "@/lib/logger";
 
@@ -31,6 +31,7 @@ export async function POST(request: NextRequest) {
       where: { id: user.id },
       data:  { passwordHash: hashPassword(password), resetToken: null, resetTokenExpiry: null, updatedAt: new Date() },
     });
+    await revokeAllUserSessions(user.id, "password-reset");
 
     logger.info("Admin password reset successful", { email: user.email });
     return NextResponse.json({ success: true });

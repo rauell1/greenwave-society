@@ -87,6 +87,7 @@ model AuditLog {
   id           String   @id @default(cuid())
   action       String
   actor        String
+  actorUserId  String?  @map("actor_user_id")
   detail       String?
   ip           String?
   resourceType String?
@@ -100,14 +101,17 @@ model AuditLog {
   @@index([createdAt])
   @@index([action])
   @@index([actor])
+  @@index([actorUserId])
   @@index([resourceType, resourceId])
   @@map("audit_logs")
 }
 
 model AdminSession {
   id               String    @id @default(cuid())
-  token            String    @unique
+  token            String?   @unique // legacy sessions only; remove after migration window
+  tokenHash        String?   @unique @map("token_hash")
   userId           String?
+  user              AdminUser? @relation(fields: [userId], references: [id], onDelete: Cascade)
   userAgent        String?
   ipHash           String?
   createdAt        DateTime  @default(now())
@@ -179,6 +183,7 @@ model AdminUser {
   updatedAt        DateTime  @updatedAt
 
   roles            AdminUserRole[]
+  sessions         AdminSession[]
 
   @@index([resetToken])
   @@map("admin_users")
@@ -304,4 +309,15 @@ model AdminUserRole {
 
   @@id([userId, roleId])
   @@map("admin_user_roles")
+}
+
+model CmsFeatureFlag {
+  key         String   @id
+  enabled     Boolean  @default(false)
+  description String?
+  updatedBy   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("cms_feature_flags")
 }

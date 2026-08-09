@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAdminSession } from "@/lib/admin-auth";
+import { authorizeRoute } from "@/lib/auth/route-authorization";
+import { PERMISSIONS } from "@/lib/auth/permissions";
 import { getDb } from "@/lib/db";
 import { randomBytes } from "crypto";
 
 export async function GET() {
-  const { valid } = await getAdminSession();
-  if (!valid) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await authorizeRoute(PERMISSIONS.CONTENT_READ);
+  if (!auth.ok) return auth.response;
 
   const db = getDb();
   const versions = await db.constitutionVersion.findMany({
@@ -20,8 +21,9 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const { valid, email } = await getAdminSession();
-  if (!valid) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await authorizeRoute(PERMISSIONS.CONTENT_CREATE);
+  if (!auth.ok) return auth.response;
+  const email = auth.admin.email;
 
   const { versionTag, title, content, contentType } = await req.json();
   if (!versionTag || !content) {

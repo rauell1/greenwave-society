@@ -1,7 +1,11 @@
-import { requireAdmin } from "@/lib/auth/guards";
+import { requirePermission } from "@/lib/auth/guards";
+import { PERMISSIONS } from "@/lib/auth/permissions";
+import { isCmsFeatureEnabled } from "@/lib/cms/feature-flags";
+import { notFound } from "next/navigation";
 
 export default async function ContentPage() {
-  await requireAdmin();
+  await requirePermission(PERMISSIONS.CONTENT_READ);
+  if (!(await isCmsFeatureEnabled("content"))) notFound();
   
   return (
     <div className="bg-white shadow rounded-lg p-6 flex flex-col items-center justify-center min-h-[400px]">

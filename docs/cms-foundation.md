@@ -15,14 +15,14 @@ The key additions include:
 ```mermaid
 graph TD
     A[Browser] --> B[Next.js App Router]
-    B --> C[Middleware: Rate Limit & Headers]
+    B --> C[Proxy: Rate Limit & Headers]
     B --> D[Admin Layout: Sidebar & Nav]
     
     D --> E[Route Handlers / Server Components]
     E --> F[Auth Guards: requireAdmin, requirePermission]
     
     F --> G[Session Manager: getAdminSession]
-    G --> H[Prisma DB: admin_sessions]
+    G --> H[Prisma DB: hashed admin sessions]
     
     F --> I[DAL: getAdminUserById]
     I --> J[Prisma DB: admin_roles & permissions]
@@ -38,9 +38,9 @@ Before starting, we analyzed the existing implementation. It heavily relied on:
 - `AdminSession` storing `token|email` in the `token` field, rather than using a `userId` foreign key.
 - A basic `AuditLog` model lacking structure (missing `outcome`, `requestId`, `beforeState`, `afterState`).
 
-**Our strategy** does not disrupt this existing state; instead, it *adds* the new schema and securely bridges old sessions to the new RBAC model until all admins are explicitly migrated in Phase 2.
+The migration is additive and includes an idempotent seed/backfill. Existing administrators are assigned database roles during deployment, while legacy sessions remain readable for a short compatibility window.
 
 ## Next Steps (Phase 2)
 1. Complete the `Content` module UI.
-2. Formally migrate all admins into the `AdminUser` and `AdminRole` database tables.
-3. Remove the legacy email allow-list fallback logic.
+2. Add owner-controlled user and role management screens.
+3. Remove the legacy email allow-list and legacy session column after the compatibility window.

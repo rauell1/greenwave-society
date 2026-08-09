@@ -1,19 +1,21 @@
 import "server-only";
 import { getDb } from "../db";
+import { sanitizeAuditState } from "./sanitize";
 
 export type AuditOutcome = "SUCCESS" | "FAILURE";
 
 export interface AuditEventParams {
   action: string;
   actor: string;
+  actorUserId?: string;
   detail?: string;
   ip?: string;
   resourceType?: string;
   resourceId?: string;
   requestId?: string;
   outcome?: AuditOutcome;
-  beforeState?: Record<string, any>;
-  afterState?: Record<string, any>;
+  beforeState?: Record<string, unknown>;
+  afterState?: Record<string, unknown>;
 }
 
 export const AUDIT_ACTIONS = {
@@ -37,13 +39,14 @@ export async function logAuditEvent(params: AuditEventParams): Promise<void> {
     const db = getDb();
     
     // Safely serialize states to JSON if provided
-    const beforeStateStr = params.beforeState ? JSON.stringify(params.beforeState) : null;
-    const afterStateStr = params.afterState ? JSON.stringify(params.afterState) : null;
+    const beforeStateStr = params.beforeState ? JSON.stringify(sanitizeAuditState(params.beforeState)) : null;
+    const afterStateStr = params.afterState ? JSON.stringify(sanitizeAuditState(params.afterState)) : null;
 
     await db.auditLog.create({
       data: {
         action: params.action,
         actor: params.actor,
+        actorUserId: params.actorUserId,
         detail: params.detail,
         ip: params.ip,
         resourceType: params.resourceType,

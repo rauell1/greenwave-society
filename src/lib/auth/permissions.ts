@@ -1,5 +1,3 @@
-import "server-only";
-
 export const PERMISSIONS = {
   DASHBOARD_READ: "dashboard.read",
 

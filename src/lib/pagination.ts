@@ -33,6 +33,15 @@ export function parsePaginationParams(searchParams: URLSearchParams): Pagination
   return { page, pageSize, search, sortBy, sortOrder };
 }
 
+export function parsePagination(searchParams: Record<string, string | string[] | undefined>) {
+  const value = (key: string) => typeof searchParams[key] === "string" ? searchParams[key] as string : undefined;
+  const parsedPage = Number.parseInt(value("page") ?? "1", 10);
+  const parsedSize = Number.parseInt(value("pageSize") ?? String(DEFAULT_PAGE_SIZE), 10);
+  const page = Number.isFinite(parsedPage) ? Math.max(1, parsedPage) : 1;
+  const pageSize = Number.isFinite(parsedSize) ? Math.min(MAX_PAGE_SIZE, Math.max(1, parsedSize)) : DEFAULT_PAGE_SIZE;
+  return { page, pageSize, skip: (page - 1) * pageSize };
+}
+
 export function buildPaginatedResult<T>(
   data: T[],
   total: number,

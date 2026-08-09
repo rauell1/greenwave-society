@@ -3,14 +3,15 @@ import { getAdminSession } from "./session";
 import { getAdminUserById, getAdminUserByEmail } from "../dal/admin";
 import { AdminUserDto } from "./types";
 import { SYSTEM_ROLES, PermissionKey } from "./permissions";
+import { hasPermission } from "./policy";
 import { isAllowedEmail, isSuperAdmin } from "../admin-auth";
 
 /**
  * Validates the current session and retrieves the admin user.
  */
 export async function getCurrentAdmin(): Promise<AdminUserDto | null> {
-  const { valid, session } = await getAdminSession();
-  if (!valid || !session) return null;
+  const session = await getAdminSession();
+  if (!session) return null;
 
   let adminUser: AdminUserDto | null = null;
 
@@ -53,13 +54,6 @@ export async function requireAdmin(): Promise<AdminUserDto> {
  * Checks if the given admin has the required permission.
  * Owners have all permissions.
  */
-export function hasPermission(admin: AdminUserDto, permission: PermissionKey): boolean {
-  if (admin.roles.includes(SYSTEM_ROLES.OWNER)) {
-    return true;
-  }
-  return admin.permissions.includes(permission);
-}
-
 /**
  * Validates that the current admin has the required permission.
  */

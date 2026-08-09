@@ -1,21 +1,15 @@
-# Testing the CMS
+# Testing the CMS foundation
 
-Testing for the CMS relies on Vitest and standard Next.js build commands.
-
-## Running Tests
-Ensure there are no build errors or type checking issues by running:
+Run:
 
 ```bash
+npm test
 npm run lint
 npx tsc --noEmit
+npx prisma validate
 npm run build
 ```
 
-## Security & Authorization Tests (Phase 2 Focus)
-When testing, ensure that:
-1. **Unauthenticated access** receives a redirect or `401`.
-2. **Unauthorized mutation** receives a `403`.
-3. The **Owner** role correctly bypasses granular permission checks.
-4. **Sessions** naturally expire or are actively revoked.
+Current focused tests cover owner permission inheritance, explicit grants, deny-by-default behavior, opaque session-token hashing, recursive audit redaction, and pagination limits.
 
-We rely on Server Actions and Route Handlers for mutations. These must all be tested via standard integration testing (using `next/server` abstractions and `vitest`).
+Before production deployment, apply the migration and seed to an isolated Neon branch, then verify login, logout, idle expiration, password-reset revocation, `401`/`403` route behavior, audit filtering, mobile navigation, and existing constitution/member workflows.

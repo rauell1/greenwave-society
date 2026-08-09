@@ -1,119 +1,128 @@
 import "server-only";
+
+import { createHmac, randomBytes, timingSafeEqual } from "crypto";
 import { cookies } from "next/headers";
-import { createHmac, randomBytes } from "crypto";
 import { getDb } from "../db";
-import { AdminSessionDto } from "./types";
+import { hashSessionToken } from "./session-token";
 
 const COOKIE_NAME = "gw_admin_session";
-const SESSION_TTL = 8 * 60 * 60 * 1000; // 8 hours
-const IDLE_TIMEOUT = 2 * 60 * 60 * 1000; // 2 hours
+const ABSOLUTE_TTL_MS = 8 * 60 * 60 * 1000;
+const IDLE_TTL_MS = 2 * 60 * 60 * 1000;
 
-export function signToken(token: string): string {
-  const secret = process.env.SESSION_SECRET ?? "greenwave-fallback-secret-change-me-now";
-  return createHmac("sha256", secret).update(token).digest("hex");
+export interface VerifiedAdminSession {
+  id: string;
+  userId: string | null;
+  email: string | undefined;
+  expiresAt: Date;
+  idleExpiresAt: Date | null;
 }
 
-export async function createAdminSession(userId: string | null, email?: string, userAgent?: string, ipHash?: string): Promise<string> {
-  const token = randomBytes(32).toString("hex");
-  const db = getDb();
-  
-  // Backward compatibility: store email if provided, but prefer userId.
-  const payload = userId ? `${token}|uid:${userId}` : `${token}|${email}`;
+function safeEqualHex(left: string, right: string): boolean {
+  try {
+    return timingSafeEqual(Buffer.from(left, "hex"), Buffer.from(right, "hex"));
+  } catch {
+    return false;
+  }
+}
 
-  await db.adminSession.create({
-    data: { 
-      token: payload, 
+function legacySecret(): string | null {
+  const secret = process.env.SESSION_SECRET;
+  if (!secret && process.env.NODE_ENV === "production") return null;
+  return secret ?? "development-only-session-secret";
+}
+
+export async function createAdminSession(
+  userId: string,
+  metadata: { userAgent?: string; ipHash?: string } = {},
+): Promise<string> {
+  const rawToken = randomBytes(32).toString("hex");
+  const now = Date.now();
+  await getDb().adminSession.create({
+    data: {
+      tokenHash: hashSessionToken(rawToken),
       userId,
-      userAgent,
-      ipHash,
-      expiresAt: new Date(Date.now() + SESSION_TTL),
-      idleExpiresAt: new Date(Date.now() + IDLE_TIMEOUT),
+      userAgent: metadata.userAgent?.slice(0, 500),
+      ipHash: metadata.ipHash,
+      expiresAt: new Date(now + ABSOLUTE_TTL_MS),
+      idleExpiresAt: new Date(now + IDLE_TTL_MS),
     },
   });
-  
-  return payload;
+  return rawToken;
 }
 
-export async function setAdminSessionCookie(token: string) {
+export async function setAdminSessionCookie(rawToken: string): Promise<void> {
   const cookieStore = await cookies();
-  cookieStore.set(COOKIE_NAME, `${token}.${signToken(token)}`, {
+  cookieStore.set(COOKIE_NAME, rawToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    maxAge: SESSION_TTL / 1000,
+    maxAge: ABSOLUTE_TTL_MS / 1000,
     path: "/",
   });
 }
 
-export async function clearAdminSessionCookie() {
+async function findLegacySession(cookieValue: string) {
+  const splitAt = cookieValue.lastIndexOf(".");
+  if (splitAt < 1) return null;
+  const payload = cookieValue.slice(0, splitAt);
+  const suppliedSignature = cookieValue.slice(splitAt + 1);
+  const secret = legacySecret();
+  if (!secret) return null;
+  const expected = createHmac("sha256", secret).update(payload).digest("hex");
+  if (!safeEqualHex(suppliedSignature, expected)) return null;
+  return getDb().adminSession.findUnique({
+    where: { token: payload },
+    include: { user: { select: { email: true, isActive: true } } },
+  });
+}
+
+export async function getAdminSession(): Promise<VerifiedAdminSession | null> {
+  const raw = (await cookies()).get(COOKIE_NAME)?.value;
+  if (!raw) return null;
+
+  const db = getDb();
+  const session = await db.adminSession.findUnique({
+    where: { tokenHash: hashSessionToken(raw) },
+    include: { user: { select: { email: true, isActive: true } } },
+  }) ?? await findLegacySession(raw);
+
+  if (!session) return null;
+  const now = new Date();
+  const user = session.user;
+  const expired = session.expiresAt <= now || Boolean(session.idleExpiresAt && session.idleExpiresAt <= now);
+  if (session.revokedAt || expired || (user && !user.isActive)) {
+    if (!session.revokedAt) {
+      await db.adminSession.update({ where: { id: session.id }, data: { revokedAt: now, revocationReason: expired ? "expired" : "user-disabled" } });
+    }
+    return null;
+  }
+
+  const legacyEmail = session.token?.includes("|") ? session.token.split("|")[1] : undefined;
+  const email = user?.email ?? legacyEmail;
+  await db.adminSession.update({
+    where: { id: session.id },
+    data: { idleExpiresAt: new Date(Date.now() + IDLE_TTL_MS) },
+  });
+
+  return { id: session.id, userId: session.userId, email, expiresAt: session.expiresAt, idleExpiresAt: session.idleExpiresAt };
+}
+
+export async function clearAdminSessionCookie(): Promise<void> {
   const cookieStore = await cookies();
+  const raw = cookieStore.get(COOKIE_NAME)?.value;
+  if (raw) {
+    const db = getDb();
+    const current = await db.adminSession.findUnique({ where: { tokenHash: hashSessionToken(raw) } }) ?? await findLegacySession(raw);
+    if (current && !current.revokedAt) {
+      await db.adminSession.update({ where: { id: current.id }, data: { revokedAt: new Date(), revocationReason: "logout" } });
+    }
+  }
   cookieStore.delete(COOKIE_NAME);
 }
 
-export async function getAdminSession(userAgent?: string, ipHash?: string): Promise<{ valid: boolean; session?: AdminSessionDto }> {
-  const cookieStore = await cookies();
-  const raw = cookieStore.get(COOKIE_NAME)?.value;
-  if (!raw) return { valid: false };
-
-  const lastDot = raw.lastIndexOf(".");
-  const payload = raw.slice(0, lastDot);
-  const sig = raw.slice(lastDot + 1);
-  if (!payload || !sig || sig !== signToken(payload)) return { valid: false };
-
-  const db = getDb();
-  const session = await db.adminSession.findUnique({ where: { token: payload } });
-  
-  if (!session) return { valid: false };
-  
-  if (
-    session.revokedAt || 
-    session.expiresAt < new Date() || 
-    (session.idleExpiresAt && session.idleExpiresAt < new Date())
-  ) {
-    await db.adminSession.delete({ where: { token: payload } });
-    return { valid: false };
-  }
-
-  // Optional: Verify IP/UA binding here
-  // If strict, we could invalidate on ipHash/userAgent mismatch.
-  
-  // Extend idle expiration
-  await db.adminSession.update({
-    where: { token: payload },
-    data: { idleExpiresAt: new Date(Date.now() + IDLE_TIMEOUT) }
-  });
-
-  // Extract old email fallback if uid is not present in token payload
-  const parts = payload.split("|");
-  let fallbackEmail: string | undefined;
-  if (parts[1] && !parts[1].startsWith("uid:")) {
-    fallbackEmail = parts[1];
-  }
-
-  return { 
-    valid: true, 
-    session: {
-      id: session.id,
-      userId: session.userId,
-      email: fallbackEmail,
-      expiresAt: session.expiresAt,
-      idleExpiresAt: session.idleExpiresAt
-    } 
-  };
-}
-
-export async function revokeAllUserSessions(userId: string, reason?: string) {
-  const db = getDb();
-  await db.adminSession.updateMany({
+export async function revokeAllUserSessions(userId: string, reason: string): Promise<void> {
+  await getDb().adminSession.updateMany({
     where: { userId, revokedAt: null },
-    data: { revokedAt: new Date(), revocationReason: reason }
-  });
-}
-
-export async function revokeSession(sessionId: string, reason?: string) {
-  const db = getDb();
-  await db.adminSession.update({
-    where: { id: sessionId },
-    data: { revokedAt: new Date(), revocationReason: reason }
+    data: { revokedAt: new Date(), revocationReason: reason },
   });
 }

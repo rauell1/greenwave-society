@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import { 
   LayoutDashboard, 
   FileText, 
@@ -11,24 +12,25 @@ import {
   Settings, 
   ShieldAlert, 
   LogOut,
-  FolderOpen
+  FolderOpen,
+  Menu,
+  X,
 } from "lucide-react";
-import { APP_CONFIG } from "@/config/app.config";
 import { AdminUserDto } from "@/lib/auth/types";
-import { hasPermission } from "@/lib/auth/guards";
+import { hasPermission } from "@/lib/auth/policy";
 import { PERMISSIONS } from "@/lib/auth/permissions";
 
 interface AdminSidebarProps {
   admin: AdminUserDto;
+  enabledFeatures: string[];
 }
 
-export default function AdminSidebar({ admin }: AdminSidebarProps) {
+export default function AdminSidebar({ admin, enabledFeatures }: AdminSidebarProps) {
   const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   // Simple feature flag check
-  const isEnabled = (key: keyof typeof APP_CONFIG.features.cms) => {
-    return APP_CONFIG.features.cms[key] === true;
-  };
+  const isEnabled = (key: string) => enabledFeatures.includes(key);
 
   const navItems = [
     {
@@ -81,8 +83,8 @@ export default function AdminSidebar({ admin }: AdminSidebarProps) {
     },
   ];
 
-  return (
-    <aside className="w-64 bg-white border-r border-gray-200 hidden md:flex flex-col">
+  const navigation = (
+    <>
       <div className="h-16 flex items-center px-6 border-b border-gray-200">
         <h2 className="text-lg font-bold text-green-700">Greenwave Admin</h2>
       </div>
@@ -107,6 +109,7 @@ export default function AdminSidebar({ admin }: AdminSidebarProps) {
                   ? "bg-green-50 text-green-700" 
                   : "text-gray-700 hover:bg-gray-100"
               }`}
+              onClick={() => setMobileOpen(false)}
             >
               <Icon className={`mr-3 flex-shrink-0 h-5 w-5 ${isActive ? "text-green-700" : "text-gray-400"}`} />
               {item.title}
@@ -126,6 +129,17 @@ export default function AdminSidebar({ admin }: AdminSidebarProps) {
           </button>
         </form>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      <aside className="hidden w-64 shrink-0 flex-col border-r border-gray-200 bg-white md:flex">{navigation}</aside>
+      <div className="fixed inset-x-0 top-0 z-40 flex h-16 items-center justify-between border-b bg-white px-4 md:hidden">
+        <span className="font-bold text-green-800">Greenwave Admin</span>
+        <button type="button" aria-label="Open navigation" aria-expanded={mobileOpen} onClick={() => setMobileOpen(true)} className="rounded-md p-2 hover:bg-gray-100"><Menu className="h-5 w-5" /></button>
+      </div>
+      {mobileOpen && <div className="fixed inset-0 z-50 md:hidden"><button aria-label="Close navigation" className="absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} /><aside className="relative flex h-full w-72 flex-col bg-white shadow-xl"><button type="button" aria-label="Close navigation" onClick={() => setMobileOpen(false)} className="absolute right-3 top-3 rounded-md p-2 hover:bg-gray-100"><X className="h-5 w-5" /></button>{navigation}</aside></div>}
+    </>
   );
 }

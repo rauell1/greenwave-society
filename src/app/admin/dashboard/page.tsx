@@ -1,4 +1,5 @@
-import { getAdminSession, isSuperAdmin } from "@/lib/admin-auth";
+import { requirePermission } from "@/lib/auth/guards";
+import { PERMISSIONS, SYSTEM_ROLES } from "@/lib/auth/permissions";
 import { redirect } from "next/navigation";
 import { getDb } from "@/lib/db";
 import ConstitutionDashboard from "./ConstitutionDashboard";
@@ -7,11 +8,12 @@ export const metadata = { title: "Admin Dashboard | Greenwave Society" };
 export const dynamic  = "force-dynamic";
 
 export default async function DashboardPage() {
-  const { valid, email } = await getAdminSession();
-  if (!valid) redirect("/admin");
+  const admin = await requirePermission(PERMISSIONS.DASHBOARD_READ).catch(() => null);
+  if (!admin) redirect("/admin");
+  const email = admin.email;
 
   const db         = getDb();
-  const superAdmin = isSuperAdmin(email);
+  const superAdmin = admin.roles.includes(SYSTEM_ROLES.OWNER);
 
   // Fetch leaders with ALL their signatures (not just one)
   const leaders = await db.executiveLeader.findMany({

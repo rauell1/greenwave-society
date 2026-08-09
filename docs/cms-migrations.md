@@ -1,47 +1,21 @@
-# Migrations and Backfill
+# CMS migrations and backfill
 
-## Database Migrations
-All Prisma changes are strictly additive:
-1. Extended `AuditLog` with structured fields (`resourceType`, `outcome`, `beforeState`, `afterState`).
-2. Extended `AdminSession` with `userId`, `userAgent`, `idleExpiresAt`, and `revokedAt`.
-3. Created `AdminRole`, `AdminPermission`, `AdminRolePermission`, `AdminUserRole`.
+Phase 1 uses the additive migration in `prisma/migrations/20260809093000_cms_foundation/migration.sql`.
 
-**To execute the migration locally:**
-```bash
-npx prisma migrate dev --name cms_rbac_foundation
-```
+## Deployment order
 
-**Note on Rollbacks:**
-Since all changes are additive, rolling back the application code to `main` will continue to function normally with the updated database schema, because existing application code does not rely on or strictly validate the presence of the new columns/tables.
+1. Take or verify a restorable Neon backup/branch.
+2. Run `npx prisma migrate deploy` against the target database.
+3. Run `npm run cms:seed` with `CMS_OWNER_EMAIL` set to the owner account when it differs from the default.
+4. Deploy the application.
+5. Confirm the owner can sign in, inspect `/admin/audit`, and revoke a session.
 
-## Data Backfill
-Since the CMS now requires `AdminRole` assignments, existing administrators must be backfilled into the new `AdminUser` records.
+The seed is idempotent. It creates permissions and system roles, assigns the Owner role, assigns Administrator to existing administrators without a role, and creates disabled CMS feature flags. Audit is the only new module enabled by default.
 
-A backfill script can be executed idempotently using the following logic:
+## Compatibility and rollback
 
-```typescript
-// scripts/backfill-admin-roles.ts
-import { getDb } from "../src/lib/db";
-import { SYSTEM_ROLES } from "../src/lib/auth/permissions";
+The migration preserves legacy session rows and makes the legacy `token` column nullable. New sessions write only `token_hash`. Rolling application code back leaves the additive tables and columns in place. Do not reverse the schema migration during an incident; roll back the application first and investigate safely.
 
-async function run() {
-  const db = getDb();
-  // Idempotently create roles...
-  const ownerRole = await db.adminRole.upsert({
-    where: { name: SYSTEM_ROLES.OWNER },
-    update: {},
-    create: { name: SYSTEM_ROLES.OWNER, isSystem: true },
-  });
-  
-  // Assign owner role to super admin...
-  const superAdmin = await db.adminUser.findUnique({ where: { email: "royokola3@gmail.com" } });
-  if (superAdmin) {
-    await db.adminUserRole.upsert({
-      where: { userId_roleId: { userId: superAdmin.id, roleId: ownerRole.id } },
-      update: {},
-      create: { userId: superAdmin.id, roleId: ownerRole.id },
-    });
-  }
-}
-```
-*(This can be run as a standard Node script or added to the Prisma seed).*
+Legacy sessions should be removed after the migration window by revoking rows where `token_hash IS NULL`, then dropping the legacy `token` column in a later migration.
+
+Never use `prisma migrate reset` or `prisma db push` in production.

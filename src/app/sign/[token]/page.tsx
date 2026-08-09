@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
   const db  = getDb();
-  const sig = await db.constitutionSignature.findUnique({ where: { token }, include: { leader: true, version: true } });
+  const sig = await db.constitutionSignature.findUnique({ where: { token }, include: { leader: true, constitutionVersion: true } });
   if (!sig) return { title: "Invalid Link" };
   return { title: `Constitution Signing | ${sig.leader.name} | Greenwave Society` };
 }
@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: { params: Promise<{ token: st
 export default async function SigningPage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
   const db  = getDb();
-  const sig = await db.constitutionSignature.findUnique({ where: { token }, include: { leader: true, version: true } });
+  const sig = await db.constitutionSignature.findUnique({ where: { token }, include: { leader: true, constitutionVersion: true } });
   if (!sig) notFound();
 
   return (
@@ -53,15 +53,15 @@ export default async function SigningPage({ params }: { params: Promise<{ token:
         <div className="bg-white rounded-2xl shadow border border-gray-200 mb-8 overflow-hidden">
           <div className="bg-[#1A5C38] px-8 py-6 text-center">
             <p className="text-white font-bold text-xl font-serif tracking-wide">GREENWAVE SOCIETY</p>
-            <p className="text-green-200 text-sm mt-1">{(sig!.version?.title ?? "EXECUTIVE LEADERSHIP CONSTITUTION").toUpperCase()}</p>
+            <p className="text-green-200 text-sm mt-1">{(sig!.constitutionVersion?.title ?? "EXECUTIVE LEADERSHIP CONSTITUTION").toUpperCase()}</p>
             <p className="text-green-300 text-xs mt-0.5 italic">{sig!.versionTag} &bull; June 2026 &bull; Nairobi, Kenya</p>
           </div>
 
-          {sig!.version?.content ? (
+          {sig!.constitutionVersion?.content ? (
             <div
               className="px-10 py-10"
               style={{ fontFamily: "Times New Roman, serif", textAlign: "justify", fontSize: "15px", lineHeight: "1.75", color: "#111" }}
-              dangerouslySetInnerHTML={{ __html: sig!.version.content }}
+              dangerouslySetInnerHTML={{ __html: sig!.constitutionVersion.content }}
             />
           ) : (
           <div className="px-10 py-10 space-y-8" style={{ fontFamily: "Times New Roman, serif", textAlign: "justify", fontSize: "15px", lineHeight: "1.75", color: "#111" }}>
