@@ -1,0 +1,63 @@
+import "server-only";
+import { getDb } from "../db";
+
+export type AuditOutcome = "SUCCESS" | "FAILURE";
+
+export interface AuditEventParams {
+  action: string;
+  actor: string;
+  detail?: string;
+  ip?: string;
+  resourceType?: string;
+  resourceId?: string;
+  requestId?: string;
+  outcome?: AuditOutcome;
+  beforeState?: Record<string, any>;
+  afterState?: Record<string, any>;
+}
+
+export const AUDIT_ACTIONS = {
+  AUTH_LOGIN_SUCCEEDED: "AUTH_LOGIN_SUCCEEDED",
+  AUTH_LOGIN_FAILED: "AUTH_LOGIN_FAILED",
+  AUTH_LOGOUT: "AUTH_LOGOUT",
+  SESSION_REVOKED: "SESSION_REVOKED",
+  ADMIN_ROLE_ASSIGNED: "ADMIN_ROLE_ASSIGNED",
+  ADMIN_ROLE_REMOVED: "ADMIN_ROLE_REMOVED",
+  ADMIN_DISABLED: "ADMIN_DISABLED",
+  ADMIN_ENABLED: "ADMIN_ENABLED",
+  SETTINGS_UPDATED: "SETTINGS_UPDATED",
+  CONTENT_CREATED: "CONTENT_CREATED",
+  CONTENT_UPDATED: "CONTENT_UPDATED",
+  CONTENT_PUBLISHED: "CONTENT_PUBLISHED",
+  MEMBER_EXPORTED: "MEMBER_EXPORTED",
+} as const;
+
+export async function logAuditEvent(params: AuditEventParams): Promise<void> {
+  try {
+    const db = getDb();
+    
+    // Safely serialize states to JSON if provided
+    const beforeStateStr = params.beforeState ? JSON.stringify(params.beforeState) : null;
+    const afterStateStr = params.afterState ? JSON.stringify(params.afterState) : null;
+
+    await db.auditLog.create({
+      data: {
+        action: params.action,
+        actor: params.actor,
+        detail: params.detail,
+        ip: params.ip,
+        resourceType: params.resourceType,
+        resourceId: params.resourceId,
+        requestId: params.requestId,
+        outcome: params.outcome,
+        beforeState: beforeStateStr,
+        afterState: afterStateStr,
+      },
+    });
+  } catch (error) {
+    // Audit failures must not silently hide critical administrative failures,
+    // but throwing here might break the main flow. 
+    // We log it securely. In a production environment, this should trigger an alert.
+    console.error("[CRITICAL] Failed to write audit log:", error);
+  }
+}

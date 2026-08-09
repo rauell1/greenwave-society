@@ -84,25 +84,40 @@ model ConstitutionSignature {
 }
 
 model AuditLog {
-  id        String   @id @default(cuid())
-  action    String
-  actor     String
-  detail    String?
-  ip        String?
-  createdAt DateTime @default(now())
+  id           String   @id @default(cuid())
+  action       String
+  actor        String
+  detail       String?
+  ip           String?
+  resourceType String?
+  resourceId   String?
+  requestId    String?
+  outcome      String?
+  beforeState  String?  @db.Text
+  afterState   String?  @db.Text
+  createdAt    DateTime @default(now())
 
   @@index([createdAt])
   @@index([action])
+  @@index([actor])
+  @@index([resourceType, resourceId])
   @@map("audit_logs")
 }
 
 model AdminSession {
-  id        String   @id @default(cuid())
-  token     String   @unique
-  createdAt DateTime @default(now())
-  expiresAt DateTime
+  id               String    @id @default(cuid())
+  token            String    @unique
+  userId           String?
+  userAgent        String?
+  ipHash           String?
+  createdAt        DateTime  @default(now())
+  expiresAt        DateTime
+  idleExpiresAt    DateTime?
+  revokedAt        DateTime?
+  revocationReason String?
 
   @@index([token])
+  @@index([userId])
   @@index([expiresAt])
   @@map("admin_sessions")
 }
@@ -159,8 +174,11 @@ model AdminUser {
   passwordHash     String?
   resetToken       String?   @unique
   resetTokenExpiry DateTime?
+  isActive         Boolean   @default(true)
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
+
+  roles            AdminUserRole[]
 
   @@index([resetToken])
   @@map("admin_users")
@@ -241,3 +259,49 @@ model BaazaRegistration {
   @@map("baraza_registrations")
 }
 
+model AdminRole {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  isSystem    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  permissions AdminRolePermission[]
+  users       AdminUserRole[]
+
+  @@map("admin_roles")
+}
+
+model AdminPermission {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+
+  roles AdminRolePermission[]
+
+  @@map("admin_permissions")
+}
+
+model AdminRolePermission {
+  roleId       String
+  permissionId String
+
+  role       AdminRole       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission AdminPermission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("admin_role_permissions")
+}
+
+model AdminUserRole {
+  userId String
+  roleId String
+
+  user AdminUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role AdminRole @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+  @@map("admin_user_roles")
+}

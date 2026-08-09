@@ -40,6 +40,19 @@ export const APP_CONFIG = {
     enableNewsletter: true,
     enableContactForm: true,
     enableDonations: false, // Not yet implemented
+
+    // CMS Modules
+    cms: {
+      content: process.env.FEATURE_CMS_CONTENT === "true" || false,
+      pages: process.env.FEATURE_CMS_PAGES === "true" || false,
+      programs: process.env.FEATURE_CMS_PROGRAMS === "true" || false,
+      events: process.env.FEATURE_CMS_EVENTS === "true" || false,
+      members: process.env.FEATURE_CMS_MEMBERS === "true" || false,
+      media: process.env.FEATURE_CMS_MEDIA === "true" || false,
+      communications: process.env.FEATURE_CMS_COMMUNICATIONS === "true" || false,
+      users: process.env.FEATURE_CMS_USERS === "true" || false,
+      audit: process.env.FEATURE_CMS_AUDIT === "true" || true, // Audit enabled by default
+    }
   },
 
   // Rate limiting
