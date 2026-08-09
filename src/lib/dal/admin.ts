@@ -1,7 +1,6 @@
 import "server-only";
 import { getDb } from "../db";
-import { AdminUserDto, AdminSessionDto } from "../auth/types";
-import { SYSTEM_ROLES } from "../auth/permissions";
+import { AdminUserDto } from "../auth/types";
 
 /**
  * Gets the complete AdminUserDto by user ID.

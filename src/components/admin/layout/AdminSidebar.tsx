@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { APP_CONFIG } from "@/config/app.config";
 import { AdminUserDto } from "@/lib/auth/types";
-import { hasPermission, SYSTEM_ROLES } from "@/lib/auth/guards";
+import { hasPermission } from "@/lib/auth/guards";
 import { PERMISSIONS } from "@/lib/auth/permissions";
 
 interface AdminSidebarProps {

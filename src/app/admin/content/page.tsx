@@ -1,5 +1,4 @@
 import { requireAdmin } from "@/lib/auth/guards";
-import { notFound } from "next/navigation";
 
 export default async function ContentPage() {
   await requireAdmin();
