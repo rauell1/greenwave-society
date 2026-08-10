@@ -41,6 +41,6 @@ Before starting, we analyzed the existing implementation. It heavily relied on:
 The migration is additive and includes an idempotent seed/backfill. Existing administrators are assigned database roles during deployment, while legacy sessions remain readable for a short compatibility window.
 
 ## Next Steps (Phase 2)
-1. Complete the `Content` module UI.
+1. Complete the `Content` module UI. See `cms-content.md` for the versioned Phase 2A implementation.
 2. Add owner-controlled user and role management screens.
 3. Remove the legacy email allow-list and legacy session column after the compatibility window.

@@ -61,21 +61,21 @@ model ConstitutionVersion {
 }
 
 model ConstitutionSignature {
-  id              String               @id @default(cuid())
-  leaderId        String               @unique
-  leader          ExecutiveLeader      @relation(fields: [leaderId], references: [id], onDelete: Cascade)
+  id                  String               @id @default(cuid())
+  leaderId            String               @unique
+  leader              ExecutiveLeader      @relation(fields: [leaderId], references: [id], onDelete: Cascade)
   versionId           String?
   constitutionVersion ConstitutionVersion? @relation("ConstitutionSignatureVersion", fields: [versionId], references: [id])
   versionTag          String               @default("V1")
-  version             String?              // legacy text column retained for existing data
-  status          String               @default("pending")
-  token           String               @unique
-  signedAt        DateTime?
-  rejectionReason String?
-  ipAddress       String?
-  emailSentAt     DateTime?
-  createdAt       DateTime             @default(now())
-  updatedAt       DateTime             @updatedAt
+  version             String? // legacy text column retained for existing data
+  status              String               @default("pending")
+  token               String               @unique
+  signedAt            DateTime?
+  rejectionReason     String?
+  ipAddress           String?
+  emailSentAt         DateTime?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
 
   @@index([leaderId])
   @@index([token])
@@ -107,14 +107,14 @@ model AuditLog {
 }
 
 model AdminSession {
-  id               String    @id @default(cuid())
-  token            String?   @unique // legacy sessions only; remove after migration window
-  tokenHash        String?   @unique @map("token_hash")
+  id               String     @id @default(cuid())
+  token            String?    @unique // legacy sessions only; remove after migration window
+  tokenHash        String?    @unique @map("token_hash")
   userId           String?
-  user              AdminUser? @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user             AdminUser? @relation(fields: [userId], references: [id], onDelete: Cascade)
   userAgent        String?
   ipHash           String?
-  createdAt        DateTime  @default(now())
+  createdAt        DateTime   @default(now())
   expiresAt        DateTime
   idleExpiresAt    DateTime?
   revokedAt        DateTime?
@@ -184,20 +184,68 @@ model AdminUser {
 
   roles            AdminUserRole[]
   sessions         AdminSession[]
+  createdContent   CmsContent[]         @relation("CmsContentCreatedBy")
+  updatedContent   CmsContent[]         @relation("CmsContentUpdatedBy")
+  contentRevisions CmsContentRevision[] @relation("CmsRevisionCreatedBy")
 
   @@index([resetToken])
   @@map("admin_users")
 }
 
+model CmsContent {
+  id          String               @id @default(cuid())
+  type        String               @default("page")
+  slug        String
+  title       String
+  excerpt     String?              @db.Text
+  body        String               @db.Text
+  metadata    String?              @db.Text
+  status      String               @default("draft")
+  version     Int                  @default(1)
+  publishedAt DateTime?
+  scheduledAt DateTime?
+  createdById String
+  updatedById String
+  createdBy   AdminUser            @relation("CmsContentCreatedBy", fields: [createdById], references: [id])
+  updatedBy   AdminUser            @relation("CmsContentUpdatedBy", fields: [updatedById], references: [id])
+  revisions   CmsContentRevision[]
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+
+  @@unique([type, slug])
+  @@index([status, updatedAt])
+  @@index([scheduledAt])
+  @@map("cms_content")
+}
+
+model CmsContentRevision {
+  id          String     @id @default(cuid())
+  contentId   String
+  content     CmsContent @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  version     Int
+  title       String
+  excerpt     String?    @db.Text
+  body        String     @db.Text
+  metadata    String?    @db.Text
+  status      String
+  createdById String
+  createdBy   AdminUser  @relation("CmsRevisionCreatedBy", fields: [createdById], references: [id])
+  createdAt   DateTime   @default(now())
+
+  @@unique([contentId, version])
+  @@index([contentId, createdAt])
+  @@map("cms_content_revisions")
+}
+
 model ConsentLog {
   id               String   @id @default(cuid())
   consentId        String   @unique
-  categories       String   // JSON string of enabled categories (necessary, analytics, marketing, preferences)
+  categories       String // JSON string of enabled categories (necessary, analytics, marketing, preferences)
   ipHash           String?
   countryCode      String?  @default("GLOBAL")
   consentType      String   @default("opt-in") // opt-in, opt-out, customized
-  consentModeState String?  // GCM v2 state snapshot
-  tcfVector        String?  // IAB TCF 2.3 vector string if enabled
+  consentModeState String? // GCM v2 state snapshot
+  tcfVector        String? // IAB TCF 2.3 vector string if enabled
   userAgent        String?
   createdAt        DateTime @default(now())
 
@@ -219,28 +267,28 @@ model CookieScanResult {
 }
 
 model ConsentBannerConfig {
-  id                  String   @id @default("default")
-  themeColor          String   @default("#166534") // Emerald / Greenwave theme
-  layout              String   @default("bottom-bar") // bottom-bar, modal, popup-card
-  position            String   @default("bottom")
-  defaultLang         String   @default("en")
-  consentModeV2       Boolean  @default(true)
-  tcfEnabled          Boolean  @default(true)
-  geoTargeting        Boolean  @default(true)
-  autoBlock           Boolean  @default(true)
-  customCss           String?  @db.Text
-  updatedAt           DateTime @updatedAt
+  id            String   @id @default("default")
+  themeColor    String   @default("#166534") // Emerald / Greenwave theme
+  layout        String   @default("bottom-bar") // bottom-bar, modal, popup-card
+  position      String   @default("bottom")
+  defaultLang   String   @default("en")
+  consentModeV2 Boolean  @default(true)
+  tcfEnabled    Boolean  @default(true)
+  geoTargeting  Boolean  @default(true)
+  autoBlock     Boolean  @default(true)
+  customCss     String?  @db.Text
+  updatedAt     DateTime @updatedAt
 
   @@map("consent_banner_config")
 }
 
 model LegalPolicy {
-  id          String   @id @default(cuid())
-  type        String   @unique // privacy, cookie, terms
-  title       String
-  content     String   @db.Text
-  version     String   @default("1.0.0")
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(cuid())
+  type      String   @unique // privacy, cookie, terms
+  title     String
+  content   String   @db.Text
+  version   String   @default("1.0.0")
+  updatedAt DateTime @updatedAt
 
   @@map("legal_policies")
 }
