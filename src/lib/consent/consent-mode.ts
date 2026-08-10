@@ -16,7 +16,7 @@ export interface ConsentModeSettings {
 declare global {
   interface Window {
     dataLayer: any[];
-    gtag?: (...args: any[]) => void;
+    gtag: (...args: any[]) => void;
   }
 }
 

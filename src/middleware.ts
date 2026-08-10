@@ -110,6 +110,22 @@ export async function middleware(request: NextRequest) {
     });
   }
 
+  // Geolocation and Privacy Compliance
+  // Detect country for GDPR vs CCPA defaults
+  const country = request.headers.get("x-vercel-ip-country") || "US";
+  
+  // Pass the country to the frontend via a cookie if not already set, 
+  // so the client-side useConsent hook can determine default states (Opt-in vs Opt-out)
+  if (!request.cookies.has("user-country")) {
+    response.cookies.set("user-country", country, {
+      path: "/",
+      httpOnly: false, // Must be accessible to the frontend hook
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 7, // 1 week
+    });
+  }
+
   // Log request (only in production or when debugging)
   if (process.env.NODE_ENV === "production" || process.env.DEBUG_REQUESTS === "true") {
     const duration = Date.now() - startTime;
