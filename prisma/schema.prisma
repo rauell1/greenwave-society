@@ -312,6 +312,10 @@ model CmsCampaignRecipient {
   attempts          Int                   @default(0)
   lastError         String?               @db.Text
   sentAt            DateTime?
+  deliveredAt       DateTime?
+  bouncedAt         DateTime?
+  complainedAt      DateTime?
+  lastEventAt       DateTime?
   createdAt         DateTime              @default(now())
   updatedAt         DateTime              @updatedAt
 
@@ -319,6 +323,20 @@ model CmsCampaignRecipient {
   @@index([campaignId, status])
   @@index([email])
   @@map("cms_campaign_recipients")
+}
+
+model CmsWebhookEvent {
+  id                String    @id
+  provider          String    @default("resend")
+  type              String
+  providerMessageId String?
+  payload           String    @db.Text
+  receivedAt        DateTime  @default(now())
+  processedAt       DateTime?
+
+  @@index([providerMessageId])
+  @@index([type, receivedAt])
+  @@map("cms_webhook_events")
 }
 
 model CmsEvent {
