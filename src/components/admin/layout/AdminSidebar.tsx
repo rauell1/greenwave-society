@@ -64,6 +64,12 @@ export default function AdminSidebar({ admin, enabledFeatures }: AdminSidebarPro
       show: isEnabled("members") && hasPermission(admin, PERMISSIONS.MEMBERS_READ),
     },
     {
+      title: "Media",
+      href: "/admin/media",
+      icon: FolderOpen,
+      show: isEnabled("media") && hasPermission(admin, PERMISSIONS.MEDIA_READ),
+    },
+    {
       title: "Communications",
       href: "/admin/communications",
       icon: Mail,

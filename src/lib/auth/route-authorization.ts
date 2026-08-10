@@ -12,5 +12,6 @@ export async function authorizeRoute(permission: PermissionKey) {
   if (!hasPermission(admin, permission)) return { ok: false as const, response: NextResponse.json({ error: "Forbidden" }, { status: 403 }) };
   if (permission.startsWith("events.") && !(await isCmsFeatureEnabled("events"))) return { ok: false as const, response: NextResponse.json({ error: "Not found" }, { status: 404 }) };
   if (permission.startsWith("communications.") && !(await isCmsFeatureEnabled("communications"))) return { ok: false as const, response: NextResponse.json({ error: "Not found" }, { status: 404 }) };
+  if (permission.startsWith("media.") && !(await isCmsFeatureEnabled("media"))) return { ok: false as const, response: NextResponse.json({ error: "Not found" }, { status: 404 }) };
   return { ok: true as const, admin };
 }

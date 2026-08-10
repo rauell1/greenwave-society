@@ -1,0 +1,2 @@
+import { describe, expect, it } from "vitest";import { hasValidSignature, safeMediaFilename } from "./validation";
+describe("media validation",()=>{it("normalizes unsafe filenames",()=>expect(safeMediaFilename("../../My Hero Image.PNG")).toBe("My-Hero-Image.png"));it("validates file signatures",()=>{expect(hasValidSignature(new Uint8Array([0xff,0xd8,0xff]),"image/jpeg")).toBe(true);expect(hasValidSignature(new TextEncoder().encode("not an image"),"image/jpeg")).toBe(false)})});
