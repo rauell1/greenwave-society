@@ -229,9 +229,51 @@ model AdminUser {
   updatedEvents    CmsEvent[]           @relation("CmsEventUpdatedBy")
   createdCampaigns CmsCampaign[]        @relation("CmsCampaignCreatedBy")
   updatedCampaigns CmsCampaign[]        @relation("CmsCampaignUpdatedBy")
+  uploadedMedia    CmsMediaAsset[]      @relation("CmsMediaUploadedBy")
+  updatedMedia     CmsMediaAsset[]      @relation("CmsMediaUpdatedBy")
 
   @@index([resetToken])
   @@map("admin_users")
+}
+
+model CmsMediaAsset {
+  id           String          @id @default(cuid())
+  filename     String
+  pathname     String          @unique
+  url          String          @unique
+  contentType  String
+  size         Int
+  checksum     String
+  width        Int?
+  height       Int?
+  altText      String?
+  caption      String?         @db.Text
+  status       String          @default("active")
+  uploadedById String
+  updatedById  String
+  uploadedBy   AdminUser       @relation("CmsMediaUploadedBy", fields: [uploadedById], references: [id])
+  updatedBy    AdminUser       @relation("CmsMediaUpdatedBy", fields: [updatedById], references: [id])
+  usages       CmsMediaUsage[]
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@index([contentType, createdAt])
+  @@index([status, createdAt])
+  @@map("cms_media_assets")
+}
+
+model CmsMediaUsage {
+  id           String        @id @default(cuid())
+  mediaId      String
+  media        CmsMediaAsset @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+  resourceType String
+  resourceId   String
+  field        String
+  createdAt    DateTime      @default(now())
+
+  @@unique([mediaId, resourceType, resourceId, field])
+  @@index([resourceType, resourceId])
+  @@map("cms_media_usages")
 }
 
 model CmsCampaign {
