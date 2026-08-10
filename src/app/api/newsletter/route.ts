@@ -31,10 +31,11 @@ export async function POST(request: NextRequest) {
     const existing = await db.newsletterSubscriber.findUnique({ where: { email } });
 
     if (existing) {
-      return NextResponse.json({ success: true, message: "You are already subscribed to our newsletter!" });
+      if (!existing.active || !existing.unsubscribeToken) await db.newsletterSubscriber.update({ where: { id: existing.id }, data: { active: true, unsubscribeToken: existing.unsubscribeToken ?? crypto.randomUUID() } });
+      return NextResponse.json({ success: true, message: existing.active ? "You are already subscribed to our newsletter!" : "Welcome back! Your subscription is active again." });
     }
 
-    await db.newsletterSubscriber.create({ data: { id: crypto.randomUUID(), email } });
+    await db.newsletterSubscriber.create({ data: { id: crypto.randomUUID(), email, unsubscribeToken: crypto.randomUUID() } });
 
     requestLogger.info("Newsletter subscriber added", { email });
 

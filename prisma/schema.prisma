@@ -23,11 +23,12 @@ model ContactSubmission {
 }
 
 model NewsletterSubscriber {
-  id               String   @id @default(cuid())
-  email            String   @unique
-  active           Boolean  @default(true)
-  unsubscribeToken String?  @unique @map("unsubscribe_token")
-  createdAt        DateTime @default(now())
+  id                 String                 @id @default(cuid())
+  email              String                 @unique
+  active             Boolean                @default(true)
+  unsubscribeToken   String?                @unique @map("unsubscribe_token")
+  createdAt          DateTime               @default(now())
+  campaignRecipients CmsCampaignRecipient[]
 
   @@index([createdAt])
   @@map("newsletter_subscribers")
@@ -226,9 +227,56 @@ model AdminUser {
   contentRevisions CmsContentRevision[] @relation("CmsRevisionCreatedBy")
   createdEvents    CmsEvent[]           @relation("CmsEventCreatedBy")
   updatedEvents    CmsEvent[]           @relation("CmsEventUpdatedBy")
+  createdCampaigns CmsCampaign[]        @relation("CmsCampaignCreatedBy")
+  updatedCampaigns CmsCampaign[]        @relation("CmsCampaignUpdatedBy")
 
   @@index([resetToken])
   @@map("admin_users")
+}
+
+model CmsCampaign {
+  id          String                 @id @default(cuid())
+  name        String
+  subject     String
+  preheader   String?
+  eyebrow     String                 @default("Greenwave Update")
+  htmlBody    String                 @db.Text
+  status      String                 @default("draft")
+  audience    String                 @default("newsletter")
+  scheduledAt DateTime?
+  sentAt      DateTime?
+  createdById String
+  updatedById String
+  createdBy   AdminUser              @relation("CmsCampaignCreatedBy", fields: [createdById], references: [id])
+  updatedBy   AdminUser              @relation("CmsCampaignUpdatedBy", fields: [updatedById], references: [id])
+  recipients  CmsCampaignRecipient[]
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+
+  @@index([status, createdAt])
+  @@index([scheduledAt])
+  @@map("cms_campaigns")
+}
+
+model CmsCampaignRecipient {
+  id                String                @id @default(cuid())
+  campaignId        String
+  campaign          CmsCampaign           @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  subscriberId      String?
+  subscriber        NewsletterSubscriber? @relation(fields: [subscriberId], references: [id], onDelete: SetNull)
+  email             String
+  status            String                @default("pending")
+  providerMessageId String?
+  attempts          Int                   @default(0)
+  lastError         String?               @db.Text
+  sentAt            DateTime?
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+
+  @@unique([campaignId, email])
+  @@index([campaignId, status])
+  @@index([email])
+  @@map("cms_campaign_recipients")
 }
 
 model CmsEvent {
