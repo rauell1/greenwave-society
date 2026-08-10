@@ -38,7 +38,7 @@ export function Contact() {
             Contact <span className="italic font-normal text-primary">Us</span>
           </h2>
           <p className="mt-4 text-muted-foreground text-sm sm:text-base max-w-xl mx-auto">
-            Have a question, want to volunteer, or interested in partnering with us? We would love to hear from you.
+            Have a question, want to volunteer, or interested in partnering with us? We would love to hear from you. We promise to get back to you within 24 hours.
           </p>
         </FadeIn>
 

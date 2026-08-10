@@ -11,6 +11,7 @@ import { VolunteerCTA } from "@/components/sections/VolunteerCTA";
 import { Contact } from "@/components/sections/Contact";
 import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Greenwave Society | Equipping Youth to Lead, Build & Connect in Kenya",
@@ -153,6 +154,16 @@ export default function HomePage() {
       </main>
       <Footer />
       <ScrollToTop />
+      
+      {/* Sticky Mobile CTA */}
+      <div className="md:hidden fixed bottom-0 left-0 w-full p-4 bg-background/95 backdrop-blur-sm border-t border-border z-50 shadow-lg">
+        <Link 
+          href="/contact?interest=volunteer"
+          className="flex w-full items-center justify-center bg-primary text-primary-foreground font-semibold py-3 px-4 rounded-xl shadow-sm hover:bg-primary/90 transition-colors"
+        >
+          Join Our Mission
+        </Link>
+      </div>
     </div>
   );
 }

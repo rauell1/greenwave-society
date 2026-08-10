@@ -5,7 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { APP_CONFIG } from "@/config/app.config";
-import { CookieBanner } from "@/components/consent/CookieBanner";
+import { CookieBanner } from "@/components/CookieBanner";
+import { ScriptInjector } from "@/components/ScriptInjector";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -332,6 +333,7 @@ export default function RootLayout({
         <Analytics />
         <SpeedInsights />
         <CookieBanner />
+        <ScriptInjector />
       </body>
     </html>
   );
