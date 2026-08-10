@@ -8,9 +8,12 @@ import { AUDIT_ACTIONS, logAuditEvent } from "@/lib/audit/audit-service";
 export async function GET(request: NextRequest) {
   await requirePermission(PERMISSIONS.CONTENT_READ);
   const status = request.nextUrl.searchParams.get("status");
+  const requestedType = request.nextUrl.searchParams.get("type");
+  const type = requestedType && ["page", "program", "story", "announcement"].includes(requestedType) ? requestedType : undefined;
   const query = request.nextUrl.searchParams.get("q")?.trim();
   const items = await getDb().cmsContent.findMany({
     where: {
+      ...(type ? { type } : {}),
       ...(status ? { status } : {}),
       ...(query ? { OR: [{ title: { contains: query, mode: "insensitive" } }, { slug: { contains: query, mode: "insensitive" } }] } : {}),
     },
