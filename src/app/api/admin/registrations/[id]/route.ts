@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { authorizeRoute } from "@/lib/auth/route-authorization";
 import { PERMISSIONS } from "@/lib/auth/permissions";
 import { getDb } from "@/lib/db";
-import { Resend } from "resend";
 import { randomBytes } from "crypto";
-import { brandedEmail, CONTACT_EMAIL, emailButton, emailNotice, escapeHtml, FROM_EMAIL, SITE_URL } from "@/lib/email-template";
+import { AUDIT_ACTIONS } from "@/lib/audit/audit-service";
+import { sendMembershipDecisionEmail } from "@/lib/members/email";
 
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -25,45 +25,24 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return NextResponse.json({ error: "Application already reviewed" }, { status: 409 });
   }
 
-  const memberToken = action === "approve" ? randomBytes(24).toString("hex") : undefined;
+  const cleanNote = typeof reviewNote === "string" ? reviewNote.trim().slice(0, 2000) : "";
+  const memberToken = action === "approve" ? randomBytes(24).toString("hex") : null;
 
-  const updated = await db.memberRegistration.update({
-    where: { id },
-    data: {
-      status:      action === "approve" ? "approved" : "rejected",
-      reviewNote:  reviewNote?.trim() || null,
-      reviewedAt:  new Date(),
-      reviewedBy:  email ?? "admin",
-      updatedAt:   new Date(),
-      ...(memberToken ? { memberToken } : {}),
-    },
+  const nextStatus = action === "approve" ? "approved" : "rejected";
+  const updated = await db.$transaction(async tx => {
+    const changed = await tx.memberRegistration.updateMany({
+      where: { id, status: "pending" },
+      data: { status: nextStatus, active: action === "approve", reviewNote: cleanNote || null, reviewedAt: new Date(), reviewedBy: email ?? "admin", updatedAt: new Date(), memberToken, ...(action === "approve" ? { onboardingEmailStatus: "pending" } : {}) },
+    });
+    if (changed.count !== 1) return null;
+    await tx.memberStatusHistory.create({ data: { registrationId: id, fromStatus: reg.status, toStatus: nextStatus, reason: cleanNote || null, actorUserId: auth.admin.id, actorEmail: auth.admin.email } });
+    await tx.auditLog.create({ data: { action: AUDIT_ACTIONS.MEMBER_STATUS_CHANGED, actor: auth.admin.email, actorUserId: auth.admin.id, resourceType: "member_registration", resourceId: id, outcome: "SUCCESS", detail: `${action === "approve" ? "Approved" : "Rejected"} application`, beforeState: JSON.stringify({ status: reg.status }), afterState: JSON.stringify({ status: nextStatus }) } });
+    return tx.memberRegistration.findUniqueOrThrow({ where: { id }, select: { id: true, fullName: true, email: true, status: true, active: true } });
   });
-
-  await db.auditLog.create({
-    data: {
-      id:     randomBytes(12).toString("hex"),
-      action: action === "approve" ? "REGISTRATION_APPROVED" : "REGISTRATION_REJECTED",
-      actor:  email ?? "admin",
-      detail: `${action === "approve" ? "Approved" : "Rejected"} application from ${reg.fullName} (${reg.email})`,
-    },
-  });
-
-  // Send outcome email
-  if (process.env.RESEND_API_KEY) {
-    const resend     = new Resend(process.env.RESEND_API_KEY);
-    const firstName  = escapeHtml(reg.fullName.split(" ")[0]);
-    const subject    = action === "approve"
-      ? "Your Greenwave Society Membership Application has been Approved"
-      : "Update on Your Greenwave Society Membership Application";
-
-    const html = action === "approve"
-      ? brandedEmail({ eyebrow: "Membership Application", title: "Welcome to Greenwave Society", body: `<p style="margin:0 0 16px">Dear ${firstName},</p><p style="margin:0 0 16px">We are pleased to confirm that your membership application has been <strong style="color:#1A5C38">approved</strong>.</p><p style="margin:0 0 16px">Welcome to the Greenwave Society community. Your member profile is ready below.</p>${reviewNote ? emailNotice(escapeHtml(reviewNote)) : ""}${emailButton("Access My Member Profile", `${SITE_URL}/member/${memberToken}`)}<p style="margin:0 0 22px;color:#607068">Questions? Email <a href="mailto:${CONTACT_EMAIL}" style="color:#1A5C38">${CONTACT_EMAIL}</a>.</p><p style="margin:0">Yours sincerely,<br><strong>Greenwave Society Team</strong></p>` })
-      : brandedEmail({ eyebrow: "Membership Application", title: "An update on your application", body: `<p style="margin:0 0 16px">Dear ${firstName},</p><p style="margin:0 0 16px">Thank you for your interest in Greenwave Society. After careful review, we are unable to approve your application at this time.</p>${reviewNote ? emailNotice(escapeHtml(reviewNote), "amber") : ""}<p style="margin:0 0 22px">Stay connected with our work at <a href="${SITE_URL}" style="color:#1A5C38">greenwavesociety.org</a>, and please consider applying during a future intake.</p><p style="margin:0">Kind regards,<br><strong>Greenwave Society Team</strong></p>` });
-
-    await resend.emails.send({ from: FROM_EMAIL, to: reg.email, subject, html }).catch(() => null);
-  }
-
-  return NextResponse.json({ success: true, registration: updated });
+  if (!updated) return NextResponse.json({ error: "Application was reviewed in another request. Reload and try again." }, { status: 409 });
+  const delivery = await sendMembershipDecisionEmail({ fullName: reg.fullName, email: reg.email, approved: action === "approve", memberToken, reviewNote: cleanNote });
+  if (action === "approve") await db.memberRegistration.update({ where: { id }, data: { onboardingEmailStatus: delivery.sent ? "sent" : "failed", onboardingEmailAttempts: { increment: 1 }, onboardingEmailLastError: delivery.error, onboardingEmailSentAt: delivery.sent ? new Date() : null } });
+  return NextResponse.json({ success: true, registration: updated, emailStatus: delivery.sent ? "sent" : "failed" });
 }
 
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
