@@ -20,6 +20,7 @@ export const PERMISSIONS = {
   EVENTS_UPDATE: "events.update",
   EVENTS_PUBLISH: "events.publish",
   EVENTS_MANAGE_ATTENDANCE: "events.manage_attendance",
+  EVENTS_EXPORT: "events.export",
 
   COMMUNICATIONS_READ: "communications.read",
   COMMUNICATIONS_CREATE: "communications.create",
