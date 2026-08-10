@@ -10,6 +10,10 @@ import { AUDIT_ACTIONS } from "@/lib/audit/audit-service";
 
 export const runtime = "nodejs";
 
+function hasBlobCredentials(): boolean {
+  return Boolean(process.env.BLOB_READ_WRITE_TOKEN || (process.env.VERCEL_OIDC_TOKEN && process.env.BLOB_STORE_ID));
+}
+
 export async function GET(request: NextRequest) {
   const auth = await authorizeRoute(PERMISSIONS.MEDIA_READ); if (!auth.ok) return auth.response;
   const search = request.nextUrl.searchParams.get("search")?.trim() ?? "";
@@ -19,7 +23,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   const auth = await authorizeRoute(PERMISSIONS.MEDIA_UPLOAD); if (!auth.ok) return auth.response;
-  if (!process.env.BLOB_READ_WRITE_TOKEN) return NextResponse.json({ error: "Media storage is not configured" }, { status: 503 });
+  if (!hasBlobCredentials()) return NextResponse.json({ error: "Media storage is not configured" }, { status: 503 });
   const contentLength = Number(request.headers.get("content-length") ?? "0");
   if (contentLength > MAX_MEDIA_BYTES + 64 * 1024) return NextResponse.json({ error: "Upload request is too large" }, { status: 413 });
   const form = await request.formData(); const file = form.get("file");
