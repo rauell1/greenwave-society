@@ -5,7 +5,7 @@ const db = new PrismaClient();
 const permissions = [
   "dashboard.read", "content.read", "content.create", "content.update", "content.review", "content.publish", "content.archive",
   "members.read", "members.create", "members.update", "members.review", "members.export", "members.delete",
-  "events.read", "events.create", "events.update", "events.publish", "events.manage_attendance",
+  "events.read", "events.create", "events.update", "events.publish", "events.manage_attendance", "events.export",
   "communications.read", "communications.create", "communications.send",
   "contacts.read", "contacts.respond", "contacts.delete",
   "newsletter.read", "newsletter.export", "newsletter.manage",
