@@ -1,0 +1,2 @@
+import { describe, expect, it } from "vitest";import { campaignInputSchema, canSendCampaign } from "./validation";
+describe("campaign validation",()=>{it("requires meaningful content",()=>expect(campaignInputSchema.safeParse({name:"x",subject:"Hi",htmlBody:"short"}).success).toBe(false));it("prevents duplicate sends",()=>{expect(canSendCampaign("draft")).toBe(true);expect(canSendCampaign("sent")).toBe(false);expect(canSendCampaign("sending")).toBe(false)})});
