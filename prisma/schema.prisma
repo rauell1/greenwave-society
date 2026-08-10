@@ -127,36 +127,72 @@ model AdminSession {
 }
 
 model MemberRegistration {
-  id               String           @id @default(cuid())
-  fullName         String
-  email            String
-  phone            String
-  county           String
-  occupation       String
-  organization     String?
-  meetsEligibility Boolean          @default(true)
-  interests        String[]
-  motivation       String           @db.Text
-  hearAboutUs      String?
-  source           String?
-  acknowledged     Boolean          @default(true)
-  active           Boolean          @default(true)
-  status           String           @default("pending")
-  reviewNote       String?
-  reviewedAt       DateTime?
-  reviewedBy       String?
-  memberToken      String?          @unique
-  lastSeenAt       DateTime?
-  loginCount       Int              @default(0)
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
-  activity         MemberActivity[]
+  id                       String                @id @default(cuid())
+  fullName                 String
+  email                    String
+  phone                    String
+  county                   String
+  occupation               String
+  organization             String?
+  meetsEligibility         Boolean               @default(true)
+  interests                String[]
+  motivation               String                @db.Text
+  hearAboutUs              String?
+  source                   String?
+  acknowledged             Boolean               @default(true)
+  active                   Boolean               @default(true)
+  status                   String                @default("pending")
+  reviewNote               String?
+  reviewedAt               DateTime?
+  reviewedBy               String?
+  memberToken              String?               @unique
+  lastSeenAt               DateTime?
+  loginCount               Int                   @default(0)
+  onboardingEmailStatus    String?
+  onboardingEmailAttempts  Int                   @default(0)
+  onboardingEmailLastError String?               @db.Text
+  onboardingEmailSentAt    DateTime?
+  createdAt                DateTime              @default(now())
+  updatedAt                DateTime              @updatedAt
+  activity                 MemberActivity[]
+  statusHistory            MemberStatusHistory[]
+  notes                    MemberNote[]
 
   @@index([email])
   @@index([status])
   @@index([createdAt])
   @@index([memberToken])
   @@map("member_registrations")
+}
+
+model MemberStatusHistory {
+  id             String             @id @default(cuid())
+  registrationId String
+  member         MemberRegistration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  fromStatus     String?
+  toStatus       String
+  reason         String?            @db.Text
+  actorUserId    String?
+  actorEmail     String
+  createdAt      DateTime           @default(now())
+
+  @@index([registrationId, createdAt])
+  @@index([toStatus, createdAt])
+  @@map("member_status_history")
+}
+
+model MemberNote {
+  id             String             @id @default(cuid())
+  registrationId String
+  member         MemberRegistration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  body           String             @db.Text
+  authorUserId   String?
+  authorEmail    String
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+
+  @@index([registrationId, createdAt])
+  @@map("member_notes")
 }
 
 model MemberActivity {
