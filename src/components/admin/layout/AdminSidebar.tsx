@@ -37,7 +37,7 @@ export default function AdminSidebar({ admin, enabledFeatures }: AdminSidebarPro
       title: "Dashboard",
       href: "/admin/dashboard",
       icon: LayoutDashboard,
-      show: true, // Always show dashboard if logged in
+      show: hasPermission(admin, PERMISSIONS.DASHBOARD_READ),
     },
     {
       title: "Content",

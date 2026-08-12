@@ -9,7 +9,7 @@ export const dynamic  = "force-dynamic";
 
 export default async function DashboardPage() {
   const admin = await requirePermission(PERMISSIONS.DASHBOARD_READ).catch(() => null);
-  if (!admin) redirect("/admin");
+  if (!admin) redirect("/admin/no-access");
   const email = admin.email;
 
   const db         = getDb();

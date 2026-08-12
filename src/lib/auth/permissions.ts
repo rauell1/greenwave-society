@@ -64,4 +64,5 @@ export const SYSTEM_ROLES = {
   REVIEWER: "Reviewer",
   ANALYST: "Analyst",
   AUDITOR: "Auditor",
+  VIEWER: "Viewer",
 } as const;
