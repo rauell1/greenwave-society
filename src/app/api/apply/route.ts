@@ -9,6 +9,19 @@ function getResend(): Resend | null {
   return new Resend(key);
 }
 
+/**
+ * Job Application API Route
+ *
+ * Handles incoming job applications submitted from the careers page.
+ * This endpoint processes multipart/form-data, ensuring that all 5 required
+ * fields are present: Name, Email, Phone, Cover Letter, and a mandatory CV upload.
+ *
+ * It utilizes the Resend API to dispatch a well-documented email to the organization,
+ * securely attaching the applicant's CV.
+ *
+ * @param {NextRequest} request - The incoming HTTP request containing multipart/form-data
+ * @returns {NextResponse} JSON response indicating success or error status (400, 500)
+ */
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData().catch(() => null);
@@ -16,6 +29,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid form data" }, { status: 400 });
     }
 
+    // Extract fields
     const name = formData.get("name") as string;
     const email = formData.get("email") as string;
     const phone = formData.get("phone") as string;
@@ -23,21 +37,36 @@ export async function POST(request: NextRequest) {
     const role = formData.get("role") as string;
     const cvFile = formData.get("cv") as File | null;
 
-    if (!name || !email || !phone || !coverLetter || !cvFile || !role) {
-      return NextResponse.json({ error: "All fields are required, including CV" }, { status: 400 });
+    // Strict validation for text fields
+    if (!name || !email || !phone || !coverLetter || !role) {
+      return NextResponse.json({ error: "All text fields (Name, Email, Phone, Cover Letter) are required." }, { status: 400 });
+    }
+
+    // Strict validation: CV is an absolute must
+    if (!cvFile || cvFile.size === 0) {
+      return NextResponse.json({ error: "A valid CV file is mandatory for this application." }, { status: 400 });
     }
 
     const resend = getResend();
     
+    // Construct a well-documented, professional HTML email layout for the response
     const bodyHtml = `
-      <p style="margin:0 0 16px"><strong>Role:</strong> ${escapeHtml(role)}</p>
-      <p style="margin:0 0 16px"><strong>Name:</strong> ${escapeHtml(name)}</p>
-      <p style="margin:0 0 16px"><strong>Email:</strong> ${escapeHtml(email)}</p>
-      <p style="margin:0 0 16px"><strong>Phone:</strong> ${escapeHtml(phone)}</p>
-      <div style="margin:20px 0;padding:16px;background:#f5f5f0;border-left:4px solid #1A5C38;color:#333;">
-        <h4 style="margin:0 0 10px;color:#1A5C38;">Cover Letter:</h4>
+      <h2 style="color:#1A5C38;margin:0 0 16px;">Applicant Details</h2>
+      <table style="width:100%;border-collapse:collapse;margin-bottom:24px;font-size:15px;">
+        <tr><td style="padding:10px 0;border-bottom:1px solid #eaeaea;width:120px;color:#666;"><strong>Role:</strong></td><td style="padding:10px 0;border-bottom:1px solid #eaeaea;font-weight:600;">${escapeHtml(role)}</td></tr>
+        <tr><td style="padding:10px 0;border-bottom:1px solid #eaeaea;color:#666;"><strong>Name:</strong></td><td style="padding:10px 0;border-bottom:1px solid #eaeaea;">${escapeHtml(name)}</td></tr>
+        <tr><td style="padding:10px 0;border-bottom:1px solid #eaeaea;color:#666;"><strong>Email:</strong></td><td style="padding:10px 0;border-bottom:1px solid #eaeaea;"><a href="mailto:${escapeHtml(email)}" style="color:#1A5C38;">${escapeHtml(email)}</a></td></tr>
+        <tr><td style="padding:10px 0;border-bottom:1px solid #eaeaea;color:#666;"><strong>Phone:</strong></td><td style="padding:10px 0;border-bottom:1px solid #eaeaea;">${escapeHtml(phone)}</td></tr>
+      </table>
+      
+      <h3 style="color:#1A5C38;margin:0 0 12px;">Cover Letter / Message</h3>
+      <div style="padding:18px;background:#f9f9f9;border-left:4px solid #1A5C38;color:#333;line-height:1.6;font-size:15px;">
         <div style="white-space:pre-wrap;">${escapeHtml(coverLetter)}</div>
       </div>
+      
+      <p style="margin:24px 0 0;font-size:13px;color:#888;">
+        <em>Note: The applicant's mandatory CV (${escapeHtml(cvFile.name)}) is attached to this email.</em>
+      </p>
     `;
 
     if (resend) {

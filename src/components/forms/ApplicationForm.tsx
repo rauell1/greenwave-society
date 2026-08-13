@@ -3,6 +3,16 @@
 import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 
+/**
+ * ApplicationForm Component
+ *
+ * Renders a strict 5-field job application form (Name, Email, Phone, Cover Letter, CV).
+ * It enforces that a CV must be attached by setting the required attribute on the file input.
+ * When submitted, it constructs a FormData object and posts it to the /api/apply endpoint.
+ *
+ * @param {Object} props
+ * @param {string} props.roleTitle - The title of the job role being applied for
+ */
 export function ApplicationForm({ roleTitle }: { roleTitle: string }) {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
