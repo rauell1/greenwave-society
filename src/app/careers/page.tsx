@@ -47,15 +47,11 @@ export default function CareersPage() {
                 <div className="flex flex-wrap items-center gap-3 mb-2">
                   <h3 className="text-xl font-bold text-zinc-900">Communications Lead</h3>
                   <span className="bg-emerald-100 text-emerald-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Full-time</span>
-                  <span className="bg-zinc-100 text-zinc-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">By Invitation Only</span>
                 </div>
                 <p className="text-zinc-600 mb-4">Lead our communication strategies and shape our public narrative to amplify our impact across Kenya.</p>
-                <div className="text-sm text-zinc-500">
-                  <span className="italic">Note: This position is currently open exclusively to invited candidate (jaydaphill@gmail.com).</span>
-                </div>
               </div>
               <a 
-                href={`mailto:${APP_CONFIG.contact.email}?subject=Application for Communications Lead`}
+                href="/careers/apply/communications-lead"
                 className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-full font-medium transition-colors whitespace-nowrap shrink-0"
               >
                 Apply Now <ArrowRight className="w-4 h-4" />
