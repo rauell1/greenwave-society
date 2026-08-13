@@ -75,6 +75,7 @@ export function Footer() {
                 { label: "Our Programs", href: "/programs" },
                 { label: "Our Impact", href: "/impact" },
                 { label: "Our Team", href: "/team" },
+                { label: "Careers", href: "/careers" },
                 { label: "Contact", href: "/contact" },
                 { label: "Privacy & Data Rights", href: "/privacy" },
               ].map((l) => (
