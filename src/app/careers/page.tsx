@@ -33,11 +33,34 @@ export default function CareersPage() {
 
         {/* Current Openings */}
         <section className="py-20 sm:py-32 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4 text-zinc-900">Open Positions</h2>
             <p className="text-zinc-600 max-w-2xl mx-auto">
-              Currently, we don't have any open positions. However, we are always on the lookout for talented individuals. Feel free to send us your resume.
+              Explore our current openings and find where you fit in.
             </p>
+          </div>
+
+          <div className="max-w-4xl mx-auto mb-20 space-y-6">
+            <div className="bg-white rounded-2xl shadow-sm border border-emerald-200 p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6 hover:shadow-md transition-shadow relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-2 h-full bg-emerald-500"></div>
+              <div>
+                <div className="flex flex-wrap items-center gap-3 mb-2">
+                  <h3 className="text-xl font-bold text-zinc-900">Communications Lead</h3>
+                  <span className="bg-emerald-100 text-emerald-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Full-time</span>
+                  <span className="bg-zinc-100 text-zinc-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">By Invitation Only</span>
+                </div>
+                <p className="text-zinc-600 mb-4">Lead our communication strategies and shape our public narrative to amplify our impact across Kenya.</p>
+                <div className="text-sm text-zinc-500">
+                  <span className="italic">Note: This position is currently open exclusively to invited candidate (jaydaphill@gmail.com).</span>
+                </div>
+              </div>
+              <a 
+                href={`mailto:${APP_CONFIG.contact.email}?subject=Application for Communications Lead`}
+                className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-full font-medium transition-colors whitespace-nowrap shrink-0"
+              >
+                Apply Now <ArrowRight className="w-4 h-4" />
+              </a>
+            </div>
           </div>
 
           <div className="bg-white rounded-3xl shadow-sm border border-zinc-200 p-8 sm:p-12 text-center max-w-3xl mx-auto">
