@@ -11,18 +11,20 @@ const ROLES = {
   }
 };
 
-export function generateMetadata({ params }: { params: { role: string } }): Metadata {
-  const role = ROLES[params.role as keyof typeof ROLES];
-  if (!role) return { title: "Position Not Found" };
+export async function generateMetadata({ params }: { params: Promise<{ role: string }> }): Promise<Metadata> {
+  const { role } = await params;
+  const roleData = ROLES[role as keyof typeof ROLES];
+  if (!roleData) return { title: "Position Not Found" };
   
   return {
-    title: `Apply for ${role.title} | Greenwave Society`,
+    title: `Apply for ${roleData.title} | Greenwave Society`,
   };
 }
 
-export default function ApplyPage({ params }: { params: { role: string } }) {
-  const role = ROLES[params.role as keyof typeof ROLES];
-  if (!role) notFound();
+export default async function ApplyPage({ params }: { params: Promise<{ role: string }> }) {
+  const { role } = await params;
+  const roleData = ROLES[role as keyof typeof ROLES];
+  if (!roleData) notFound();
 
   return (
     <div className="min-h-screen flex flex-col bg-zinc-50">
@@ -30,15 +32,15 @@ export default function ApplyPage({ params }: { params: { role: string } }) {
       <main className="flex-1 pt-24 pb-20 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto w-full">
         <div className="mb-8">
           <h1 className="text-3xl font-bold font-serif text-zinc-900 mb-2">
-            Apply for {role.title}
+            Apply for {roleData.title}
           </h1>
           <p className="text-zinc-600">
-            {role.description}
+            {roleData.description}
           </p>
         </div>
         
         <div className="bg-white rounded-2xl shadow-sm border border-zinc-200 p-6 sm:p-8">
-          <ApplicationForm roleTitle={role.title} />
+          <ApplicationForm roleTitle={roleData.title} />
         </div>
       </main>
       <Footer />
