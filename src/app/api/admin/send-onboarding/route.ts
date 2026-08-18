@@ -7,13 +7,7 @@ import { FROM_EMAIL, SITE_URL } from "@/lib/email-template";
 
 const APP_URL = SITE_URL;
 
-const LEADERS = [
-  { name: "Martin Kyalo",     role: "Chief Executive Officer (CEO)",                email: "martinkyalo777@gmail.com" },
-  { name: "Njeri Njoroge",    role: "Chief Operating Officer (COO)",                email: "njerinjoroge661@gmail.com" },
-  { name: "Eugene Shadrack",  role: "Chief Innovation Officer (CIO)",               email: "eugeneshadrack60@gmail.com" },
-  { name: "Roy Okola Otieno", role: "Head of Design",                               email: "royokola3@gmail.com" },
-  { name: "Roy John",         role: "Design Assistant",                             email: "johnroyochola@gmail.com" },
-];
+const LEADERS: { name: string; role: string; email: string }[] = [];
 
 function buildHtml(leader: { name: string; role: string; email: string }, today: string): string {
   return `<!DOCTYPE html>
