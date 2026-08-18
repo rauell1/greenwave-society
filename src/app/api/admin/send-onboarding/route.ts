@@ -11,7 +11,6 @@ const LEADERS = [
   { name: "Martin Kyalo",     role: "Chief Executive Officer (CEO)",                email: "martinkyalo777@gmail.com" },
   { name: "Njeri Njoroge",    role: "Chief Operating Officer (COO)",                email: "njerinjoroge661@gmail.com" },
   { name: "Eugene Shadrack",  role: "Chief Innovation Officer (CIO)",               email: "eugeneshadrack60@gmail.com" },
-  { name: "Mark Katana",      role: "Chief Strategy and Well-being Officer (CSWO)", email: "markkatanam@gmail.com" },
   { name: "Roy Okola Otieno", role: "Head of Design",                               email: "royokola3@gmail.com" },
   { name: "Roy John",         role: "Design Assistant",                             email: "johnroyochola@gmail.com" },
 ];
@@ -72,7 +71,7 @@ function buildHtml(leader: { name: string; role: string; email: string }, today:
       </div>
       <p style="margin:0 0 16px;font-size:15px;color:#111;line-height:1.8">
         Should you encounter any difficulty in activating your account, kindly contact the Head of Design
-        via <a href="mailto:royokola3@gmail.com" style="color:#1A5C38">royokola3@gmail.com</a>.
+        via <a href="mailto:info@greenwavesociety.org" style="color:#1A5C38">info@greenwavesociety.org</a>.
       </p>
       <p style="margin:0 0 4px;font-size:15px;color:#111">Yours faithfully,</p>
       <p style="margin:0 0 4px;font-size:15px;color:#111;font-weight:bold">Martin Kyalo</p>
@@ -83,7 +82,7 @@ function buildHtml(leader: { name: string; role: string; email: string }, today:
     <td style="background:#1A5C38;padding:20px 40px;text-align:center">
       <p style="margin:0;font-size:12px;color:#a8d5b5;line-height:1.8">
         Greenwave Society &bull; Nairobi, Kenya<br/>
-        greenwavesociety.org &bull; info@rauell.systems
+        greenwavesociety.org &bull; info@greenwavesociety.org
       </p>
     </td>
   </tr>

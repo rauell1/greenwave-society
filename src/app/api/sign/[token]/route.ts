@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { Resend } from "resend";
-import { brandedEmail, emailButton, emailNotice, escapeHtml, FROM_EMAIL, SITE_URL } from "@/lib/email-template";
+import { brandedEmail, CONTACT_EMAIL, emailButton, emailNotice, escapeHtml, FROM_EMAIL, SITE_URL } from "@/lib/email-template";
 
-const SUPER_ADMIN = "royokola3@gmail.com";
+const SUPER_ADMIN = CONTACT_EMAIL;
 
 function notifySuperAdmin(opts: {
   leaderName: string; leaderRole: string; leaderEmail: string;
