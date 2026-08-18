@@ -71,7 +71,7 @@ function buildHtml(leader: { name: string; role: string; email: string }, today:
       </div>
       <p style="margin:0 0 16px;font-size:15px;color:#111;line-height:1.8">
         Should you encounter any difficulty in activating your account, kindly contact the Head of Design
-        via <a href="mailto:royokola3@gmail.com" style="color:#1A5C38">royokola3@gmail.com</a>.
+        via <a href="mailto:info@greenwavesociety.org" style="color:#1A5C38">info@greenwavesociety.org</a>.
       </p>
       <p style="margin:0 0 4px;font-size:15px;color:#111">Yours faithfully,</p>
       <p style="margin:0 0 4px;font-size:15px;color:#111;font-weight:bold">Martin Kyalo</p>
