@@ -44,7 +44,7 @@ export function VolunteerCTA() {
                 Become a <span className="italic font-normal text-primary">Volunteer</span> Today
               </h2>
               <p className="mt-6 text-muted-foreground text-sm sm:text-base leading-relaxed">
-                Join a growing network of young Kenyans who are doing real things — leading systems thinking sessions, organising community barazas, planting trees, running clean-ups, and building an organisation that sustains itself. There is a role here for you.
+                Join a growing network of young Kenyans who are doing real things: leading systems thinking sessions, organising community barazas, planting trees, running clean-ups, and building an organisation that sustains itself. There is a role here for you.
               </p>
 
               {/* High-end list structure */}

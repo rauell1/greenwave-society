@@ -38,7 +38,7 @@ export function Hero() {
 
             <FadeIn delay={0.35}>
               <p className="mt-6 text-base sm:text-lg text-muted-foreground leading-relaxed max-w-xl">
-                Greenwave Society is a youth-led social enterprise and think tank in Kenya. We translate complex systems into simple, practical action — through enterprise training, community barazas, conservation, and knowledge-driven partnerships that put young people at the centre.
+                Greenwave Society is a youth-led social enterprise and think tank in Kenya. We translate complex systems into simple, practical action: enterprise training, community barazas, conservation, and knowledge-driven partnerships that put young people at the centre.
               </p>
             </FadeIn>
 

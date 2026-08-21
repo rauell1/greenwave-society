@@ -10,7 +10,7 @@ export function About() {
     {
       icon: <Leaf className="w-5 h-5" />,
       title: "Systems Thinking in Action",
-      desc: "We bring systems thinking out of the classroom and into the community — helping young Kenyans map root causes, identify impact gaps, and design interventions that address the real reasons challenges persist. Aligned with SDG 13, 14, and 15.",
+      desc: "We bring systems thinking out of the classroom and into the community, helping young Kenyans map root causes, identify impact gaps, and design interventions that address the real reasons challenges persist. Aligned with SDG 13, 14, and 15.",
     },
     {
       icon: <Users className="w-5 h-5" />,
@@ -25,7 +25,7 @@ export function About() {
     {
       icon: <Globe className="w-5 h-5" />,
       title: "Knowledge-Driven Partnerships",
-      desc: "Operating as a think tank, we build evidence-based partnerships — from urban tree-planting with Tatu City to community cleanup events — ensuring every collaboration delivers measurable, lasting impact aligned with SDG 17.",
+      desc: "Operating as a think tank, we build evidence-based partnerships: from urban tree-planting with Tatu City to community cleanup events, ensuring every collaboration delivers measurable, lasting impact aligned with SDG 17.",
     },
   ];
 
@@ -74,14 +74,14 @@ export function About() {
             <FadeIn delay={0.2}>
               <div className="mt-6 border-l-4 border-primary pl-6 py-2">
                 <p className="font-serif italic text-lg sm:text-xl text-muted-foreground leading-relaxed">
-                  "We exist to translate systems thinking into everyday action — equipping young Kenyans to diagnose the challenges in their communities, build enterprises that outlast donor cycles, and lead change from the ground up."
+                  "We exist to translate systems thinking into everyday action: equipping young Kenyans to diagnose the challenges in their communities, build enterprises that outlast donor cycles, and lead change from the ground up."
                 </p>
               </div>
             </FadeIn>
 
             <FadeIn delay={0.3}>
               <p className="mt-6 text-muted-foreground text-sm sm:text-base leading-relaxed">
-                We are transitioning from a non-governmental model to a self-sustaining social enterprise — reducing dependency on donor funding and building an organisation that generates its own impact and value. Our vision is a generation of equipped, confident young Kenyans: leading enterprises, applying systems thinking in their communities, and driving lasting change from the ground up.
+                We are transitioning from a non-governmental model to a self-sustaining social enterprise, reducing dependency on donor funding and building an organisation that generates its own impact and value. Our vision is a generation of equipped, confident young Kenyans: leading enterprises, applying systems thinking in their communities, and driving lasting change from the ground up.
               </p>
             </FadeIn>
             
