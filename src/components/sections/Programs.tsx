@@ -13,7 +13,7 @@ const programs = [
     span: "md:col-span-2 lg:col-span-2",
   },
   {
-    image: "/images/Sewafu429.jpg",
+    image: "/images/IMG_9415.jpg",
     icon: <HeartHandshake className="w-5 h-5" />,
     title: "Young People Pulse (YPP)",
     desc: "A youth-volunteer initiative centred on intergenerational connection, mental health, and community accountability. YPP organises community barazas, peer support sessions, and cross-pod collaboration that bring young Kenyans together to build shared responsibility and drive grassroots change.",
@@ -29,7 +29,7 @@ const programs = [
     span: "md:col-span-1 lg:col-span-1",
   },
   {
-    image: "/images/Sewafu076.jpg",
+    image: "/images/IMG_9390.jpg",
     icon: <TreePine className="w-5 h-5" />,
     title: "Conservation & Restoration",
     desc: "From tree-planting with Tatu City to community clean-ups at JCK and habitat restoration, our conservation work directly protects local ecosystems while giving young people real-world project leadership experience, skills, and accountability that no classroom can replicate.",
@@ -45,7 +45,7 @@ const programs = [
     span: "md:col-span-2 lg:col-span-2",
   },
   {
-    image: "/images/Sewafu087.jpg",
+    image: "/images/IMG_9327.jpg",
     icon: <Sprout className="w-5 h-5" />,
     title: "Sustainability & Urban Resilience",
     desc: "As a social enterprise, we design sustainable models that reduce donor dependency: from lean programme delivery and shared community infrastructure to tiered revenue strategies that keep our work going long after grants run out.",
