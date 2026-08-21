@@ -25,20 +25,20 @@ export function Hero() {
                 className="mb-6 px-4 py-2 text-xs uppercase tracking-wider font-bold bg-primary/10 text-primary border border-primary/20 rounded-full"
               >
                 <Sprout className="w-3.5 h-3.5 mr-1.5" />
-                Non-Profit Organization &bull; Kenya
+                Social Enterprise &bull; Think Tank &bull; Kenya
               </Badge>
             </FadeIn>
 
             <FadeIn delay={0.2}>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-serif font-black text-foreground leading-[1.05] tracking-tight">
-                Equipping youth <br />
-                to lead, build, and <span className="text-primary italic font-normal">connect</span>
+                Turning systems <br />
+                thinking into <span className="text-primary italic font-normal">community change</span>
               </h1>
             </FadeIn>
 
             <FadeIn delay={0.35}>
               <p className="mt-6 text-base sm:text-lg text-muted-foreground leading-relaxed max-w-xl">
-                Young Kenyans face real challenges: skills gaps, unemployment, and mental health pressures. Greenwave Society bridges those gaps through enterprise training, environmental action, and community-led programmes.
+                Greenwave Society is a youth-led social enterprise and think tank in Kenya. We translate complex systems into simple, practical action — through enterprise training, community barazas, conservation, and knowledge-driven partnerships that put young people at the centre.
               </p>
             </FadeIn>
 

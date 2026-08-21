@@ -9,23 +9,23 @@ export function About() {
   const values = [
     {
       icon: <Leaf className="w-5 h-5" />,
-      title: "Environment as the Classroom",
-      desc: "Conservation, restoration, and sustainability work aren't just environmental goals. They're the real-world context where young people build skills, accountability, and belonging. Aligned with SDG 13, 14, and 15.",
+      title: "Systems Thinking in Action",
+      desc: "We bring systems thinking out of the classroom and into the community — helping young Kenyans map root causes, identify impact gaps, and design interventions that address the real reasons challenges persist. Aligned with SDG 13, 14, and 15.",
     },
     {
       icon: <Users className="w-5 h-5" />,
-      title: "Youth Leadership & Inclusion",
-      desc: "We equip youth aged 15-35 to tackle the intersecting crises of skills mismatch, mental health, and unemployment, through enterprise training, mentorship, and equitable opportunities aligned with SDG 4, 5, 8, and 10.",
+      title: "Social Enterprise & Skills",
+      desc: "Through The 50 Percent programme and our social enterprise transition, we equip youth aged 18-35 to create economic value, close the skills-to-employment gap, and build organisations that sustain themselves. Aligned with SDG 4, 8, and 10.",
     },
     {
       icon: <Heart className="w-5 h-5" />,
       title: "Community-Led Wellbeing",
-      desc: "We invest in the mental resilience and holistic wellbeing of every young person we work with, because sustainable communities start with people who are supported, connected, and heard. Aligned with SDG 3, 6, and 11.",
+      desc: "Through community barazas, the Young People Pulse initiative, and intergenerational connection, we invest in the mental resilience and collective accountability of every young person we work with. Aligned with SDG 3, 6, and 11.",
     },
     {
       icon: <Globe className="w-5 h-5" />,
-      title: "Partnerships & Accountability",
-      desc: "Through SDG 17 partnerships, transparent governance, and active connections with organisations like the UN and Google, we scale our impact responsibly and ensure every programme delivers measurable results.",
+      title: "Knowledge-Driven Partnerships",
+      desc: "Operating as a think tank, we build evidence-based partnerships — from urban tree-planting with Tatu City to community cleanup events — ensuring every collaboration delivers measurable, lasting impact aligned with SDG 17.",
     },
   ];
 
@@ -74,14 +74,14 @@ export function About() {
             <FadeIn delay={0.2}>
               <div className="mt-6 border-l-4 border-primary pl-6 py-2">
                 <p className="font-serif italic text-lg sm:text-xl text-muted-foreground leading-relaxed">
-                  "We exist to close the gaps that hold young Kenyans back, in skills, in opportunity, and in wellbeing, by building leaders who serve their communities and drive lasting change."
+                  "We exist to translate systems thinking into everyday action — equipping young Kenyans to diagnose the challenges in their communities, build enterprises that outlast donor cycles, and lead change from the ground up."
                 </p>
               </div>
             </FadeIn>
 
             <FadeIn delay={0.3}>
               <p className="mt-6 text-muted-foreground text-sm sm:text-base leading-relaxed">
-                Our vision is a generation of equipped, confident young Kenyans: leading enterprises, restoring ecosystems, and strengthening communities from the ground up.
+                We are transitioning from a non-governmental model to a self-sustaining social enterprise — reducing dependency on donor funding and building an organisation that generates its own impact and value. Our vision is a generation of equipped, confident young Kenyans: leading enterprises, applying systems thinking in their communities, and driving lasting change from the ground up.
               </p>
             </FadeIn>
             
