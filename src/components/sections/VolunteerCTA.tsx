@@ -23,7 +23,7 @@ export function VolunteerCTA() {
                 <div className="aspect-[4/5] sm:aspect-[3/2] lg:aspect-[4/5] relative rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_oklch(var(--primary)/8%)]">
                   <Image quality={95}
                     src="/images/20241214_180058.jpg"
-                    alt="Volunteers and community members gathered at Sewafu Children's Home"
+                    alt="Greenwave Society volunteers and community members gathered in Kenya"
                     fill
                     sizes="(max-width: 768px) 100vw, 40vw"
                     className="object-cover grayscale-[15%] hover:grayscale-0 transition-all duration-500"

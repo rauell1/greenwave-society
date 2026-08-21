@@ -99,7 +99,7 @@ export function Hero() {
               <div className="absolute top-0 right-4 w-[75%] h-[75%] rounded-[2.5rem] overflow-hidden border-8 border-background shadow-2xl z-10 hover:-translate-y-2 transition-transform duration-500">
                 <Image quality={95}
                   src="/images/g-28.jpg"
-                  alt="Greenwave Society community members celebrating at Sewafu Children's Home visit"
+                  alt="Greenwave Society youth celebrating at a community event in Kenya"
                   fill
                   priority
                   sizes="(max-width: 768px) 75vw, 40vw"
