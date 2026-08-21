@@ -166,7 +166,7 @@ export function JoinForm() {
       {/* Header */}
       <header className="bg-[#1A5C38] text-white py-5 px-6">
         <div className="max-w-3xl mx-auto flex items-center gap-3">
-          <Image src="/logo.png" alt="Greenwave Society Logo" width={36} height={36} className="h-9 w-9 rounded-xl object-contain" />
+          <Image quality={95} src="/logo.png" alt="Greenwave Society Logo" width={36} height={36} className="h-9 w-9 rounded-xl object-contain" />
           <div>
             <p className="font-bold font-serif tracking-wide text-sm">GREENWAVE SOCIETY</p>
             <p className="text-green-200 text-xs">Membership Application</p>

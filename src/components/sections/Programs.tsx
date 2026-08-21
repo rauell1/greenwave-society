@@ -83,7 +83,7 @@ export function Programs() {
                   
                   {/* Image wrapper */}
                   <div className={`relative overflow-hidden min-h-[220px] ${p.span.includes("col-span-2") ? "lg:col-span-5 h-full" : "h-64"}`}>
-                    <Image
+                    <Image quality={95}
                       src={p.image}
                       alt={p.title}
                       fill

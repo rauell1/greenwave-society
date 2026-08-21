@@ -44,7 +44,7 @@ export function About() {
                 {/* Custom geometric shape border */}
                 <div className="absolute -inset-4 rounded-[2.5rem] border border-primary/20 -z-10 rotate-2" />
                 <div className="aspect-[4/5] relative rounded-[2rem] overflow-hidden shadow-[0_20px_50px_oklch(var(--primary)/12%)]">
-                  <Image
+                  <Image quality={95}
                     src="/images/Sewafu145.jpg"
                     alt="Youth in community environmental discussion in Kenya"
                     fill

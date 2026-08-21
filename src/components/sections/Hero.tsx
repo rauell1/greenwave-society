@@ -97,7 +97,7 @@ export function Hero() {
               
               {/* Main Image */}
               <div className="absolute top-0 right-4 w-[75%] h-[75%] rounded-[2.5rem] overflow-hidden border-8 border-background shadow-2xl z-10 hover:-translate-y-2 transition-transform duration-500">
-                <Image
+                <Image quality={95}
                   src="/images/IMG_9415.jpg"
                   alt="Greenwave Society community members celebrating at Sewafu Children's Home visit"
                   fill
@@ -109,7 +109,7 @@ export function Hero() {
 
               {/* Staggered overlapping Image */}
               <div className="absolute bottom-4 left-4 w-[60%] h-[60%] rounded-[2rem] overflow-hidden border-8 border-background shadow-xl z-20 hover:-translate-y-2 transition-transform duration-500">
-                <Image
+                <Image quality={95}
                   src="/images/Sewafu091.jpg"
                   alt="Young women empowered through Greenwave Society programmes in Kenya"
                   fill

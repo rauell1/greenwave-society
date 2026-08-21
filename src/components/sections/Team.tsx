@@ -84,7 +84,7 @@ export function Team() {
                     {founder.tag}
                   </div>
                   <div className="relative w-full h-full rounded-[1.5rem] overflow-hidden bg-primary/5">
-                    <Image
+                    <Image quality={95}
                       src={founder.image}
                       alt={founder.name}
                       fill
