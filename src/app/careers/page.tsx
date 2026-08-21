@@ -7,9 +7,33 @@ import { Briefcase, ArrowRight, Leaf, Users, Zap } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Careers | Join Greenwave Society",
-  description: "Join our team at Greenwave Society and help close the gaps in skills, opportunity, and wellbeing for young Kenyans.",
+  description: "Join the Greenwave Society team and help build a self-sustaining social enterprise and think tank for young Kenyans. Explore open positions in communications, programmes, and operations.",
+  keywords: [
+    "Greenwave Society careers Kenya",
+    "jobs social enterprise Kenya",
+    "Nairobi youth organisation jobs",
+    "communications lead Kenya",
+    "think tank careers Nairobi",
+    "social enterprise jobs Nairobi Kenya",
+    "youth programmes jobs Kenya",
+    "work with Greenwave Society",
+  ],
   alternates: {
     canonical: `${APP_CONFIG.url}/careers`,
+  },
+  openGraph: {
+    title: "Careers | Greenwave Society Kenya",
+    description: "Join the Greenwave Society team. Open positions in a self-sustaining social enterprise and think tank dedicated to equipping young Kenyans to lead, build, and connect.",
+    url: `${APP_CONFIG.url}/careers`,
+    siteName: "Greenwave Society",
+    images: [{ url: "/images/IMG_9415.jpg", width: 1200, height: 630, alt: "Careers at Greenwave Society Kenya" }],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Careers | Greenwave Society Kenya",
+    description: "Help build a social enterprise and think tank for young Kenyans. Explore open positions at Greenwave Society.",
+    images: ["/images/IMG_9415.jpg"],
   },
 };
 
