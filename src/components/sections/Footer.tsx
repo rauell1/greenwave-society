@@ -28,7 +28,7 @@ export function Footer() {
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
             <Link href="/" className="flex items-center gap-2.5 mb-4 group">
-              <Image
+              <Image quality={95}
                 src="/logo.png"
                 alt="Greenwave Society Logo"
                 width={40}
@@ -74,6 +74,7 @@ export function Footer() {
                 { label: "About Us", href: "/about" },
                 { label: "Our Programs", href: "/programs" },
                 { label: "Our Impact", href: "/impact" },
+                { label: "Gallery", href: "/gallery" },
                 { label: "Our Team", href: "/team" },
                 { label: "Careers", href: "/careers" },
                 { label: "Contact", href: "/contact" },

@@ -13,6 +13,7 @@ const navLinks = [
   { label: "About", href: "/about" },
   { label: "Programs", href: "/programs" },
   { label: "Impact", href: "/impact" },
+  { label: "Gallery", href: "/gallery" },
   { label: "Team", href: "/team" },
   { label: "Contact", href: "/contact" },
 ];
@@ -42,7 +43,7 @@ export function Navbar() {
     >
       <nav className="max-w-7xl mx-auto flex items-center justify-between px-6 sm:px-8 h-12">
         <Link href="/" className="flex items-center gap-2.5 group">
-          <Image
+          <Image quality={95}
             src="/logo.png"
             alt="Greenwave Society Logo"
             width={40}

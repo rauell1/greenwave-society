@@ -40,7 +40,7 @@ export function AboutTeam() {
             <FadeIn key={member.name} delay={0.1 * (index + 1)}>
               <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow p-6 border border-gray-100 flex flex-col items-center text-center">
                 <div className="relative w-32 h-32 mb-6 rounded-full overflow-hidden border-4 border-emerald-50">
-                  <Image
+                  <Image quality={95}
                     src={member.image}
                     alt={`${member.name} - ${member.role}`}
                     fill
