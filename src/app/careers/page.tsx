@@ -7,7 +7,7 @@ import { Briefcase, ArrowRight, Leaf, Users, Zap } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Careers | Join Greenwave Society",
-  description: "Join the Greenwave Society team and help build a self-sustaining social enterprise and think tank for young Kenyans. Explore open positions in communications, programmes, and operations.",
+  description: "Join the Greenwave Society team and help build a self-sustaining social enterprise and think tank for young Kenyans. We are currently hiring a Communications Lead in Nairobi.",
   keywords: [
     "Greenwave Society careers Kenya",
     "jobs social enterprise Kenya",
