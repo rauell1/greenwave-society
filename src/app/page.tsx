@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     siteName: "Greenwave Society",
     images: [
       {
-        url: "/images/hero.png",
+        url: "/images/IMG_9415.jpg",
         width: 1200,
         height: 630,
         alt: "Greenwave Society youth leadership and community development in Kenya",
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Greenwave Society | Youth Leadership & Skills in Kenya",
     description: "Closing the gaps in skills, opportunity, and wellbeing for young Kenyans aged 15-35.",
-    images: ["/images/hero.png"],
+    images: ["/images/IMG_9415.jpg"],
     creator: "@greenwaveke",
     site: "@greenwaveke",
   },

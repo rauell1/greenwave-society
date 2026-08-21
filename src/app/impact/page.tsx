@@ -35,14 +35,14 @@ export const metadata: Metadata = {
     description: "500+ youth empowered, 10,000+ trees planted, 25+ communities served. Real measurable change across Kenya by Greenwave Society.",
     url: `${APP_CONFIG.url}/impact`,
     siteName: "Greenwave Society",
-    images: [{ url: "/images/hero.png", width: 1200, height: 630, alt: "Greenwave Society impact metrics Kenya 500 youth 10000 trees" }],
+    images: [{ url: "/images/IMG_9415.jpg", width: 1200, height: 630, alt: "Greenwave Society impact metrics Kenya 500 youth 10000 trees" }],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "Impact | Greenwave Society Kenya",
     description: "500+ youth, 10,000+ trees, 25+ communities, 50+ events. Greenwave Society's measurable impact in Kenya.",
-    images: ["/images/hero.png"],
+    images: ["/images/IMG_9415.jpg"],
   },
 };
 
