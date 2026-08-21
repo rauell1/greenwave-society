@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     "10000 trees planted Kenya",
     "community development impact Nairobi",
     "conservation results Kenya",
-    "environmental NGO impact Kenya",
+    "social enterprise impact Kenya",
     "youth workshops Kenya results",
     "waste recycled Kenya programme",
     "Kangemi restoration impact",

@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     "skills training programme application Kenya",
     "mental health youth volunteer Kenya",
     "changemakers application Kenya",
-    "NGO membership Kenya youth",
+    "social enterprise membership Kenya youth",
   ],
   alternates: {
     canonical: `${APP_CONFIG.url}/join`,
