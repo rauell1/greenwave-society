@@ -13,7 +13,7 @@ const programs = [
     span: "md:col-span-2 lg:col-span-2",
   },
   {
-    image: "/images/20250404_134744.jpg",
+    image: "/images/g-12.jpg",
     icon: <HeartHandshake className="w-5 h-5" />,
     title: "Young People Pulse (YPP)",
     desc: "A youth-volunteer initiative centred on intergenerational connection, mental health, and community accountability. YPP organises community barazas, peer support sessions, and cross-pod collaboration that bring young Kenyans together to build shared responsibility and drive grassroots change.",
@@ -29,7 +29,7 @@ const programs = [
     span: "md:col-span-1 lg:col-span-1",
   },
   {
-    image: "/images/g-162.jpg",
+    image: "/images/g-71.jpg",
     icon: <TreePine className="w-5 h-5" />,
     title: "Conservation & Restoration",
     desc: "From tree-planting with Tatu City to community clean-ups at JCK and habitat restoration, our conservation work directly protects local ecosystems while giving young people real-world project leadership experience, skills, and accountability that no classroom can replicate.",
@@ -37,7 +37,7 @@ const programs = [
     span: "md:col-span-2 lg:col-span-2",
   },
   {
-    image: "/images/g-186.jpg",
+    image: "/images/20241214_142822.jpg",
     icon: <HandHeart className="w-5 h-5" />,
     title: "Youth Empowerment & Leadership",
     desc: "We build leadership capacity through mentorship, systems thinking training, and rotating meeting leadership so every member develops facilitation and critical thinking skills. We believe the next generation of leaders learns best by doing: leading meetings, managing budgets, and driving real projects.",
