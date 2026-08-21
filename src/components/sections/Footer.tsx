@@ -98,10 +98,12 @@ export function Footer() {
             </h4>
             <ul className="space-y-2.5">
               {[
-                "Environmental Education",
+                "The 50 Percent",
+                "Young People Pulse (YPP)",
+                "Climate Action & Advocacy",
                 "Conservation & Restoration",
-                "Youth Empowerment",
-                "Sustainable Agriculture",
+                "Youth Leadership",
+                "Social Enterprise & Sustainability",
               ].map((l) => (
                 <li key={l}>
                   <Link

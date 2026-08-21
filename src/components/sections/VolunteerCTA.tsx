@@ -44,19 +44,16 @@ export function VolunteerCTA() {
                 Become a <span className="italic font-normal text-primary">Volunteer</span> Today
               </h2>
               <p className="mt-6 text-muted-foreground text-sm sm:text-base leading-relaxed">
-                Join our growing network of passionate volunteers and help make a
-                real difference in your community. Whether you want to plant trees,
-                lead workshops, or support our operations, there is a place for you
-                at Greenwave Society.
+                Join a growing network of young Kenyans who are doing real things — leading systems thinking sessions, organising community barazas, planting trees, running clean-ups, and building an organisation that sustains itself. There is a role here for you.
               </p>
 
               {/* High-end list structure */}
               <div className="mt-8 grid sm:grid-cols-2 gap-4">
                 {[
-                  "Flexible volunteering opportunities",
-                  "Training and mentorship provided",
-                  "Connect with like-minded changemakers",
-                  "Make a measurable environmental impact",
+                  "Lead community barazas & workshops",
+                  "Participate in systems thinking training",
+                  "Join conservation & cleanup events",
+                  "Grow your leadership with real responsibility",
                 ].map((item) => (
                   <div key={item} className="flex items-start gap-3">
                     <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
