@@ -44,10 +44,10 @@ export const metadata: Metadata = {
     "youth leadership Kenya",
     "youth leadership Nairobi",
     "youth development Kenya",
-    "youth organisation Kenya",
-    "youth NGO Kenya",
-    "NGO Nairobi",
-    "nonprofit Kenya",
+    "youth social enterprise Kenya",
+    "think tank Kenya youth",
+    "social enterprise Nairobi",
+    "systems thinking Kenya",
     // Problems addressed
     "skills mismatch Kenya",
     "youth unemployment Kenya",
@@ -94,7 +94,7 @@ export const metadata: Metadata = {
     "sustainability Kenya",
     "youth social enterprise Africa",
     "Kenya youth programmes",
-    "Nairobi youth organisation",
+    "Nairobi social enterprise youth",
   ],
   authors: [{ name: "Greenwave Society", url: APP_CONFIG.url }],
   creator: "Greenwave Society",
@@ -160,7 +160,7 @@ export default function RootLayout({
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": ["NGO", "Organization"],
+        "@type": ["Organization", "EducationalOrganization"],
         "@id": `${APP_CONFIG.url}/#organization`,
         "name": "Greenwave Society",
         "alternateName": ["Greenwave", "Greenwave Kenya"],
