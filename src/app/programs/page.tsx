@@ -34,14 +34,14 @@ export const metadata: Metadata = {
     description: "Six interconnected programmes closing the gaps in skills, employment, and wellbeing for young Kenyans aged 15-35, from flagship enterprise training to conservation and mental health.",
     url: `${APP_CONFIG.url}/programs`,
     siteName: "Greenwave Society",
-    images: [{ url: "/images/hero.png", width: 1200, height: 630, alt: "Greenwave Society programmes Kenya youth enterprise conservation" }],
+    images: [{ url: "/images/IMG_9415.jpg", width: 1200, height: 630, alt: "Greenwave Society programmes Kenya youth enterprise conservation" }],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "Our Programmes | Greenwave Society Kenya",
     description: "The 50 Percent, YPP, Climate Action, Conservation, Youth Empowerment, Sustainability Education, six programmes building the next generation of Kenyan leaders.",
-    images: ["/images/hero.png"],
+    images: ["/images/IMG_9415.jpg"],
   },
 };
 

@@ -31,14 +31,14 @@ export const metadata: Metadata = {
     description: "Open to youth aged 15-35 in Kenya. Apply to build enterprise skills, lead in your community, and be part of Greenwave Society's mission to close the gaps in skills, opportunity, and wellbeing.",
     url: `${APP_CONFIG.url}/join`,
     siteName: "Greenwave Society",
-    images: [{ url: "/images/hero.png", width: 1200, height: 630, alt: "Join Greenwave Society youth leadership Kenya" }],
+    images: [{ url: "/images/IMG_9415.jpg", width: 1200, height: 630, alt: "Join Greenwave Society youth leadership Kenya" }],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "Join Greenwave Society | Apply to Lead in Kenya",
     description: "Youth aged 15-35 in Kenya: apply for membership and be part of enterprise training, conservation, and community leadership.",
-    images: ["/images/hero.png"],
+    images: ["/images/IMG_9415.jpg"],
   },
 };
 

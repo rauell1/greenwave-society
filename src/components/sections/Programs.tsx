@@ -5,7 +5,7 @@ import { FadeIn } from "@/components/ui/fade-in";
 
 const programs = [
   {
-    image: "/images/program-education.png",
+    image: "/images/IMG_9361.jpg",
     icon: <TrendingUp className="w-5 h-5" />,
     title: "The 50 Percent: Social Enterprise",
     desc: "Our flagship programme equips young people with the tools to create economic value. Built around five pillars: who we train, how we train, where we train, what skills we build, and why. It addresses unemployment and skills gaps head-on, expanding thinking and adding lasting value to organisations and communities.",
@@ -13,7 +13,7 @@ const programs = [
     span: "md:col-span-2 lg:col-span-2",
   },
   {
-    image: "/images/program-empowerment.png",
+    image: "/images/Sewafu429.jpg",
     icon: <HeartHandshake className="w-5 h-5" />,
     title: "Young People Pulse (YPP)",
     desc: "A youth-volunteer initiative centred on intergenerational connection, mental health awareness, and community accountability. YPP brings together young people to support one another, build shared responsibility, and drive grassroots change across Kenya.",
@@ -21,7 +21,7 @@ const programs = [
     span: "md:col-span-1 lg:col-span-1",
   },
   {
-    image: "/images/program-climate-action.png",
+    image: "/images/IMG_9326.jpg",
     icon: <GraduationCap className="w-5 h-5" />,
     title: "Climate Action & Advocacy Training",
     desc: "Hands-on workshops that teach young people ecology, sustainability, and climate science, equipping them with the knowledge to advocate for change and make informed environmental decisions in their communities.",
@@ -29,7 +29,7 @@ const programs = [
     span: "md:col-span-1 lg:col-span-1",
   },
   {
-    image: "/images/program-conservation.png",
+    image: "/images/Sewafu076.jpg",
     icon: <TreePine className="w-5 h-5" />,
     title: "Conservation & Restoration",
     desc: "From tree-planting campaigns to river clean-ups and habitat restoration, our conservation programmes directly protect local ecosystems, while giving young people real-world project experience that builds skills and accountability.",
@@ -37,7 +37,7 @@ const programs = [
     span: "md:col-span-2 lg:col-span-2",
   },
   {
-    image: "/images/program-leadership.png",
+    image: "/images/IMG_9086.jpg",
     icon: <HandHeart className="w-5 h-5" />,
     title: "Youth Empowerment & Leadership",
     desc: "We build leadership capacity through mentorship, vocational skills training, and community engagement. Our programmes help youth develop the confidence, critical thinking, and project management skills that employers and communities need.",
@@ -45,7 +45,7 @@ const programs = [
     span: "md:col-span-2 lg:col-span-2",
   },
   {
-    image: "/images/program-agriculture.png",
+    image: "/images/Sewafu087.jpg",
     icon: <Sprout className="w-5 h-5" />,
     title: "Sustainability & Urban Resilience",
     desc: "Urban planning initiatives and ecosystem design projects that help communities build greener, more resilient neighbourhoods, connecting young people to the infrastructure challenges their generation will solve.",

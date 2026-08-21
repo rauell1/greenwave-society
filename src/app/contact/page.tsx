@@ -29,14 +29,14 @@ export const metadata: Metadata = {
     description: "Email, WhatsApp, or fill out our contact form. We would love to hear from volunteers, partners, and anyone passionate about youth leadership and conservation in Kenya.",
     url: `${APP_CONFIG.url}/contact`,
     siteName: "Greenwave Society",
-    images: [{ url: "/images/hero.png", width: 1200, height: 630, alt: "Contact Greenwave Society Nairobi Kenya" }],
+    images: [{ url: "/images/IMG_9415.jpg", width: 1200, height: 630, alt: "Contact Greenwave Society Nairobi Kenya" }],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "Contact Greenwave Society | Kenya",
     description: "Email info@greenwavesociety.org or WhatsApp +254 700 519 130. Volunteers and partners welcome.",
-    images: ["/images/hero.png"],
+    images: ["/images/IMG_9415.jpg"],
   },
 };
 

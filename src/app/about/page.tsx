@@ -36,14 +36,14 @@ export const metadata: Metadata = {
     description: "We exist to close the gaps that hold young Kenyans back. Discover our mission, four strategic pillars, and the leaders driving change.",
     url: `${APP_CONFIG.url}/about`,
     siteName: "Greenwave Society",
-    images: [{ url: "/images/hero.png", width: 1200, height: 630, alt: "About Greenwave Society Kenya mission and vision" }],
+    images: [{ url: "/images/IMG_9415.jpg", width: 1200, height: 630, alt: "About Greenwave Society Kenya mission and vision" }],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "About Greenwave Society | Mission, Vision & Strategy",
     description: "Closing the gaps in skills, opportunity, and wellbeing for young Kenyans. Learn our strategy and the team behind the mission.",
-    images: ["/images/hero.png"],
+    images: ["/images/IMG_9415.jpg"],
   },
 };
 

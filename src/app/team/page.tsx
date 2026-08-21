@@ -29,14 +29,14 @@ export const metadata: Metadata = {
     description: "Meet Martin Kyalo, Njeri Njoroge, Eugene Shadrack, and Roy Okola, the team behind Greenwave Society's mission to equip young Kenyans to lead, build, and connect.",
     url: `${APP_CONFIG.url}/team`,
     siteName: "Greenwave Society",
-    images: [{ url: "/images/hero.png", width: 1200, height: 630, alt: "Greenwave Society leadership team Kenya" }],
+    images: [{ url: "/images/IMG_9415.jpg", width: 1200, height: 630, alt: "Greenwave Society leadership team Kenya" }],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "Our Team | Greenwave Society Kenya",
     description: "Meet the team building youth leadership, enterprise skills, and conservation across Kenya.",
-    images: ["/images/hero.png"],
+    images: ["/images/IMG_9415.jpg"],
   },
 };
 
