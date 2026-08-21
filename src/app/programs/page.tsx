@@ -7,7 +7,7 @@ import { APP_CONFIG } from "@/config/app.config";
 
 export const metadata: Metadata = {
   title: "Our Programmes | The 50 Percent, YPP, Conservation & More | Kenya",
-  description: "Six interconnected programmes from Greenwave Society in Kenya: The 50 Percent (flagship enterprise training), Young People Pulse (YPP), Climate Action, Conservation, Youth Empowerment, and Sustainability Education, all addressing skills gaps, unemployment, and mental health for youth aged 15-35.",
+  description: "Six interconnected programmes from Greenwave Society in Kenya: The 50 Percent (flagship systems thinking fellowship), Young People Pulse (YPP), Climate Action, Conservation, Youth Empowerment, and Sustainability & Urban Resilience, all addressing skills gaps, unemployment, and mental health for youth aged 15-35.",
   keywords: [
     "The 50 Percent social enterprise programme Kenya",
     "Young People Pulse YPP Kenya",
@@ -18,7 +18,8 @@ export const metadata: Metadata = {
     "ecosystem conservation programme Nairobi",
     "Kangemi restoration programme Kenya",
     "youth empowerment programme Nairobi",
-    "sustainability education schools Kenya",
+    "sustainability urban resilience Kenya",
+    "systems thinking social enterprise Kenya",
     "Maangani Primary School programme",
     "skills mismatch Kenya programme",
     "youth mental health programme Kenya",
@@ -40,7 +41,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Our Programmes | Greenwave Society Kenya",
-    description: "The 50 Percent, YPP, Climate Action, Conservation, Youth Empowerment, Sustainability Education, six programmes building the next generation of Kenyan leaders.",
+    description: "The 50 Percent, YPP, Climate Action, Conservation, Youth Empowerment, Sustainability & Urban Resilience: six programmes building the next generation of Kenyan leaders through systems thinking and social enterprise.",
     images: ["/images/IMG_9415.jpg"],
   },
 };
