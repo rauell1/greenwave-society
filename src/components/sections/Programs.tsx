@@ -29,7 +29,7 @@ const programs = [
     span: "md:col-span-1 lg:col-span-1",
   },
   {
-    image: "/images/g-71.jpg",
+    image: "/images/20250404_134843.jpg",
     icon: <TreePine className="w-5 h-5" />,
     title: "Conservation & Restoration",
     desc: "From tree-planting with Tatu City to community clean-ups at JCK and habitat restoration, our conservation work directly protects local ecosystems while giving young people real-world project leadership experience, skills, and accountability that no classroom can replicate.",
