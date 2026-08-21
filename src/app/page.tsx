@@ -15,7 +15,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Greenwave Society | Youth Social Enterprise & Think Tank in Kenya",
-  description: "Greenwave Society is a youth-led social enterprise and think tank in Nairobi, Kenya. We translate systems thinking into community action — through The 50 Percent fellowship, conservation, community barazas, and knowledge-driven partnerships for young Kenyans aged 18-35.",
+  description: "Greenwave Society is a youth-led social enterprise and think tank in Nairobi, Kenya. We translate systems thinking into community action: The 50 Percent fellowship, conservation, community barazas, and knowledge-driven partnerships for young Kenyans aged 18-35.",
   keywords: [
     "Greenwave Society Kenya",
     "youth social enterprise Kenya",
