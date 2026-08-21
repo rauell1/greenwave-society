@@ -22,7 +22,7 @@ export function VolunteerCTA() {
                 <div className="absolute -inset-4 rounded-[3rem] border border-primary/20 -z-10 -rotate-2" />
                 <div className="aspect-[4/5] sm:aspect-[3/2] lg:aspect-[4/5] relative rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_oklch(var(--primary)/8%)]">
                   <Image quality={95}
-                    src="/images/Sewafu143.jpg"
+                    src="/images/20241214_180058.jpg"
                     alt="Volunteers and community members gathered at Sewafu Children's Home"
                     fill
                     sizes="(max-width: 768px) 100vw, 40vw"
