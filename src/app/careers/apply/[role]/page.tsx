@@ -1,49 +1,16 @@
-import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { ApplicationForm } from "@/components/forms/ApplicationForm";
+import { CAREER_ROLES, isCareerRoleOpen, isCareerSlug } from "@/lib/careers";
 
-const ROLES = {
-  "communications-lead": {
-    title: "Communications Lead",
-    description: "Lead our communication strategies and shape our public narrative to amplify our impact across Kenya."
-  }
-};
-
-export async function generateMetadata({ params }: { params: Promise<{ role: string }> }): Promise<Metadata> {
-  const { role } = await params;
-  const roleData = ROLES[role as keyof typeof ROLES];
-  if (!roleData) return { title: "Position Not Found" };
-  
-  return {
-    title: `Apply for ${roleData.title} | Greenwave Society`,
-  };
-}
+export const dynamic = "force-dynamic";
 
 export default async function ApplyPage({ params }: { params: Promise<{ role: string }> }) {
-  const { role } = await params;
-  const roleData = ROLES[role as keyof typeof ROLES];
-  if (!roleData) notFound();
-
-  return (
-    <div className="min-h-screen flex flex-col bg-zinc-50">
-      <Navbar />
-      <main className="flex-1 pt-24 pb-20 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto w-full">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold font-serif text-zinc-900 mb-2">
-            Apply for {roleData.title}
-          </h1>
-          <p className="text-zinc-600">
-            {roleData.description}
-          </p>
-        </div>
-        
-        <div className="bg-white rounded-2xl shadow-sm border border-zinc-200 p-6 sm:p-8">
-          <ApplicationForm roleTitle={roleData.title} />
-        </div>
-      </main>
-      <Footer />
-    </div>
-  );
+  const { role: slug } = await params;
+  if (!isCareerSlug(slug)) notFound();
+  const role = CAREER_ROLES[slug];
+  const open = await isCareerRoleOpen(slug);
+  return <div className="min-h-screen bg-zinc-50"><Navbar/><main className="mx-auto max-w-4xl px-5 pb-20 pt-28"><p className="text-xs font-bold uppercase tracking-[.14em] text-emerald-800">Volunteer application</p><h1 className="mt-4 font-serif text-5xl text-zinc-900">Apply for {role.title}</h1><p className="mt-5 max-w-2xl text-lg leading-8 text-zinc-600">No CV is needed. Your answers help us understand your motivation, judgment, and potential contribution.</p>{open ? <div className="mt-10 rounded-2xl border bg-white p-6 shadow-sm sm:p-10"><ApplicationForm roleSlug={slug} roleTitle={role.title} roleQuestion={role.question}/></div> : <div className="mt-10 rounded-2xl border bg-white p-10"><h2 className="font-serif text-3xl">Applications are currently closed</h2><p className="mt-4 text-zinc-600">This role remains available to review, but it is not accepting applications right now.</p><Link href={`/careers/${slug}`} className="mt-6 inline-block font-semibold text-emerald-800">Return to the role</Link></div>}</main><Footer/></div>;
 }

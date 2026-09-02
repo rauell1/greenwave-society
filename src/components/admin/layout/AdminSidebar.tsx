@@ -13,6 +13,7 @@ import {
   ShieldAlert, 
   LogOut,
   FolderOpen,
+  BriefcaseBusiness,
   Menu,
   X,
 } from "lucide-react";
@@ -74,6 +75,12 @@ export default function AdminSidebar({ admin, enabledFeatures }: AdminSidebarPro
       href: "/admin/communications",
       icon: Mail,
       show: isEnabled("communications") && hasPermission(admin, PERMISSIONS.COMMUNICATIONS_READ),
+    },
+    {
+      title: "Careers",
+      href: "/admin/careers",
+      icon: BriefcaseBusiness,
+      show: true,
     },
     {
       title: "Administrators",

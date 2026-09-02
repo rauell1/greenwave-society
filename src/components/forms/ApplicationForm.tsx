@@ -1,154 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
-/**
- * ApplicationForm Component
- *
- * Renders a strict 5-field job application form (Name, Email, Phone, Cover Letter, CV).
- * It enforces that a CV must be attached by setting the required attribute on the file input.
- * When submitted, it constructs a FormData object and posts it to the /api/apply endpoint.
- *
- * @param {Object} props
- * @param {string} props.roleTitle - The title of the job role being applied for
- */
-export function ApplicationForm({ roleTitle }: { roleTitle: string }) {
-  const [loading, setLoading] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState("");
+const base = "w-full rounded-xl border border-zinc-300 px-4 py-3 text-sm outline-none focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100";
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-
-    const formData = new FormData(e.currentTarget);
-    formData.append("role", roleTitle);
-
-    try {
-      const res = await fetch("/api/apply", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || "Failed to submit application");
-      }
-
-      setSubmitted(true);
-    } catch (err: any) {
-      setError(err.message || "An unexpected error occurred. Please try again later.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  if (submitted) {
-    return (
-      <div className="text-center py-8">
-        <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <svg className="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-          </svg>
-        </div>
-        <h2 className="text-2xl font-bold text-zinc-900 mb-2">Application Received</h2>
-        <p className="text-zinc-600 mb-6">
-          Thank you for applying for the {roleTitle} position. We have received your application and will be in touch soon.
-        </p>
-        <a href="/careers" className="text-emerald-600 hover:text-emerald-700 font-medium inline-flex items-center gap-1">
-          Back to Careers <ArrowRight className="w-4 h-4" />
-        </a>
-      </div>
-    );
-  }
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      {error && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
-          {error}
-        </div>
-      )}
-
-      <div>
-        <label htmlFor="name" className="block text-sm font-medium text-zinc-700 mb-1">Full Name</label>
-        <input 
-          type="text" 
-          id="name" 
-          name="name" 
-          required 
-          className="w-full border border-zinc-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600"
-          placeholder="Jane Doe"
-        />
-      </div>
-
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium text-zinc-700 mb-1">Email Address</label>
-        <input 
-          type="email" 
-          id="email" 
-          name="email" 
-          required 
-          className="w-full border border-zinc-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600"
-          placeholder="jane@example.com"
-        />
-      </div>
-
-      <div>
-        <label htmlFor="phone" className="block text-sm font-medium text-zinc-700 mb-1">Phone Number</label>
-        <input 
-          type="tel" 
-          id="phone" 
-          name="phone" 
-          required 
-          className="w-full border border-zinc-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600"
-          placeholder="07XX XXX XXX"
-        />
-      </div>
-
-      <div>
-        <label htmlFor="coverLetter" className="block text-sm font-medium text-zinc-700 mb-1">Cover Letter / Message</label>
-        <textarea 
-          id="coverLetter" 
-          name="coverLetter" 
-          rows={5} 
-          required 
-          className="w-full border border-zinc-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 resize-y"
-          placeholder="Tell us why you are a great fit for this role..."
-        />
-      </div>
-
-      <div>
-        <label htmlFor="cv" className="block text-sm font-medium text-zinc-700 mb-1">Upload CV (PDF, DOCX)</label>
-        <input 
-          type="file" 
-          id="cv" 
-          name="cv" 
-          accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" 
-          required 
-          className="w-full border border-zinc-300 rounded-xl px-4 py-2.5 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100"
-        />
-      </div>
-
-      <button 
-        type="submit" 
-        disabled={loading}
-        className="w-full bg-zinc-900 hover:bg-zinc-800 text-white py-3.5 rounded-xl font-medium transition-colors disabled:opacity-70 flex items-center justify-center gap-2 text-sm"
-      >
-        {loading ? (
-          <>
-            <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-            </svg>
-            Submitting...
-          </>
-        ) : (
-          "Submit Application"
-        )}
-      </button>
-    </form>
-  );
+export function ApplicationForm({ roleSlug, roleTitle, roleQuestion }: { roleSlug: string; roleTitle: string; roleQuestion: string }) {
+  const [loading,setLoading]=useState(false); const [error,setError]=useState(""); const [reference,setReference]=useState("");
+  async function submit(event: React.FormEvent<HTMLFormElement>) { event.preventDefault(); setLoading(true); setError(""); const form=new FormData(event.currentTarget); const body=Object.fromEntries(form.entries()); const response=await fetch("/api/apply",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...body,roleSlug,consent:form.get("consent")==="on"})}); const data=await response.json(); setLoading(false); if(!response.ok){setError(data.error??"Could not save your application.");return} setReference(data.reference); }
+  if(reference) return <div className="py-8 text-center"><div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-2xl text-emerald-700">✓</div><h2 className="font-serif text-3xl">Application received</h2><p className="mt-4 text-zinc-600">Thank you for applying for {roleTitle}. Keep this reference for your records.</p><code className="mt-5 inline-block rounded-lg bg-emerald-50 px-4 py-2 font-bold text-emerald-800">{reference}</code><div><Link href="/careers" className="mt-7 inline-block font-semibold text-emerald-800">Back to careers</Link></div></div>;
+  return <form onSubmit={submit} className="space-y-10"><section><h2 className="font-serif text-3xl">About you</h2><div className="mt-6 grid gap-5 sm:grid-cols-2"><Field name="fullName" label="Full name"/><Field name="email" label="Email" type="email"/><Field name="phone" label="Phone number"/><Field name="location" label="Current location"/><label className="sm:col-span-2 text-sm font-semibold">Availability and time commitment<textarea name="availability" required rows={3} className={`${base} mt-2`} /></label><label className="sm:col-span-2 text-sm font-semibold">Portfolio or professional profile <span className="font-normal text-zinc-500">(optional)</span><input name="portfolioUrl" type="url" className={`${base} mt-2`} /></label></div></section><section className="border-t pt-9"><h2 className="font-serif text-3xl">Your contribution</h2><div className="mt-6 space-y-5"><Question name="motivation" label="Why do you want to contribute to Greenwave Society?"/><Question name="relevantExperience" label="What experience, skills, or lived perspective would you bring?"/><Question name="collaborationStyle" label="How do you communicate and collaborate when priorities or opinions differ?"/><Question name="roleResponse" label={roleQuestion}/></div></section><label className="flex gap-3 text-sm leading-6 text-zinc-600"><input name="consent" type="checkbox" required className="mt-1 h-4 w-4 accent-emerald-700"/>I confirm that the information is accurate and consent to Greenwave Society processing it for recruitment.</label>{error&&<p role="alert" className="rounded-lg bg-red-50 p-4 font-semibold text-red-700">{error}</p>}<button disabled={loading} className="w-full rounded-full bg-emerald-800 px-6 py-4 font-bold text-white disabled:opacity-60">{loading?"Submitting application":"Submit application"}</button></form>;
 }
+
+function Field({name,label,type="text"}:{name:string;label:string;type?:string}) { return <label className="text-sm font-semibold">{label}<input name={name} type={type} required className={`${base} mt-2`}/></label> }
+function Question({name,label}:{name:string;label:string}) { return <label className="block text-sm font-semibold">{label}<textarea name={name} required rows={5} className={`${base} mt-2`}/></label> }

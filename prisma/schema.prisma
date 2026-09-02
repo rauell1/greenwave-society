@@ -22,6 +22,42 @@ model ContactSubmission {
   @@map("contact_submissions")
 }
 
+model CareerRole {
+  slug       String   @id
+  title      String
+  isOpen     Boolean  @default(true) @map("is_open")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@map("career_roles")
+}
+
+model CareerApplication {
+  id                    String   @id @default(cuid())
+  reference             String   @unique
+  roleSlug              String   @map("role_slug")
+  roleTitle             String   @map("role_title")
+  fullName              String   @map("full_name")
+  email                 String
+  phone                 String
+  location              String
+  availability          String
+  motivation            String   @db.Text
+  relevantExperience    String   @db.Text @map("relevant_experience")
+  collaborationStyle    String   @db.Text @map("collaboration_style")
+  roleResponse          String   @db.Text @map("role_response")
+  portfolioUrl          String?  @map("portfolio_url")
+  candidateEmailSubject String   @map("candidate_email_subject")
+  candidateEmailBody    String   @db.Text @map("candidate_email_body")
+  teamEmailSubject      String   @map("team_email_subject")
+  teamEmailBody         String   @db.Text @map("team_email_body")
+  status                String   @default("new")
+  createdAt             DateTime @default(now()) @map("created_at")
+
+  @@index([roleSlug, createdAt])
+  @@index([email])
+  @@map("career_applications")
+}
+
 model NewsletterSubscriber {
   id                 String                 @id @default(cuid())
   email              String                 @unique
