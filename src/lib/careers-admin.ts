@@ -4,9 +4,11 @@ import { PERMISSIONS } from "@/lib/auth/permissions";
 import { SYSTEM_ROLES, type PermissionKey } from "@/lib/auth/permissions";
 import { getDb } from "@/lib/db";
 import type { AdminUserDto } from "@/lib/auth/types";
+import { isExecutiveRoleName } from "@/lib/auth/executive-roles";
 
 export async function isExecutiveCommitteeMember(admin: AdminUserDto) {
   if (admin.roles.includes(SYSTEM_ROLES.OWNER)) return true;
+  if (admin.roles.some(isExecutiveRoleName)) return true;
   return Boolean(await getDb().executiveLeader.findUnique({ where: { email: admin.email }, select: { id: true } }));
 }
 

@@ -1,17 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requirePermission } from "@/lib/auth/guards";
-import { PERMISSIONS } from "@/lib/auth/permissions";
+import { requireAnyPermission, requirePermission } from "@/lib/auth/guards";
+import { PERMISSIONS, SYSTEM_ROLES } from "@/lib/auth/permissions";
 import { getDb } from "@/lib/db";
 import { createAdminSchema } from "@/lib/cms/admin-users";
 import { AUDIT_ACTIONS, logAuditEvent } from "@/lib/audit/audit-service";
+import { isExecutiveRoleName } from "@/lib/auth/executive-roles";
 
 export async function GET() {
-  await requirePermission(PERMISSIONS.ROLES_MANAGE);
-  const [users, roles] = await Promise.all([
+  await requireAnyPermission([PERMISSIONS.ROLES_READ, PERMISSIONS.ROLES_MANAGE]);
+  const [users, roles, executiveLeaders] = await Promise.all([
     getDb().adminUser.findMany({ orderBy: { email: "asc" }, select: { id: true, email: true, isActive: true, createdAt: true, roles: { select: { role: { select: { id: true, name: true } } } } } }),
     getDb().adminRole.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true, description: true, isSystem: true } }),
+    getDb().executiveLeader.findMany({ select: { email: true } }),
   ]);
-  return NextResponse.json({ users: users.map(user => ({ ...user, roles: user.roles.map(value => value.role) })), roles });
+  const executiveEmails = new Set(executiveLeaders.map(leader => leader.email.toLowerCase()));
+  const shapedUsers = users.map(user => ({ ...user, roles: user.roles.map(value => value.role) }));
+  return NextResponse.json({
+    users: shapedUsers.map(user => ({
+      ...user,
+      isRecordedExecutive: executiveEmails.has(user.email.toLowerCase()),
+      isExecutive: executiveEmails.has(user.email.toLowerCase()) || user.roles.some(role => role.name === SYSTEM_ROLES.OWNER || isExecutiveRoleName(role.name)),
+    })),
+    roles,
+  });
 }
 
 export async function POST(request: NextRequest) {

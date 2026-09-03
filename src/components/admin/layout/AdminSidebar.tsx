@@ -107,7 +107,7 @@ export default function AdminSidebar({ admin, enabledFeatures, notificationCount
       title: "Administrators",
       href: "/admin/users",
       icon: Users,
-      show: isEnabled("users") && hasPermission(admin, PERMISSIONS.ROLES_MANAGE),
+      show: isEnabled("users") && (hasPermission(admin, PERMISSIONS.ROLES_READ) || hasPermission(admin, PERMISSIONS.ROLES_MANAGE)),
       group: "Administration",
     },
     {
