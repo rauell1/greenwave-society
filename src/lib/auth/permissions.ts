@@ -1,6 +1,11 @@
 export const PERMISSIONS = {
   DASHBOARD_READ: "dashboard.read",
 
+  CAREERS_READ: "careers.read",
+  CAREERS_REVIEW: "careers.review",
+  CAREERS_EXPORT: "careers.export",
+  CAREERS_MANAGE: "careers.manage",
+
   CONTENT_READ: "content.read",
   CONTENT_CREATE: "content.create",
   CONTENT_UPDATE: "content.update",

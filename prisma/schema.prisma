@@ -23,37 +23,44 @@ model ContactSubmission {
 }
 
 model CareerRole {
-  slug       String   @id
-  title      String
-  isOpen     Boolean  @default(true) @map("is_open")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  slug      String   @id
+  title     String
+  isOpen    Boolean  @default(true) @map("is_open")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("career_roles")
 }
 
 model CareerApplication {
-  id                    String   @id @default(cuid())
-  reference             String   @unique
-  roleSlug              String   @map("role_slug")
-  roleTitle             String   @map("role_title")
-  fullName              String   @map("full_name")
+  id                    String    @id @default(cuid())
+  reference             String    @unique
+  roleSlug              String    @map("role_slug")
+  roleTitle             String    @map("role_title")
+  fullName              String    @map("full_name")
   email                 String
   phone                 String
   location              String
   availability          String
-  motivation            String   @db.Text
-  relevantExperience    String   @db.Text @map("relevant_experience")
-  collaborationStyle    String   @db.Text @map("collaboration_style")
-  roleResponse          String   @db.Text @map("role_response")
-  portfolioUrl          String?  @map("portfolio_url")
-  candidateEmailSubject String   @map("candidate_email_subject")
-  candidateEmailBody    String   @db.Text @map("candidate_email_body")
-  teamEmailSubject      String   @map("team_email_subject")
-  teamEmailBody         String   @db.Text @map("team_email_body")
-  status                String   @default("new")
-  createdAt             DateTime @default(now()) @map("created_at")
+  motivation            String    @db.Text
+  relevantExperience    String    @map("relevant_experience") @db.Text
+  collaborationStyle    String    @map("collaboration_style") @db.Text
+  roleResponse          String    @map("role_response") @db.Text
+  portfolioUrl          String?   @map("portfolio_url")
+  candidateEmailSubject String    @map("candidate_email_subject")
+  candidateEmailBody    String    @map("candidate_email_body") @db.Text
+  teamEmailSubject      String    @map("team_email_subject")
+  teamEmailBody         String    @map("team_email_body") @db.Text
+  status                String    @default("new")
+  internalNotes         String?   @map("internal_notes") @db.Text
+  rating                Int?
+  assignedReviewer      String?   @map("assigned_reviewer")
+  reviewedAt            DateTime? @map("reviewed_at")
+  reviewedBy            String?   @map("reviewed_by")
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
 
   @@index([roleSlug, createdAt])
+  @@index([status, createdAt])
   @@index([email])
   @@map("career_applications")
 }

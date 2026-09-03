@@ -1,14 +1,25 @@
 import "server-only";
-import { getCurrentAdmin } from "@/lib/auth/guards";
+import { requirePermission } from "@/lib/auth/guards";
+import { PERMISSIONS } from "@/lib/auth/permissions";
+import { SYSTEM_ROLES, type PermissionKey } from "@/lib/auth/permissions";
+import { getDb } from "@/lib/db";
+import type { AdminUserDto } from "@/lib/auth/types";
+
+export async function isExecutiveCommitteeMember(admin: AdminUserDto) {
+  if (admin.roles.includes(SYSTEM_ROLES.OWNER)) return true;
+  return Boolean(await getDb().executiveLeader.findUnique({ where: { email: admin.email }, select: { id: true } }));
+}
+
+export async function requireExecutiveCareersAccess(permission: PermissionKey) {
+  const admin = await requirePermission(permission).catch(() => null);
+  if (!admin) return null;
+  return (await isExecutiveCommitteeMember(admin)) ? admin : null;
+}
 
 export async function requireCareersManager() {
-  const admin=await getCurrentAdmin();
-  return admin;
+  return requireExecutiveCareersAccess(PERMISSIONS.CAREERS_READ);
 }
 
 export async function requireCareersExportAdmin() {
-  const admin=await getCurrentAdmin();
-  const allowed=(process.env.ADMIN_EMAIL??"").trim().toLowerCase();
-  if(!admin || !allowed || admin.email.toLowerCase()!==allowed) return null;
-  return admin;
+  return requireExecutiveCareersAccess(PERMISSIONS.CAREERS_EXPORT);
 }

@@ -1,98 +1,34 @@
+import Link from "next/link";
+import { ArrowRight, BriefcaseBusiness, CalendarDays, FileText, Inbox, Mail, UserCheck, Users } from "lucide-react";
 import { requirePermission } from "@/lib/auth/guards";
-import { PERMISSIONS, SYSTEM_ROLES } from "@/lib/auth/permissions";
-import { redirect } from "next/navigation";
+import { PERMISSIONS } from "@/lib/auth/permissions";
 import { getDb } from "@/lib/db";
-import ConstitutionDashboard from "./ConstitutionDashboard";
+import { hasPermission } from "@/lib/auth/policy";
+import { requireExecutiveCareersAccess } from "@/lib/careers-admin";
 
-export const metadata = { title: "Admin Dashboard | Greenwave Society" };
-export const dynamic  = "force-dynamic";
+export const metadata = { title: "Admin Overview | Greenwave Society" };
+export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const admin = await requirePermission(PERMISSIONS.DASHBOARD_READ).catch(() => null);
-  if (!admin) redirect("/admin/no-access");
-  const email = admin.email;
-
-  const db         = getDb();
-  const superAdmin = admin.roles.includes(SYSTEM_ROLES.OWNER);
-
-  // Fetch leaders with ALL their signatures (not just one)
-  const leaders = await db.executiveLeader.findMany({
-    include: {
-      signatures: {
-        orderBy: { createdAt: "desc" },
-      },
-    },
-    orderBy: { createdAt: "asc" },
-  });
-
-  // Fetch all constitution versions
-  const versions = await db.constitutionVersion.findMany({
-    orderBy: { createdAt: "desc" },
-    include: {
-      signatures: { select: { status: true, leaderId: true } },
-    },
-  });
-
-  // For the active (published) version, compute signing stats
-  const activeVersion = versions.find(v => v.status === "published");
-  const activeSigs = activeVersion ? activeVersion.signatures : [];
-  const signedCount   = activeSigs.filter(s => s.status === "signed").length;
-  const pendingCount  = activeSigs.filter(s => s.status === "pending").length;
-  const rejectedCount = activeSigs.filter(s => s.status === "rejected").length;
-
-  // All admins can see registrations
-  const registrations = await db.memberRegistration.findMany({
-    orderBy: { createdAt: "desc" },
-  });
-
-  let subscribers:  { id: string; email: string; createdAt: Date }[] = [];
-  let adminUsers:   { id: string; email: string; passwordHash: string | null; createdAt: Date; updatedAt: Date }[] = [];
-  let dbStats:      { table: string; count: number }[] = [];
-  let auditLogs:    { id: string; action: string; actor: string; detail: string | null; ip: string | null; createdAt: Date }[] = [];
-
-  if (superAdmin) {
-    const [subs, users, logs] = await Promise.all([
-      db.newsletterSubscriber.findMany({ orderBy: { createdAt: "desc" } }),
-      db.adminUser.findMany({ orderBy: { createdAt: "asc" } }),
-      db.auditLog.findMany({ orderBy: { createdAt: "desc" }, take: 100 }),
-    ]);
-    subscribers = subs;
-    adminUsers  = users;
-    auditLogs   = logs;
-
-    const counts = await Promise.all([
-      db.executiveLeader.count(),
-      db.constitutionSignature.count(),
-      db.newsletterSubscriber.count(),
-      db.adminUser.count(),
-      db.adminSession.count(),
-      db.contactSubmission.count(),
-    ]);
-    dbStats = [
-      { table: "Executive Leaders",       count: counts[0] },
-      { table: "Constitution Signatures", count: counts[1] },
-      { table: "Newsletter Subscribers",  count: counts[2] },
-      { table: "Admin Users",             count: counts[3] },
-      { table: "Active Sessions",         count: counts[4] },
-      { table: "Contact Submissions",     count: counts[5] },
-      { table: "Member Registrations",    count: registrations.length },
-    ];
-  }
-
-  return (
-    <ConstitutionDashboard
-      leaders={leaders as any}
-      versions={versions as any}
-      signedCount={signedCount}
-      pendingCount={pendingCount}
-      rejectedCount={rejectedCount}
-      currentEmail={email ?? ""}
-      superAdmin={superAdmin}
-      subscribers={subscribers as any}
-      adminUsers={adminUsers as any}
-      dbStats={dbStats}
-      auditLogs={auditLogs as any}
-      registrations={registrations as any}
-    />
-  );
+  const admin = await requirePermission(PERMISSIONS.DASHBOARD_READ);
+  const db = getDb(); const now = new Date();
+  const [careersAccess] = await Promise.all([requireExecutiveCareersAccess(PERMISSIONS.CAREERS_READ)]);
+  const canReadMembers = hasPermission(admin, PERMISSIONS.MEMBERS_READ);
+  const canReadEvents = hasPermission(admin, PERMISSIONS.EVENTS_READ);
+  const canReadContacts = hasPermission(admin, PERMISSIONS.CONTACTS_READ);
+  const canReadContent = hasPermission(admin, PERMISSIONS.CONTENT_READ);
+  const canReadNewsletter = hasPermission(admin, PERMISSIONS.NEWSLETTER_READ) || hasPermission(admin, PERMISSIONS.COMMUNICATIONS_READ);
+  const canReadAudit = hasPermission(admin, PERMISSIONS.AUDIT_READ);
+  const [newApplications, openRoles, pendingMembers, upcomingEvents, recentContacts, draftContent, subscribers, recentActivity, applications, members, content] = await Promise.all([
+    careersAccess ? db.careerApplication.count({ where: { status: "new" } }) : Promise.resolve(0), careersAccess ? db.careerRole.count({ where: { isOpen: true } }) : Promise.resolve(0), canReadMembers ? db.memberRegistration.count({ where: { status: "pending" } }) : Promise.resolve(0), canReadEvents ? db.cmsEvent.count({ where: { startsAt: { gte: now }, status: "published" } }) : Promise.resolve(0), canReadContacts ? db.contactSubmission.count({ where: { createdAt: { gte: new Date(now.getTime() - 7 * 86400000) } } }) : Promise.resolve(0), canReadContent ? db.cmsContent.count({ where: { status: "draft" } }) : Promise.resolve(0), canReadNewsletter ? db.newsletterSubscriber.count({ where: { active: true } }) : Promise.resolve(0), canReadAudit ? db.auditLog.findMany({ orderBy: { createdAt: "desc" }, take: 6 }) : Promise.resolve([]), careersAccess ? db.careerApplication.findMany({ where: { status: "new" }, orderBy: { createdAt: "desc" }, take: 4, select: { id: true, fullName: true, roleTitle: true, createdAt: true } }) : Promise.resolve([]), canReadMembers ? db.memberRegistration.findMany({ where: { status: "pending" }, orderBy: { createdAt: "desc" }, take: 3, select: { id: true, fullName: true, createdAt: true } }) : Promise.resolve([]), canReadContent ? db.cmsContent.findMany({ where: { status: "draft" }, orderBy: { updatedAt: "desc" }, take: 3, select: { id: true, title: true, updatedAt: true } }) : Promise.resolve([]),
+  ]);
+  const cards = [
+    careersAccess && { label: "New applications", value: newApplications, href: "/admin/careers", icon: BriefcaseBusiness, tone: "bg-emerald-50 text-emerald-700" }, careersAccess && { label: "Open vacancies", value: openRoles, href: "/admin/careers", icon: UserCheck, tone: "bg-blue-50 text-blue-700" }, canReadMembers && { label: "Pending members", value: pendingMembers, href: "/admin/members?status=pending", icon: Users, tone: "bg-amber-50 text-amber-700" }, canReadEvents && { label: "Upcoming events", value: upcomingEvents, href: "/admin/events", icon: CalendarDays, tone: "bg-violet-50 text-violet-700" }, canReadContacts && { label: "Contacts this week", value: recentContacts, href: "/admin/dashboard", icon: Inbox, tone: "bg-cyan-50 text-cyan-700" }, canReadContent && { label: "Draft content", value: draftContent, href: "/admin/content", icon: FileText, tone: "bg-slate-100 text-slate-700" }, canReadNewsletter && { label: "Subscribers", value: subscribers, href: "/admin/communications", icon: Mail, tone: "bg-rose-50 text-rose-700" },
+  ].filter((item): item is Exclude<typeof item, false | null> => Boolean(item));
+  const attention = [...applications.map((item) => ({ title: item.fullName, detail: `Applied for ${item.roleTitle}`, date: item.createdAt, href: "/admin/careers", action: "Review" })), ...members.map((item) => ({ title: item.fullName, detail: "Membership application awaiting review", date: item.createdAt, href: `/admin/members/${item.id}`, action: "Review" })), ...content.map((item) => ({ title: item.title, detail: "Draft content awaiting publication", date: item.updatedAt, href: "/admin/content", action: "Open" }))].toSorted((a,b) => b.date.getTime() - a.date.getTime()).slice(0,8);
+  return <section className="space-y-6"><header><p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">Operations overview</p><h1 className="mt-1 text-2xl font-bold text-slate-900 sm:text-3xl">What needs attention today</h1><p className="mt-2 text-sm text-slate-500">A live summary of recruitment, membership, events, content, and communications.</p></header>
+    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">{cards.map(({ label, value, href, icon: Icon, tone }) => <Link key={label} href={href} className="group rounded-xl border bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-md"><div className="flex items-center justify-between"><span className={`rounded-lg p-2 ${tone}`}><Icon className="h-5 w-5" /></span><ArrowRight className="h-4 w-4 text-slate-300 transition group-hover:translate-x-1 group-hover:text-emerald-600" /></div><p className="mt-4 text-3xl font-bold text-slate-900">{value}</p><p className="mt-1 text-sm text-slate-500">{label}</p></Link>)}</div>
+    <div className="grid gap-6 xl:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.8fr)]"><section className="overflow-hidden rounded-xl border bg-white"><div className="border-b px-5 py-4"><h2 className="font-semibold text-slate-900">Requires attention</h2><p className="text-sm text-slate-500">The newest items waiting for an administrator.</p></div>{attention.length ? <div className="divide-y">{attention.map((item, index) => <div key={`${item.href}-${index}`} className="flex items-center justify-between gap-4 px-5 py-4"><div className="min-w-0"><p className="truncate font-medium text-slate-900">{item.title}</p><p className="truncate text-sm text-slate-500">{item.detail} · {item.date.toLocaleDateString("en-KE", { dateStyle: "medium" })}</p></div><Link href={item.href} className="shrink-0 rounded-lg border border-emerald-700 px-3 py-2 text-sm font-medium text-emerald-800">{item.action}</Link></div>)}</div> : <p className="px-5 py-12 text-center text-sm text-slate-500">Nothing requires immediate attention.</p>}</section>
+      <section className="overflow-hidden rounded-xl border bg-white"><div className="border-b px-5 py-4"><h2 className="font-semibold text-slate-900">Recent administrator activity</h2><p className="text-sm text-slate-500">Latest recorded changes across the system.</p></div>{recentActivity.length ? <div className="divide-y">{recentActivity.map((item) => <div key={item.id} className="px-5 py-3"><p className="text-sm font-medium text-slate-800">{item.action.replaceAll("_", " ").toLowerCase()}</p><p className="mt-1 text-xs text-slate-500">{item.actor} · {item.createdAt.toLocaleString("en-KE", { dateStyle: "medium", timeStyle: "short" })}</p></div>)}</div> : <p className="px-5 py-12 text-center text-sm text-slate-500">No activity recorded yet.</p>}</section></div>
+  </section>;
 }
