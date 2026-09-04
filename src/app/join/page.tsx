@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     "environmental conservation volunteer Kenya",
     "apply youth empowerment programme Kenya",
     "The 50 Percent programme apply",
-    "Young People Pulse YPP apply Kenya",
+    "Youth Pulse Program apply Kenya",
     "community volunteer Nairobi",
     "skills training programme application Kenya",
     "mental health youth volunteer Kenya",

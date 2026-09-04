@@ -25,7 +25,7 @@ const REVIEWS = [
     role: "Program Graduate",
     photo: "/images/team/placeholder.jpg",
     rating: 4,
-    text: "The mental health awareness sessions in the YPP initiative provided a safe space for us. It is rare to find an organization that cares about our holistic wellbeing.",
+    text: "The mental health awareness sessions in the Youth Pulse Program provided a safe space for us. It is rare to find an organization that cares about our holistic wellbeing.",
   }
 ];
 
@@ -66,7 +66,7 @@ export function Testimonials() {
                 {/* Reviewer Info */}
                 <div className="flex items-center gap-4 mt-auto">
                   <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-emerald-100">
-                    <Image
+                    <Image quality={95}
                       src={review.photo}
                       alt={review.name}
                       fill
