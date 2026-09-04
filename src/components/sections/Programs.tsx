@@ -15,8 +15,8 @@ const programs = [
   {
     image: "/images/g-12.jpg",
     icon: <HeartHandshake className="w-5 h-5" />,
-    title: "Young People Pulse (YPP)",
-    desc: "A youth-volunteer initiative centred on intergenerational connection, mental health, and community accountability. YPP organises community barazas, peer support sessions, and cross-pod collaboration that bring young Kenyans together to build shared responsibility and drive grassroots change.",
+    title: "Youth Pulse Program",
+    desc: "A youth-volunteer initiative centred on intergenerational connection, mental health, and community accountability. The Youth Pulse Program organises community barazas, peer support sessions, and cross-pod collaboration that bring young Kenyans together to build shared responsibility and drive grassroots change.",
     tags: ["Volunteers", "Mental Health", "Intergenerational"],
     span: "md:col-span-1 lg:col-span-1",
   },

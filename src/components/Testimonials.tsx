@@ -25,7 +25,7 @@ const REVIEWS = [
     role: "Program Graduate",
     photo: "/images/team/placeholder.jpg",
     rating: 4,
-    text: "The mental health awareness sessions in the YPP initiative provided a safe space for us. It is rare to find an organization that cares about our holistic wellbeing.",
+    text: "The mental health awareness sessions in the Youth Pulse Program provided a safe space for us. It is rare to find an organization that cares about our holistic wellbeing.",
   }
 ];
 

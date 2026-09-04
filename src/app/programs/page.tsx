@@ -6,11 +6,11 @@ import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { APP_CONFIG } from "@/config/app.config";
 
 export const metadata: Metadata = {
-  title: "Our Programmes | The 50 Percent, YPP, Conservation & More | Kenya",
-  description: "Six interconnected programmes from Greenwave Society in Kenya: The 50 Percent (flagship systems thinking fellowship), Young People Pulse (YPP), Climate Action, Conservation, Youth Empowerment, and Sustainability & Urban Resilience, all addressing skills gaps, unemployment, and mental health for youth aged 15-35.",
+  title: "Our Programmes | The 50 Percent, Youth Pulse Program, Conservation & More | Kenya",
+  description: "Six interconnected programmes from Greenwave Society in Kenya: The 50 Percent (flagship systems thinking fellowship), Youth Pulse Program, Climate Action, Conservation, Youth Empowerment, and Sustainability & Urban Resilience, all addressing skills gaps, unemployment, and mental health for youth aged 15-35.",
   keywords: [
     "The 50 Percent social enterprise programme Kenya",
-    "Young People Pulse YPP Kenya",
+    "Youth Pulse Program Kenya",
     "Greenwave Society programmes Kenya",
     "social enterprise training Nairobi",
     "youth enterprise skills Kenya",
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Our Programmes | Greenwave Society Kenya",
-    description: "The 50 Percent, YPP, Climate Action, Conservation, Youth Empowerment, Sustainability & Urban Resilience: six programmes building the next generation of Kenyan leaders through systems thinking and social enterprise.",
+    description: "The 50 Percent, Youth Pulse Program, Climate Action, Conservation, Youth Empowerment, Sustainability & Urban Resilience: six programmes building the next generation of Kenyan leaders through systems thinking and social enterprise.",
     images: ["/images/IMG_9415.jpg"],
   },
 };
@@ -90,7 +90,7 @@ export default function ProgramsPage() {
             "position": 2,
             "item": {
               "@type": "Service",
-              "name": "Young People Pulse (YPP)",
+              "name": "Youth Pulse Program",
               "description": "Youth-volunteer initiative centred on intergenerational connection, mental health awareness, and community accountability across Kenya.",
               "provider": { "@id": `${APP_CONFIG.url}/#organization` },
               "serviceType": "Mental Health & Community Volunteering",
@@ -167,4 +167,3 @@ export default function ProgramsPage() {
     </div>
   );
 }
-

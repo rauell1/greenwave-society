@@ -22,7 +22,7 @@ const FAQS = [
   },
   {
     question: "How does Greenwave Society address mental health?",
-    answer: "Through the Young People Pulse (YPP) initiative and our Community-Led Wellbeing pillar, we integrate mental health awareness and peer support into all our community programmes, recognising it as a core part of youth development.",
+    answer: "Through the Youth Pulse Program and our Community-Led Wellbeing pillar, we integrate mental health awareness and peer support into all our community programmes, recognising it as a core part of youth development.",
   }
 ];
 

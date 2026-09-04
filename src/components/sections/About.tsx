@@ -20,7 +20,7 @@ export function About() {
     {
       icon: <Heart className="w-5 h-5" />,
       title: "Community-Led Wellbeing",
-      desc: "Through community barazas, the Young People Pulse initiative, and intergenerational connection, we invest in the mental resilience and collective accountability of every young person we work with. Aligned with SDG 3, 6, and 11.",
+      desc: "Through community barazas, the Youth Pulse Program, and intergenerational connection, we invest in the mental resilience and collective accountability of every young person we work with. Aligned with SDG 3, 6, and 11.",
     },
     {
       icon: <Globe className="w-5 h-5" />,

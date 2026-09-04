@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     "skills training Nairobi",
     // Flagship programmes
     "The 50 Percent social enterprise Kenya",
-    "Young People Pulse YPP Kenya",
+    "Youth Pulse Program Kenya",
     "social enterprise training Kenya",
     "enterprise skills training Nairobi",
     "leadership training Kenya",
@@ -204,7 +204,7 @@ export default function RootLayout({
               "@type": "Offer",
               "itemOffered": {
                 "@type": "Service",
-                "name": "Young People Pulse (YPP)",
+                "name": "Youth Pulse Program",
                 "description": "Youth-volunteer initiative focused on intergenerational connection, mental health awareness, and community accountability.",
               },
             },

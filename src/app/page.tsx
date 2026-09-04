@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     "think tank Nairobi youth",
     "systems thinking Kenya",
     "The 50 Percent programme Kenya",
-    "Young People Pulse YPP",
+    "Youth Pulse Program",
     "youth unemployment Kenya",
     "community baraza Kenya",
     "skills mismatch Kenya",
@@ -95,10 +95,10 @@ const faqJsonLd = {
     },
     {
       "@type": "Question",
-      "name": "What is Young People Pulse (YPP)?",
+      "name": "What is the Youth Pulse Program?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Young People Pulse (YPP) is a youth-volunteer initiative centred on intergenerational connection, mental health awareness, and community accountability. YPP brings young Kenyans together to support one another and drive grassroots change.",
+        "text": "The Youth Pulse Program is a youth-volunteer initiative centred on intergenerational connection, mental health awareness, and community accountability. It brings young Kenyans together to support one another and drive grassroots change.",
       },
     },
     {
@@ -130,7 +130,7 @@ const faqJsonLd = {
       "name": "How does Greenwave Society address mental health?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Through the Young People Pulse (YPP) initiative and our Community-Led Wellbeing pillar, Greenwave Society integrates mental health awareness and peer support into all community programmes, recognising mental health as a core part of youth development and aligned with SDG 3.",
+        "text": "Through the Youth Pulse Program and our Community-Led Wellbeing pillar, Greenwave Society integrates mental health awareness and peer support into all community programmes, recognising mental health as a core part of youth development and aligned with SDG 3.",
       },
     },
   ],

@@ -100,7 +100,7 @@ export function Footer() {
             <ul className="space-y-2.5">
               {[
                 "The 50 Percent",
-                "Young People Pulse (YPP)",
+                "Youth Pulse Program",
                 "Climate Action & Advocacy",
                 "Conservation & Restoration",
                 "Youth Leadership",
