@@ -1,5 +1,5 @@
 export const SITE_URL = "https://greenwavesociety.org";
-export const FROM_EMAIL = "Greenwave Society <info@greenwave.rauell.systems>";
+export const FROM_EMAIL = "Greenwave Society <info@rauell.systems>";
 export const CONTACT_EMAIL = "info@greenwavesociety.org";
 
 const BRAND = {
