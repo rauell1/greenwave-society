@@ -17,6 +17,7 @@ import {
   Menu,
   X,
   Scale,
+  Wallet,
 } from "lucide-react";
 import { AdminUserDto } from "@/lib/auth/types";
 import { hasPermission } from "@/lib/auth/policy";
@@ -73,6 +74,13 @@ export default function AdminSidebar({ admin, enabledFeatures, notificationCount
       show: isEnabled("members") && hasPermission(admin, PERMISSIONS.MEMBERS_READ),
       group: "People",
       count: notificationCounts.members,
+    },
+    {
+      title: "Payments",
+      href: "/admin/payments",
+      icon: Wallet,
+      show: isEnabled("members") && hasPermission(admin, PERMISSIONS.MEMBERS_READ),
+      group: "People",
     },
     {
       title: "Media",
