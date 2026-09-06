@@ -11,7 +11,7 @@ const permissions = [
   "newsletter.read", "newsletter.export", "newsletter.manage",
   "media.read", "media.upload", "media.update", "media.delete",
   "users.read", "users.invite", "users.update", "users.disable",
-  "roles.read", "roles.manage", "audit.read", "settings.read", "settings.manage",
+  "roles.read", "roles.manage", "audit.read", "settings.read", "settings.manage", "payments.refund",
 ];
 
 const rolePermissions = {

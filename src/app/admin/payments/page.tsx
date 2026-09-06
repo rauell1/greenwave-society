@@ -7,6 +7,7 @@ import { isCmsFeatureEnabled } from "@/lib/cms/feature-flags";
 import { getDb } from "@/lib/db";
 import { parsePagination } from "@/lib/pagination";
 import { PAYMENT_STATUSES } from "@/lib/payments/constants";
+import { RefundButton } from "@/components/admin/payments/RefundButton";
 
 export const dynamic = "force-dynamic";
 
@@ -34,13 +35,17 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Pro
   const [payments, total, counts] = await Promise.all([
     getDb().membershipPayment.findMany({
       where, orderBy: { createdAt: "desc" }, skip, take: pageSize,
-      include: { registration: { select: { id: true, fullName: true, email: true } } },
+      include: {
+        registration: { select: { id: true, fullName: true, email: true } },
+        refunds: { orderBy: { createdAt: "desc" }, take: 1 },
+      },
     }),
     getDb().membershipPayment.count({ where }),
     getDb().membershipPayment.groupBy({ by: ["status"], _count: { _all: true } }),
   ]);
   const pages = Math.max(1, Math.ceil(total / pageSize));
   const params = (targetPage: number) => `?page=${targetPage}&search=${encodeURIComponent(search)}&status=${encodeURIComponent(status)}`;
+  const canRefund = hasPermission(admin, PERMISSIONS.PAYMENTS_REFUND);
 
   return <section className="space-y-5">
     <div className="flex flex-wrap items-end justify-between gap-3">
@@ -67,17 +72,26 @@ export default async function PaymentsPage({ searchParams }: { searchParams: Pro
         <th className="px-4 py-3">Status</th>
         <th className="px-4 py-3">Receipt No.</th>
         <th className="px-4 py-3">Initiated</th>
+        <th className="px-4 py-3">Refund</th>
         <th className="px-4 py-3"></th>
       </tr></thead>
-      <tbody className="divide-y">{payments.map(payment => <tr key={payment.id}>
+      <tbody className="divide-y">{payments.map(payment => {
+        const refund = payment.refunds[0];
+        return <tr key={payment.id}>
         <td className="px-4 py-3"><p className="font-medium text-slate-900">{payment.registration.fullName}</p><p className="text-xs text-slate-500">{payment.registration.email}</p></td>
         <td className="px-4 py-3">{payment.phoneNumber}</td>
         <td className="px-4 py-3">KES {payment.amount}</td>
         <td className="px-4 py-3"><span className={`rounded-full px-2 py-1 text-xs font-medium ${payment.status === "SUCCESS" ? "bg-emerald-50 text-emerald-700" : payment.status === "PENDING" ? "bg-amber-50 text-amber-700" : "bg-red-50 text-red-700"}`}>{payment.status}</span>{payment.failureReason && <p className="mt-1 text-xs text-slate-400">{payment.failureReason}</p>}</td>
         <td className="px-4 py-3">{payment.mpesaReceiptNumber ?? "—"}</td>
         <td className="whitespace-nowrap px-4 py-3">{payment.initiatedAt.toLocaleString("en-KE")}</td>
+        <td className="min-w-[180px] px-4 py-3">
+          {refund
+            ? <span className={`rounded-full px-2 py-1 text-xs font-medium ${refund.status === "SUCCESS" ? "bg-emerald-50 text-emerald-700" : refund.status === "PENDING" ? "bg-amber-50 text-amber-700" : "bg-red-50 text-red-700"}`}>Refund {refund.status.toLowerCase()}</span>
+            : (canRefund && payment.status === "SUCCESS" ? <RefundButton paymentId={payment.id} /> : <span className="text-xs text-slate-400">—</span>)}
+        </td>
         <td className="px-4 py-3"><Link href={`/admin/members/${payment.registration.id}`} className="font-medium text-emerald-700">View applicant</Link></td>
-      </tr>)}</tbody>
+      </tr>;
+      })}</tbody>
     </table></div>{!payments.length && <p className="p-8 text-center text-sm text-slate-500">No payment records match these filters.</p>}</div>
     <div className="flex items-center justify-between text-sm text-slate-600"><span>Page {page} of {pages} · {total} records</span><div className="flex gap-2">{page > 1 && <Link className="rounded border px-3 py-1.5" href={params(page - 1)}>Previous</Link>}{page < pages && <Link className="rounded border px-3 py-1.5" href={params(page + 1)}>Next</Link>}</div></div>
   </section>;
