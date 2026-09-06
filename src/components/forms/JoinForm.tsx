@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -64,7 +64,13 @@ const INITIAL: FormData = {
 
 const STEP_LABELS = ["Eligibility", "Personal Info", "Background", "Interests", "Motivation", "Review"];
 
-export function JoinForm() {
+interface JoinFormProps {
+  /** Feature-flagged: the M-Pesa membership fee flow is off until an admin enables it. */
+  mpesaEnabled?: boolean;
+  feeKes?: number;
+}
+
+export function JoinForm({ mpesaEnabled = false, feeKes = 500 }: JoinFormProps) {
   const [step, setStep]           = useState(1);
   const [form, setForm]           = useState<FormData>(INITIAL);
   const [loading, setLoading]     = useState(false);
@@ -72,6 +78,9 @@ export function JoinForm() {
   const [submitted, setSubmitted] = useState(false);
   const [submittedName, setSubmittedName]   = useState("");
   const [submittedEmail, setSubmittedEmail] = useState("");
+  const [registrationId, setRegistrationId] = useState("");
+  const [awaitingPayment, setAwaitingPayment] = useState(false);
+  const [approvedViaPayment, setApprovedViaPayment] = useState(false);
 
   const set = useCallback(<K extends keyof FormData>(k: K, v: FormData[K]) =>
     setForm(f => ({ ...f, [k]: v })), []);
@@ -119,7 +128,12 @@ export function JoinForm() {
         localStorage.setItem("gws_submitted_email", form.email.toLowerCase().trim());
         setSubmittedName(form.fullName.split(" ")[0]);
         setSubmittedEmail(form.email.toLowerCase().trim());
-        setSubmitted(true);
+        setRegistrationId(data.id);
+        if (mpesaEnabled && data.paymentRequired) {
+          setAwaitingPayment(true);
+        } else {
+          setSubmitted(true);
+        }
       } else if (res.status === 403) {
         setError("Membership intake is currently closed. Please check back later.");
       } else if (res.status === 409) {
@@ -136,6 +150,18 @@ export function JoinForm() {
     }
   }
 
+  if (awaitingPayment) {
+    return (
+      <PaymentStep
+        registrationId={registrationId}
+        defaultPhone={form.phone}
+        feeKes={feeKes}
+        submittedName={form.fullName.split(" ")[0]}
+        onApproved={() => { setAwaitingPayment(false); setSubmittedName(form.fullName.split(" ")[0]); setSubmittedEmail(form.email.toLowerCase().trim()); setApprovedViaPayment(true); setSubmitted(true); }}
+      />
+    );
+  }
+
   if (submitted) {
     return (
       <div className="min-h-screen bg-[#f5f5f0] flex items-center justify-center px-4">
@@ -145,14 +171,27 @@ export function JoinForm() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-[#1A5C38] font-serif mb-3">Application Received</h1>
-          <p className="text-gray-700 text-base leading-relaxed mb-2">
-            Thank you, <strong>{submittedName}</strong>. Your Expression of Interest has been received.
-          </p>
-          <p className="text-gray-500 text-sm leading-relaxed mb-6">
-            A confirmation has been sent to <strong>{submittedEmail}</strong>. Our team will review your application
-            and contact you within <strong>5 working days</strong>. This submission is not immediate membership.
-          </p>
+          <h1 className="text-2xl font-bold text-[#1A5C38] font-serif mb-3">
+            {approvedViaPayment ? "Welcome to Greenwave Society!" : "Application Received"}
+          </h1>
+          {approvedViaPayment ? (
+            <p className="text-gray-700 text-base leading-relaxed mb-6">
+              Thank you, <strong>{submittedName}</strong>. Your membership fee has been received and you are now an{" "}
+              <strong>official member</strong> of Greenwave Society. A confirmation with access to your member
+              profile has been sent to <strong>{submittedEmail}</strong>.
+            </p>
+          ) : (
+            <>
+              <p className="text-gray-700 text-base leading-relaxed mb-2">
+                Thank you, <strong>{submittedName}</strong>. Your Expression of Interest has been received.
+              </p>
+              <p className="text-gray-500 text-sm leading-relaxed mb-6">
+                A confirmation has been sent to <strong>{submittedEmail}</strong>. Our team will review your
+                application and contact you within <strong>5 working days</strong>. This submission is not immediate
+                membership.
+              </p>
+            </>
+          )}
           <Link href="/" className="inline-block bg-[#1A5C38] text-white px-6 py-3 rounded-xl text-sm font-semibold hover:bg-[#154d2f] transition-colors">
             Back to Home
           </Link>
@@ -249,6 +288,147 @@ export function JoinForm() {
           </div>
         </div>
       </main>
+    </div>
+  );
+}
+
+// ── Payment step ─────────────────────────────────────────────────────────────
+
+type PaymentPhase = "form" | "waiting" | "failed" | "timeout";
+
+const POLL_INTERVAL_MS = 3000;
+const MAX_POLL_ATTEMPTS = 30; // ~90s, comfortably past mpesa-stk's own poll/callback window
+
+function PaymentStep({
+  registrationId, defaultPhone, feeKes, submittedName, onApproved,
+}: {
+  registrationId: string;
+  defaultPhone: string;
+  feeKes: number;
+  submittedName: string;
+  onApproved: () => void;
+}) {
+  const [phone, setPhone]     = useState(defaultPhone);
+  const [phase, setPhase]     = useState<PaymentPhase>("form");
+  const [error, setError]     = useState("");
+  const [sending, setSending] = useState(false);
+  const attemptsRef = useRef(0);
+
+  const poll = useCallback(async () => {
+    attemptsRef.current += 1;
+    try {
+      const res = await fetch(`/api/registrations/${registrationId}/status`);
+      const data = await res.json();
+      if (data.membershipFeeStatus === "paid") {
+        onApproved();
+        return;
+      }
+      if (data.membershipFeeStatus === "failed") {
+        setPhase("failed");
+        setError(data.failureReason || "The payment was not completed. You can try again below.");
+        return;
+      }
+    } catch {
+      // Network hiccup mid-poll — keep trying until MAX_POLL_ATTEMPTS.
+    }
+    if (attemptsRef.current >= MAX_POLL_ATTEMPTS) {
+      setPhase("timeout");
+    }
+  }, [registrationId, onApproved]);
+
+  useEffect(() => {
+    if (phase !== "waiting") return;
+    const interval = setInterval(poll, POLL_INTERVAL_MS);
+    return () => clearInterval(interval);
+  }, [phase, poll]);
+
+  async function pay() {
+    if (!phone.trim()) {
+      setError("Enter the phone number that will receive the M-Pesa prompt.");
+      return;
+    }
+    setSending(true);
+    setError("");
+    try {
+      const res = await fetch(`/api/registrations/${registrationId}/pay`, {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ phoneNumber: phone.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error ?? "Could not send the payment request. Please try again.");
+        return;
+      }
+      attemptsRef.current = 0;
+      setPhase("waiting");
+    } catch {
+      setError("Network error. Please check your connection and try again.");
+    } finally {
+      setSending(false);
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-[#f5f5f0] flex items-center justify-center px-4">
+      <div className="bg-white rounded-2xl shadow-lg max-w-lg w-full p-10 text-center">
+        <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-5">
+          <svg className="w-8 h-8 text-[#1A5C38]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <h1 className="text-2xl font-bold text-[#1A5C38] font-serif mb-3">One Last Step, {submittedName}</h1>
+
+        {phase === "form" && (
+          <>
+            <p className="text-gray-600 text-sm leading-relaxed mb-6">
+              Your application has been received. Pay the <strong>KES {feeKes}</strong> membership fee via M-Pesa
+              to activate your official membership right away.
+            </p>
+            <div className="text-left mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">M-Pesa Phone Number</label>
+              <input value={phone} onChange={e => setPhone(e.target.value)}
+                placeholder="07XX XXX XXX" className={inp} />
+            </div>
+            {error && (
+              <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700 text-left">
+                {error}
+              </div>
+            )}
+            <button onClick={pay} disabled={sending}
+              className="w-full bg-[#1A5C38] text-white px-6 py-3 rounded-xl text-sm font-semibold disabled:opacity-40 hover:bg-[#154d2f] transition-colors">
+              {sending ? "Sending payment request..." : `Pay KES ${feeKes} via M-Pesa`}
+            </button>
+          </>
+        )}
+
+        {phase === "waiting" && (
+          <>
+            <svg className="animate-spin w-8 h-8 text-[#1A5C38] mx-auto mb-4" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+            </svg>
+            <p className="text-gray-700 text-sm leading-relaxed mb-2">
+              Check your phone <strong>{phone}</strong> and enter your M-Pesa PIN to complete the payment.
+            </p>
+            <p className="text-gray-400 text-xs">This page will update automatically once payment is confirmed.</p>
+          </>
+        )}
+
+        {(phase === "failed" || phase === "timeout") && (
+          <>
+            <div className="mb-4 px-4 py-3 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800 text-left">
+              {phase === "timeout"
+                ? "We haven't received confirmation of your payment yet. If you completed the M-Pesa prompt, it may still be processing — otherwise, try again."
+                : error}
+            </div>
+            <button onClick={() => { setPhase("form"); setError(""); }}
+              className="w-full bg-[#1A5C38] text-white px-6 py-3 rounded-xl text-sm font-semibold hover:bg-[#154d2f] transition-colors">
+              Try Again
+            </button>
+          </>
+        )}
+      </div>
     </div>
   );
 }

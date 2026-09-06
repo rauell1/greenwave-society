@@ -196,12 +196,15 @@ model MemberRegistration {
   onboardingEmailAttempts  Int                    @default(0)
   onboardingEmailLastError String?                @db.Text
   onboardingEmailSentAt    DateTime?
+  membershipFeeStatus      String                 @default("not_required")
+  membershipFeePaidAt      DateTime?
   createdAt                DateTime               @default(now())
   updatedAt                DateTime               @updatedAt
   activity                 MemberActivity[]
   statusHistory            MemberStatusHistory[]
   notes                    MemberNote[]
   eventRegistrations       CmsEventRegistration[]
+  membershipPayments       MembershipPayment[]
 
   @@index([email])
   @@index([status])
@@ -614,4 +617,65 @@ model CmsFeatureFlag {
   updatedAt   DateTime @updatedAt
 
   @@map("cms_feature_flags")
+}
+
+model MembershipPayment {
+  id                 String              @id @default(cuid())
+  registrationId     String
+  registration       MemberRegistration  @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  phoneNumber        String
+  amount             Int
+  checkoutRequestId  String              @unique
+  merchantRequestId  String
+  idempotencyKey     String?             @unique
+  status             String              @default("PENDING")
+  mpesaReceiptNumber String?
+  failureReason      String?             @db.Text
+  resultCode         Int?
+  initiatedAt        DateTime            @default(now())
+  completedAt        DateTime?
+  rawCallback        Json?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  refunds            MembershipRefund[]
+
+  @@index([registrationId, createdAt])
+  @@index([status])
+  @@map("membership_payments")
+}
+
+/** One row per M-Pesa Transaction Reversal attempt against a MembershipPayment. */
+model MembershipRefund {
+  id                       String            @id @default(cuid())
+  paymentId                String
+  payment                  MembershipPayment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  amount                   Int
+  reason                   String?           @db.Text
+  status                   String            @default("PENDING")
+  conversationId           String?           @unique
+  originatorConversationId String?           @unique
+  resultCode               Int?
+  resultDesc               String?           @db.Text
+  rawResult                Json?
+  requestedBy              String
+  initiatedAt              DateTime          @default(now())
+  completedAt              DateTime?
+  createdAt                DateTime          @default(now())
+  updatedAt                DateTime          @updatedAt
+
+  @@index([paymentId, createdAt])
+  @@index([status])
+  @@map("membership_refunds")
+}
+
+/** Generic admin-editable key/value settings (e.g. the membership fee amount). */
+model AppSetting {
+  key         String   @id
+  value       String
+  description String?
+  updatedBy   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("app_settings")
 }

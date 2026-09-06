@@ -55,6 +55,7 @@ export const PERMISSIONS = {
   AUDIT_READ: "audit.read",
   SETTINGS_READ: "settings.read",
   SETTINGS_MANAGE: "settings.manage",
+  PAYMENTS_REFUND: "payments.refund",
 } as const;
 
 export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];

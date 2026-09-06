@@ -1,6 +1,10 @@
 import { Metadata } from "next";
 import { JoinForm } from "@/components/forms/JoinForm";
 import { APP_CONFIG } from "@/config/app.config";
+import { isMpesaMembershipEnabled } from "@/lib/payments/feature-flag";
+import { getMembershipFeeKes } from "@/lib/payments/config";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Join Greenwave Society | Apply to Lead, Build & Connect in Kenya",
@@ -42,7 +46,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function JoinPage() {
+export default async function JoinPage() {
+  const [mpesaEnabled, feeKes] = await Promise.all([isMpesaMembershipEnabled(), getMembershipFeeKes()]);
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -91,7 +96,7 @@ export default function JoinPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <JoinForm />
+      <JoinForm mpesaEnabled={mpesaEnabled} feeKes={feeKes} />
     </>
   );
 }
