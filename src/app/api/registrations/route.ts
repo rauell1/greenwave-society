@@ -3,6 +3,7 @@ import { getDb } from "@/lib/db";
 import { Resend } from "resend";
 import { randomBytes } from "crypto";
 import { brandedEmail, emailButton, escapeHtml, FROM_EMAIL, SITE_URL } from "@/lib/email-template";
+import { isMpesaMembershipEnabled } from "@/lib/payments/feature-flag";
 
 
 const VALID_OCCUPATIONS = ["student", "employed_private", "employed_public", "self_employed", "unemployed", "other"];
@@ -47,6 +48,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const mpesaEnabled = await isMpesaMembershipEnabled();
+
     const id = randomBytes(12).toString("hex");
     const record = await db.memberRegistration.create({
       data: {
@@ -64,6 +67,7 @@ export async function POST(req: NextRequest) {
         source:           source?.trim() || null,
         acknowledged:     true,
         status:           "pending",
+        membershipFeeStatus: mpesaEnabled ? "pending" : "not_required",
       },
     });
 
@@ -94,7 +98,7 @@ export async function POST(req: NextRequest) {
       }).catch(() => null); // non-fatal
     }
 
-    return NextResponse.json({ success: true, id: record.id }, { status: 201 });
+    return NextResponse.json({ success: true, id: record.id, paymentRequired: mpesaEnabled }, { status: 201 });
   } catch (err) {
     console.error("Registration error:", err);
     return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });

@@ -196,12 +196,15 @@ model MemberRegistration {
   onboardingEmailAttempts  Int                    @default(0)
   onboardingEmailLastError String?                @db.Text
   onboardingEmailSentAt    DateTime?
+  membershipFeeStatus      String                 @default("not_required")
+  membershipFeePaidAt      DateTime?
   createdAt                DateTime               @default(now())
   updatedAt                DateTime               @updatedAt
   activity                 MemberActivity[]
   statusHistory            MemberStatusHistory[]
   notes                    MemberNote[]
   eventRegistrations       CmsEventRegistration[]
+  membershipPayments       MembershipPayment[]
 
   @@index([email])
   @@index([status])
@@ -614,4 +617,28 @@ model CmsFeatureFlag {
   updatedAt   DateTime @updatedAt
 
   @@map("cms_feature_flags")
+}
+
+model MembershipPayment {
+  id                 String              @id @default(cuid())
+  registrationId     String
+  registration       MemberRegistration  @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  phoneNumber        String
+  amount             Int
+  checkoutRequestId  String              @unique
+  merchantRequestId  String
+  idempotencyKey     String?             @unique
+  status             String              @default("PENDING")
+  mpesaReceiptNumber String?
+  failureReason      String?             @db.Text
+  resultCode         Int?
+  initiatedAt        DateTime            @default(now())
+  completedAt        DateTime?
+  rawCallback        Json?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+
+  @@index([registrationId, createdAt])
+  @@index([status])
+  @@map("membership_payments")
 }
