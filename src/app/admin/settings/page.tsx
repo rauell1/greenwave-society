@@ -4,8 +4,9 @@ import { PERMISSIONS } from "@/lib/auth/permissions";
 import { hasPermission } from "@/lib/auth/policy";
 import { getDb } from "@/lib/db";
 import { MPESA_MEMBERSHIP_FLAG_KEY } from "@/lib/payments/feature-flag";
-import { MEMBERSHIP_FEE_KES } from "@/lib/payments/config";
+import { getMembershipFeeKes } from "@/lib/payments/config";
 import { MpesaFeatureToggle } from "@/components/admin/settings/MpesaFeatureToggle";
+import { MembershipFeeControl } from "@/components/admin/settings/MembershipFeeControl";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Settings | Greenwave Admin" };
@@ -15,9 +16,10 @@ export default async function SettingsPage() {
   if (!admin) redirect("/admin");
   if (!hasPermission(admin, PERMISSIONS.SETTINGS_READ)) redirect("/admin/dashboard");
   const canManage = hasPermission(admin, PERMISSIONS.SETTINGS_MANAGE);
-  const [features, mpesaFlag] = await Promise.all([
+  const [features, mpesaFlag, feeKes] = await Promise.all([
     getDb().cmsFeatureFlag.findMany({ orderBy: { key: "asc" }, select: { key: true, enabled: true, description: true, updatedAt: true } }),
     getDb().cmsFeatureFlag.findUnique({ where: { key: MPESA_MEMBERSHIP_FLAG_KEY } }),
+    getMembershipFeeKes(),
   ]);
   return <section className="space-y-6">
     <header><h1 className="text-2xl font-semibold text-slate-900">Settings</h1><p className="mt-1 text-sm text-slate-500">Production CMS configuration and feature availability.</p></header>
@@ -32,11 +34,18 @@ export default async function SettingsPage() {
           <div>
             <p className="font-medium text-slate-900">M-Pesa membership fee</p>
             <p className="text-xs text-slate-500">
-              When enabled, join applicants must pay a KES {MEMBERSHIP_FEE_KES} fee via M-Pesa STK Push and are
-              auto-approved on successful payment. Requires MPESA_* credentials to be configured first.
+              When enabled, join applicants must pay the membership fee via M-Pesa STK Push and are auto-approved on
+              successful payment. Requires MPESA_* credentials to be configured first.
             </p>
           </div>
           <MpesaFeatureToggle initialEnabled={mpesaFlag?.enabled ?? false} canManage={canManage} />
+        </li>
+        <li className="flex items-center justify-between gap-4 px-5 py-4">
+          <div>
+            <p className="font-medium text-slate-900">Membership fee amount</p>
+            <p className="text-xs text-slate-500">The KES amount charged per membership application.</p>
+          </div>
+          <MembershipFeeControl initialFeeKes={feeKes} canManage={canManage} />
         </li>
       </ul>
     </div>

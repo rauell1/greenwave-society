@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 import { isMpesaMembershipEnabled } from "@/lib/payments/feature-flag";
 import { getMpesaClient } from "@/lib/payments/client";
-import { MEMBERSHIP_FEE_KES } from "@/lib/payments/config";
+import { getMembershipFeeKes } from "@/lib/payments/config";
 
 // Rate-limited (strict tier) by src/middleware.ts, which applies to all
 // non-GET /api/registrations/* routes.
@@ -38,7 +38,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   try {
     const result = await getMpesaClient().initiatePayment({
       phoneNumber,
-      amount: MEMBERSHIP_FEE_KES,
+      amount: await getMembershipFeeKes(),
       accountReference: registration.id,
       description: `Greenwave Society membership fee - ${registration.fullName}`,
       idempotencyKey: registration.id,
