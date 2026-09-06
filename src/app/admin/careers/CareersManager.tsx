@@ -1,5 +1,6 @@
 "use client";
 
+<<<<<<< Updated upstream
 import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { ChevronDown, ChevronUp, Download, Search, Star, Users } from "lucide-react";
 
@@ -96,3 +97,174 @@ function ApplicationCard({ application, expanded, selected, canReview, saving, o
 
 function StageBadge({ stage }: { stage: string }) { const colors: Record<string,string> = { new:"bg-blue-50 text-blue-700", reviewing:"bg-amber-50 text-amber-700", shortlisted:"bg-violet-50 text-violet-700", interview:"bg-cyan-50 text-cyan-700", accepted:"bg-emerald-50 text-emerald-700", rejected:"bg-red-50 text-red-700" }; return <span className={`rounded-full px-2 py-1 text-xs font-semibold capitalize ${colors[stage] ?? "bg-slate-100"}`}>{stage}</span>; }
 function Detail({ label, value, wide = false, link = false }: { label: string; value: string | null; wide?: boolean; link?: boolean }) { return <div className={wide ? "lg:col-span-2" : ""}><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</p>{link && value ? <a href={value} target="_blank" rel="noreferrer" className="mt-1 block break-all text-sm text-emerald-700 underline">{value}</a> : <p className="mt-1 whitespace-pre-wrap text-sm leading-6">{value || "Not provided"}</p>}</div>; }
+=======
+import { useEffect, useState } from "react";
+
+type Role = { slug: string; title: string; isOpen: boolean };
+type Application = {
+  id: string;
+  reference: string;
+  roleSlug: string;
+  roleTitle: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  location: string;
+  availability: string;
+  motivation: string;
+  relevantExperience: string;
+  collaborationStyle: string;
+  roleResponse: string;
+  portfolioUrl: string | null;
+  status: string;
+  createdAt: string;
+};
+
+const responseFields: Array<[keyof Application, string]> = [
+  ["availability", "Availability"],
+  ["motivation", "Motivation"],
+  ["relevantExperience", "Relevant experience"],
+  ["collaborationStyle", "Collaboration style"],
+  ["roleResponse", "Role-specific response"],
+];
+
+export default function CareersManager({ applications }: { applications: Application[] }) {
+  const [roles, setRoles] = useState<Role[]>([]);
+  const [key, setKey] = useState("");
+  const [message, setMessage] = useState("");
+
+  async function load() {
+    const response = await fetch("/api/admin/careers/roles");
+    const data = await response.json();
+    setRoles(data.roles ?? []);
+    setMessage(response.ok ? "" : data.error);
+  }
+
+  useEffect(() => {
+    void load();
+  }, []);
+
+  async function toggle(role: Role) {
+    const response = await fetch("/api/admin/careers/roles", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ slug: role.slug, isOpen: !role.isOpen }),
+    });
+    const data = await response.json();
+    setMessage(response.ok ? `${role.title} is now ${!role.isOpen ? "open" : "closed"}.` : data.error);
+    if (response.ok) await load();
+  }
+
+  async function download() {
+    const response = await fetch("/api/admin/careers/export", { headers: { "x-export-key": key } });
+    if (!response.ok) {
+      const data = await response.json();
+      setMessage(data.error);
+      return;
+    }
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "greenwave-careers-applications.xls";
+    anchor.click();
+    URL.revokeObjectURL(url);
+  }
+
+  const applicationRoles = Array.from(
+    new Map(applications.map((application) => [application.roleSlug, application.roleTitle])).entries(),
+  );
+
+  return (
+    <div className="space-y-6">
+      {message && <p role="status" className="rounded-lg bg-slate-100 p-3 text-sm">{message}</p>}
+
+      <section className="rounded-xl border bg-white p-5">
+        <h2 className="text-lg font-semibold">Applications</h2>
+        <p className="mt-1 text-sm text-slate-500">
+          {applications.length} {applications.length === 1 ? "application" : "applications"}, grouped by role.
+        </p>
+        {applications.length === 0 ? (
+          <div className="mt-4 rounded-lg border border-dashed p-8 text-center text-sm text-slate-500">
+            No applications have been submitted yet.
+          </div>
+        ) : (
+          <div className="mt-5 space-y-6">
+            {applicationRoles.map(([slug, title]) => {
+              const roleApplications = applications.filter((application) => application.roleSlug === slug);
+              return (
+                <section key={slug} className="overflow-hidden rounded-xl border border-slate-200">
+                  <header className="flex items-center justify-between gap-4 bg-slate-50 px-4 py-3">
+                    <h3 className="font-semibold text-slate-900">{title}</h3>
+                    <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-bold text-emerald-800">
+                      {roleApplications.length} {roleApplications.length === 1 ? "applicant" : "applicants"}
+                    </span>
+                  </header>
+                  <div className="divide-y divide-slate-200">
+                    {roleApplications.map((application) => (
+                      <article key={application.id} className="p-4">
+                        <div className="flex flex-wrap items-start justify-between gap-3">
+                          <div>
+                            <h4 className="text-base font-semibold text-slate-900">{application.fullName}</h4>
+                            <p className="mt-1 text-xs text-slate-500">
+                              {application.reference} · {new Intl.DateTimeFormat("en", { dateStyle: "medium", timeStyle: "short" }).format(new Date(application.createdAt))}
+                            </p>
+                          </div>
+                          <span className="rounded-full bg-blue-100 px-2.5 py-1 text-xs font-semibold capitalize text-blue-800">
+                            {application.status}
+                          </span>
+                        </div>
+                        <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
+                          <div><dt className="font-medium text-slate-500">Email</dt><dd className="break-all text-slate-900"><a className="hover:underline" href={`mailto:${application.email}`}>{application.email}</a></dd></div>
+                          <div><dt className="font-medium text-slate-500">Phone</dt><dd className="text-slate-900">{application.phone}</dd></div>
+                          <div><dt className="font-medium text-slate-500">Location</dt><dd className="text-slate-900">{application.location}</dd></div>
+                        </dl>
+                        <div className="mt-4 grid gap-3 lg:grid-cols-2">
+                          {responseFields.map(([field, label]) => (
+                            <div key={field} className="rounded-lg bg-slate-50 p-3 text-sm last:lg:col-span-2">
+                              <h5 className="font-semibold text-slate-700">{label}</h5>
+                              <p className="mt-1 whitespace-pre-wrap text-slate-600">{application[field]}</p>
+                            </div>
+                          ))}
+                          {application.portfolioUrl && (
+                            <div className="rounded-lg bg-slate-50 p-3 text-sm lg:col-span-2">
+                              <h5 className="font-semibold text-slate-700">Portfolio</h5>
+                              <a className="mt-1 block break-all text-emerald-700 hover:underline" href={application.portfolioUrl} target="_blank" rel="noreferrer">{application.portfolioUrl}</a>
+                            </div>
+                          )}
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                </section>
+              );
+            })}
+          </div>
+        )}
+      </section>
+
+      <section className="rounded-xl border bg-white p-5">
+        <h2 className="text-lg font-semibold">Role availability</h2>
+        <div className="mt-4 grid gap-3">
+          {roles.map((role) => (
+            <div key={role.slug} className="flex flex-wrap items-center justify-between gap-4 rounded-lg border p-4">
+              <div>
+                <span className={`rounded-full px-2 py-1 text-xs font-bold ${role.isOpen ? "bg-emerald-100 text-emerald-800" : "bg-red-100 text-red-800"}`}>{role.isOpen ? "Open" : "Closed"}</span>
+                <h3 className="mt-2 font-semibold">{role.title}</h3>
+              </div>
+              <button onClick={() => void toggle(role)} className="rounded-lg border px-4 py-2 text-sm font-medium">{role.isOpen ? "Close role" : "Open role"}</button>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="rounded-xl border bg-white p-5">
+        <h2 className="text-lg font-semibold">Application workbook</h2>
+        <p className="mt-2 text-sm text-slate-500">Download one workbook with a separate sheet for each role.</p>
+        <input type="password" value={key} onChange={(event) => setKey(event.target.value)} placeholder="Export password" className="mt-4 w-full max-w-md rounded-lg border px-3 py-2" />
+        <div><button disabled={!key} onClick={() => void download()} className="mt-3 rounded-lg bg-emerald-700 px-4 py-2 text-sm font-medium text-white disabled:opacity-50">Download Excel workbook</button></div>
+      </section>
+    </div>
+  );
+}
+>>>>>>> Stashed changes
