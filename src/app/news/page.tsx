@@ -1,4 +1,4 @@
-﻿import { Metadata } from "next";
+import { Metadata } from "next";
 import Link from "next/link";
 import { format } from "date-fns";
 import { ArrowRight, Calendar, Newspaper } from "lucide-react";
@@ -20,7 +20,7 @@ export const revalidate = 60;
 export default async function NewsPage() {
   const db = getDb();
   
-  let articles = [];
+  let articles: any[] = [];
   try {
     articles = await db.cmsContent.findMany({
       where: {

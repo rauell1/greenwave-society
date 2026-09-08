@@ -1,4 +1,4 @@
-import Image from "next/image";
+
 import { Users, Linkedin, Sparkles, Compass, Palette } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { FadeIn } from "@/components/ui/fade-in";

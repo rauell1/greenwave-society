@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Mail, Phone, MapPin, Globe, Instagram, Facebook, Heart } from "lucide-react";
+import { Phone, MapPin, Globe, Instagram, Facebook, Heart } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { APP_CONFIG } from "@/config/app.config";
 import { SafeEmailLink } from "@/components/ui/safe-email-link";
