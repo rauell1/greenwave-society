@@ -52,12 +52,12 @@ export async function sendPasswordResetEmail(to: string, resetUrl: string): Prom
   const resend = getResend();
 
   if (!resend) {
-    logger.info("RESEND_API_KEY not set — reset link generated", { to, resetUrl });
+    logger.error("Password reset email unavailable: RESEND_API_KEY is not set");
     return false;
   }
 
   try {
-    await resend.emails.send({
+    const { data, error } = await resend.emails.send({
       from:    FROM_EMAIL,
       to,
       subject: "Greenwave Society — Admin Password Reset",
@@ -67,7 +67,11 @@ export async function sendPasswordResetEmail(to: string, resetUrl: string): Prom
         body: `<p style="margin:0 0 16px">A password reset was requested for <strong>${escapeHtml(to)}</strong>.</p><p style="margin:0 0 16px">Use the secure link below within <strong>1 hour</strong>.</p>${emailButton("Reset My Password", resetUrl)}<p style="margin:0;color:#607068;font-size:13px">If you did not request this reset, you can safely ignore this email.</p>`,
       }),
     });
-    logger.info("Password reset email sent via Resend", { to });
+    if (error || !data?.id) {
+      logger.error("Password reset email rejected by Resend");
+      return false;
+    }
+    logger.info("Password reset email accepted by Resend", { to });
     return true;
   } catch (error) {
     logger.error("Failed to send reset email", error as Error, { to });

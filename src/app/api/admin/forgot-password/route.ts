@@ -8,7 +8,7 @@ import { logger } from "@/lib/logger";
 export async function POST(request: NextRequest) {
   try {
     const body  = await request.json().catch(() => null);
-    const email = body?.email?.trim().toLowerCase();
+    const email = typeof body?.email === "string" ? body.email.trim().toLowerCase() : "";
 
     if (!email) return NextResponse.json({ error: "Email required." }, { status: 400 });
 
@@ -34,10 +34,15 @@ export async function POST(request: NextRequest) {
 
     logger.info("Password reset requested", { email, emailSent });
 
-    return NextResponse.json({
-      success:  true,
-      resetUrl: emailSent ? undefined : resetUrl,
-    });
+    if (!emailSent) {
+      await db.adminUser.updateMany({
+        where: { email, resetToken: token },
+        data: { resetToken: null, resetTokenExpiry: null },
+      });
+      return NextResponse.json({ error: "Unable to send a reset email. Please try again later." }, { status: 503 });
+    }
+
+    return NextResponse.json({ success: true });
   } catch (error) {
     logger.error("Forgot password failed", error as Error);
     return NextResponse.json({ error: "Request failed." }, { status: 500 });

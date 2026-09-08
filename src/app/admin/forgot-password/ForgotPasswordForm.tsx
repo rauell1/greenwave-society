@@ -7,12 +7,12 @@ export default function ForgotPasswordForm() {
   const [email, setEmail]       = useState("");
   const [loading, setLoading]   = useState(false);
   const [sent, setSent]         = useState(false);
-  const [resetUrl, setResetUrl] = useState("");
   const [error, setError]       = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+    setSent(false);
     setLoading(true);
     try {
       const res  = await fetch("/api/admin/forgot-password", {
@@ -21,12 +21,13 @@ export default function ForgotPasswordForm() {
         body:    JSON.stringify({ email }),
       });
       const data = await res.json();
-      if (data.success) {
+      if (res.ok && data.success) {
         setSent(true);
-        if (data.resetUrl) setResetUrl(data.resetUrl);
       } else {
         setError(data.error ?? "Request failed.");
       }
+    } catch {
+      setError("The recovery service is unavailable. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -45,15 +46,8 @@ export default function ForgotPasswordForm() {
             <div className="flex flex-col gap-4 text-center">
               <div className="text-4xl text-green-600">&#10003;</div>
               <p className="text-sm text-gray-700 leading-relaxed">
-                {resetUrl
-                  ? "SMTP is not configured. Copy the reset link below and open it in your browser:"
-                  : "If your email is on the authorised list, a reset link has been sent. Check your inbox."}
+                If your email is on the authorised list, a reset link has been requested. Check your inbox and spam folder.
               </p>
-              {resetUrl && (
-                <div className="bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-600 break-all text-left">
-                  {resetUrl}
-                </div>
-              )}
               <Link href="/admin" className="text-sm text-[#1A5C38] hover:underline">&larr; Back to sign in</Link>
             </div>
           ) : (
