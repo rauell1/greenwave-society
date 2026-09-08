@@ -39,13 +39,13 @@ async function main() {
   await db.adminRolePermission.createMany({ data: grants, skipDuplicates: true });
 
   const ownerEmail = (process.env.CMS_OWNER_EMAIL ?? "royokola3@gmail.com").toLowerCase();
-  const owner = await db.adminUser.upsert({ where: { email: ownerEmail }, update: { isActive: true }, create: { email: ownerEmail } });
-  await db.adminUserRole.upsert({
+  const owner = await db.adminUser.upsert({ where: { email: ownerEmail }, update: {}, create: { email: ownerEmail } });
+  if (owner.isActive && !owner.deletedAt) await db.adminUserRole.upsert({
     where: { userId_roleId: { userId: owner.id, roleId: roleRows.get("Owner") } },
     update: {}, create: { userId: owner.id, roleId: roleRows.get("Owner") },
   });
 
-  const admins = await db.adminUser.findMany({ include: { roles: true } });
+  const admins = await db.adminUser.findMany({ where: { isActive: true, deletedAt: null }, include: { roles: true } });
   await db.adminUserRole.createMany({
     data: admins.filter((admin) => admin.id !== owner.id && admin.roles.length === 0).map((admin) => ({ userId: admin.id, roleId: roleRows.get("Administrator") })),
     skipDuplicates: true,
@@ -53,7 +53,7 @@ async function main() {
 
   const features = ["content", "pages", "programs", "events", "members", "media", "communications", "users", "audit"];
   await db.cmsFeatureFlag.createMany({
-    data: features.map((key) => ({ key: `cms.${key}`, enabled: key === "audit", description: `CMS ${key} module` })),
+    data: features.map((key) => ({ key: `cms.${key}`, enabled: key === "audit" || key === "users", description: `CMS ${key} module` })),
     skipDuplicates: true,
   });
 }

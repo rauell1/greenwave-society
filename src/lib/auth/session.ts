@@ -72,7 +72,7 @@ async function findLegacySession(cookieValue: string) {
   if (!safeEqualHex(suppliedSignature, expected)) return null;
   return getDb().adminSession.findUnique({
     where: { token: payload },
-    include: { user: { select: { email: true, isActive: true } } },
+    include: { user: { select: { email: true, isActive: true, deletedAt: true } } },
   });
 }
 
@@ -83,22 +83,22 @@ export async function getAdminSession(): Promise<VerifiedAdminSession | null> {
   const db = getDb();
   const session = await db.adminSession.findUnique({
     where: { tokenHash: hashSessionToken(raw) },
-    include: { user: { select: { email: true, isActive: true } } },
+    include: { user: { select: { email: true, isActive: true, deletedAt: true } } },
   }) ?? await findLegacySession(raw);
 
   if (!session) return null;
   const now = new Date();
+  // Sessions must remain bound to a real account, never an email-only fallback.
   const user = session.user;
   const expired = session.expiresAt <= now || Boolean(session.idleExpiresAt && session.idleExpiresAt <= now);
-  if (session.revokedAt || expired || (user && !user.isActive)) {
+  if (session.revokedAt || expired || !user || !user.isActive || Boolean(user.deletedAt)) {
     if (!session.revokedAt) {
       await db.adminSession.update({ where: { id: session.id }, data: { revokedAt: now, revocationReason: expired ? "expired" : "user-disabled" } });
     }
     return null;
   }
 
-  const legacyEmail = session.token?.includes("|") ? session.token.split("|")[1] : undefined;
-  const email = user?.email ?? legacyEmail;
+  const email = user.email;
   await db.adminSession.update({
     where: { id: session.id },
     data: { idleExpiresAt: new Date(Date.now() + IDLE_TTL_MS) },

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { hashPassword, revokeAllUserSessions } from "@/lib/admin-auth";
+import { hashPassword } from "@/lib/admin-auth";
 import { getDb } from "@/lib/db";
 import { logger } from "@/lib/logger";
 
@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
     const password = body?.password;
     const confirm  = body?.confirm;
 
-    if (!token || !password || !confirm) {
+    if (typeof token !== "string" || !token || typeof password !== "string" || !password || typeof confirm !== "string" || !confirm) {
       return NextResponse.json({ error: "All fields are required." }, { status: 400 });
     }
     if (password.length < 8) {
@@ -23,15 +23,22 @@ export async function POST(request: NextRequest) {
     const db   = getDb();
     const user = await db.adminUser.findUnique({ where: { resetToken: token } });
 
-    if (!user || !user.resetTokenExpiry || user.resetTokenExpiry < new Date()) {
+    if (!user || !user.isActive || user.deletedAt || !user.resetTokenExpiry || user.resetTokenExpiry <= new Date()) {
       return NextResponse.json({ error: "This reset link is invalid or has expired." }, { status: 400 });
     }
 
-    await db.adminUser.update({
-      where: { id: user.id },
-      data:  { passwordHash: hashPassword(password), resetToken: null, resetTokenExpiry: null, updatedAt: new Date() },
+    const passwordHash = hashPassword(password);
+    const changed = await db.$transaction(async tx => {
+      // Consume the token once, and recheck access in the same transaction.
+      const result = await tx.adminUser.updateMany({
+        where: { id: user.id, isActive: true, deletedAt: null, resetToken: token, resetTokenExpiry: { gt: new Date() } },
+        data: { passwordHash, resetToken: null, resetTokenExpiry: null },
+      });
+      if (!result.count) return false;
+      await tx.adminSession.updateMany({ where: { userId: user.id, revokedAt: null }, data: { revokedAt: new Date(), revocationReason: "password-reset" } });
+      return true;
     });
-    await revokeAllUserSessions(user.id, "password-reset");
+    if (!changed) return NextResponse.json({ error: "This reset link is invalid or has expired." }, { status: 400 });
 
     logger.info("Admin password reset successful", { email: user.email });
     return NextResponse.json({ success: true });

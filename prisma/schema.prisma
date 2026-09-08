@@ -257,6 +257,7 @@ model MemberActivity {
 }
 
 model AdminUser {
+  deletedAt        DateTime?
   id               String    @id @default(cuid())
   email            String    @unique
   passwordHash     String?

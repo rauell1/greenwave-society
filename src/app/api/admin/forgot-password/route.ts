@@ -1,5 +1,5 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
-import { isAllowedEmail, generateResetToken } from "@/lib/admin-auth";
+import { generateResetToken } from "@/lib/admin-auth";
 import { sendPasswordResetEmail } from "@/lib/email";
 import { SITE_URL } from "@/lib/email-template";
 import { getDb } from "@/lib/db";
@@ -12,21 +12,17 @@ export async function POST(request: NextRequest) {
 
     if (!email) return NextResponse.json({ error: "Email required." }, { status: 400 });
 
-    // Always return success to avoid revealing which emails are registered
-    if (!isAllowedEmail(email)) return NextResponse.json({ success: true });
-
     const db = getDb();
-    await db.adminUser.upsert({
-      where:  { email },
-      update: {},
-      create: { email },
-    });
+    const user = await db.adminUser.findUnique({ where: { email } });
+    // Do not create accounts or disclose unknown, disabled, or deleted addresses.
+    if (!user || !user.isActive || user.deletedAt) return NextResponse.json({ success: true });
 
     const { token, expiry } = generateResetToken();
-    await db.adminUser.update({
-      where: { email },
-      data:  { resetToken: token, resetTokenExpiry: expiry },
+    const updated = await db.adminUser.updateMany({
+      where: { id: user.id, isActive: true, deletedAt: null },
+      data: { resetToken: token, resetTokenExpiry: expiry },
     });
+    if (!updated.count) return NextResponse.json({ success: true });
 
     const resetUrl = `${SITE_URL}/admin/reset-password/${token}`;
 

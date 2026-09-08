@@ -2,9 +2,8 @@ import "server-only";
 import { getAdminSession } from "./session";
 import { getAdminUserById, getAdminUserByEmail } from "../dal/admin";
 import { AdminUserDto } from "./types";
-import { SYSTEM_ROLES, PermissionKey } from "./permissions";
+import { PermissionKey } from "./permissions";
 import { hasPermission } from "./policy";
-import { isAllowedEmail, isSuperAdmin } from "../admin-auth";
 
 /**
  * Validates the current session and retrieves the admin user.
@@ -19,18 +18,7 @@ export async function getCurrentAdmin(): Promise<AdminUserDto | null> {
     adminUser = await getAdminUserById(session.userId);
   } else if (session.email) {
     adminUser = await getAdminUserByEmail(session.email);
-    
-    // Fallback logic for legacy users that don't exist in the DB yet,
-    // but are allowed via the env var allow-list or super admin hardcode.
-    if (!adminUser && (isAllowedEmail(session.email) || isSuperAdmin(session.email))) {
-      adminUser = {
-        id: `legacy-${session.email}`,
-        email: session.email,
-        isActive: true,
-        roles: isSuperAdmin(session.email) ? [SYSTEM_ROLES.OWNER] : [SYSTEM_ROLES.ADMINISTRATOR],
-        permissions: [], // Implicitly granted via roles below
-      };
-    }
+
   }
 
   if (!adminUser || !adminUser.isActive) return null;

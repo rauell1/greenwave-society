@@ -4,14 +4,13 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 
-type Step = "email" | "password" | "set-password";
+type Step = "email" | "password";
 
 export default function AdminLoginForm() {
   const router = useRouter();
   const [step, setStep]         = useState<Step>("email");
   const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
-  const [confirm, setConfirm]   = useState("");
   const [error, setError]       = useState("");
   const [loading, setLoading]   = useState(false);
 
@@ -38,47 +37,13 @@ export default function AdminLoginForm() {
         router.push("/admin/dashboard");
         router.refresh();
       } else if (data.code === "NO_PASSWORD") {
-        setStep("set-password");
+        setError("Use Forgot password below to receive a secure link and set your password.");
         setPassword("");
       } else {
         setError(data.error ?? "Login failed.");
       }
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleSetPassword(e: React.FormEvent) {
-    e.preventDefault();
-    setError("");
-    if (password.length < 8) { setError("Password must be at least 8 characters."); return; }
-    if (password !== confirm) { setError("Passwords do not match."); return; }
-    setLoading(true);
-    try {
-      const res  = await fetch("/api/admin/setup-password", {
-        method:  "POST",
-        headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({ email, password, confirm }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        const loginRes  = await fetch("/api/admin/login", {
-          method:  "POST",
-          headers: { "Content-Type": "application/json" },
-          body:    JSON.stringify({ email, password }),
-        });
-        const loginData = await loginRes.json();
-        if (loginData.success) {
-          router.push("/admin/dashboard");
-          router.refresh();
-        } else {
-          setStep("password");
-          setPassword("");
-          setError("Password set. Please sign in.");
-        }
-      } else {
-        setError(data.error ?? "Failed to set password.");
-      }
+    } catch {
+      setError("The sign-in service is unavailable. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -99,9 +64,9 @@ export default function AdminLoginForm() {
               <div key={s} className="flex items-center gap-2">
                 <div className={
                   "w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold " +
-                  (step === s || (step === "set-password" && s === "password")
+                  (step === s
                     ? "bg-[#1A5C38] text-white"
-                    : (i === 0 && (step === "password" || step === "set-password"))
+                    : (i === 0 && step === "password")
                       ? "bg-green-100 text-green-800"
                       : "bg-gray-100 text-gray-400")
                 }>{i + 1}</div>
@@ -160,40 +125,6 @@ export default function AdminLoginForm() {
             </form>
           )}
 
-          {step === "set-password" && (
-            <form onSubmit={handleSetPassword} className="flex flex-col gap-4">
-              <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2.5 text-xs text-green-800">
-                Welcome! You are signing in for the first time. Please set a password for your account.
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">New password</label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  required
-                  autoFocus
-                  placeholder="At least 8 characters"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A5C38]"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Confirm password</label>
-                <input
-                  type="password"
-                  value={confirm}
-                  onChange={e => setConfirm(e.target.value)}
-                  required
-                  placeholder="Repeat your password"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A5C38]"
-                />
-              </div>
-              {error && <p className="text-red-600 text-sm bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</p>}
-              <button type="submit" disabled={loading} className="w-full bg-[#1A5C38] text-white rounded-lg py-2.5 font-medium text-sm hover:bg-[#154d2f] disabled:opacity-50 transition-colors">
-                {loading ? "Setting password..." : "Set Password & Sign In"}
-              </button>
-            </form>
-          )}
         </div>
       </div>
     </div>

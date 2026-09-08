@@ -26,7 +26,7 @@ export async function getAdminUserById(userId: string): Promise<AdminUserDto | n
     },
   });
 
-  if (!user) return null;
+  if (!user || user.deletedAt) return null;
 
   const roleNames = user.roles.map((ur) => ur.role.name);
   
@@ -71,7 +71,7 @@ export async function getAdminUserByEmail(email: string): Promise<AdminUserDto |
     },
   });
 
-  if (!user) return null;
+  if (!user || user.deletedAt) return null;
 
   const roleNames = user.roles.map((ur) => ur.role.name);
   

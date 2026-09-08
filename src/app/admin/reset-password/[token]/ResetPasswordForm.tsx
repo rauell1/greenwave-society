@@ -25,12 +25,14 @@ export default function ResetPasswordForm({ token }: { token: string }) {
         body:    JSON.stringify({ token, password, confirm }),
       });
       const data = await res.json();
-      if (data.success) {
+      if (res.ok && data.success) {
         setSuccess(true);
         setTimeout(() => router.push("/admin"), 2500);
       } else {
         setError(data.error ?? "Reset failed. The link may have expired.");
       }
+    } catch {
+      setError("The recovery service is unavailable. Please try again.");
     } finally {
       setLoading(false);
     }

@@ -9,7 +9,7 @@ import { isExecutiveRoleName } from "@/lib/auth/executive-roles";
 export async function GET() {
   await requireAnyPermission([PERMISSIONS.ROLES_READ, PERMISSIONS.ROLES_MANAGE]);
   const [users, roles, executiveLeaders] = await Promise.all([
-    getDb().adminUser.findMany({ orderBy: { email: "asc" }, select: { id: true, email: true, isActive: true, createdAt: true, roles: { select: { role: { select: { id: true, name: true } } } } } }),
+    getDb().adminUser.findMany({ where: { deletedAt: null }, orderBy: { email: "asc" }, select: { id: true, email: true, isActive: true, createdAt: true, roles: { select: { role: { select: { id: true, name: true } } } } } }),
     getDb().adminRole.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true, description: true, isSystem: true } }),
     getDb().executiveLeader.findMany({ select: { email: true } }),
   ]);
@@ -33,8 +33,19 @@ export async function POST(request: NextRequest) {
   const validRoles = await db.adminRole.findMany({ where: { id: { in: parsed.data.roleIds } }, select: { id: true, name: true } });
   if (validRoles.length !== new Set(parsed.data.roleIds).size) return NextResponse.json({ error: "One or more roles are invalid." }, { status: 400 });
   const existing = await db.adminUser.findUnique({ where: { email: parsed.data.email } });
-  if (existing) return NextResponse.json({ error: "An administrator with this email already exists." }, { status: 409 });
-  const user = await db.adminUser.create({ data: { email: parsed.data.email, roles: { create: validRoles.map(role => ({ roleId: role.id })) } }, select: { id: true, email: true, isActive: true } });
+  if (existing && !existing.deletedAt) return NextResponse.json({ error: "An administrator with this email already exists." }, { status: 409 });
+  const user = await db.$transaction(async tx => {
+    const data = { email: parsed.data.email, roles: { create: validRoles.map(role => ({ roleId: role.id })) } };
+    if (!existing) return tx.adminUser.create({ data, select: { id: true, email: true, isActive: true } });
+    // Explicitly adding a deleted address starts fresh; old credentials stay invalid.
+    await tx.adminSession.deleteMany({ where: { userId: existing.id } });
+    await tx.adminUserRole.deleteMany({ where: { userId: existing.id } });
+    return tx.adminUser.update({
+      where: { id: existing.id, deletedAt: { not: null } },
+      data: { ...data, isActive: true, deletedAt: null, passwordHash: null, resetToken: null, resetTokenExpiry: null },
+      select: { id: true, email: true, isActive: true },
+    });
+  }, { isolationLevel: "Serializable" });
   await logAuditEvent({ action: AUDIT_ACTIONS.ADMIN_CREATED, actor: admin.email, actorUserId: admin.id, resourceType: "admin_user", resourceId: user.id, outcome: "SUCCESS", afterState: { email: user.email, roles: validRoles.map(role => role.name) } });
   return NextResponse.json({ user, setup: "Ask the administrator to use Forgot password to create their password securely." }, { status: 201 });
 }
