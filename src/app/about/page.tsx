@@ -8,26 +8,6 @@ import { APP_CONFIG } from "@/config/app.config";
 export const metadata: Metadata = {
   title: "About Greenwave Society | Mission, Vision & Strategy in Kenya",
   description: "Greenwave Society exists to close the gaps that hold young Kenyans back, in skills, opportunity, and wellbeing, by building leaders who serve their communities and drive lasting change. Learn our mission, vision, and four strategic pillars.",
-  keywords: [
-    "About Greenwave Society Kenya",
-    "Greenwave Society mission",
-    "Greenwave Society vision",
-    "youth organisation Nairobi mission",
-    "youth leadership strategy Kenya",
-    "Martin Kyalo founder Greenwave",
-    "Njeri Njoroge COO Greenwave",
-    "Eugene Shadrack CIO Greenwave",
-    "social enterprise think tank Nairobi",
-    "community-led wellbeing Kenya",
-    "youth mental health Kenya",
-    "skills mismatch Kenya strategy",
-    "SDG 3 SDG 4 SDG 8 Kenya youth",
-    "SDG 13 SDG 15 SDG 17 Kenya",
-    "systems thinking community action Kenya",
-    "knowledge-driven partnerships Kenya",
-    "youth inclusion Kenya aged 15 to 35",
-    "social enterprise Kenya",
-  ],
   alternates: {
     canonical: `${APP_CONFIG.url}/about`,
   },
@@ -101,4 +81,5 @@ export default function AboutPage() {
     </div>
   );
 }
+
 

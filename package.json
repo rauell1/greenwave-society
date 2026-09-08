@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3000 2>&1 | tee dev.log",
-    "build": "prisma migrate deploy && prisma generate && next build && node scripts/copy-standalone.mjs",
+    "build": "prisma generate && next build",
     "postinstall": "prisma generate",
     "start": "NODE_ENV=production bun .next/standalone/server.js 2>&1 | tee server.log",
     "lint": "eslint .",
@@ -62,6 +62,7 @@
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.23.2",
+    "fslightbox-react": "^2.1.1",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.525.0",
     "mpesa-stk": "^0.3.1",

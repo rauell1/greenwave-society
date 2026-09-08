@@ -8,25 +8,6 @@ import { APP_CONFIG } from "@/config/app.config";
 export const metadata: Metadata = {
   title: "Our Programmes | The 50 Percent, Youth Pulse Program, Conservation & More | Kenya",
   description: "Six interconnected programmes from Greenwave Society in Kenya: The 50 Percent (flagship systems thinking fellowship), Youth Pulse Program, Climate Action, Conservation, Youth Empowerment, and Sustainability & Urban Resilience, all addressing skills gaps, unemployment, and mental health for youth aged 15-35.",
-  keywords: [
-    "The 50 Percent social enterprise programme Kenya",
-    "Youth Pulse Program Kenya",
-    "Greenwave Society programmes Kenya",
-    "social enterprise training Nairobi",
-    "youth enterprise skills Kenya",
-    "climate action programme Kenya",
-    "ecosystem conservation programme Nairobi",
-    "Kangemi restoration programme Kenya",
-    "youth empowerment programme Nairobi",
-    "sustainability urban resilience Kenya",
-    "systems thinking social enterprise Kenya",
-    "Maangani Primary School programme",
-    "skills mismatch Kenya programme",
-    "youth mental health programme Kenya",
-    "intergenerational volunteer programme Kenya",
-    "community leadership programme Nairobi",
-    "SDG 4 SDG 8 SDG 13 Kenya programmes",
-  ],
   alternates: {
     canonical: `${APP_CONFIG.url}/programs`,
   },
@@ -167,3 +148,4 @@ export default function ProgramsPage() {
     </div>
   );
 }
+

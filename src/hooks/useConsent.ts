@@ -62,13 +62,11 @@ export function useConsent() {
     }
   }, []);
 
-  const pushToDataLayer = (categories: ConsentCategories) => {
+  function pushToDataLayer(categories: ConsentCategories) {
     if (typeof window !== "undefined") {
       window.dataLayer = window.dataLayer || [];
       if (!window.gtag) {
-        window.gtag = function () {
-          window.dataLayer.push(arguments);
-        };
+        window.gtag = function (...args: any[]) { window.dataLayer.push(args); };
       }
 
       window.gtag('consent', 'update', {
@@ -114,3 +112,4 @@ export function useConsent() {
     isGdprRegion: GDPR_COUNTRIES.includes(country),
   };
 }
+

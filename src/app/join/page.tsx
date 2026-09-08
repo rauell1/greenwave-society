@@ -9,24 +9,6 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Join Greenwave Society | Apply to Lead, Build & Connect in Kenya",
   description: "Apply to join Greenwave Society in Kenya. Open to youth aged 15-35 who want to build enterprise skills, engage in conservation, support mental health in their communities, and lead lasting change. Fill out our membership application today.",
-  keywords: [
-    "join Greenwave Society Kenya",
-    "Greenwave Society membership application",
-    "volunteer youth Kenya aged 15 35",
-    "volunteer Nairobi organisation",
-    "social enterprise membership Kenya",
-    "youth leadership programme join Kenya",
-    "youth volunteer application Nairobi",
-    "environmental conservation volunteer Kenya",
-    "apply youth empowerment programme Kenya",
-    "The 50 Percent programme apply",
-    "Youth Pulse Program apply Kenya",
-    "community volunteer Nairobi",
-    "skills training programme application Kenya",
-    "mental health youth volunteer Kenya",
-    "changemakers application Kenya",
-    "social enterprise membership Kenya youth",
-  ],
   alternates: {
     canonical: `${APP_CONFIG.url}/join`,
   },
@@ -100,3 +82,4 @@ export default async function JoinPage() {
     </>
   );
 }
+

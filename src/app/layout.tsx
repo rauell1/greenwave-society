@@ -32,70 +32,6 @@ export const metadata: Metadata = {
     template: "%s | Greenwave Society Kenya",
   },
   description: APP_CONFIG.description,
-  keywords: [
-    // Brand
-    "Greenwave Society",
-    "Greenwave Society Kenya",
-    "greenwavesociety.org",
-    "Greenwave Kenya",
-    // Core mission
-    "youth empowerment Kenya",
-    "youth empowerment Nairobi",
-    "youth leadership Kenya",
-    "youth leadership Nairobi",
-    "youth development Kenya",
-    "youth social enterprise Kenya",
-    "think tank Kenya youth",
-    "social enterprise Nairobi",
-    "systems thinking Kenya",
-    // Problems addressed
-    "skills mismatch Kenya",
-    "youth unemployment Kenya",
-    "youth unemployment Nairobi",
-    "mental health youth Kenya",
-    "skills gap Kenya youth",
-    "skills training Nairobi",
-    // Flagship programmes
-    "The 50 Percent social enterprise Kenya",
-    "Youth Pulse Program Kenya",
-    "social enterprise training Kenya",
-    "enterprise skills training Nairobi",
-    "leadership training Kenya",
-    "vocational training Nairobi",
-    // Environmental
-    "environmental conservation Kenya",
-    "ecosystem restoration Kenya",
-    "tree planting Kenya",
-    "conservation Nairobi",
-    "climate action youth Kenya",
-    "Kangemi restoration Kenya",
-    // Community
-    "community development Nairobi",
-    "community outreach Nairobi",
-    "Maangani Primary School Kenya",
-    "intergenerational programme Kenya",
-    // Volunteer
-    "volunteer Kenya",
-    "volunteer Nairobi",
-    "youth volunteer Kenya",
-    // People
-    "Martin Kyalo Greenwave",
-    "Njeri Njoroge Greenwave",
-    "Eugene Shadrack Greenwave",
-    // SDG
-    "SDG 3 health wellbeing Kenya",
-    "SDG 4 education Kenya",
-    "SDG 8 decent work Kenya",
-    "SDG 13 climate action Kenya",
-    "SDG 15 life on land Kenya",
-    "UN SDG youth Kenya",
-    // General
-    "changemakers Kenya",
-    "sustainability Kenya",
-    "youth social enterprise Africa",
-    "Kenya youth programmes",
-    "Nairobi social enterprise youth",
-  ],
   authors: [{ name: "Greenwave Society", url: APP_CONFIG.url }],
   creator: "Greenwave Society",
   publisher: "Greenwave Society",
@@ -318,7 +254,6 @@ export default function RootLayout({
         <meta name="geo.position" content="-1.2921;36.8219" />
         <meta name="ICBM" content="-1.2921, 36.8219" />
         <meta name="language" content="English" />
-        <meta name="revisit-after" content="7 days" />
         <meta name="rating" content="general" />
         <script
           type="application/ld+json"
@@ -338,3 +273,4 @@ export default function RootLayout({
     </html>
   );
 }
+

@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { Mail, Phone, MapPin, Instagram, Facebook, Globe } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { FadeIn } from "@/components/ui/fade-in";
+import { SafeEmailLink } from "@/components/ui/safe-email-link";
 import { ContactForm } from "@/components/sections/ContactForm";
 import { NewsletterForm } from "@/components/sections/NewsletterForm";
 import { APP_CONFIG } from "@/config/app.config";
@@ -49,10 +50,7 @@ export function Contact() {
               <div>
                 <h3 className="font-serif font-black text-xl text-foreground mb-6">Reach Out To Us</h3>
                 <div className="space-y-4">
-                  <a
-                    href={`mailto:${APP_CONFIG.contact.email}`}
-                    className="flex items-start gap-4 py-3 group border-b border-primary/10 transition-colors duration-300"
-                  >
+                  <SafeEmailLink className="flex items-start gap-4 py-3 group border-b border-primary/10 transition-colors duration-300">
                     <div className="text-primary group-hover:text-gold transition-colors duration-300 mt-1">
                       <Mail className="w-5 h-5" />
                     </div>
@@ -64,7 +62,7 @@ export function Contact() {
                         {APP_CONFIG.contact.email}
                       </p>
                     </div>
-                  </a>
+                  </SafeEmailLink>
 
                   <a
                     href={`https://wa.me/${APP_CONFIG.contact.whatsapp}`}
@@ -159,9 +157,6 @@ export function Contact() {
           {/* Contact Form Container */}
           <FadeIn direction="right" className="lg:col-span-3">
             <div className="bg-background rounded-[2rem] border border-primary/20 p-6 sm:p-8 lg:p-10 shadow-[0_20px_50px_oklch(var(--primary)/4%)] relative">
-              <div className="absolute -top-3.5 left-8 bg-gold text-white font-mono text-[9px] tracking-widest uppercase py-1 px-3 rounded-full">
-                Form
-              </div>
               <Suspense fallback={
                 <div className="space-y-6 animate-pulse">
                   <div className="h-12 bg-secondary/30 rounded w-3/4"></div>

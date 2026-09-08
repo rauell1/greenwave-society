@@ -8,12 +8,6 @@ import { APP_CONFIG } from "@/config/app.config";
 export const metadata: Metadata = {
   title: "Privacy Policy & Data Rights | Greenwave Society",
   description: "Learn about Greenwave Society's privacy policy, data protection standards, data export, and self-service right to erasure.",
-  keywords: [
-    "Greenwave Society privacy policy",
-    "Data protection compliance Kenya",
-    "Right to erasure GDPR",
-    "Data export compliance",
-  ],
   alternates: {
     canonical: `${APP_CONFIG.url}/privacy`,
   },
@@ -64,3 +58,4 @@ export default function PrivacyPage() {
     </div>
   );
 }
+

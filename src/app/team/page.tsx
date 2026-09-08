@@ -8,19 +8,6 @@ import { APP_CONFIG } from "@/config/app.config";
 export const metadata: Metadata = {
   title: "Our Team | Martin Kyalo, Njeri Njoroge, Eugene Shadrack & Roy Okola",
   description: "Meet the Greenwave Society leadership team: Founder Martin Kyalo (CEO), Njeri Njoroge (COO), Eugene Shadrack (CIO), and Roy Okola Otieno (Head of Design), building the next generation of Kenyan leaders and changemakers.",
-  keywords: [
-    "Martin Kyalo Greenwave Society founder CEO",
-    "Njeri Njoroge COO Greenwave Kenya",
-    "Eugene Shadrack CIO Greenwave Society",
-    "Roy Okola Otieno Head of Design Greenwave",
-    "Greenwave Society leadership team Kenya",
-    "social enterprise leadership Nairobi",
-    "think tank team Kenya",
-    "youth social enterprise founders Kenya",
-    "Martin Kyalo LinkedIn Kenya",
-    "social enterprise leadership Kenya",
-    "community development team Nairobi",
-  ],
   alternates: {
     canonical: `${APP_CONFIG.url}/team`,
   },
@@ -125,4 +112,5 @@ export default function TeamPage() {
     </div>
   );
 }
+
 

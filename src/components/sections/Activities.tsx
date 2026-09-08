@@ -1,4 +1,5 @@
 import { Calendar, ExternalLink } from "lucide-react";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { FadeIn } from "@/components/ui/fade-in";
 
@@ -8,49 +9,49 @@ const activities = [
     desc: "Greenwave's first project, a school-focused conservation and education programme delivering hands-on environmental learning and community support to students in Maangani.",
     date: "6 Jul 2024",
     type: "Education",
-    mediaUrl: "https://photos.app.goo.gl/bwhvJHBHeFEgnAin9",
+    mediaUrl: "/gallery",
   },
   {
     title: "Ngong Hike",
     desc: "A community hike through the Ngong Hills bringing youth together around environmental appreciation, physical wellbeing, and connection to Kenya's natural landscape.",
     date: "6 Jul 2024",
     type: "Community",
-    mediaUrl: "https://photos.app.goo.gl/aPp6qoR1sftX1ckc7",
+    mediaUrl: "/gallery",
   },
   {
     title: "Wellness Picnic",
     desc: "An outdoor gathering focused on team wellbeing, member bonding, and grounding the Greenwave community in shared purpose ahead of the year ahead.",
     date: "Dec 2024",
     type: "Wellness",
-    mediaUrl: "https://photos.app.goo.gl/goGFiHwXDiDobrmK6",
+    mediaUrl: "/gallery",
   },
   {
     title: "Valentine's Day Picnic",
     desc: "A mental health awareness event and community picnic designed to foster peer connection, open conversation, and emotional support among Greenwave youth members.",
     date: "14 Feb 2025",
     type: "Mental Health",
-    mediaUrl: "https://photos.app.goo.gl/ep2HVgur2hmVzTNAA",
+    mediaUrl: "/gallery",
   },
   {
     title: "Departmental Hang Out",
     desc: "A cross-department team session to strengthen internal collaboration, align on shared goals, and build the relationships that keep Greenwave running effectively.",
     date: "14 Feb 2025",
     type: "Team Building",
-    mediaUrl: "https://photos.app.goo.gl/zZqqv3SGCCxqBBAo8",
+    mediaUrl: "/gallery",
   },
   {
     title: "Kangemi Restoration Programme",
     desc: "A hands-on ecosystem restoration initiative in Kangemi, bringing youth volunteers together to rehabilitate green spaces, plant trees, and connect environmental action with community pride.",
     date: "Jul 2025",
     type: "Conservation",
-    mediaUrl: "https://photos.app.goo.gl/CxjV1qY33ZYosmyK7",
+    mediaUrl: "/gallery",
   },
   {
     title: "Mentorship at Kangemi Vocational Centre",
     desc: "A mentorship engagement at Kangemi Vocational Centre equipping young people with career guidance, practical skills, and the confidence to navigate employment and enterprise.",
     date: "May 2025",
     type: "Mentorship",
-    mediaUrl: "https://photos.app.goo.gl/8jsuqcjCEGeWoHb16",
+    mediaUrl: "/gallery",
   },
   {
     title: "Featured Video Story",
@@ -125,15 +126,25 @@ export function Activities() {
                     </p>
                     
                     <div className="mt-5 flex items-center">
-                      <a
-                        href={a.mediaUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary hover:underline hover:gap-2 transition-all duration-300"
-                      >
-                        Explore Event Media
-                        <ExternalLink className="w-3.5 h-3.5 text-gold" />
-                      </a>
+                      {a.mediaUrl.startsWith('/') ? (
+                        <Link
+                          href={a.mediaUrl}
+                          className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary hover:underline hover:gap-2 transition-all duration-300"
+                        >
+                          Explore Event Media
+                          <ExternalLink className="w-3.5 h-3.5 text-gold" />
+                        </Link>
+                      ) : (
+                        <a
+                          href={a.mediaUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary hover:underline hover:gap-2 transition-all duration-300"
+                        >
+                          Explore Event Media
+                          <ExternalLink className="w-3.5 h-3.5 text-gold" />
+                        </a>
+                      )}
                     </div>
                   </div>
                 </div>

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Mail, Phone, MapPin, Globe, Instagram, Facebook, Heart } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { APP_CONFIG } from "@/config/app.config";
+import { SafeEmailLink } from "@/components/ui/safe-email-link";
 
 function TwitterIcon({ className = "w-5 h-5" }: { className?: string }) {
   return (
@@ -125,12 +126,7 @@ export function Footer() {
             </h4>
             <ul className="space-y-2.5">
               <li>
-                <a
-                  href={`mailto:${APP_CONFIG.contact.email}`}
-                  className="text-sm text-zinc-400 hover:text-emerald-400 transition-colors flex items-center gap-2 break-all"
-                >
-                  <Mail className="w-3.5 h-3.5" /> {APP_CONFIG.contact.email}
-                </a>
+                <SafeEmailLink className="text-sm text-zinc-400 hover:text-emerald-400 transition-colors flex items-center gap-2 break-all" showIcon={true} />
               </li>
               <li>
                 <a
@@ -170,7 +166,7 @@ export function Footer() {
           </p>
           <p className="flex items-center gap-1">
             Made with{" "}
-            <Heart className="w-3.5 h-3.5 text-emerald-500 fill-emerald-500" />{" "}
+            <Heart className="w-3.5 h-3.5 text-emerald-500" fill="currentColor" />{" "}
             for the planet
           </p>
         </div>

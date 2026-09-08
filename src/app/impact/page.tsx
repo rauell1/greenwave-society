@@ -9,24 +9,6 @@ import { APP_CONFIG } from "@/config/app.config";
 export const metadata: Metadata = {
   title: "Our Impact | 500+ Youth, 10,000+ Trees, 25+ Communities in Kenya",
   description: "Greenwave Society has empowered 500+ young Kenyans, planted 10,000+ trees, served 25+ communities, organised 50+ events, delivered 30+ workshops, and recycled 5 tons of waste. Real, measurable impact across Nairobi, Ngong, Kangemi, and beyond.",
-  keywords: [
-    "Greenwave Society impact Kenya",
-    "youth empowered Nairobi results",
-    "10000 trees planted Kenya",
-    "community development impact Nairobi",
-    "conservation results Kenya",
-    "social enterprise impact Kenya",
-    "youth workshops Kenya results",
-    "waste recycled Kenya programme",
-    "Kangemi restoration impact",
-    "Ngong Hills conservation",
-    "Maangani Primary School trees",
-    "SDG impact metrics Kenya",
-    "youth led conservation results",
-    "social enterprise impact Kenya",
-    "mental health youth programme results Kenya",
-    "community outreach Nairobi results",
-  ],
   alternates: {
     canonical: `${APP_CONFIG.url}/impact`,
   },
@@ -165,4 +147,5 @@ export default function ImpactPage() {
     </div>
   );
 }
+
 

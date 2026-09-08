@@ -8,19 +8,6 @@ import { APP_CONFIG } from "@/config/app.config";
 export const metadata: Metadata = {
   title: "Contact Greenwave Society | Nairobi, Kenya | Email & WhatsApp",
   description: "Contact Greenwave Society in Nairobi, Kenya. Reach us by email at info@greenwavesociety.org or WhatsApp at +254 700 519 130. Whether you want to volunteer, partner, or learn more about our youth leadership and conservation programmes, we would love to hear from you.",
-  keywords: [
-    "Contact Greenwave Society Kenya",
-    "Greenwave Society Nairobi contact",
-    "Greenwave Society email info@greenwavesociety.org",
-    "Greenwave Society WhatsApp Kenya",
-    "volunteer Nairobi youth programme contact",
-    "partner social enterprise Kenya",
-    "think tank contact Nairobi Kenya",
-    "youth social enterprise contact Kenya",
-    "social enterprise Kenya contact",
-    "community programme contact Nairobi",
-    "environmental conservation contact Kenya",
-  ],
   alternates: {
     canonical: `${APP_CONFIG.url}/contact`,
   },
@@ -114,4 +101,5 @@ export default function ContactPage() {
     </div>
   );
 }
+
 
