@@ -1,10 +1,15 @@
-﻿name: CI
+name: CI
 
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+
+env:
+  DATABASE_URL: "postgresql://dummy:dummy@localhost:5432/dummy"
+  DIRECT_DATABASE_URL: "postgresql://dummy:dummy@localhost:5432/dummy"
+  NEXT_PUBLIC_APP_URL: "http://localhost:3000"
 
 jobs:
   build-and-test:
@@ -45,7 +50,3 @@ jobs:
 
     - name: Test Build
       run: npm run build
-      env:
-        DATABASE_URL: "postgresql://dummy:dummy@localhost:5432/dummy"
-        DIRECT_DATABASE_URL: "postgresql://dummy:dummy@localhost:5432/dummy"
-        NEXT_PUBLIC_APP_URL: "http://localhost:3000"
