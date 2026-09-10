@@ -37,8 +37,13 @@ export const metadata: Metadata = {
   publisher: "Greenwave Society",
   category: "Youth Empowerment & Environmental Conservation",
   icons: {
-    icon: "/logo.png",
-    apple: "/logo.png",
+    icon: [
+      { url: "/favicon-16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-48.png", sizes: "48x48", type: "image/png" },
+      { url: "/favicon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
   },
   alternates: {
     canonical: APP_CONFIG.url,
@@ -254,7 +259,6 @@ export default function RootLayout({
         <meta name="geo.position" content="-1.2921;36.8219" />
         <meta name="ICBM" content="-1.2921, 36.8219" />
         <meta name="language" content="English" />
-        <meta name="rating" content="general" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdGraph) }}

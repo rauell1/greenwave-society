@@ -91,12 +91,12 @@ export function Activities() {
             {activities.map((a, i) => (
               <FadeIn key={a.title} delay={i * 0.08}>
                 <div className="relative md:grid md:grid-cols-[120px_1fr] md:gap-12 pl-10 md:pl-0 group">
-                  {/* Left Column: Date & Type (Desktop) */}
-                  <div className="hidden md:block text-right">
-                    <span className="font-mono text-xs text-gold uppercase tracking-widest block pt-1.5">
+                  {/* Date & Type: right-aligned column on desktop, inline row above the card on mobile */}
+                  <div className="flex flex-wrap items-center gap-3 mb-3 md:mb-0 md:block md:text-right">
+                    <span className="font-mono text-xs text-gold uppercase tracking-widest md:block md:pt-1.5">
                       {a.date}
                     </span>
-                    <Badge variant="outline" className="mt-2 text-[10px] uppercase tracking-wider border-primary/20 text-primary bg-primary/5 rounded-md px-2.5 py-0.5">
+                    <Badge variant="outline" className="text-[10px] uppercase tracking-wider border-primary/20 text-primary bg-primary/5 rounded-md px-2.5 py-0.5 md:mt-2 md:inline-block">
                       {a.type}
                     </Badge>
                   </div>
@@ -108,16 +108,6 @@ export function Activities() {
 
                   {/* Right Column: Content Card */}
                   <div className="flex-1 bg-background rounded-[1.5rem] border border-primary/10 p-6 sm:p-8 hover:shadow-[0_20px_50px_oklch(var(--primary)/5%)] transition-all duration-300 group-hover:border-primary/20">
-                    {/* Date and Tag for Mobile */}
-                    <div className="flex flex-wrap items-center gap-3 mb-3 md:hidden">
-                      <span className="font-mono text-xs text-gold uppercase tracking-widest">
-                        {a.date}
-                      </span>
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-                        {a.type}
-                      </span>
-                    </div>
-
                     <h3 className="text-xl font-serif font-black text-foreground group-hover:text-primary transition-colors duration-300">
                       {a.title}
                     </h3>
