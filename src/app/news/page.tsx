@@ -9,9 +9,30 @@ import { Footer } from "@/components/sections/Footer";
 
 export const metadata: Metadata = {
   title: "News & Updates | Greenwave Society Kenya",
-  description: "Read the latest news, updates, and impact stories from Greenwave Society.",
+  description: "Read the latest news, updates, and impact stories from Greenwave Society — youth leadership, conservation, and community programmes across Kenya.",
+  keywords: [
+    "Greenwave Society news",
+    "Greenwave Society Kenya updates",
+    "youth leadership news Kenya",
+    "conservation news Kenya",
+    "community impact stories Nairobi",
+  ],
   alternates: {
     canonical: APP_CONFIG.url + "/news",
+  },
+  openGraph: {
+    title: "News & Updates | Greenwave Society Kenya",
+    description: "Read the latest news, updates, and impact stories from Greenwave Society.",
+    url: APP_CONFIG.url + "/news",
+    siteName: "Greenwave Society",
+    images: [{ url: "/images/IMG_9415.jpg", width: 1200, height: 630, alt: "Greenwave Society news and updates" }],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "News & Updates | Greenwave Society Kenya",
+    description: "Read the latest news, updates, and impact stories from Greenwave Society.",
+    images: ["/images/IMG_9415.jpg"],
   },
 };
 
@@ -35,7 +56,31 @@ export default async function NewsPage() {
     console.error("Failed to fetch news:", error);
   }
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "@id": `${APP_CONFIG.url}/news/#webpage`,
+        "url": `${APP_CONFIG.url}/news`,
+        "name": "News & Updates | Greenwave Society Kenya",
+        "description": "Read the latest news, updates, and impact stories from Greenwave Society.",
+        "isPartOf": { "@id": `${APP_CONFIG.url}/#website` },
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": `${APP_CONFIG.url}/news/#breadcrumb`,
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": APP_CONFIG.url },
+          { "@type": "ListItem", "position": 2, "name": "News", "item": `${APP_CONFIG.url}/news` },
+        ],
+      },
+    ],
+  };
+
   return (
+    <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
       <main className="flex-1 pt-24 pb-20">
@@ -87,5 +132,6 @@ export default async function NewsPage() {
       </main>
       <Footer />
     </div>
+    </>
   );
 }

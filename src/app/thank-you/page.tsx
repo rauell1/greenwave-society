@@ -4,6 +4,7 @@ import { CheckCircle } from "lucide-react";
 export const metadata = {
   title: "Thank You | Greenwave Society",
   description: "Thank you for reaching out to Greenwave Society.",
+  robots: { index: false, follow: true },
 };
 
 export default function ThankYouPage() {

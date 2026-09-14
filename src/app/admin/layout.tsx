@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import type { Metadata } from "next";
 import { getCurrentAdmin } from "@/lib/auth/guards";
 import AdminSidebar from "@/components/admin/layout/AdminSidebar";
 import { getEnabledCmsFeatures } from "@/lib/cms/feature-flags";
@@ -7,6 +8,10 @@ import AdminBreadcrumbs from "@/components/admin/layout/AdminBreadcrumbs";
 import { hasPermission } from "@/lib/auth/policy";
 import { PERMISSIONS } from "@/lib/auth/permissions";
 import { isExecutiveCommitteeMember, requireExecutiveCareersAccess } from "@/lib/careers-admin";
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false, nocache: true },
+};
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   const admin = await getCurrentAdmin();
