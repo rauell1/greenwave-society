@@ -251,6 +251,19 @@ export default function RootLayout({
   return (
     <html lang="en-KE" suppressHydrationWarning>
       <head>
+        {/* Google tag (gtag.js) */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-B54FTH27MB" />
+        <script
+          id="google-tag-setup"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-B54FTH27MB');
+            `,
+          }}
+        />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {/* Geo targeting for Kenya / Nairobi */}
