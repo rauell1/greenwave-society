@@ -107,7 +107,7 @@ export function SuicidePreventionRegistrationForm({ isRegistrationOpen }: { isRe
               <MapPinIcon className="w-6 h-6 text-green-600" />
               <div>
                 <p className="font-semibold">Location</p>
-                <p className="text-sm">Virtual / Greenwave HQ</p>
+                <p className="text-sm">To be communicated (Physical Meeting)</p>
               </div>
             </div>
           </div>

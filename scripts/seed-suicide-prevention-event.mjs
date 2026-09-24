@@ -27,7 +27,7 @@ async function main() {
       slug: "suicide-prevention-awareness-2026",
       title: "Suicide Prevention Awareness Session",
       description: "A small awareness session to our members in awareness of the suicide prevention month.",
-      location: "Virtual / Greenwave HQ",
+      location: "To be communicated (Physical Meeting)",
       timezone: "Africa/Nairobi",
       startsAt: new Date("2026-10-03T10:00:00+03:00"),
       endsAt: new Date("2026-10-03T13:00:00+03:00"),
