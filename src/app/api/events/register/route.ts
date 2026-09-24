@@ -14,7 +14,7 @@ export async function POST(req: Request) {
       suicidalIdeation, knowsSomeoneAttempted, stigmaReason 
     } = body;
 
-    if (!fullName || !email || !eventSlug || !expectations) {
+    if (!fullName || !email || !eventSlug || !phone || !attendedBefore || !expectations || !makesYouHappy || !accessibilityNeeds || !suicidalIdeation || !knowsSomeoneAttempted || !stigmaReason) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 

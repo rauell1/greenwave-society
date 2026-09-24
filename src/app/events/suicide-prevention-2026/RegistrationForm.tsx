@@ -15,14 +15,14 @@ import { CalendarIcon, MapPinIcon, AlertCircle } from "lucide-react";
 const formSchema = z.object({
   fullName: z.string().min(2, "Full name is required"),
   email: z.string().email("Invalid email address"),
-  phone: z.string().optional(),
-  attendedBefore: z.string().optional(),
+  phone: z.string().min(1, "Phone number is required"),
+  attendedBefore: z.string().min(1, "This field is required"),
   expectations: z.string().min(2, "Expectations are required"),
-  makesYouHappy: z.string().optional(),
-  accessibilityNeeds: z.string().optional(),
-  suicidalIdeation: z.string().optional(),
-  knowsSomeoneAttempted: z.string().optional(),
-  stigmaReason: z.string().optional(),
+  makesYouHappy: z.string().min(1, "This field is required"),
+  accessibilityNeeds: z.string().min(1, "This field is required"),
+  suicidalIdeation: z.string().min(1, "This field is required"),
+  knowsSomeoneAttempted: z.string().min(1, "This field is required"),
+  stigmaReason: z.string().min(1, "This field is required"),
 });
 
 type RegistrationFormValues = z.infer<typeof formSchema>;
@@ -200,7 +200,7 @@ export function SuicidePreventionRegistrationForm({ isRegistrationOpen }: { isRe
                         name="phone"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Phone Number (Optional)</FormLabel>
+                            <FormLabel>Phone Number *</FormLabel>
                             <FormControl>
                               <Input placeholder="Your phone number" {...field} />
                             </FormControl>
@@ -214,7 +214,7 @@ export function SuicidePreventionRegistrationForm({ isRegistrationOpen }: { isRe
                         name="attendedBefore"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Attended our events before? (Optional)</FormLabel>
+                            <FormLabel>Attended our events before? *</FormLabel>
                             <FormControl>
                               <Input placeholder="e.g. First time, 2 times..." {...field} />
                             </FormControl>
@@ -243,7 +243,7 @@ export function SuicidePreventionRegistrationForm({ isRegistrationOpen }: { isRe
                       name="makesYouHappy"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>What makes you happy? (Optional)</FormLabel>
+                          <FormLabel>What makes you happy? *</FormLabel>
                           <FormControl>
                             <Textarea placeholder="Share something that brings you joy..." className="resize-none h-20" {...field} />
                           </FormControl>
@@ -258,7 +258,7 @@ export function SuicidePreventionRegistrationForm({ isRegistrationOpen }: { isRe
                         name="suicidalIdeation"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Have you struggled with suicide ideation? (Optional)</FormLabel>
+                            <FormLabel>Have you struggled with suicide ideation? *</FormLabel>
                             <FormControl>
                               <Input placeholder="Yes, No, Prefer not to say..." {...field} />
                             </FormControl>
@@ -272,7 +272,7 @@ export function SuicidePreventionRegistrationForm({ isRegistrationOpen }: { isRe
                         name="knowsSomeoneAttempted"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Do you know anyone who has attempted suicide? (Optional)</FormLabel>
+                            <FormLabel>Do you know anyone who has attempted suicide? *</FormLabel>
                             <FormControl>
                               <Input placeholder="Yes, No..." {...field} />
                             </FormControl>
@@ -287,7 +287,7 @@ export function SuicidePreventionRegistrationForm({ isRegistrationOpen }: { isRe
                       name="stigmaReason"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Why do you think people are stigmatized when they attempt suicide? (Optional)</FormLabel>
+                          <FormLabel>Why do you think people are stigmatized when they attempt suicide? *</FormLabel>
                           <FormControl>
                             <Textarea placeholder="Share your thoughts..." className="resize-none h-20" {...field} />
                           </FormControl>
@@ -301,9 +301,9 @@ export function SuicidePreventionRegistrationForm({ isRegistrationOpen }: { isRe
                       name="accessibilityNeeds"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Do you have any accessibility needs or required accommodations? (Optional)</FormLabel>
+                          <FormLabel>Do you have any accessibility needs or required accommodations? *</FormLabel>
                           <FormControl>
-                            <Textarea placeholder="Let us know how we can make you comfortable..." className="resize-none h-20" {...field} />
+                            <Textarea placeholder="Type 'None' if not applicable..." className="resize-none h-20" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
