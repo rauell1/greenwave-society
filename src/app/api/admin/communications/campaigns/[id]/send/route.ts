@@ -15,12 +15,38 @@ export async function POST(_: Request, { params }: { params: Promise<{ id: strin
   if (["draft", "failed"].includes(campaign.status)) {
     const claimed = await db.cmsCampaign.updateMany({ where: { id, status: campaign.status }, data: { status: "sending", updatedById: auth.admin.id } });
     if (claimed.count !== 1) return NextResponse.json({ error: "Campaign state changed; refresh and try again" }, { status: 409 });
-    if (campaign.status === "failed") await db.cmsCampaignRecipient.updateMany({ where: { campaignId: id, status: "failed" }, data: { status: "pending" } });
-    else {
-      const subscribers = await db.newsletterSubscriber.findMany({ where: { active: true, unsubscribeToken: { not: null } }, select: { id: true, email: true } });
+    if (campaign.status === "failed") {
+      await db.cmsCampaignRecipient.updateMany({ where: { campaignId: id, status: "failed" }, data: { status: "pending" } });
+    } else {
+      const [subscribers, unsubscribed, approvedMembers] = await Promise.all([
+        db.newsletterSubscriber.findMany({ where: { active: true, unsubscribeToken: { not: null } }, select: { id: true, email: true } }),
+        db.newsletterSubscriber.findMany({ where: { active: false }, select: { email: true } }),
+        db.memberRegistration.findMany({ where: { status: "approved" }, select: { email: true } })
+      ]);
+      
+      const recipientMap = new Map<string, { subscriberId?: string, email: string }>();
+      const unsubscribedEmails = new Set(unsubscribed.map(u => u.email.toLowerCase().trim()));
+      
+      approvedMembers.forEach(m => {
+        const email = m.email.toLowerCase().trim();
+        if (!unsubscribedEmails.has(email) && !recipientMap.has(email)) {
+          recipientMap.set(email, { email });
+        }
+      });
+
+      subscribers.forEach(s => {
+        const email = s.email.toLowerCase().trim();
+        recipientMap.set(email, { subscriberId: s.id, email });
+      });
+
+      const uniqueRecipients = Array.from(recipientMap.values());
+
       await db.$transaction(async tx => {
-        await tx.cmsCampaignRecipient.createMany({ data: subscribers.map(item => ({ campaignId: id, subscriberId: item.id, email: item.email })), skipDuplicates: true });
-        await tx.auditLog.create({ data: { action: AUDIT_ACTIONS.CAMPAIGN_RECIPIENTS_SNAPSHOTTED, actor: auth.admin.email, actorUserId: auth.admin.id, resourceType: "cms_campaign", resourceId: id, outcome: "SUCCESS", afterState: JSON.stringify({ count: subscribers.length }) } });
+        await tx.cmsCampaignRecipient.createMany({ 
+          data: uniqueRecipients.map(item => ({ campaignId: id, subscriberId: item.subscriberId, email: item.email })), 
+          skipDuplicates: true 
+        });
+        await tx.auditLog.create({ data: { action: AUDIT_ACTIONS.CAMPAIGN_RECIPIENTS_SNAPSHOTTED, actor: auth.admin.email, actorUserId: auth.admin.id, resourceType: "cms_campaign", resourceId: id, outcome: "SUCCESS", afterState: JSON.stringify({ count: uniqueRecipients.length }) } });
       });
     }
   } else if (campaign.status !== "sending") return NextResponse.json({ error: "Campaign cannot be sent from its current state" }, { status: 409 });
@@ -29,8 +55,14 @@ export async function POST(_: Request, { params }: { params: Promise<{ id: strin
   for (const recipient of batch) {
     const reserved = await db.cmsCampaignRecipient.updateMany({ where: { id: recipient.id, status: "pending" }, data: { status: "processing", attempts: { increment: 1 } } });
     if (reserved.count !== 1) continue;
-    if (!recipient.subscriber?.active || !recipient.subscriber.unsubscribeToken) { await db.cmsCampaignRecipient.update({ where: { id: recipient.id }, data: { status: "skipped", lastError: "Subscriber opted out before delivery" } }); continue; }
-    const result = await deliverCampaignEmail(recipient.email, campaign.subject, renderCampaign({ ...campaign, unsubscribeToken: recipient.subscriber.unsubscribeToken }));
+    
+    // If they have a linked subscriber record, ensure they are still active
+    if (recipient.subscriberId && (!recipient.subscriber?.active || !recipient.subscriber.unsubscribeToken)) { 
+      await db.cmsCampaignRecipient.update({ where: { id: recipient.id }, data: { status: "skipped", lastError: "Subscriber opted out before delivery" } }); 
+      continue; 
+    }
+    
+    const result = await deliverCampaignEmail(recipient.email, campaign.subject, renderCampaign({ ...campaign, unsubscribeToken: recipient.subscriber?.unsubscribeToken }));
     await db.cmsCampaignRecipient.update({ where: { id: recipient.id }, data: result.ok ? { status: "sent", sentAt: new Date(), providerMessageId: result.id, lastError: null } : { status: "failed", lastError: result.error.slice(0, 2000) } });
     if (result.ok) sent++; else failed++;
   }
