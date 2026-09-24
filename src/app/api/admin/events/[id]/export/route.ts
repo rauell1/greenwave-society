@@ -1,16 +1,86 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { authorizeRoute } from "@/lib/auth/route-authorization";
 import { PERMISSIONS } from "@/lib/auth/permissions";
 import { getDb } from "@/lib/db";
-import { csvCell } from "@/lib/members/validation";
+import { AUDIT_ACTIONS } from "@/lib/audit/audit-service";
 
-export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const auth = await authorizeRoute(PERMISSIONS.EVENTS_EXPORT); if (!auth.ok) return auth.response;
-  const { id } = await params;
-  const event = await getDb().cmsEvent.findUnique({ where: { id }, include: { registrations: { orderBy: { createdAt: "asc" } } } });
-  if (!event) return NextResponse.json({ error: "Event not found" }, { status: 404 });
-  await getDb().auditLog.create({ data: { action: "EVENT_ATTENDEES_EXPORTED", actor: auth.admin.email, actorUserId: auth.admin.id, resourceType: "cms_event", resourceId: id, outcome: "SUCCESS", detail: `Exported ${event.registrations.length} attendee records` } });
-  const header = ["Name", "Email", "Phone", "Organization", "Registration status", "Attendance", "Checked in at"];
-  const rows = event.registrations.map(item => [item.fullName, item.email, item.phone, item.organization, item.status, item.attendanceStatus, item.checkedInAt?.toISOString()].map(csvCell).join(","));
-  return new NextResponse([header.map(csvCell).join(","), ...rows].join("\r\n"), { headers: { "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": `attachment; filename="${event.slug}-attendees.csv"`, "Cache-Control": "no-store" } });
+export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
+  const auth = await authorizeRoute(PERMISSIONS.EVENTS_READ); 
+  if (!auth.ok) return auth.response;
+
+  const { id } = await params; 
+  const db = getDb();
+  
+  const event = await db.cmsEvent.findUnique({
+    where: { id },
+    include: {
+      registrations: { orderBy: { createdAt: "desc" } }
+    }
+  });
+
+  if (!event) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+  // Convert to CSV
+  const headers = [
+    "Name",
+    "Email",
+    "Phone",
+    "Organization",
+    "Status",
+    "Attendance",
+    "Attended Before",
+    "Expectations",
+    "Makes You Happy",
+    "Accessibility Needs",
+    "Suicidal Ideation",
+    "Knows Someone Attempted",
+    "Stigma Reason",
+    "Registered At"
+  ];
+
+  const rows = event.registrations.map(reg => {
+    const meta = (reg.metadata as Record<string, any>) || {};
+    
+    return [
+      reg.fullName,
+      reg.email,
+      reg.phone || "",
+      reg.organization || "",
+      reg.status,
+      reg.attendanceStatus,
+      meta.attendedBefore || "",
+      meta.expectations || "",
+      meta.makesYouHappy || "",
+      meta.accessibilityNeeds || "",
+      meta.suicidalIdeation || "",
+      meta.knowsSomeoneAttempted || "",
+      meta.stigmaReason || "",
+      reg.createdAt.toISOString()
+    ].map(field => {
+      // Escape quotes and wrap in quotes to ensure valid CSV
+      const str = String(field).replace(/"/g, '""');
+      return `"${str}"`;
+    }).join(",");
+  });
+
+  const csv = [headers.join(","), ...rows].join("\n");
+
+  await db.auditLog.create({
+    data: {
+      action: AUDIT_ACTIONS.EVENT_ATTENDEES_EXPORTED,
+      actor: auth.admin.email,
+      actorUserId: auth.admin.id,
+      resourceType: "cms_event_registrations",
+      resourceId: id,
+      outcome: "SUCCESS",
+      detail: `Exported ${event.registrations.length} registrations`
+    }
+  });
+
+  return new NextResponse(csv, {
+    headers: {
+      "Content-Type": "text/csv; charset=utf-8",
+      "Content-Disposition": `attachment; filename="event_${event.slug}_attendees.csv"`,
+    }
+  });
 }
