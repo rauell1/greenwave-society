@@ -87,7 +87,7 @@ export async function POST(req: Request) {
       name: fullName,
       eventTitle: event.title,
       eventDate: eventDateStr,
-      location: event.location || "To be communicated",
+      location: event.location || "To be confirmed. The final venue will be shared directly with you via email.",
       isMentalHealthEvent: event.slug === "suicide-prevention-awareness-2026",
     });
 

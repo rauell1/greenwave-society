@@ -113,7 +113,8 @@ export function SuicidePreventionRegistrationForm({ isRegistrationOpen }: { isRe
               <MapPinIcon className="w-6 h-6 text-green-600" />
               <div>
                 <p className="font-semibold">Location</p>
-                <p className="text-sm">To be communicated (Physical Meeting)</p>
+                <p className="text-sm">To be confirmed (Physical Meeting)</p>
+                <p className="text-xs mt-1 text-green-700/80 dark:text-green-300/80">The exact venue details will be shared directly with all registered attendees once confirmed.</p>
               </div>
             </div>
           </div>
