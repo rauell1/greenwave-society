@@ -16,16 +16,27 @@ export interface EventRegistrationEmailOptions {
   name: string;
   eventTitle: string;
   eventDate: string;
+  location?: string;
+  isMentalHealthEvent?: boolean;
 }
 
 export async function sendEventRegistrationConfirmation(opts: EventRegistrationEmailOptions): Promise<boolean> {
   const resend = getResend();
-  const eventUrl = `${SITE_URL}`; // Default back to site, or a specific event URL if you have one.
+  const eventUrl = `${SITE_URL}`;
 
   if (!resend) {
     logger.info("RESEND_API_KEY not set — event registration confirmation simulated", { name: opts.name, to: opts.to });
     return true;
   }
+
+  // Custom messaging for mental health circles
+  const customMessage = opts.isMentalHealthEvent
+    ? `<p style="margin:0 0 16px; font-size: 15px; color: #173126;">We are so grateful that you're joining us. This circle is designed to be a safe, non-judgmental space where we can connect, listen, and support one another.</p>`
+    : "";
+
+  const locationText = opts.location 
+    ? `<p style="margin:0 0 16px"><strong>Location:</strong> ${escapeHtml(opts.location)}</p>` 
+    : "";
 
   try {
     await resend.emails.send({
@@ -36,7 +47,16 @@ export async function sendEventRegistrationConfirmation(opts: EventRegistrationE
         eyebrow: "Greenwave Events",
         title: "Registration Confirmed",
         preheader: `You are registered for ${opts.eventTitle}.`,
-        body: `<p style="margin:0 0 16px">Dear ${escapeHtml(opts.name)},</p><p style="margin:0 0 16px">Thank you for registering for <strong>${escapeHtml(opts.eventTitle)}</strong>.</p><p style="margin:0 0 16px">The session will take place on <strong>${escapeHtml(opts.eventDate)}</strong>. We'll send you a reminder 3-4 days before the event.</p>${emailButton("View Greenwave Society", eventUrl)}<p style="margin:0;color:#607068;font-size:13px">Questions? Contact us at <a href="mailto:${CONTACT_EMAIL}" style="color:#1A5C38">${CONTACT_EMAIL}</a>.</p>`,
+        body: `<p style="margin:0 0 16px; font-size: 16px;">Dear ${escapeHtml(opts.name)},</p>
+               <p style="margin:0 0 16px; font-size: 15px;">Thank you for registering for <strong>${escapeHtml(opts.eventTitle)}</strong>.</p>
+               ${customMessage}
+               <div style="margin:24px 0;padding:16px;background:#EFF9E9;border-radius:8px;border-left:4px solid #5FAF2D;">
+                 <p style="margin:0 0 8px"><strong>Date & Time:</strong> ${escapeHtml(opts.eventDate)}</p>
+                 ${locationText}
+                 <p style="margin:0">We will send you a reminder with any final details 3-4 days before the event.</p>
+               </div>
+               ${emailButton("Visit Greenwave Society", eventUrl)}
+               <p style="margin:24px 0 0;color:#607068;font-size:13px">If you have any questions or accessibility needs you forgot to mention, just reply to this email or contact us at <a href="mailto:${CONTACT_EMAIL}" style="color:#1A5C38">${CONTACT_EMAIL}</a>.</p>`,
       }),
     });
     logger.info("Event registration email sent", { name: opts.name, to: opts.to });

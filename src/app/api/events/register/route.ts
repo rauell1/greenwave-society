@@ -74,6 +74,8 @@ export async function POST(req: Request) {
       name: fullName,
       eventTitle: event.title,
       eventDate: eventDateStr,
+      location: event.location || "To be communicated",
+      isMentalHealthEvent: event.slug === "suicide-prevention-awareness-2026",
     });
 
     return NextResponse.json({ success: true, data: registration });
