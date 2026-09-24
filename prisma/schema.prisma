@@ -425,6 +425,7 @@ model CmsEventRegistration {
   email                String
   phone                String?
   organization         String?
+  metadata             Json?
   status               String              @default("registered")
   attendanceStatus     String              @default("not_checked_in")
   checkedInAt          DateTime?

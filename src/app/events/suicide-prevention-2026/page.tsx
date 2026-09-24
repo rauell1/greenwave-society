@@ -7,6 +7,7 @@ import * as z from "zod";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { CalendarIcon, MapPinIcon } from "lucide-react";
@@ -15,7 +16,9 @@ const formSchema = z.object({
   fullName: z.string().min(2, "Full name is required"),
   email: z.string().email("Invalid email address"),
   phone: z.string().optional(),
-  organization: z.string().optional(),
+  attendedBefore: z.string().optional(),
+  expectations: z.string().min(2, "Expectations are required"),
+  makesYouHappy: z.string().optional(),
 });
 
 type RegistrationFormValues = z.infer<typeof formSchema>;
@@ -30,7 +33,9 @@ export default function SuicidePreventionEventPage() {
       fullName: "",
       email: "",
       phone: "",
-      organization: "",
+      attendedBefore: "",
+      expectations: "",
+      makesYouHappy: "",
     },
   });
 
@@ -69,10 +74,10 @@ export default function SuicidePreventionEventPage() {
         <div className="space-y-6">
           <div>
             <h1 className="text-4xl font-bold tracking-tight text-green-900 dark:text-green-100 mb-4">
-              Suicide Prevention Awareness Session
+              RSVP: GreenWave Society Mental Health Circle
             </h1>
             <p className="text-lg text-green-700 dark:text-green-300">
-              Join Greenwave Society as we hold a small awareness session for our members to observe Suicide Prevention Month. We aim to equip our community with knowledge, resources, and a safe space for dialogue.
+              Confirm Your Place at Our Exclusive Mental Health Circle. Join Greenwave Society as we hold an awareness session for our members to observe Suicide Prevention Month.
             </p>
           </div>
 
@@ -100,9 +105,9 @@ export default function SuicidePreventionEventPage() {
         <div>
           <Card className="border-green-100 shadow-lg dark:border-green-900">
             <CardHeader className="bg-green-50/50 dark:bg-green-900/20 border-b border-green-100 dark:border-green-900">
-              <CardTitle>Register for the Event</CardTitle>
+              <CardTitle>Reserve your spot</CardTitle>
               <CardDescription>
-                Fill in your details below to reserve your spot.
+                Fill in your details below to confirm your attendance.
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-6">
@@ -138,7 +143,7 @@ export default function SuicidePreventionEventPage() {
                         <FormItem>
                           <FormLabel>Full Name *</FormLabel>
                           <FormControl>
-                            <Input placeholder="John Doe" {...field} />
+                            <Input placeholder="Your full name" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -152,7 +157,7 @@ export default function SuicidePreventionEventPage() {
                         <FormItem>
                           <FormLabel>Email Address *</FormLabel>
                           <FormControl>
-                            <Input type="email" placeholder="john@example.com" {...field} />
+                            <Input type="email" placeholder="your@email.com" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -166,7 +171,7 @@ export default function SuicidePreventionEventPage() {
                         <FormItem>
                           <FormLabel>Phone Number (Optional)</FormLabel>
                           <FormControl>
-                            <Input placeholder="+254..." {...field} />
+                            <Input placeholder="Your phone number" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -175,12 +180,40 @@ export default function SuicidePreventionEventPage() {
 
                     <FormField
                       control={form.control}
-                      name="organization"
+                      name="attendedBefore"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Organization/Chapter (Optional)</FormLabel>
+                          <FormLabel>How many times have you attended Our Events? (Optional)</FormLabel>
                           <FormControl>
-                            <Input placeholder="Greenwave Campus Chapter" {...field} />
+                            <Input placeholder="e.g. First time, 2 times..." {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="expectations"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>What are your expectations for the event? *</FormLabel>
+                          <FormControl>
+                            <Textarea placeholder="Share what you hope to gain..." {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="makesYouHappy"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>What makes you happy? (Optional)</FormLabel>
+                          <FormControl>
+                            <Textarea placeholder="Share something that brings you joy..." {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -188,7 +221,7 @@ export default function SuicidePreventionEventPage() {
                     />
 
                     <Button type="submit" className="w-full bg-green-600 hover:bg-green-700" disabled={isSubmitting}>
-                      {isSubmitting ? "Registering..." : "Complete Registration"}
+                      {isSubmitting ? "Submitting..." : "Submit"}
                     </Button>
                   </form>
                 </Form>
