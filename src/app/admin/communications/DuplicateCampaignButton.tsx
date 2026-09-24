@@ -12,7 +12,15 @@ export default function DuplicateCampaignButton({ id }: { id: string }) {
     setBusy(true);
     try {
       const res = await fetch(`/api/admin/communications/campaigns/${id}/duplicate`, { method: "POST" });
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        alert(`Unexpected response format from server (${res.status}).`);
+        setBusy(false);
+        return;
+      }
+
       if (res.ok && data.campaign?.id) {
         // Navigate directly to the edit page of the duplicated campaign
         router.push(`/admin/communications/${data.campaign.id}/edit`);

@@ -20,7 +20,15 @@ export default function CampaignActions({id,canSend,status}:{id:string;canSend:b
   async function duplicate() {
     setBusy(true);
     const response = await fetch(`/api/admin/communications/campaigns/${id}/duplicate`, { method: "POST" });
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+    } catch {
+      setBusy(false);
+      setMessage(`Server returned an unexpected error (${response.status})`);
+      return;
+    }
+    
     if (response.ok && data.campaign) {
       router.push(`/admin/communications/${data.campaign.id}/edit`);
       router.refresh();
