@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function CampaignEditor({ campaign }: { campaign: any }) {
+export default function CampaignEditor({ campaign, events = [] }: { campaign: any, events?: { id: string; title: string; slug: string }[] }) {
   const router = useRouter(); 
   const [busy, setBusy] = useState(false); 
   const [message, setMessage] = useState("");
@@ -12,7 +12,8 @@ export default function CampaignEditor({ campaign }: { campaign: any }) {
     subject: campaign.subject || "",
     preheader: campaign.preheader || "",
     eyebrow: campaign.eyebrow || "Greenwave Update",
-    htmlBody: campaign.htmlBody || ""
+    htmlBody: campaign.htmlBody || "",
+    audience: campaign.audience || "newsletter"
   });
 
   async function update() {
@@ -37,10 +38,24 @@ export default function CampaignEditor({ campaign }: { campaign: any }) {
       <h2 className="font-semibold">Edit campaign draft</h2>
       <div className="mt-4 grid gap-3">
         <input className="rounded-lg border p-2.5" placeholder="Internal campaign name" value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
+        
+        <select 
+          className="rounded-lg border p-2.5 bg-white text-slate-700" 
+          value={form.audience} 
+          onChange={e => setForm({ ...form, audience: e.target.value })}
+        >
+          <option value="newsletter">All Newsletter Subscribers & Approved Members</option>
+          {events.map(event => (
+            <option key={event.id} value={`event:${event.slug}`}>
+              Event Attendees: {event.title}
+            </option>
+          ))}
+        </select>
+
         <input className="rounded-lg border p-2.5" placeholder="Email subject" value={form.subject} onChange={e => setForm({...form, subject: e.target.value})} />
         <input className="rounded-lg border p-2.5" placeholder="Inbox preview text" value={form.preheader} onChange={e => setForm({...form, preheader: e.target.value})} />
         <textarea className="min-h-40 rounded-lg border p-2.5 font-mono text-sm" value={form.htmlBody} onChange={e => setForm({...form, htmlBody: e.target.value})} />
-        <button disabled={busy || !form.name || !form.subject} onClick={() => void update()} className="rounded-lg bg-emerald-700 px-4 py-2 text-white disabled:opacity-50">Save changes</button>
+        <button disabled={busy || !form.name || !form.subject} onClick={() => void update()} className="rounded-lg bg-emerald-700 px-4 py-2 text-white disabled:opacity-50 w-full sm:w-auto mt-2">Save changes</button>
         {message && <p role="status" className="text-sm text-red-700">{message}</p>}
       </div>
     </section>

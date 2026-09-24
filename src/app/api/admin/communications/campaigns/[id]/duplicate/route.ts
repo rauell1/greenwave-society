@@ -27,6 +27,7 @@ export async function POST(_: Request, { params }: { params: Promise<{ id: strin
           eyebrow: existing.eyebrow,
           htmlBody: existing.htmlBody,
           status: "draft",
+          audience: existing.audience,
           createdById: auth.admin.id,
           updatedById: auth.admin.id,
         }

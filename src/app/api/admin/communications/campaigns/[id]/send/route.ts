@@ -18,34 +18,58 @@ export async function POST(_: Request, { params }: { params: Promise<{ id: strin
     if (campaign.status === "failed") {
       await db.cmsCampaignRecipient.updateMany({ where: { campaignId: id, status: "failed" }, data: { status: "pending" } });
     } else {
-      const [subscribers, unsubscribed, approvedMembers] = await Promise.all([
-        db.newsletterSubscriber.findMany({ where: { active: true, unsubscribeToken: { not: null } }, select: { id: true, email: true } }),
-        db.newsletterSubscriber.findMany({ where: { active: false }, select: { email: true } }),
-        db.memberRegistration.findMany({ where: { status: "approved" }, select: { email: true } })
-      ]);
-      
-      const recipientMap = new Map<string, { subscriberId?: string, email: string }>();
-      const unsubscribedEmails = new Set(unsubscribed.map(u => u.email.toLowerCase().trim()));
-      
-      approvedMembers.forEach(m => {
-        const email = m.email.toLowerCase().trim();
-        if (!unsubscribedEmails.has(email) && !recipientMap.has(email)) {
-          recipientMap.set(email, { email });
+      let uniqueRecipients: { subscriberId?: string, email: string }[] = [];
+
+      if (campaign.audience.startsWith("event:")) {
+        const eventSlug = campaign.audience.replace("event:", "");
+        const event = await db.cmsEvent.findUnique({ where: { slug: eventSlug } });
+        
+        if (event) {
+          const attendees = await db.cmsEventRegistration.findMany({
+            where: { eventId: event.id },
+            select: { email: true }
+          });
+          
+          const recipientMap = new Map<string, { email: string }>();
+          attendees.forEach(a => {
+            const email = a.email.toLowerCase().trim();
+            if (!recipientMap.has(email)) recipientMap.set(email, { email });
+          });
+          uniqueRecipients = Array.from(recipientMap.values());
         }
-      });
+      } else {
+        // Default "newsletter" behavior
+        const [subscribers, unsubscribed, approvedMembers] = await Promise.all([
+          db.newsletterSubscriber.findMany({ where: { active: true, unsubscribeToken: { not: null } }, select: { id: true, email: true } }),
+          db.newsletterSubscriber.findMany({ where: { active: false }, select: { email: true } }),
+          db.memberRegistration.findMany({ where: { status: "approved" }, select: { email: true } })
+        ]);
+        
+        const recipientMap = new Map<string, { subscriberId?: string, email: string }>();
+        const unsubscribedEmails = new Set(unsubscribed.map(u => u.email.toLowerCase().trim()));
+        
+        approvedMembers.forEach(m => {
+          const email = m.email.toLowerCase().trim();
+          if (!unsubscribedEmails.has(email) && !recipientMap.has(email)) {
+            recipientMap.set(email, { email });
+          }
+        });
 
-      subscribers.forEach(s => {
-        const email = s.email.toLowerCase().trim();
-        recipientMap.set(email, { subscriberId: s.id, email });
-      });
+        subscribers.forEach(s => {
+          const email = s.email.toLowerCase().trim();
+          recipientMap.set(email, { subscriberId: s.id, email });
+        });
 
-      const uniqueRecipients = Array.from(recipientMap.values());
+        uniqueRecipients = Array.from(recipientMap.values());
+      }
 
       await db.$transaction(async tx => {
-        await tx.cmsCampaignRecipient.createMany({ 
-          data: uniqueRecipients.map(item => ({ campaignId: id, subscriberId: item.subscriberId, email: item.email })), 
-          skipDuplicates: true 
-        });
+        if (uniqueRecipients.length > 0) {
+          await tx.cmsCampaignRecipient.createMany({ 
+            data: uniqueRecipients.map(item => ({ campaignId: id, subscriberId: item.subscriberId, email: item.email })), 
+            skipDuplicates: true 
+          });
+        }
         await tx.auditLog.create({ data: { action: AUDIT_ACTIONS.CAMPAIGN_RECIPIENTS_SNAPSHOTTED, actor: auth.admin.email, actorUserId: auth.admin.id, resourceType: "cms_campaign", resourceId: id, outcome: "SUCCESS", afterState: JSON.stringify({ count: uniqueRecipients.length }) } });
       });
     }

@@ -6,6 +6,7 @@ export const campaignInputSchema = z.object({
   preheader: z.string().trim().max(200).optional().nullable(),
   eyebrow: z.string().trim().min(2).max(80).default("Greenwave Update"),
   htmlBody: z.string().trim().min(10).max(100_000),
+  audience: z.string().default("newsletter"),
 });
 
 export function canSendCampaign(status: string): boolean {
