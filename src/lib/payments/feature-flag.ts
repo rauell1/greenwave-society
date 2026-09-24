@@ -1,7 +1,5 @@
 import "server-only";
 
-import { getDb } from "@/lib/db";
-
 const FLAG_KEY = "payments.mpesa_membership";
 
 /**

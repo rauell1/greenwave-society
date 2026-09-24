@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { authorizeRoute } from "@/lib/auth/route-authorization";
 import { PERMISSIONS } from "@/lib/auth/permissions";
 import { getDb } from "@/lib/db";
 import { randomBytes } from "crypto";
-import { AUDIT_ACTIONS, logAuditEvent } from "@/lib/audit/audit-service";
+import { AUDIT_ACTIONS } from "@/lib/audit/audit-service";
 
-export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function POST(_: Request, { params }: { params: Promise<{ id: string }> }) {
   const auth = await authorizeRoute(PERMISSIONS.COMMUNICATIONS_CREATE); 
   if (!auth.ok) return auth.response;
 
@@ -27,6 +27,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         htmlBody: existing.htmlBody,
         status: "draft",
         createdById: auth.admin.id,
+        updatedById: auth.admin.id,
       }
     });
 
