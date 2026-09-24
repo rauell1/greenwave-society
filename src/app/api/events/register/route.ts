@@ -19,11 +19,24 @@ export async function POST(req: Request) {
     }
 
     const event = await db.cmsEvent.findUnique({
-      where: { slug: eventSlug }
+      where: { slug: eventSlug },
+      include: {
+        _count: {
+          select: { registrations: true }
+        }
+      }
     });
 
     if (!event) {
       return NextResponse.json({ error: "Event not found" }, { status: 404 });
+    }
+
+    if (event.status !== "published") {
+      return NextResponse.json({ error: "Registration is not currently open for this event." }, { status: 400 });
+    }
+
+    if (event.capacity && event._count.registrations >= event.capacity) {
+      return NextResponse.json({ error: "This event has reached its maximum capacity. Please look out for our next session." }, { status: 400 });
     }
 
     // Check if user is already registered for this event
