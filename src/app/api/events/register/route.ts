@@ -11,11 +11,12 @@ export async function POST(req: Request) {
     const { 
       fullName, email, phone, organization, eventSlug, 
       attendedBefore, expectations, makesYouHappy, accessibilityNeeds,
-      suicidalIdeation, knowsSomeoneAttempted, stigmaReason 
+      suicidalIdeation, knowsSomeoneAttempted, stigmaReason,
+      emergencyContactName, emergencyContactPhone, dietaryRestrictions, liabilityConsent
     } = body;
 
-    if (!fullName || !email || !eventSlug || !phone || !attendedBefore || !expectations || !makesYouHappy || !accessibilityNeeds || !suicidalIdeation || !knowsSomeoneAttempted || !stigmaReason) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    if (!fullName || !email || !eventSlug || !phone || !attendedBefore || !expectations || !makesYouHappy || !accessibilityNeeds || !suicidalIdeation || !knowsSomeoneAttempted || !stigmaReason || !emergencyContactName || !emergencyContactPhone || liabilityConsent !== true) {
+      return NextResponse.json({ error: "Missing required fields or consent" }, { status: 400 });
     }
 
     const event = await db.cmsEvent.findUnique({
@@ -73,7 +74,11 @@ export async function POST(req: Request) {
           accessibilityNeeds,
           suicidalIdeation,
           knowsSomeoneAttempted,
-          stigmaReason
+          stigmaReason,
+          emergencyContactName,
+          emergencyContactPhone,
+          dietaryRestrictions,
+          liabilityConsent
         },
         status: "registered",
         attendanceStatus: "not_checked_in"

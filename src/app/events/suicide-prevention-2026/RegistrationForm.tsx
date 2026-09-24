@@ -9,6 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { CalendarIcon, MapPinIcon, AlertCircle } from "lucide-react";
 
@@ -23,6 +24,10 @@ const formSchema = z.object({
   suicidalIdeation: z.string().min(1, "This field is required"),
   knowsSomeoneAttempted: z.string().min(1, "This field is required"),
   stigmaReason: z.string().min(1, "This field is required"),
+  emergencyContactName: z.string().min(2, "Emergency contact name is required"),
+  emergencyContactPhone: z.string().min(5, "Emergency contact phone is required"),
+  dietaryRestrictions: z.string().optional(),
+  liabilityConsent: z.boolean().refine(val => val === true, "You must acknowledge this to register"),
 });
 
 type RegistrationFormValues = z.infer<typeof formSchema>;
@@ -44,6 +49,10 @@ export function SuicidePreventionRegistrationForm({ isRegistrationOpen }: { isRe
       suicidalIdeation: "",
       knowsSomeoneAttempted: "",
       stigmaReason: "",
+      emergencyContactName: "",
+      emergencyContactPhone: "",
+      dietaryRestrictions: "",
+      liabilityConsent: false,
     },
   });
 
@@ -311,7 +320,74 @@ export function SuicidePreventionRegistrationForm({ isRegistrationOpen }: { isRe
                       )}
                     />
 
-                    <Button type="submit" className="w-full bg-green-600 hover:bg-green-700" disabled={isSubmitting}>
+                    <div className="space-y-4 pt-4 border-t">
+                      <h3 className="font-semibold text-lg text-slate-800">Safety & Safeguarding</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="emergencyContactName"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Emergency Contact Name *</FormLabel>
+                              <FormControl>
+                                <Input placeholder="Jane Doe" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="emergencyContactPhone"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Emergency Contact Phone *</FormLabel>
+                              <FormControl>
+                                <Input placeholder="+254 700 000000" type="tel" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      
+                      <FormField
+                        control={form.control}
+                        name="dietaryRestrictions"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Dietary Restrictions (Optional)</FormLabel>
+                            <FormControl>
+                              <Input placeholder="e.g., Vegan, Nut allergy, etc." {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="liabilityConsent"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow-sm bg-slate-50 mt-4">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                              <FormLabel className="text-sm font-medium leading-relaxed">
+                                I understand that this event provides a community peer support space and is not a substitute for professional clinical therapy or emergency psychiatric care. *
+                              </FormLabel>
+                              <FormMessage />
+                            </div>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 mt-6" disabled={isSubmitting}>
                       {isSubmitting ? "Submitting..." : "Submit Registration"}
                     </Button>
                   </form>
