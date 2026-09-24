@@ -33,13 +33,28 @@ export async function POST(request: NextRequest) {
     const forwardedIp = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
     const ipHash = forwardedIp ? createHash("sha256").update(forwardedIp).digest("hex") : undefined;
     const token = await createAdminSession(user.id, { userAgent: request.headers.get("user-agent") ?? undefined, ipHash });
-    await setAdminSessionCookie(token);
+    
+    // Fallback if setAdminSessionCookie crashes:
+    try {
+      await setAdminSessionCookie(token);
+    } catch (cookieError) {
+      logger.error("Failed to set cookie via next/headers", cookieError as Error);
+    }
 
     await logAuditEvent({ action: AUDIT_ACTIONS.AUTH_LOGIN_SUCCEEDED, actor: email, actorUserId: user.id, outcome: "SUCCESS", ip: ipHash });
     logger.info("Admin login successful", { email });
-    return NextResponse.json({ success: true });
+    
+    const response = NextResponse.json({ success: true });
+    response.cookies.set("gw_admin_session", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 8 * 60 * 60,
+      path: "/",
+    });
+    return response;
   } catch (error) {
     logger.error("Admin login failed", error as Error);
-    return NextResponse.json({ error: "Login failed. Please try again." }, { status: 500 });
+    return NextResponse.json({ error: (error as Error).message || "Login failed. Please try again." }, { status: 500 });
   }
 }

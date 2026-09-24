@@ -32,8 +32,17 @@ export default function AdminLoginForm() {
         headers: { "Content-Type": "application/json" },
         body:    JSON.stringify({ email, password }),
       });
-      const data = await res.json();
-      if (data.success) {
+      
+      let data;
+      try {
+        data = await res.json();
+      } catch (parseError) {
+        setError(`Unexpected server response (${res.status} ${res.statusText}). Please contact support.`);
+        setLoading(false);
+        return;
+      }
+
+      if (res.ok && data.success) {
         router.push("/admin/dashboard");
         router.refresh();
       } else if (data.code === "NO_PASSWORD") {
@@ -42,8 +51,8 @@ export default function AdminLoginForm() {
       } else {
         setError(data.error ?? "Login failed.");
       }
-    } catch {
-      setError("The sign-in service is unavailable. Please try again.");
+    } catch (error) {
+      setError("The sign-in service is unavailable. Please check your connection and try again.");
     } finally {
       setLoading(false);
     }
