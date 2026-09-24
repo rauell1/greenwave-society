@@ -20,6 +20,9 @@ const formSchema = z.object({
   expectations: z.string().min(2, "Expectations are required"),
   makesYouHappy: z.string().optional(),
   accessibilityNeeds: z.string().optional(),
+  suicidalIdeation: z.string().optional(),
+  knowsSomeoneAttempted: z.string().optional(),
+  stigmaReason: z.string().optional(),
 });
 
 type RegistrationFormValues = z.infer<typeof formSchema>;
@@ -38,6 +41,9 @@ export function SuicidePreventionRegistrationForm({ isRegistrationOpen }: { isRe
       expectations: "",
       makesYouHappy: "",
       accessibilityNeeds: "",
+      suicidalIdeation: "",
+      knowsSomeoneAttempted: "",
+      stigmaReason: "",
     },
   });
 
@@ -240,6 +246,50 @@ export function SuicidePreventionRegistrationForm({ isRegistrationOpen }: { isRe
                           <FormLabel>What makes you happy? (Optional)</FormLabel>
                           <FormControl>
                             <Textarea placeholder="Share something that brings you joy..." className="resize-none h-20" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="suicidalIdeation"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Have you struggled with suicide ideation? (Optional)</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Yes, No, Prefer not to say..." {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="knowsSomeoneAttempted"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Do you know anyone who has attempted suicide? (Optional)</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Yes, No..." {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <FormField
+                      control={form.control}
+                      name="stigmaReason"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Why do you think people are stigmatized when they attempt suicide? (Optional)</FormLabel>
+                          <FormControl>
+                            <Textarea placeholder="Share your thoughts..." className="resize-none h-20" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
