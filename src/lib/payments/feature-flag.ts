@@ -12,9 +12,8 @@ const FLAG_KEY = "payments.mpesa_membership";
  * real rollout without a deploy.
  */
 export async function isMpesaMembershipEnabled(): Promise<boolean> {
-  if (process.env.FEATURE_MPESA_MEMBERSHIP === "true") return true;
-  const row = await getDb().cmsFeatureFlag.findUnique({ where: { key: FLAG_KEY } });
-  return row?.enabled ?? false;
+  // Hardcoded to false as per user request to disable payment option
+  return false;
 }
 
 export const MPESA_MEMBERSHIP_FLAG_KEY = FLAG_KEY;
