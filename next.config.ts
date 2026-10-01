@@ -23,6 +23,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "ui-avatars.com",
       },
+      {
+        protocol: "https",
+        hostname: "cdn.greenwavesociety.org",
+      },
     ],
   },
 
@@ -39,6 +43,16 @@ const nextConfig: NextConfig = {
 
   compiler: {
     removeConsole: process.env.NODE_ENV === "production" ? { exclude: ["error", "warn"] } : false,
+  },
+
+  async rewrites() {
+    return [
+      {
+        source: "/images/:path*",
+        // If you change the bucket domain, update this URL
+        destination: "https://cdn.greenwavesociety.org/images/:path*",
+      },
+    ];
   },
 
   async headers() {
