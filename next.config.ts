@@ -12,6 +12,8 @@ const nextConfig: NextConfig = {
   },
 
   images: {
+    loader: "custom",
+    loaderFile: "./src/lib/cloudflare-loader.ts",
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 2592000, // 30 days
     remotePatterns: [
