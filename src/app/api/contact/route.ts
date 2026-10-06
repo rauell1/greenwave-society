@@ -8,7 +8,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 import { logger } from "@/lib/logger";
-import { rateLimit, getRateLimitHeaders } from "@/lib/rate-limit";
 import { contactFormSchema, validateInput, containsSuspiciousPatterns } from "@/lib/validation";
 
 export async function POST(request: NextRequest) {
@@ -16,10 +15,6 @@ export async function POST(request: NextRequest) {
   const requestLogger = logger.child({ endpoint: "/api/contact" });
 
   try {
-    // Apply rate limiting
-    const rateLimitResult = await rateLimit(request);
-    if (rateLimitResult) return rateLimitResult;
-
     // Parse request body
     const body = await request.json().catch(() => null);
     if (!body) {
@@ -79,7 +74,6 @@ export async function POST(request: NextRequest) {
       },
       {
         status: 200,
-        headers: getRateLimitHeaders(request),
       }
     );
   } catch (error) {

@@ -2,6 +2,15 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model RateLimitBucket {
+  key     String   @id
+  count   Int
+  resetAt DateTime @map("reset_at")
+
+  @@index([resetAt])
+  @@map("rate_limit_buckets")
+}
+
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")

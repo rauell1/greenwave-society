@@ -1,15 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requirePermission } from "@/lib/auth/guards";
+import { authorizeRoute } from "@/lib/auth/route-authorization";
 import { PERMISSIONS } from "@/lib/auth/permissions";
 import { getDb } from "@/lib/db";
-import { contentInputSchema, serializeMetadata } from "@/lib/cms/content";
+import { CONTENT_TYPES, contentInputSchema, serializeMetadata } from "@/lib/cms/content";
 import { AUDIT_ACTIONS, logAuditEvent } from "@/lib/audit/audit-service";
 
 export async function GET(request: NextRequest) {
-  await requirePermission(PERMISSIONS.CONTENT_READ);
+  const auth = await authorizeRoute(PERMISSIONS.CONTENT_READ);
+  if (!auth.ok) return auth.response;
   const status = request.nextUrl.searchParams.get("status");
   const requestedType = request.nextUrl.searchParams.get("type");
-  const type = requestedType && ["page", "program", "story", "announcement"].includes(requestedType) ? requestedType : undefined;
+  const type = requestedType && CONTENT_TYPES.some(type => type === requestedType) ? requestedType : undefined;
   const query = request.nextUrl.searchParams.get("q")?.trim();
   const items = await getDb().cmsContent.findMany({
     where: {
@@ -25,7 +26,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const admin = await requirePermission(PERMISSIONS.CONTENT_CREATE);
+  const auth = await authorizeRoute(PERMISSIONS.CONTENT_CREATE);
+  if (!auth.ok) return auth.response;
+  const admin = auth.admin;
   const parsed = contentInputSchema.safeParse(await request.json());
   if (!parsed.success) return NextResponse.json({ error: "Invalid content", issues: parsed.error.flatten() }, { status: 400 });
   const input = parsed.data;

@@ -1,3 +1,5 @@
+import { serializeJsonLd } from "@/lib/seo";
+import { getPublicHomepageContent } from "@/lib/cms/public-content";
 import { Metadata } from "next";
 import { Navbar } from "@/components/sections/Navbar";
 import { Impact } from "@/components/sections/Impact";
@@ -6,29 +8,22 @@ import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { APP_CONFIG } from "@/config/app.config";
 
-export const metadata: Metadata = {
-  title: "Our Impact | 500+ Youth, 10,000+ Trees, 25+ Communities in Kenya",
-  description: "Greenwave Society has empowered 500+ young Kenyans, planted 10,000+ trees, served 25+ communities, organised 50+ events, delivered 30+ workshops, and recycled 5 tons of waste. Real, measurable impact across Nairobi, Ngong, Kangemi, and beyond.",
-  alternates: {
-    canonical: `${APP_CONFIG.url}/impact`,
-  },
-  openGraph: {
-    title: "Our Impact | Greenwave Society Kenya",
-    description: "500+ youth empowered, 10,000+ trees planted, 25+ communities served. Real measurable change across Kenya by Greenwave Society.",
-    url: `${APP_CONFIG.url}/impact`,
-    siteName: "Greenwave Society",
-    images: [{ url: "/images/IMG_9415.jpg", width: 1200, height: 630, alt: "Greenwave Society impact metrics Kenya 500 youth 10000 trees" }],
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Impact | Greenwave Society Kenya",
-    description: "500+ youth, 10,000+ trees, 25+ communities, 50+ events. Greenwave Society's measurable impact in Kenya.",
-    images: ["/images/IMG_9415.jpg"],
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { impact } = await getPublicHomepageContent();
+  const title = 'Our Impact | Greenwave Society Kenya';
+  const description = `Greenwave Society has empowered ${impact.youthReached}+ youth, planted ${impact.treesPlanted}+ trees, served ${impact.communitiesServed}+ communities, organised ${impact.eventsOrganized}+ events, delivered ${impact.workshopsDelivered}+ workshops, and recycled ${impact.wasteRecycled} tons of waste across Kenya.`;
+  return {
+    title, description,
+    alternates: { canonical: `${APP_CONFIG.url}/impact` },
+    openGraph: { title, description, url: `${APP_CONFIG.url}/impact`, siteName: 'Greenwave Society', type: 'website', images: [{ url: '/images/IMG_9415.jpg', width: 1200, height: 630, alt: 'Greenwave Society community impact in Kenya' }] },
+    twitter: { card: 'summary_large_image', title, description, images: ['/images/IMG_9415.jpg'] },
+  };
+}
 
-export default function ImpactPage() {
+export const revalidate = 60;
+
+export default async function ImpactPage() {
+  const { impact, activities } = await getPublicHomepageContent();
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -36,8 +31,8 @@ export default function ImpactPage() {
         "@type": "ItemPage",
         "@id": `${APP_CONFIG.url}/impact/#webpage`,
         "url": `${APP_CONFIG.url}/impact`,
-        "name": "Greenwave Society Impact | 500+ Youth, 10,000+ Trees in Kenya",
-        "description": "Greenwave Society has empowered 500+ youth, planted 10,000+ trees, served 25+ communities, and delivered 30+ workshops across Kenya.",
+        "name": "Greenwave Society Impact in Kenya",
+        "description": `Greenwave Society has empowered ${impact.youthReached}+ youth, planted ${impact.treesPlanted}+ trees, served ${impact.communitiesServed}+ communities, and delivered ${impact.workshopsDelivered}+ workshops across Kenya.`,
         "isPartOf": { "@id": `${APP_CONFIG.url}/#website` },
       },
       {
@@ -60,8 +55,8 @@ export default function ImpactPage() {
             "item": {
               "@type": "QuantitativeValue",
               "name": "Youth Empowered",
-              "value": 500,
-              "minValue": 500,
+              "value": impact.youthReached,
+              "minValue": impact.youthReached,
               "unitText": "youth",
               "description": "Young Kenyans engaged in hands-on skills training, mentorship, and leadership initiatives.",
             },
@@ -72,8 +67,8 @@ export default function ImpactPage() {
             "item": {
               "@type": "QuantitativeValue",
               "name": "Trees Planted",
-              "value": 10000,
-              "minValue": 10000,
+              "value": impact.treesPlanted,
+              "minValue": impact.treesPlanted,
               "unitText": "trees",
               "description": "Trees reforested across schools, community parks, and local ecological zones in Kenya.",
             },
@@ -84,8 +79,8 @@ export default function ImpactPage() {
             "item": {
               "@type": "QuantitativeValue",
               "name": "Communities Served",
-              "value": 25,
-              "minValue": 25,
+              "value": impact.communitiesServed,
+              "minValue": impact.communitiesServed,
               "unitText": "communities",
               "description": "Local areas across Nairobi and Kenya empowered with sanitation, education, and restoration programmes.",
             },
@@ -96,8 +91,8 @@ export default function ImpactPage() {
             "item": {
               "@type": "QuantitativeValue",
               "name": "Events Organised",
-              "value": 50,
-              "minValue": 50,
+              "value": impact.eventsOrganized,
+              "minValue": impact.eventsOrganized,
               "unitText": "events",
               "description": "Community clean-ups, youth leadership summits, and conservation hikes.",
             },
@@ -108,8 +103,8 @@ export default function ImpactPage() {
             "item": {
               "@type": "QuantitativeValue",
               "name": "Workshops Delivered",
-              "value": 30,
-              "minValue": 30,
+              "value": impact.workshopsDelivered,
+              "minValue": impact.workshopsDelivered,
               "unitText": "workshops",
               "description": "Practical sessions on environmental literacy, skills development, and UN SDG awareness.",
             },
@@ -120,7 +115,7 @@ export default function ImpactPage() {
             "item": {
               "@type": "QuantitativeValue",
               "name": "Waste Recycled",
-              "value": 5,
+              "value": impact.wasteRecycled,
               "unitCode": "TNE",
               "unitText": "metric tons",
               "description": "Diverted from local landfills through youth-led collection and sorting programmes.",
@@ -135,12 +130,12 @@ export default function ImpactPage() {
     <div className="min-h-screen flex flex-col">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
       />
       <Navbar />
       <main className="flex-1 pt-16 sm:pt-20">
-        <Impact />
-        <Activities />
+        <Impact impact={impact} />
+        <Activities activities={activities} />
       </main>
       <Footer />
       <ScrollToTop />

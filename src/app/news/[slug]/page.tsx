@@ -1,8 +1,9 @@
-﻿import { notFound } from "next/navigation";
+import { serializeJsonLd } from "@/lib/seo";
+import { getPublishedArticle } from "@/lib/cms/news";
+import { notFound } from "next/navigation";
 import { format } from "date-fns";
 import { Calendar, ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { getDb } from "@/lib/db";
 import { APP_CONFIG } from "@/config/app.config";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
@@ -12,15 +13,9 @@ export const revalidate = 60;
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const db = getDb();
   let article = null;
   try {
-    article = await db.cmsContent.findFirst({
-      where: {
-        slug,
-        OR: [{ type: "news" }, { type: "article" }],
-      },
-    });
+    article = await getPublishedArticle(slug);
   } catch (error) {}
 
   if (!article) return { title: "Not Found" };
@@ -56,17 +51,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const db = getDb();
   let article = null;
 
   try {
-    article = await db.cmsContent.findFirst({
-      where: {
-        slug,
-        OR: [{ type: "news" }, { type: "article" }],
-        status: "published",
-      },
-    });
+    article = await getPublishedArticle(slug);
   } catch (error) {}
 
   if (!article) {
@@ -105,7 +93,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
   return (
     <>
-    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }} />
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
       <main className="flex-1 pt-24 pb-20">

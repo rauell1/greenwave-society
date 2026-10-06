@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useId, useRef, useState } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
 import { X, ChevronLeft, ChevronRight, ZoomIn } from "lucide-react";
 
 export interface GalleryImage {
@@ -11,26 +12,32 @@ export interface GalleryImage {
 
 export function GalleryGrid({ images }: { images: GalleryImage[] }) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const opener = useRef<HTMLButtonElement | null>(null);
+  const dialogId = useId();
 
   const openLightbox = (index: number) => setLightboxIndex(index);
   const closeLightbox = () => setLightboxIndex(null);
-  const showPrev = (e: React.MouseEvent) => {
+  const showPrev = (e: React.SyntheticEvent) => {
     e.stopPropagation();
     setLightboxIndex((prev) => (prev !== null ? (prev === 0 ? images.length - 1 : prev - 1) : null));
   };
-  const showNext = (e: React.MouseEvent) => {
+  const showNext = (e: React.SyntheticEvent) => {
     e.stopPropagation();
     setLightboxIndex((prev) => (prev !== null ? (prev === images.length - 1 ? 0 : prev + 1) : null));
   };
 
   return (
-    <>
+    <Dialog.Root open={lightboxIndex !== null} onOpenChange={open => { if (!open) closeLightbox(); }}>
       <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
         {images.map((img, index) => (
-          <div
+          <button
+            type="button"
             key={index}
-            className="break-inside-avoid rounded-2xl overflow-hidden relative group bg-primary/5 cursor-pointer shadow-sm hover:shadow-md transition-shadow"
-            onClick={() => openLightbox(index)}
+            className="block w-full text-left break-inside-avoid rounded-2xl overflow-hidden relative group bg-primary/5 cursor-pointer shadow-sm hover:shadow-md transition-shadow focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
+            onClick={event => { opener.current = event.currentTarget; openLightbox(index); }}
+            aria-label={`View photo ${index + 1}: ${img.alt}`}
+            aria-haspopup="dialog"
+            aria-controls={dialogId}
           >
             <Image
               quality={80}
@@ -48,15 +55,25 @@ export function GalleryGrid({ images }: { images: GalleryImage[] }) {
             <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <p className="text-white text-xs font-medium truncate">{img.alt}</p>
             </div>
-          </div>
+          </button>
         ))}
       </div>
 
       {lightboxIndex !== null && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-sm"
-          onClick={closeLightbox}
+        <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 z-50 bg-black/95 backdrop-blur-sm" />
+        <Dialog.Content
+          id={dialogId}
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center outline-none"
+          onCloseAutoFocus={event => { event.preventDefault(); opener.current?.focus(); }}
+          onKeyDown={event => {
+            if (event.key === "ArrowLeft") { event.preventDefault(); showPrev(event); }
+            if (event.key === "ArrowRight") { event.preventDefault(); showNext(event); }
+          }}
+          onPointerDown={event => { if (event.target === event.currentTarget) closeLightbox(); }}
         >
+          <Dialog.Title className="sr-only">Photo gallery</Dialog.Title>
           <button
             className="absolute top-6 right-6 text-white/70 hover:text-white transition-colors p-2 bg-black/20 rounded-full"
             onClick={closeLightbox}
@@ -83,9 +100,10 @@ export function GalleryGrid({ images }: { images: GalleryImage[] }) {
               className="object-contain max-h-[80vh] w-auto rounded-lg shadow-2xl"
               priority
             />
-            <p className="text-white/90 text-center mt-4 text-sm font-medium">
+            <Dialog.Description className="text-white/90 text-center mt-4 text-sm font-medium" aria-live="polite">
               {images[lightboxIndex].alt}
-            </p>
+              <span className="block mt-1 text-xs">Photo {lightboxIndex + 1} of {images.length}</span>
+            </Dialog.Description>
           </div>
 
           <button
@@ -95,8 +113,9 @@ export function GalleryGrid({ images }: { images: GalleryImage[] }) {
           >
             <ChevronRight className="w-8 h-8" />
           </button>
-        </div>
+        </Dialog.Content>
+        </Dialog.Portal>
       )}
-    </>
+    </Dialog.Root>
   );
 }

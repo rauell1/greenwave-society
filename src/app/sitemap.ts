@@ -1,3 +1,4 @@
+import { NEWS_CONTENT_TYPES } from "@/lib/cms/content";
 import { MetadataRoute } from "next";
 import { APP_CONFIG } from "@/config/app.config";
 import { getDb } from "@/lib/db";
@@ -31,7 +32,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let newsRoutes: MetadataRoute.Sitemap = [];
   try {
     const articles = await getDb().cmsContent.findMany({
-      where: { OR: [{ type: "news" }, { type: "article" }], status: "published", publishedAt: { not: null } },
+      where: { type: { in: [...NEWS_CONTENT_TYPES] }, status: "published", publishedAt: { not: null } },
       select: { slug: true, updatedAt: true },
       orderBy: { publishedAt: "desc" },
       take: 200,

@@ -5,9 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FadeIn } from "@/components/ui/fade-in";
 import { CountUp } from "@/components/ui/count-up";
+import type { ImpactStats } from "@/lib/cms/content";
 import { IMPACT_STATS } from "@/config/app.config";
 
-export function Hero() {
+export function Hero({ impact = IMPACT_STATS }: { impact?: ImpactStats }) {
   return (
     <section className="relative min-h-screen flex items-center bg-background pt-24 pb-16 lg:pt-32 overflow-hidden">
       {/* Editorial background shapes */}
@@ -69,19 +70,19 @@ export function Hero() {
               <div className="mt-12 pt-8 border-t border-border/60 grid grid-cols-3 gap-6 max-w-lg">
                 <div>
                   <p className="text-3xl sm:text-4xl font-serif font-black text-primary">
-                    <CountUp target={IMPACT_STATS.youthReached} suffix="+" />
+                    <CountUp target={impact.youthReached} suffix="+" />
                   </p>
                   <p className="text-xs uppercase tracking-wider font-bold text-muted-foreground mt-1">Youth Reached</p>
                 </div>
                 <div>
                   <p className="text-3xl sm:text-4xl font-serif font-black text-primary">
-                    <CountUp target={IMPACT_STATS.communitiesServed} suffix="+" />
+                    <CountUp target={impact.communitiesServed} suffix="+" />
                   </p>
                   <p className="text-xs uppercase tracking-wider font-bold text-muted-foreground mt-1">Communities</p>
                 </div>
                 <div>
                   <p className="text-3xl sm:text-4xl font-serif font-black text-primary">
-                    <CountUp target={IMPACT_STATS.treesPlanted} suffix="+" />
+                    <CountUp target={impact.treesPlanted} suffix="+" />
                   </p>
                   <p className="text-xs uppercase tracking-wider font-bold text-muted-foreground mt-1">Trees Planted</p>
                 </div>

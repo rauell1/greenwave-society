@@ -2,48 +2,49 @@ import { Users, TreePine, Globe, Calendar, GraduationCap, Recycle, Award, Radio,
 import { Badge } from "@/components/ui/badge";
 import { FadeIn } from "@/components/ui/fade-in";
 import { CountUp } from "@/components/ui/count-up";
+import type { ImpactStats } from "@/lib/cms/content";
 import { IMPACT_STATS } from "@/config/app.config";
 
-export function Impact() {
+export function Impact({ impact = IMPACT_STATS }: { impact?: ImpactStats }) {
   const stats = [
     {
       icon: <Users className="w-5 h-5" />,
-      value: IMPACT_STATS.youthReached,
+      value: impact.youthReached,
       suffix: "+",
       label: "Youth Empowered",
       desc: "Engaged in hands-on climate education, mentorship, and leadership initiatives."
     },
     {
       icon: <TreePine className="w-5 h-5" />,
-      value: IMPACT_STATS.treesPlanted,
+      value: impact.treesPlanted,
       suffix: "+",
       label: "Trees Planted",
       desc: "Reforested across schools, community parks, and local ecological zones."
     },
     {
       icon: <Globe className="w-5 h-5" />,
-      value: IMPACT_STATS.communitiesServed,
+      value: impact.communitiesServed,
       suffix: "+",
       label: "Communities Served",
       desc: "Local areas empowered with sanitation, education, and restoration programs."
     },
     {
       icon: <Calendar className="w-5 h-5" />,
-      value: IMPACT_STATS.eventsOrganized,
+      value: impact.eventsOrganized,
       suffix: "+",
       label: "Events Organized",
       desc: "From community clean-ups to youth leadership summits and conservation hikes."
     },
     {
       icon: <GraduationCap className="w-5 h-5" />,
-      value: IMPACT_STATS.workshopsDelivered,
+      value: impact.workshopsDelivered,
       suffix: "+",
       label: "Workshops Delivered",
       desc: "Practical curriculum sessions focusing on environmental literacy and the UN SDGs."
     },
     {
       icon: <Recycle className="w-5 h-5" />,
-      value: IMPACT_STATS.wasteRecycled,
+      value: impact.wasteRecycled,
       suffix: " tons",
       label: "Waste Recycled",
       desc: "Diverted from local landfills through youth-led collection and sorting programs."

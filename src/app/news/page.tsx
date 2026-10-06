@@ -1,8 +1,10 @@
+import { serializeJsonLd } from "@/lib/seo";
+import { getPublishedNews } from "@/lib/cms/news";
+import type { CmsContent } from "@prisma/client";
 import { Metadata } from "next";
 import Link from "next/link";
 import { format } from "date-fns";
 import { ArrowRight, Calendar, Newspaper } from "lucide-react";
-import { getDb } from "@/lib/db";
 import { APP_CONFIG } from "@/config/app.config";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
@@ -39,19 +41,9 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function NewsPage() {
-  const db = getDb();
-  
-  let articles: any[] = [];
+  let articles: CmsContent[] = [];
   try {
-    articles = await db.cmsContent.findMany({
-      where: {
-        OR: [{ type: "news" }, { type: "article" }],
-        status: "published",
-        publishedAt: { not: null },
-      },
-      orderBy: { publishedAt: "desc" },
-      take: 20,
-    });
+    articles = await getPublishedNews();
   } catch (error) {
     console.error("Failed to fetch news:", error);
   }
@@ -80,7 +72,7 @@ export default async function NewsPage() {
 
   return (
     <>
-    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }} />
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
       <main className="flex-1 pt-24 pb-20">

@@ -1,3 +1,5 @@
+import { serializeJsonLd } from "@/lib/seo";
+import { getPublicHomepageContent } from "@/lib/cms/public-content";
 import type { Metadata } from "next";
 import { APP_CONFIG } from "@/config/app.config";
 import { Navbar } from "@/components/sections/Navbar";
@@ -116,21 +118,25 @@ const faqJsonLd = {
   ],
 };
 
-export default function HomePage() {
+export const revalidate = 60;
+
+export default async function HomePage() {
+  const { impact, activities } = await getPublicHomepageContent();
+  const faq = { ...faqJsonLd, mainEntity: faqJsonLd.mainEntity.map(question => question.name === "What impact has Greenwave Society made?" ? { ...question, acceptedAnswer: { ...question.acceptedAnswer, text: `Greenwave Society has empowered ${impact.youthReached}+ youth, planted ${impact.treesPlanted}+ trees, served ${impact.communitiesServed}+ communities, organised ${impact.eventsOrganized}+ events, delivered ${impact.workshopsDelivered}+ workshops, and recycled ${impact.wasteRecycled} tons of waste across Kenya.` } } : question) };
   return (
     <div className="min-h-screen flex flex-col">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(faq) }}
       />
       <Navbar />
       <main className="flex-1">
-        <Hero />
+        <Hero impact={impact} />
         <About />
         <Programs />
-        <Impact />
+        <Impact impact={impact} />
         <Team />
-        <Activities />
+        <Activities activities={activities} />
         <VolunteerCTA />
         <Contact />
       </main>

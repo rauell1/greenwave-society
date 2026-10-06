@@ -32,9 +32,7 @@ jobs:
       run: npm audit --audit-level=high
 
     - name: Check Prisma Schema
-      run: |
-        npx prisma validate
-        npx prisma format
+      run: npx prisma validate
 
     - name: Run Prisma Generate
       run: npx prisma generate
@@ -43,10 +41,46 @@ jobs:
       run: npm run lint
 
     - name: Run Typecheck
-      run: npx tsc --noEmit
+      run: npm run typecheck
+
+    - name: Check image references
+      run: npm run images:check
 
     - name: Run Tests
       run: npm run test
 
     - name: Test Build
       run: npm run build
+
+  integration:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: greenwave_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/greenwave_test
+      DIRECT_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/greenwave_test
+      TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/greenwave_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci
+      - name: Validate the new rate-limit migration on an empty database
+        run: npx prisma db execute --file prisma/migrations/20261006180000_shared_rate_limits/migration.sql --schema prisma/schema.prisma
+      - name: Create the disposable test schema
+        run: npx prisma db push
+      - run: npm run test:integration

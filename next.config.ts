@@ -1,15 +1,16 @@
 import { withSentryConfig } from "@sentry/nextjs/config";
 import type { NextConfig } from "next";
 
+const imageCdn = new URL(process.env.IMAGE_CDN_ORIGIN || "https://cdn.greenwavesociety.org");
+if (imageCdn.protocol !== "https:" || imageCdn.username || imageCdn.password || imageCdn.pathname !== "/") {
+  throw new Error("IMAGE_CDN_ORIGIN must be an HTTPS origin without credentials or a path");
+}
+
 const nextConfig: NextConfig = {
   // Removed "standalone" — Vercel handles output format natively
   poweredByHeader: false,
   compress: true,
   reactStrictMode: true,
-
-  typescript: {
-    ignoreBuildErrors: true,
-  },
 
   images: {
     formats: ["image/avif", "image/webp"],
@@ -25,7 +26,8 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "cdn.greenwavesociety.org",
+        hostname: imageCdn.hostname,
+        port: imageCdn.port,
       },
     ],
   },
@@ -50,7 +52,7 @@ const nextConfig: NextConfig = {
       {
         source: "/images/:path*",
         // If you change the bucket domain, update this URL
-        destination: "https://cdn.greenwavesociety.org/images/:path*",
+        destination: `${imageCdn.origin}/images/:path*`,
       },
     ];
   },

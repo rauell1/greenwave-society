@@ -1,5 +1,5 @@
 /**
- * Next.js Middleware
+ * Next.js 16 Proxy (Node runtime)
  *
  * Handles security headers, CORS, and request logging.
  * Runs on all requests before reaching route handlers.
@@ -59,9 +59,9 @@ function getCorsHeaders(origin: string | null): Record<string, string> {
   };
 }
 
-import { rateLimit } from "@/lib/rate-limit";
+import { rateLimit, getRateLimitHeaders } from "@/lib/rate-limit";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const startTime = Date.now();
   const { pathname } = request.nextUrl;
 
@@ -73,8 +73,11 @@ export async function middleware(request: NextRequest) {
     });
   }
 
+  // Provider callbacks must reach their handlers so payment acknowledgments are preserved.
+  const exempt = new Set(["/api/health", "/api/mpesa/callback", "/api/mpesa/reversal-result", "/api/mpesa/reversal-timeout", "/api/webhooks/resend"]);
+
   // Rate Limiting for API routes
-  if (pathname.startsWith("/api")) {
+  if (pathname.startsWith("/api/") && !exempt.has(pathname)) {
     const isStrictRoute =
       request.method !== "GET" &&
       (pathname.startsWith("/api/contact") ||
@@ -95,6 +98,7 @@ export async function middleware(request: NextRequest) {
 
   // Get response
   const response = NextResponse.next();
+  for (const [key, value] of Object.entries(getRateLimitHeaders(request))) response.headers.set(key, value);
 
   // Add security headers
   const securityHeaders = getSecurityHeaders();
