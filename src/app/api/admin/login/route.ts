@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyPassword, createAdminSession, setAdminSessionCookie } from "@/lib/admin-auth";
+import { verifyPassword, createAdminSession } from "@/lib/admin-auth";
 import { getDb } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { createHash } from "crypto";
@@ -33,17 +33,13 @@ export async function POST(request: NextRequest) {
     const forwardedIp = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
     const ipHash = forwardedIp ? createHash("sha256").update(forwardedIp).digest("hex") : undefined;
     const token = await createAdminSession(user.id, { userAgent: request.headers.get("user-agent") ?? undefined, ipHash });
-    
-    // Fallback if setAdminSessionCookie crashes:
-    try {
-      await setAdminSessionCookie(token);
-    } catch (cookieError) {
-      logger.error("Failed to set cookie via next/headers", cookieError as Error);
-    }
 
     await logAuditEvent({ action: AUDIT_ACTIONS.AUTH_LOGIN_SUCCEEDED, actor: email, actorUserId: user.id, outcome: "SUCCESS", ip: ipHash });
     logger.info("Admin login successful", { email });
-    
+
+    // Set the cookie directly on the response being returned — the reliable way to do this in a
+    // Route Handler. (A previous fix here also called setAdminSessionCookie() via next/headers as
+    // a "fallback", which was redundant and masked rather than explained the real symptom.)
     const response = NextResponse.json({ success: true });
     response.cookies.set("gw_admin_session", token, {
       httpOnly: true,

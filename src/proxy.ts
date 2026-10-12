@@ -76,13 +76,20 @@ export async function proxy(request: NextRequest) {
   // Provider callbacks must reach their handlers so payment acknowledgments are preserved.
   const exempt = new Set(["/api/health", "/api/mpesa/callback", "/api/mpesa/reversal-result", "/api/mpesa/reversal-timeout", "/api/webhooks/resend"]);
 
+  // Unauthenticated, brute-force/enumeration-prone admin auth endpoints only — NOT the whole
+  // /api/admin/* tree. That used to share this same strict 15-req/15-min-per-IP budget with
+  // every authenticated dashboard mutation (content edits, status changes, uploads, etc.), so an
+  // admin actively using the dashboard would exhaust it and then get locked out of logging back
+  // in after any session expiry — a real recurring "can't log in" bug, not actual abuse.
+  const strictAdminAuthRoutes = new Set(["/api/admin/login", "/api/admin/forgot-password", "/api/admin/reset-password", "/api/admin/setup-password"]);
+
   // Rate Limiting for API routes
   if (pathname.startsWith("/api/") && !exempt.has(pathname)) {
     const isStrictRoute =
       request.method !== "GET" &&
       (pathname.startsWith("/api/contact") ||
         pathname.startsWith("/api/registrations") ||
-        pathname.startsWith("/api/admin") ||
+        strictAdminAuthRoutes.has(pathname) ||
         pathname.startsWith("/api/newsletter"));
 
     const rateLimitResult = await rateLimit(request, isStrictRoute ? "strict" : "standard");
