@@ -1,5 +1,6 @@
 
-import { Users, Linkedin, Sparkles, Compass, Palette } from "lucide-react";
+import { Users, Sparkles, Compass, Palette } from "lucide-react";
+import { LinkedinIcon } from "@/components/ui/social-icons";
 import { Badge } from "@/components/ui/badge";
 import { FadeIn } from "@/components/ui/fade-in";
 
@@ -106,7 +107,7 @@ export function Team() {
                   className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-foreground hover:text-primary border-b border-foreground/35 hover:border-primary pb-1 transition-all duration-300 self-start"
                   aria-label={`${founder.name} LinkedIn`}
                 >
-                  <Linkedin className="w-4 h-4 text-gold" />
+                  <LinkedinIcon className="w-4 h-4 text-gold" />
                   Connect on LinkedIn
                 </a>
               </div>

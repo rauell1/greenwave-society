@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { getDb } from "@/lib/db";
 import { sendEventRegistrationConfirmation } from "@/lib/events/email";
 import { format } from "date-fns";
 
-const db = new PrismaClient();
-
 export async function POST(req: Request) {
+  const db = getDb();
   try {
     const body = await req.json();
     const { 

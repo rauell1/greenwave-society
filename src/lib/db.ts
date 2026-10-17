@@ -6,6 +6,7 @@
  */
 
 import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
 import { logger } from "./logger";
 import { validateEnv } from "./env";
 
@@ -17,9 +18,15 @@ const globalForPrisma = globalThis as unknown as {
  * Create Prisma client with optimized configuration
  */
 function createPrismaClient(): PrismaClient {
+  const connectionString =
+    process.env.DATABASE_URL ||
+    process.env.DIRECT_DATABASE_URL ||
+    "postgresql://postgres:postgres@localhost:5432/greenwave";
+  const adapter = new PrismaPg(connectionString);
   const logLevel = process.env.NODE_ENV === "production" ? ["error", "warn"] : ["query", "error", "warn"];
 
   return new PrismaClient({
+    adapter,
     log: logLevel.map((level) => ({
       level: level as any,
       emit: "event",

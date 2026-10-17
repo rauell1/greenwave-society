@@ -1,27 +1,12 @@
 import { Suspense } from "react";
-import { Mail, Phone, MapPin, Instagram, Facebook, Globe } from "lucide-react";
+import { Mail, Phone, MapPin, Globe } from "lucide-react";
+import { InstagramIcon, FacebookIcon, TwitterIcon, TikTokIcon } from "@/components/ui/social-icons";
 import { Badge } from "@/components/ui/badge";
 import { FadeIn } from "@/components/ui/fade-in";
 import { SafeEmailLink } from "@/components/ui/safe-email-link";
 import { ContactForm } from "@/components/sections/ContactForm";
 import { NewsletterForm } from "@/components/sections/NewsletterForm";
 import { APP_CONFIG } from "@/config/app.config";
-
-function TwitterIcon({ className = "w-5 h-5" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
-      <path d="M23.95 4.57a10 10 0 0 1-2.83.78 4.93 4.93 0 0 0 2.16-2.72 9.86 9.86 0 0 1-3.12 1.19 4.92 4.92 0 0 0-8.39 4.48A13.95 13.95 0 0 1 1.64 3.16a4.93 4.93 0 0 0 1.52 6.57A4.9 4.9 0 0 1 .96 9.1v.06a4.93 4.93 0 0 0 3.94 4.83 5 5 0 0 1-2.21.08 4.94 4.94 0 0 0 4.6 3.42A9.88 9.88 0 0 1 0 19.54a13.94 13.94 0 0 0 7.55 2.21c9.06 0 14.02-7.5 14.02-14 0-.22-.01-.42-.02-.63a10 10 0 0 0 2.4-2.55Z" />
-    </svg>
-  );
-}
-
-function TikTokIcon({ className = "w-5 h-5" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
-      <path d="M16.6 5.82a4.78 4.78 0 0 1-1.23-3.2h-3.03v13.12a2.42 2.42 0 1 1-2.4-2.71c.2 0 .4.03.6.08V10a5.5 5.5 0 1 0 4.82 5.45v-6.2a7.82 7.82 0 0 0 4.59 1.48V7.72c-1.39 0-2.66-.7-3.35-1.9Z" />
-    </svg>
-  );
-}
 
 export function Contact() {
   return (
@@ -105,7 +90,7 @@ export function Contact() {
                   {[
                     {
                       href: APP_CONFIG.social.instagram,
-                      icon: <Instagram className="w-4 h-4" />,
+                      icon: <InstagramIcon className="w-4 h-4" />,
                       label: "Instagram",
                     },
                     {
@@ -115,7 +100,7 @@ export function Contact() {
                     },
                     {
                       href: APP_CONFIG.social.facebook,
-                      icon: <Facebook className="w-4 h-4" />,
+                      icon: <FacebookIcon className="w-4 h-4" />,
                       label: "Facebook",
                     },
                     {
