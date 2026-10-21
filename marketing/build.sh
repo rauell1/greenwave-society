@@ -4,7 +4,7 @@
 set -e
 cd "$(dirname "$0")"
 R="node engine/render.mjs"
-mkdir -p out/films out/stills out/sheets
+mkdir -p out/films out/stills out/sheets kit/media
 
 # ---- films: one source, every screen shape ----
 for FILM in anthem programmes; do
@@ -49,6 +49,8 @@ $R stills --size 1500x500 --query tpl=banner --still out/stills/banner-x-1500x50
 $R stills --size 1584x396 --query tpl=banner --still out/stills/banner-linkedin-1584x396.jpg
 $R stills --size 1240x1754 --query tpl=poster --still out/stills/poster-a4.jpg
 $R stills --size 2480x3508 --query tpl=poster --still out/stills/poster-a4-print.pdf
+
+cp out/stills/*.jpg kit/media/
 
 # ---- contact sheets for review ----
 sh engine/sheet.sh films/anthem 1920x1080 out/sheets/anthem-16x9.jpg
