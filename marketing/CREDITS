@@ -1,0 +1,17 @@
+Greenwave Society marketing kit: third-party assets
+
+Fonts (fonts/)
+  Playfair Display, Claus Eggers Sørensen. SIL Open Font License 1.1.
+    Files from @fontsource/playfair-display 5.3.0.
+  Plus Jakarta Sans, Tokotype. SIL Open Font License 1.1.
+    Files from @fontsource/plus-jakarta-sans 5.3.0.
+
+Sound
+  All music and effects are synthesised by engine/audio.py. No samples or recordings.
+
+Picture
+  All imagery is drawn in code by engine/brand.js and the film pages. The emblem is a
+  redrawing of Greenwave Society's own logo (public/logo-full.png).
+
+Tools
+  Chromium via playwright-core (Apache 2.0), ffmpeg (LGPL/GPL), numpy (BSD).

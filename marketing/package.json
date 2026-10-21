@@ -1,0 +1,13 @@
+{
+  "name": "greenwave-marketing",
+  "private": true,
+  "type": "module",
+  "description": "Code-rendered films, stills and the responsive media kit for Greenwave Society.",
+  "scripts": {
+    "build": "sh build.sh",
+    "preview": "node engine/serve.mjs"
+  },
+  "devDependencies": {
+    "playwright-core": "1.56.1"
+  }
+}

@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:,">
+<title>Greenwave Society: Stills</title>
+</head>
+<body>
+<script type="module">
+// Static marketing stills. ?tpl=impact|join|og|banner|poster, laid out from the frame size.
+import * as B from '../engine/brand.js';
+const { C, E, clamp, lerp, rng } = B;
+const tpl = new URLSearchParams(location.search).get('tpl') || 'impact';
+
+const STATS = [[500, '+', 'young people reached'], [10000, '', 'trees planted'], [25, '', 'communities served'], [50, '+', 'events organised']];
+
+function bg(ctx, L, top = [0.17, 0.03, 150], bot = [0.13, 0.025, 150]) {
+  const g = ctx.createLinearGradient(0, 0, 0, L.H);
+  g.addColorStop(0, B.ok(top)); g.addColorStop(1, B.ok(bot));
+  ctx.fillStyle = g; ctx.fillRect(0, 0, L.W, L.H);
+}
+
+// A landscape strip: dawn hills, acacias, a crest of young people.
+function landscape(ctx, x0, y0, w, h, seed = 3) {
+  ctx.save();
+  ctx.beginPath(); ctx.rect(x0, y0, w, h); ctx.clip();
+  const sk = ctx.createLinearGradient(0, y0, 0, y0 + h);
+  sk.addColorStop(0, 'oklch(0.3 0.06 160)'); sk.addColorStop(0.7, 'oklch(0.72 0.12 78)');
+  ctx.fillStyle = sk; ctx.fillRect(x0, y0, w, h);
+  const s = h / 600;
+  B.glow(ctx, x0 + w * 0.68, y0 + h * 0.42, 300 * s, C.gold, 0.6);
+  ctx.fillStyle = 'oklch(0.86 0.12 85)'; ctx.beginPath(); ctx.arc(x0 + w * 0.68, y0 + h * 0.42, 70 * s, 0, Math.PI * 2); ctx.fill();
+  const hill = (amp, base, f, ph, col) => {
+    ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(x0, y0 + h);
+    for (let x = 0; x <= w; x += 6) ctx.lineTo(x0 + x, y0 + h * base - (Math.sin(x / (w * f) + ph) * 0.6 + 0.4) * amp * s);
+    ctx.lineTo(x0 + w, y0 + h); ctx.fill();
+  };
+  hill(120, 0.62, 0.18, 1, 'oklch(0.33 0.06 165)');
+  hill(80, 0.72, 0.11, 2.5, 'oklch(0.38 0.08 150)');
+  const r = rng(seed);
+  const gy = (x) => y0 + h * 0.84 - (Math.sin(x / (w * 0.15) + 0.6) * 0.5 + 0.5) * 50 * s;
+  for (let i = 0; i < 9; i++) { const x = x0 + w * (i + 0.5) / 9 + (r() - 0.5) * 40 * s; (r() < 0.6 ? B.acacia : B.roundTree)(ctx, x, gy(x - x0) + 8 * s, (130 + r() * 90) * s, 1, r() < 0.5 ? C.leafDark : C.forest, 300 + i); }
+  ctx.fillStyle = 'oklch(0.42 0.11 145)'; ctx.beginPath(); ctx.moveTo(x0, y0 + h);
+  for (let x = 0; x <= w; x += 6) ctx.lineTo(x0 + x, gy(x));
+  ctx.lineTo(x0 + w, y0 + h); ctx.fill();
+  ctx.strokeStyle = C.lime; ctx.lineWidth = 3 * s; ctx.beginPath();
+  for (let x = 0; x <= w; x += 6) x ? ctx.lineTo(x0 + x, gy(x)) : ctx.moveTo(x0, gy(0));
+  ctx.stroke();
+  const n = Math.round(w / (60 * s));
+  for (let i = 0; i < n; i++) { const x = (i + 0.5) / n * w + (r() - 0.5) * 20 * s; B.person(ctx, x0 + x, gy(x) + 2 * s, (70 + r() * 26) * s, 500 + i, { wave: r() < 0.3 ? 1 : 0, scarf: i === Math.floor(n / 2) }); }
+  ctx.restore();
+}
+
+function wordmark(ctx, x, y, px, align = 'left', col = C.sand) {
+  B.font(ctx, 'serif', 900, px); ctx.textAlign = align; ctx.fillStyle = col;
+  ctx.fillText('Greenwave', x, y);
+  const w1 = ctx.measureText('Greenwave').width;
+  B.font(ctx, 'serif', 400, px, true); ctx.fillStyle = C.lime;
+  ctx.fillText('Society', x, y + px * 0.95);
+  const w2 = ctx.measureText('Society').width;
+  const dx = align === 'center' ? x + w2 / 2 : x + w2;
+  ctx.fillStyle = C.gold; ctx.beginPath(); ctx.arc(dx + px * 0.12, y + px * 0.89, px * 0.075, 0, Math.PI * 2); ctx.fill();
+  ctx.textAlign = 'left';
+  return Math.max(w1, w2);
+}
+
+function url(ctx, x, y, px, align = 'left', col = C.sand) {
+  B.font(ctx, 'sans', 700, px); ctx.textAlign = align; ctx.fillStyle = col; ctx.fillText('greenwavesociety.org', x, y); ctx.textAlign = 'left';
+}
+
+const T = {
+  impact(ctx, L) {
+    const { W, H, u, m } = L;
+    bg(ctx, L);
+    B.glow(ctx, W * 0.85, H * 0.1, W * 0.6, C.leaf, 0.18);
+    B.font(ctx, 'sans', 800, 24 * u); ctx.letterSpacing = `${4 * u}px`; ctx.fillStyle = C.gold;
+    ctx.fillText('OUR IMPACT SO FAR', m, m + 20 * u); ctx.letterSpacing = '0px';
+    const hp = B.fitSize(ctx, 'in numbers.', 'serif', 900, 104 * u, W - m * 2);
+    B.font(ctx, 'serif', 400, hp * 0.8, true); ctx.fillStyle = C.sand; ctx.fillText('Youth-led change,', m, m + 20 * u + hp * 1.15);
+    B.font(ctx, 'serif', 900, hp); ctx.fillText('in numbers.', m, m + 20 * u + hp * 2.1);
+    const top = m + 20 * u + hp * 2.6, bottom = H - m - 120 * u;
+    const cw = (W - m * 2) / 2, ch = (bottom - top) / 2;
+    STATS.forEach(([v, suf, lab], i) => {
+      const x = m + (i % 2) * cw, y = top + Math.floor(i / 2) * ch;
+      ctx.strokeStyle = B.a(C.sand, 0.15); ctx.lineWidth = 2 * u;
+      ctx.beginPath(); ctx.moveTo(x, y + 10 * u); ctx.lineTo(x + cw - 24 * u, y + 10 * u); ctx.stroke();
+      const np = B.fitSize(ctx, B.fmt(v) + suf, 'serif', 900, Math.min(150 * u, ch * 0.55), cw - 30 * u);
+      B.font(ctx, 'serif', 900, np); ctx.fillStyle = i % 3 === 0 ? C.gold : C.goldLight;
+      ctx.fillText(B.fmt(v) + suf, x, y + 10 * u + np * 0.95);
+      B.font(ctx, 'sans', 700, 24 * u); ctx.letterSpacing = `${2.5 * u}px`; ctx.fillStyle = B.a(C.sand, 0.85);
+      ctx.fillText(lab.toUpperCase(), x, y + 10 * u + np * 0.95 + 44 * u); ctx.letterSpacing = '0px';
+    });
+    B.emblem(ctx, m + 70 * u, H - m - 20 * u, 62 * u, { glowA: 0, spin: 0.4 });
+    B.font(ctx, 'serif', 900, 40 * u); ctx.fillStyle = C.sand; ctx.fillText('Greenwave Society', m + 160 * u, H - m - 36 * u);
+    url(ctx, W - m, H - m - 36 * u, 28 * u, 'right', B.a(C.sand, 0.8));
+  },
+  join(ctx, L) {
+    const { W, H, u, m } = L;
+    bg(ctx, L);
+    const lh = L.tall ? H * 0.34 : H * 0.36;
+    landscape(ctx, 0, H - lh, W, lh, 9);
+    const g = ctx.createLinearGradient(0, H - lh, 0, H - lh + 120 * u); g.addColorStop(0, 'oklch(0.15 0.025 150)'); g.addColorStop(1, 'oklch(0.15 0.025 150 / 0)');
+    ctx.fillStyle = g; ctx.fillRect(0, H - lh, W, 120 * u);
+    const R = L.tall ? W * 0.2 : H * 0.1;
+    const ey = L.tall ? H * 0.24 : H * 0.215;
+    B.emblem(ctx, W / 2, ey, R, { spin: 0.3, glowA: 0.5 });
+    const px = B.fitSize(ctx, 'Join the wave.', 'serif', 900, (L.tall ? 150 : 118) * u, W - m * 2);
+    const y = ey + R + px * 1.2;
+    B.font(ctx, 'serif', 900, px); ctx.textAlign = 'center'; ctx.fillStyle = C.sand;
+    ctx.fillText('Join the wave', W / 2 - px * 0.12, y);
+    const w = ctx.measureText('Join the wave').width;
+    ctx.fillStyle = C.gold; ctx.beginPath(); ctx.arc(W / 2 - px * 0.12 + w / 2 + px * 0.14, y - px * 0.07, px * 0.075, 0, Math.PI * 2); ctx.fill();
+    const sp = B.fitSize(ctx, 'Membership is open to young Kenyans aged 15–35.', 'sans', 500, 36 * u, W - m * 2);
+    B.font(ctx, 'sans', 500, sp); ctx.fillStyle = B.a(C.sand, 0.85);
+    ctx.fillText('Membership is open to young Kenyans aged 15–35.', W / 2, y + sp * 2);
+    B.font(ctx, 'sans', 600, sp * 0.9); ctx.fillStyle = C.lime;
+    ctx.fillText('Lead · Build · Connect', W / 2, y + sp * 3.6);
+    B.pill(ctx, W / 2, y + sp * 3.6 + 100 * u, 'GREENWAVESOCIETY.ORG/JOIN', 30 * u);
+    ctx.textAlign = 'left';
+  },
+  og(ctx, L) {
+    const { W, H, u, m } = L;
+    bg(ctx, L);
+    B.glow(ctx, W * 0.25, H * 0.6, H, C.leaf, 0.15);
+    const R = H * 0.3;
+    B.emblem(ctx, W * 0.24, H * 0.6, R, { spin: 0.35, glowA: 0.4 });
+    const x = W * 0.46;
+    const px = B.fitSize(ctx, 'Greenwave', 'serif', 900, 120 * u, W - x - m);
+    wordmark(ctx, x, H * 0.38, px);
+    const sp = B.fitSize(ctx, 'Equipping youth to lead, build, and connect.', 'sans', 500, 30 * u, W - x - m);
+    B.font(ctx, 'sans', 500, sp); ctx.fillStyle = B.a(C.sand, 0.85);
+    ctx.fillText('Equipping youth to lead, build, and connect.', x, H * 0.38 + px * 1.65);
+    url(ctx, x, H * 0.38 + px * 1.65 + 60 * u, 26 * u, 'left', C.gold);
+  },
+  banner(ctx, L) {
+    const { W, H, u } = L;
+    bg(ctx, L);
+    landscape(ctx, W * 0.42, 0, W * 0.58, H, 4);
+    const g = ctx.createLinearGradient(W * 0.42, 0, W * 0.62, 0); g.addColorStop(0, 'oklch(0.15 0.027 150)'); g.addColorStop(1, 'oklch(0.15 0.027 150 / 0)');
+    ctx.fillStyle = g; ctx.fillRect(W * 0.42, 0, W * 0.2, H);
+    const m = H * 0.14;
+    const R = H * 0.24;
+    B.emblem(ctx, m + R, H * 0.6, R, { spin: 0.3, glowA: 0.3 });
+    const x = m + R * 2 + m * 0.6;
+    const px = B.fitSize(ctx, 'Lead. Build. Connect.', 'serif', 900, H * 0.16, W * 0.48 - x);
+    B.font(ctx, 'serif', 900, px); ctx.fillStyle = C.sand;
+    ctx.fillText('Lead. Build. Connect.', x, H * 0.48);
+    B.font(ctx, 'sans', 600, px * 0.36); ctx.fillStyle = B.a(C.sand, 0.8);
+    ctx.fillText('Greenwave Society · Youth leadership & climate action, Kenya', x, H * 0.48 + px * 0.75);
+    url(ctx, x, H * 0.48 + px * 1.35, px * 0.36, 'left', C.gold);
+  },
+  poster(ctx, L) {
+    const { W, H, u, m } = L;
+    ctx.fillStyle = C.sand; ctx.fillRect(0, 0, W, H);
+    const u2 = W / 1240;
+    landscape(ctx, 0, 0, W, H * 0.44, 12);
+    ctx.fillStyle = C.forest; ctx.fillRect(0, H * 0.44, W, 10 * u2);
+    const x = 90 * u2;
+    B.font(ctx, 'sans', 800, 22 * u2); ctx.letterSpacing = `${4 * u2}px`; ctx.fillStyle = C.earth;
+    ctx.fillText('GREENWAVE SOCIETY · KENYA', x, H * 0.44 + 90 * u2); ctx.letterSpacing = '0px';
+    const px = B.fitSize(ctx, 'Lead. Build. Connect.', 'serif', 900, 130 * u2, W - x * 2);
+    B.font(ctx, 'serif', 900, px); ctx.fillStyle = C.ink;
+    ['Lead', 'Build', 'Connect'].forEach((w, i) => {
+      const y = H * 0.44 + 90 * u2 + px * (1.05 + i * 0.95);
+      B.font(ctx, 'serif', 900, px); ctx.fillStyle = C.ink; ctx.fillText(w, x, y);
+      const ww = ctx.measureText(w).width; ctx.fillStyle = C.gold; ctx.fillText('.', x + ww, y);
+    });
+    const by = H * 0.44 + 90 * u2 + px * 3.5;
+    B.font(ctx, 'sans', 500, 28 * u2); ctx.fillStyle = B.a(C.ink, 0.85);
+    const body = ['Greenwave Society equips young Kenyans aged 15–35 to lead,', 'build, and connect through enterprise training, environmental', 'action, and community-led programmes.'];
+    body.forEach((l, i) => ctx.fillText(l, x, by + i * 40 * u2));
+    const progs = ['The 50 Percent: Social Enterprise', 'Youth Pulse Program', 'Climate Action & Advocacy', 'Conservation & Restoration', 'Youth Empowerment & Leadership', 'Sustainability & Urban Resilience'];
+    const py = by + 170 * u2;
+    progs.forEach((p, i) => {
+      const cx = x + (i % 2) * (W - x * 2) / 2, cy = py + Math.floor(i / 2) * 58 * u2;
+      ctx.fillStyle = C.leaf; ctx.beginPath(); ctx.arc(cx + 10 * u2, cy - 9 * u2, 9 * u2, 0, Math.PI * 2); ctx.fill();
+      B.font(ctx, 'sans', 700, 24 * u2); ctx.fillStyle = C.ink; ctx.fillText(p, cx + 34 * u2, cy);
+    });
+    const fy = H - 230 * u2;
+    ctx.fillStyle = C.night; ctx.fillRect(0, fy, W, H - fy);
+    B.emblem(ctx, x + 85 * u2, fy + 145 * u2, 85 * u2, { glowA: 0, spin: 0.4 });
+    B.font(ctx, 'serif', 900, 58 * u2); ctx.fillStyle = C.sand; ctx.fillText('Join the wave.', x + 210 * u2, fy + 100 * u2);
+    B.font(ctx, 'sans', 600, 25 * u2); ctx.fillStyle = B.a(C.sand, 0.85);
+    ctx.fillText('greenwavesociety.org  ·  info@greenwavesociety.org  ·  +254 700 519 130', x + 210 * u2, fy + 150 * u2);
+    ctx.fillStyle = C.gold; ctx.fillText('Membership open · Volunteer · Partner with us', x + 210 * u2, fy + 192 * u2);
+  },
+};
+
+B.boot({ dur: 1, base: '../', draw(ctx, t, L) { T[tpl](ctx, L); } });
+</script>
+</body>
+</html>
