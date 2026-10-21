@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:,">
+<title>Greenwave Society: The Wave</title>
+</head>
+<body>
+<script type="module">
+// "The Wave" — 30 s brand anthem. 96 BPM, 12 bars of 2.5 s.
+// One gold seed lands, draws a line; the line becomes a wave of young people, the wave
+// becomes hills of trees, lights of 25 communities, then the whole landscape folds into
+// the Greenwave emblem. Every size (16:9, 9:16, 1:1, 4:5) is laid out from the viewport.
+import * as B from '../../engine/brand.js';
+const { C, E, clamp, lerp, seg, rng } = B;
+
+const BPM = 96, BEAT = 60 / BPM, BAR = BEAT * 4, DUR = BAR * 12;
+const T = {
+  land: 0.9, line: 0.9, t1: [1.0, 3.7], people: [2.6, 7.0], t2: [3.75, 7.35],
+  hills: [7.5, 10.0], trees: [8.0, 12.0], t3: [7.75, 12.35], breath: 12.5, lights: [12.6, 14.2], t4: [12.7, 14.85],
+  lead: 15.0, build: BAR * 6 + BEAT * 2, connect: BAR * 7, t5end: 20.0,
+  morph: [20.0, 22.5], emblem: [21.0, 23.6], t6: [21.8, 24.4], riser: [22.5, 24.55], hit: 25.0,
+  lock: [25.0, 26.2], seedDrop: [26.0, 26.6], tag: 26.7, cta: 27.3,
+};
+
+// ---------- sound cues (exported for the score) ----------
+const EV = [];
+EV.push({ t: T.land, type: 'land' });
+const PEOPLE = [];
+{
+  const r = rng(7);
+  const n = 34;
+  for (let i = 0; i < n; i++) {
+    const x = lerp(-1050, 1050, (i + 0.5) / n) + (r() - 0.5) * 30;
+    if (Math.abs(x) < 40) continue;
+    const order = Math.abs(x) / 1050;             // spreads out from the seed
+    const ts = T.people[0] + order * (T.people[1] - T.people[0]);
+    const tq = Math.round(ts / (BEAT / 2)) * (BEAT / 2);
+    PEOPLE.push({ x, s: 84 + r() * 30, seed: 100 + i, t: tq, hero: false });
+  }
+  PEOPLE.push({ x: -150, s: 104, seed: 3, t: T.people[0] - 0.2, hero: true });
+  for (const p of PEOPLE) EV.push({ t: p.t, type: 'pop', pan: clamp(p.x / 1100, -1, 1) });
+}
+const TREES = [];
+{
+  const r = rng(21);
+  for (let i = 0; i < 26; i++) {
+    const x = lerp(-1150, 1150, (i + 0.5) / 26) + (r() - 0.5) * 60;
+    if (x > 0 && x < 330) continue;               // leave room for the skyline
+    const ts = Math.round(lerp(T.trees[0], T.trees[1] - 0.6, r()) / (BEAT / 2)) * (BEAT / 2);
+    TREES.push({ x, s: 120 + r() * 120, kind: r() < 0.55 ? 'acacia' : 'round', seed: 200 + i, t: ts, col: r() < 0.5 ? C.leafDark : C.forest });
+  }
+  TREES.sort((p, q) => q.s - p.s);
+  const seen = new Set();
+  for (const tr of TREES) if (!seen.has(tr.t)) { seen.add(tr.t); EV.push({ t: tr.t, type: 'tree', pan: clamp(tr.x / 1200, -1, 1) }); }
+}
+const LIGHTS = [];
+{
+  const r = rng(33);
+  for (let i = 0; i < 25; i++) {
+    const x = lerp(-1000, 1000, r());
+    const t = T.lights[0] + (i / 25) * (T.lights[1] - T.lights[0]);
+    LIGHTS.push({ x, h: 0.25 + r() * 0.75, t, seed: i });
+    EV.push({ t, type: 'light', i, pan: clamp(x / 1100, -1, 1) });
+  }
+}
+for (let k = 0; k <= 10; k++) EV.push({ t: T.t2[0] + 0.15 + k * 0.2, type: 'tick', i: k });
+for (let k = 0; k <= 10; k++) EV.push({ t: T.t3[0] + 0.15 + k * 0.2, type: 'tick', i: k + 4 });
+EV.push({ t: T.breath, type: 'breath' });
+EV.push({ t: T.lead, type: 'word', i: 0 }, { t: T.build, type: 'word', i: 1 }, { t: T.connect, type: 'word', i: 2 });
+for (let i = 0; i < 10; i++) EV.push({ t: T.build + 0.1 + i * 0.09, type: 'block', i });
+EV.push({ t: T.morph[0], type: 'whoosh' }, { t: T.riser[0], type: 'riser', dur: T.riser[1] - T.riser[0] });
+EV.push({ t: T.emblem[0] + 0.7, type: 'turbine' });
+EV.push({ t: T.hit, type: 'hit' }, { t: T.seedDrop[1], type: 'land2' }, { t: T.cta, type: 'cta' });
+EV.sort((p, q) => p.t - q.t);
+window.TL = { bpm: BPM, beat: BEAT, bar: BAR, bars: 12, dur: DUR, T };
+
+// ---------- skies ----------
+const SKY = [
+  [0.0, [0.15, 0.025, 150], [0.2, 0.035, 150]],
+  [6.5, [0.15, 0.025, 150], [0.22, 0.04, 150]],
+  [10.5, [0.27, 0.05, 160], [0.62, 0.11, 70]],
+  [13.6, [0.19, 0.04, 220], [0.45, 0.1, 45]],
+  [15.0, [0.36, 0.07, 155], [0.8, 0.11, 88]],
+  [19.6, [0.36, 0.07, 155], [0.8, 0.11, 88]],
+  [22.0, [0.14, 0.025, 150], [0.18, 0.035, 150]],
+];
+function sky(t) {
+  let i = 0; while (i < SKY.length - 2 && t > SKY[i + 1][0]) i++;
+  const [t0, a0, b0] = SKY[i], [t1, a1, b1] = SKY[i + 1];
+  const k = E.inOutSine(seg(t, t0, t1));
+  return [B.mixOk(a0, a1, k), B.mixOk(b0, b1, k)];
+}
+
+// ---------- camera ----------
+// One world → screen mapping. World: origin at the seed / top centre of the globe, y down.
+const R = 400;
+function cams(L) {
+  const z0 = L.land ? 1.45 : L.tall ? 1.3 : 1.15;
+  const gS = L.land ? 0.7 : L.tall ? 0.6 : 0.7;
+  const ox = L.land ? 0.6 : 0.5;
+  const mid = L.tall && L.ar > 0.7;   // 4:5 sits between square and 9:16
+  const Rs = L.land ? 0.27 * L.H : mid ? 0.31 * L.W : L.tall ? 0.4 * L.W : 0.26 * L.H;
+  const ey = L.H / 2 + 0.3 * Rs;
+  let lockS, lockX, lockY;
+  if (L.land) { lockS = 1; lockX = 0.29 * L.W; lockY = ey; }
+  else if (mid) { lockS = 0.62; lockX = L.W / 2; lockY = 0.3 * L.H; }
+  else if (L.tall) { lockS = 0.72; lockX = L.W / 2; lockY = 0.33 * L.H; }
+  else { lockS = 0.6; lockX = L.W / 2; lockY = 0.36 * L.H; }
+  return { z0, gS, ox, Rs, ey, lockS, lockX, lockY };
+}
+function camera(t, L) {
+  const K = cams(L);
+  const zf = K.Rs / R;
+  let z, x, y;
+  // 0 → 7.5: pull back from the seed to reveal the line of people
+  const pb = E.inOutCubic(seg(t, 0.4, 7.5));
+  z = lerp(K.z0 * 1.75, K.z0, pb);
+  x = lerp(L.W / 2, L.W * K.ox, E.inOutCubic(seg(t, 2.0, 4.5)));
+  y = L.H * K.gS;
+  // 7.5 → 12.5: drift right to left across the hills
+  x += lerp(0, -0.05 * L.W, E.inOutSine(seg(t, 7.5, 12.8)));
+  // 15 → 20: gentle push in on the rally
+  z *= lerp(1, 1.07, E.inOutSine(seg(t, 14.8, 20)));
+  // 20 → 22.5: the landscape becomes the emblem
+  const m = E.inOutCubic(seg(t, T.morph[0], T.morph[1]));
+  z = lerp(z, zf, m); x = lerp(x, L.W / 2, m); y = lerp(y, K.ey, m);
+  // 25 → 26.2: slide into the lockup
+  const lk = E.inOutCubic(seg(t, T.lock[0] + 0.15, T.lock[1]));
+  z = lerp(z, zf * K.lockS, lk); x = lerp(x, K.lockX, lk); y = lerp(y, K.lockY, lk);
+  // a small settle on the hit
+  const hitk = seg(t, T.hit, T.hit + 0.6);
+  if (hitk > 0 && hitk < 1) z *= 1 + 0.025 * Math.sin(hitk * Math.PI) * (1 - hitk);
+  return { z, x, y, m, K };
+}
+
+// ground profile in world units (negative = up)
+function groundY(x, t) {
+  const w = E.inOutSine(seg(t, 2.4, 5.0)) * (1 - E.inOutCubic(seg(t, 7.5, 9.5)));
+  const wave = Math.sin(x / 150 - t * 2.2) * 26 * w + Math.sin(x / 70 - t * 3.1) * 7 * w;
+  const h = E.inOutCubic(seg(t, T.hills[0], T.hills[1]));
+  const hill = (Math.sin(x / 300 + 1.1) * 70 + Math.sin(x / 140 + 2.3) * 26 - 50) * h;
+  const flat = 1 - E.inOutCubic(seg(t, T.morph[0], T.morph[0] + 1.6));
+  return (wave + hill) * flat;
+}
+
+// ---------- text helpers ----------
+function textBox(L) {
+  if (L.land) return { x: L.m * 1.3, y: L.H * 0.24, align: 'left', w: L.W * 0.4 };
+  if (L.tall) return { x: L.W / 2, y: L.H * 0.17, align: 'center', w: L.W - L.m * 2 };
+  return { x: L.m, y: L.H * 0.16, align: 'left', w: L.W - L.m * 2 };
+}
+function fade(t, [t0, t1], fi = 0.35, fo = 0.35) {
+  return E.outCubic(seg(t, t0, t0 + fi)) * (1 - E.inCubic(seg(t, t1 - fo, t1)));
+}
+function counter(ctx, L, t, win, value, suffix, label, col) {
+  const tb = textBox(L);
+  const k = fade(t, win, 0.4, 0.4);
+  if (k <= 0) return;
+  const u = L.u;
+  const p = E.outExpo(seg(t, win[0] + 0.1, win[0] + 2.3));
+  const big = (L.land ? 210 : L.tall ? 230 : 190) * u;
+  ctx.save();
+  ctx.globalAlpha = k;
+  B.font(ctx, 'serif', 900, big);
+  ctx.textAlign = tb.align;
+  ctx.fillStyle = col;
+  const n = B.fmt(value * p) + (p > 0.98 ? suffix : '');
+  ctx.fillText(n, tb.x, tb.y + big * 0.72 + (1 - E.outCubic(seg(t, win[0], win[0] + 0.5))) * 40 * u);
+  B.font(ctx, 'sans', 700, 30 * u);
+  ctx.letterSpacing = `${4 * u}px`;
+  ctx.fillStyle = B.a(C.sand, 0.92);
+  B.riseText(ctx, label.toUpperCase(), tb.x, tb.y + big * 0.72 + 64 * u, seg(t, win[0] + 0.35, win[0] + 1.4) * 1.4, { align: tb.align, px: 30 * u, color: B.a(C.sand, 0.92) });
+  ctx.letterSpacing = '0px';
+  ctx.restore();
+}
+
+// ---------- the frame ----------
+function draw(ctx, t, L) {
+  const { W, H, u } = L;
+  const cam = camera(t, L);
+  const { z, m, K } = cam;
+  const toS = (wx, wy) => [cam.x + wx * z, cam.y + wy * z];
+
+  // sky
+  const [top, hor] = sky(t);
+  const g = ctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, B.ok(top)); g.addColorStop(0.75, B.ok(hor)); g.addColorStop(1, B.ok(hor));
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+  // stars in the opening night, fading at dawn
+  const starA = 1 - seg(t, 7.0, 10.0) + seg(t, 21.5, 24) * 0.6;
+  if (starA > 0) {
+    const r = rng(5);
+    for (let i = 0; i < 90; i++) {
+      const sx = r() * W, sy = r() * H * 0.7, tw = 0.5 + 0.5 * Math.sin(t * (1 + r() * 2) + i);
+      ctx.fillStyle = B.a(C.sand, 0.35 * tw * starA);
+      ctx.fillRect(sx, sy, 2 * u, 2 * u);
+    }
+  }
+
+  // sun: rises at dawn, dips at dusk, high at the rally
+  const sunA = seg(t, 7.5, 9.0) * (1 - seg(t, 19.8, 21.0));
+  if (sunA > 0) {
+    let sy = lerp(160, -330, E.inOutSine(seg(t, 7.5, 12.5)));
+    sy = lerp(sy, -170, E.inOutSine(seg(t, 12.5, 14.5)));
+    sy = lerp(sy, -430, E.outCubic(seg(t, 14.6, 16.0)));
+    const [sx, syS] = toS(420, sy);
+    ctx.globalAlpha = sunA;
+    B.glow(ctx, sx, syS, 520 * z, C.gold, 0.45);
+    ctx.fillStyle = 'oklch(0.86 0.12 85)';
+    ctx.beginPath(); ctx.arc(sx, syS, 95 * z, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+
+  // far hills (parallax, screen space)
+  const farA = E.inOutCubic(seg(t, 7.6, 10.0)) * (1 - E.inOutCubic(seg(t, T.morph[0], T.morph[0] + 1.2)));
+  if (farA > 0) {
+    const layers = [[0.35, 'oklch(0.32 0.06 165)', 150, 0.9], [0.6, 'oklch(0.36 0.08 150)', 90, 1.4]];
+    for (const [f, col, hAmp, freq] of layers) {
+      const pan = (cam.x - L.W * K.ox) * f;
+      const base = cam.y - (hAmp * 0.9) * z;
+      ctx.fillStyle = col; ctx.globalAlpha = farA;
+      ctx.beginPath(); ctx.moveTo(0, H);
+      for (let sx = 0; sx <= W + 10; sx += 10) {
+        const wx = (sx - pan) / z;
+        ctx.lineTo(sx, base - (Math.sin(wx / (260 * freq) + f * 7) * 0.6 + Math.sin(wx / (120 * freq) + f * 3) * 0.25 + 0.4) * hAmp * z * farA);
+      }
+      ctx.lineTo(W, H); ctx.closePath(); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  // ---- near ground: a band that closes into the half-globe ----
+  const reach = E.outExpo(seg(t, T.line, T.line + 1.3)) * 2600;
+  const fillA = E.inOutCubic(seg(t, 7.6, 9.6));
+  const span = lerp(3000, R, m), depth = lerp(2400, R, m), rad = Math.min(span, depth) * E.inOutSine(seg(t, T.morph[0], T.morph[1]));
+  if (fillA > 0 || m > 0) {
+    ctx.save();
+    // mask: wide rect → semicircle
+    const [mx0, my0] = toS(-span, -400), [mx1, my1] = toS(span, depth);
+    ctx.beginPath();
+    ctx.moveTo(mx0, my0); ctx.lineTo(mx1, my0);
+    ctx.lineTo(mx1, my1 - rad * z); ctx.arcTo(mx1, my1, mx1 - rad * z, my1, rad * z);
+    ctx.lineTo(mx0 + rad * z, my1); ctx.arcTo(mx0, my1, mx0, my1 - rad * z, rad * z);
+    ctx.closePath(); ctx.clip();
+    ctx.beginPath();
+    const [sx0] = toS(-span, 0), [sx1] = toS(span, 0);
+    ctx.moveTo(sx0, H * 2);
+    for (let sx = Math.max(sx0, -20); sx <= Math.min(sx1, W + 20); sx += 8) {
+      const wx = (sx - cam.x) / z;
+      ctx.lineTo(sx, cam.y + groundY(wx, t) * z);
+    }
+    ctx.lineTo(Math.min(sx1, W + 20), H * 2); ctx.closePath();
+    const gg = ctx.createLinearGradient(0, cam.y - 80 * z, 0, cam.y + R * z);
+    const nearTop = B.mixOk([0.42, 0.11, 145], [0.62, 0.16, 135], m);
+    const nearBot = B.mixOk([0.26, 0.06, 150], [0.62, 0.16, 135], m);
+    gg.addColorStop(0, B.ok(nearTop, Math.max(fillA, m)));
+    gg.addColorStop(1, B.ok(nearBot, Math.max(fillA, m)));
+    ctx.fillStyle = gg; ctx.fill();
+    // continents arrive as the globe closes
+    const [ecx, ecy] = toS(0, 0);
+    B.continents(ctx, ecx, ecy, R * z, E.outCubic(seg(t, T.morph[0] + 1.4, T.morph[1] + 0.6)));
+    ctx.restore();
+    if (m > 0.6) {
+      ctx.globalAlpha = seg(m, 0.6, 1);
+      ctx.strokeStyle = C.leafDark; ctx.lineWidth = R * z * 0.03;
+      ctx.beginPath(); ctx.arc(ecx, ecy, R * z * 0.985, 0, Math.PI); ctx.closePath(); ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  // the line: seed impact → horizon → wave crest
+  const lineA = 1 - E.inOutCubic(seg(t, T.morph[0] + 0.8, T.morph[1]));
+  if (t > T.line && lineA > 0) {
+    ctx.save();
+    ctx.lineCap = 'round';
+    for (const [lw, col, al] of [[14, C.lime, 0.12], [6, C.lime, 0.3], [3, C.lime, 1]]) {
+      ctx.strokeStyle = B.a(col, al * lineA); ctx.lineWidth = lw * u * Math.max(0.6, z / K.z0);
+      ctx.beginPath();
+      let first = true;
+      for (let wx = -reach; wx <= reach; wx += 10 / z) {
+        const [sx, sy] = toS(wx, groundY(wx, t));
+        if (sx < -30 || sx > W + 30) continue;
+        if (first) { ctx.moveTo(sx, sy); first = false; } else ctx.lineTo(sx, sy);
+      }
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  // ripple + the falling seed
+  if (t < T.land) {
+    const k = E.inCubic(seg(t, 0.0, T.land));
+    const [sx, sy] = toS(0, lerp(-330, 0, k));
+    B.glow(ctx, sx, sy, 60 * z, C.gold, 0.8);
+    ctx.fillStyle = C.goldLight; ctx.beginPath(); ctx.arc(sx, sy, 9 * z, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = B.a(C.gold, 0.5); ctx.lineWidth = 3 * z;
+    ctx.beginPath(); ctx.moveTo(sx, sy - 10 * z); ctx.lineTo(sx, sy - 10 * z - 120 * z * k); ctx.stroke();
+  } else if (t < 4.0) {
+    const [sx, sy] = toS(0, groundY(0, t));
+    for (let i = 0; i < 3; i++) {
+      const k = seg(t, T.land + i * 0.22, T.land + 1.6 + i * 0.22);
+      if (k > 0 && k < 1) {
+        ctx.strokeStyle = B.a(C.gold, (1 - k) * 0.8); ctx.lineWidth = 3 * u;
+        ctx.beginPath(); ctx.ellipse(sx, sy, 400 * z * E.outCubic(k), 60 * z * E.outCubic(k), 0, 0, Math.PI * 2); ctx.stroke();
+      }
+    }
+    const k = 1 - seg(t, T.land, 3.2);
+    B.glow(ctx, sx, sy, 90 * z, C.gold, 0.9 * k);
+  }
+
+  // trees on the hills
+  const treeOut = E.inCubic(seg(t, T.morph[0], T.morph[0] + 0.9));
+  for (const tr of TREES) {
+    const gk = seg(t, tr.t, tr.t + 0.9) * (1 - treeOut);
+    if (gk <= 0) continue;
+    const [sx, sy] = toS(tr.x, groundY(tr.x, t) + 6);
+    if (sx < -200 || sx > W + 200) continue;
+    if (tr.kind === 'acacia') B.acacia(ctx, sx, sy, tr.s * z, gk, tr.col, tr.seed);
+    else B.roundTree(ctx, sx, sy, tr.s * 0.8 * z, gk, tr.col, tr.seed);
+  }
+
+  // 25 community lights
+  const lightOut = 1 - E.inOutCubic(seg(t, T.morph[0], T.morph[0] + 0.8));
+  const lightPos = LIGHTS.map((l) => toS(l.x, groundY(l.x, t) - 40 - l.h * 90));
+  // connections ("Connect.")
+  const ck = seg(t, T.connect, T.connect + 1.6) * lightOut;
+  if (ck > 0) {
+    const order = LIGHTS.map((l, i) => i).sort((p, q) => LIGHTS[p].x - LIGHTS[q].x);
+    ctx.strokeStyle = B.a(C.goldLight, 0.75 * lightOut); ctx.lineWidth = 2.5 * u; ctx.lineCap = 'round';
+    for (let j = 0; j < order.length - 1; j++) {
+      const p = clamp(ck * order.length - j);
+      if (p <= 0) break;
+      const [x0, y0] = lightPos[order[j]], [x1, y1] = lightPos[order[j + 1]];
+      const mx = (x0 + x1) / 2, my = Math.min(y0, y1) - 60 * z;
+      ctx.beginPath(); ctx.moveTo(x0, y0);
+      const steps = 12;
+      for (let s = 1; s <= steps * p; s++) {
+        const q = s / steps;
+        ctx.lineTo((1 - q) * (1 - q) * x0 + 2 * (1 - q) * q * mx + q * q * x1, (1 - q) * (1 - q) * y0 + 2 * (1 - q) * q * my + q * q * y1);
+      }
+      ctx.stroke();
+    }
+  }
+  LIGHTS.forEach((l, i) => {
+    const k = E.outBack(seg(t, l.t, l.t + 0.35), 3) * lightOut;
+    if (k <= 0) return;
+    const [sx, sy] = lightPos[i];
+    const pulse = 0.85 + 0.15 * Math.sin(t * 5 + i);
+    B.glow(ctx, sx, sy, 42 * z * k, C.gold, 0.7 * pulse);
+    ctx.fillStyle = C.goldLight; ctx.beginPath(); ctx.arc(sx, sy, 5.5 * z * k, 0, Math.PI * 2); ctx.fill();
+  });
+
+  // people on the crest
+  const peopleOut = E.inCubic(seg(t, T.morph[0] + 0.1, T.morph[0] + 1.0));
+  for (const p of PEOPLE) {
+    const k = seg(t, p.t, p.t + 0.45) * (1 - peopleOut);
+    if (k <= 0) continue;
+    const bob = Math.sin(t * 6 + p.seed) * 2 * seg(t, 15, 15.4) * (1 - seg(t, 19.5, 20));
+    const [sx, sy] = toS(p.x, groundY(p.x, t) + 2 + bob);
+    if (sx < -80 || sx > W + 80) continue;
+    let s = p.s, wave = 0;
+    if (p.hero) {
+      const lk = E.outBack(seg(t, T.lead - 0.1, T.lead + 0.5), 2);
+      s *= 1 + 0.45 * lk;
+      wave = seg(t, T.lead, T.lead + 0.4);
+      if (lk > 0) {
+        const ring = seg(t, T.lead, T.lead + 1.2);
+        B.glow(ctx, sx, sy - s * z * 0.6, 170 * z, C.gold, 0.4 * lk * (1 - peopleOut));
+        if (ring < 1) { ctx.strokeStyle = B.a(C.gold, 1 - ring); ctx.lineWidth = 4 * u; ctx.beginPath(); ctx.arc(sx, sy - s * z * 0.6, (60 + 220 * E.outCubic(ring)) * z, 0, Math.PI * 2); ctx.stroke(); }
+      }
+    } else {
+      wave = seg(t, T.lead + 0.25 + Math.abs(p.x) / 2600, T.lead + 0.65 + Math.abs(p.x) / 2600) * (1 - seg(t, 19.0, 19.6));
+    }
+    B.person(ctx, sx, sy, s * z, p.seed, { k, wave, scarf: p.hero });
+  }
+
+  // the emblem grows out of the land: skyline at "Build.", the rest during the morph
+  {
+    const [ecx, ecy] = toS(0, 0);
+    const sky = E.outCubic(seg(t, T.build, T.build + 1.0));
+    const left = seg(t, T.emblem[0] + 0.2, T.emblem[1]);
+    const turb = seg(t, T.emblem[0] + 0.5, T.emblem[1] + 0.3);
+    const spin = Math.pow(seg(t, T.emblem[0] + 1.0, DUR), 1.4) * 9 + seg(t, T.emblem[0] + 1, T.hit) * 1.2;
+    const lit = (1 - seg(t, 19, 20.5)) * seg(t, T.build, T.build + 0.6);
+    const peopleE = seg(t, T.emblem[0] + 0.6, T.emblem[1] + 0.4);
+    const sc = lerp(1.35, 1, E.inOutCubic(seg(t, T.morph[0], T.morph[1])));
+    ctx.save();
+    ctx.translate(ecx, ecy); ctx.scale(sc, sc); ctx.translate(-ecx, -ecy);
+    B.emblem(ctx, ecx, ecy + groundY(160, t) * z, R * z, { globe: 0, land: 0, left: 0, sky, turbine: 0, glowA: 0, lit });
+    ctx.restore();
+    if (left > 0 || turb > 0) {
+      const glowA = 0.5 * seg(t, T.morph[1], T.hit) + 0.4 * (1 - seg(t, T.hit, T.hit + 1.2)) * seg(t, T.hit - 0.01, T.hit);
+      B.emblem(ctx, ecx, ecy, R * z, { globe: 0, land: 0, left, sky: 0, turbine: turb, spin, glowA, people: peopleE });
+    }
+  }
+
+  // hit flash
+  const hf = seg(t, T.hit, T.hit + 0.5);
+  if (hf > 0 && hf < 1) {
+    const [ecx, ecy] = toS(0, 0);
+    ctx.strokeStyle = B.a(C.lime, 0.8 * (1 - hf)); ctx.lineWidth = 5 * u;
+    ctx.beginPath(); ctx.arc(ecx, ecy - R * z * 0.3, R * z * (1.1 + 0.7 * E.outCubic(hf)), 0, Math.PI * 2); ctx.stroke();
+  }
+
+  B.vignette(ctx, W, H, 0.35);
+  // readability scrim behind the type column
+  const scr = seg(t, 3.4, 4.2) * (1 - seg(t, 19.8, 20.4));
+  if (scr > 0) {
+    const sg = L.land ? ctx.createLinearGradient(0, 0, W * 0.55, 0) : ctx.createLinearGradient(0, 0, 0, H * 0.5);
+    sg.addColorStop(0, `rgba(6,16,9,${0.55 * scr})`); sg.addColorStop(1, 'rgba(6,16,9,0)');
+    ctx.fillStyle = sg; ctx.fillRect(0, 0, W, H);
+  }
+
+  // ---------------- type ----------------
+  const tb = textBox(L);
+  // 1. It starts with one.
+  {
+    const k = fade(t, T.t1, 0.4, 0.45);
+    if (k > 0) {
+      const px = (L.land ? 92 : L.tall ? 84 : 78) * u;
+      B.font(ctx, 'serif', 400, px, true);
+      ctx.globalAlpha = k;
+      const y = L.land ? H * 0.3 : tb.y + px;
+      B.riseText(ctx, 'It starts with one.', L.land ? W / 2 : tb.x, y, seg(t, T.t1[0], T.t1[0] + 1.2) * 1.6, { align: L.land ? 'center' : tb.align, px, color: C.sand });
+      ctx.globalAlpha = 1;
+    }
+  }
+  counter(ctx, L, t, T.t2, 500, '+', 'young people reached', C.gold);
+  counter(ctx, L, t, T.t3, 10000, '', 'trees planted', C.goldLight);
+  // 4. Across 25 communities.
+  {
+    const k = fade(t, T.t4, 0.35, 0.3);
+    if (k > 0) {
+      const px = (L.land ? 96 : L.tall ? 92 : 84) * u;
+      ctx.globalAlpha = k;
+      B.font(ctx, 'serif', 400, px, true);
+      B.riseText(ctx, 'Across', tb.x, tb.y + px * 0.8, seg(t, T.t4[0], T.t4[0] + 0.8) * 1.5, { align: tb.align, px, color: C.sand });
+      B.font(ctx, 'serif', 900, px * 1.05);
+      B.riseText(ctx, '25 communities.', tb.x, tb.y + px * 1.95, seg(t, T.t4[0] + 0.25, T.t4[0] + 1.2) * 1.5, { align: tb.align, px, color: C.goldLight });
+      ctx.globalAlpha = 1;
+    }
+  }
+  // 5. Lead. Build. Connect.
+  {
+    const out = 1 - E.inCubic(seg(t, T.t5end - 0.4, T.t5end + 0.1));
+    if (t > T.lead - 0.05 && out > 0) {
+      const words = ['Lead', 'Build', 'Connect'];
+      const at = [T.lead, T.build, T.connect];
+      const px = (L.land ? 150 : L.tall ? 150 : 124) * u;
+      const lh = px * 1.02;
+      B.font(ctx, 'serif', 900, px);
+      words.forEach((w, i) => {
+        const k = seg(t, at[i], at[i] + 0.32);
+        if (k <= 0) return;
+        const y = tb.y + px * 0.78 + i * lh;
+        const sc = lerp(1.25, 1, E.outBack(k, 2.5));
+        ctx.save();
+        ctx.globalAlpha = clamp(k * 3) * out;
+        let x = tb.x;
+        const ww = ctx.measureText(w).width, dw = ctx.measureText('.').width;
+        if (tb.align === 'center') x -= (ww + dw) / 2;
+        ctx.translate(x, y); ctx.scale(sc, sc);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = C.sand; ctx.fillText(w, 0, 0);
+        ctx.fillStyle = C.gold; ctx.fillText('.', ww, 0);
+        ctx.restore();
+      });
+    }
+  }
+  // 6. Together, we are the wave.
+  {
+    const k = fade(t, T.t6, 0.5, 0.4);
+    if (k > 0) {
+      const px = (L.land ? 54 : L.tall ? 64 : 52) * u;
+      B.font(ctx, 'serif', 400, px, true);
+      ctx.globalAlpha = k;
+      const y = L.land || L.ar > 0.7 ? H - L.m * 0.95 : H * 0.865;
+      B.riseText(ctx, 'Together, we are the wave.', W / 2, y, seg(t, T.t6[0], T.t6[0] + 1.2) * 1.5, { align: 'center', px, color: C.sand });
+      ctx.globalAlpha = 1;
+    }
+  }
+  // 7. Lockup
+  if (t > T.hit) lockup(ctx, t, L, cam);
+}
+
+function lockup(ctx, t, L, cam) {
+  const { W, H, u, m } = L;
+  const k = E.outCubic(seg(t, T.lock[1] - 0.35, T.lock[1] + 0.6));
+  let x, y1, y2, align, px, maxW, tagY, ctaY, urlY;
+  if (L.land) {
+    x = W * 0.52; align = 'left'; maxW = W - x - m;
+    px = B.fitSize(ctx, 'Greenwave', 'serif', 900, 168 * u, maxW);
+    y1 = H * 0.42; y2 = y1 + px * 0.95; tagY = y2 + px * 0.62; ctaY = tagY + 96 * u; urlY = ctaY;
+  } else if (L.tall) {
+    x = W / 2; align = 'center'; maxW = W - m * 2;
+    px = B.fitSize(ctx, 'Greenwave', 'serif', 900, 170 * u, maxW);
+    y1 = H * (L.ar > 0.7 ? 0.6 : 0.585); y2 = y1 + px * 0.95; tagY = y2 + px * 0.55; ctaY = tagY + (L.ar > 0.7 ? 90 : 120) * u; urlY = ctaY + (L.ar > 0.7 ? 76 : 92) * u;
+    if (L.ar > 0.7) px = B.fitSize(ctx, 'Greenwave', 'serif', 900, 140 * u, maxW), y2 = y1 + px * 0.95, tagY = y2 + px * 0.55, ctaY = tagY + 90 * u, urlY = ctaY + 76 * u;
+  } else {
+    x = W / 2; align = 'center'; maxW = W - m * 2;
+    px = B.fitSize(ctx, 'Greenwave Society', 'serif', 900, 104 * u, maxW);
+    y1 = H * 0.7; y2 = null; tagY = y1 + px * 0.72; ctaY = tagY + 84 * u; urlY = ctaY;
+  }
+  ctx.save();
+  ctx.textAlign = 'left';
+  B.font(ctx, 'serif', 900, px);
+  const line1 = y2 ? 'Greenwave' : 'Greenwave Society';
+  B.riseText(ctx, line1, x, y1, k * 1.6, { align, px, color: C.sand, stagger: 0.2 });
+  let dotX, dotY;
+  if (y2) {
+    B.font(ctx, 'serif', 400, px, true);
+    const w2 = B.riseText(ctx, 'Society', x, y2, clamp(k * 1.6 - 0.2), { align, px, color: C.lime });
+    const x0 = align === 'center' ? x - w2 / 2 : x;
+    dotX = x0 + w2 + px * 0.1; dotY = y2 - px * 0.06;
+  } else {
+    B.font(ctx, 'serif', 900, px);
+    const w1 = ctx.measureText(line1).width;
+    dotX = x + w1 / 2 + px * 0.12; dotY = y1 - px * 0.06;
+  }
+  // the opening seed returns as the full stop
+  const dk = seg(t, T.seedDrop[0], T.seedDrop[1]);
+  if (dk > 0) {
+    const yy = lerp(dotY - H * 0.5, dotY, E.inCubic(dk));
+    const r = px * 0.085;
+    B.glow(ctx, dotX, yy, r * 5, C.gold, 0.7 * (dk < 1 ? 1 : 0.5 + 0.2 * Math.sin(t * 4)));
+    ctx.fillStyle = C.gold; ctx.beginPath(); ctx.arc(dotX, yy, r, 0, Math.PI * 2); ctx.fill();
+    const rp = seg(t, T.seedDrop[1], T.seedDrop[1] + 0.9);
+    if (rp > 0 && rp < 1) { ctx.strokeStyle = B.a(C.gold, 1 - rp); ctx.lineWidth = 3 * u; ctx.beginPath(); ctx.arc(dotX, dotY, r + 80 * u * E.outCubic(rp), 0, Math.PI * 2); ctx.stroke(); }
+  }
+  // tagline
+  const tk = seg(t, T.tag, T.tag + 0.9);
+  if (tk > 0) {
+    const tpx = B.fitSize(ctx, 'Equipping youth to lead, build, and connect.', 'sans', 500, (L.square ? 30 : 34) * u, maxW);
+    B.font(ctx, 'sans', 500, tpx);
+    B.riseText(ctx, 'Equipping youth to lead, build, and connect.', x, tagY, tk * 2, { align, px: tpx, color: B.a(C.sand, 0.85), stagger: 0.06 });
+  }
+  // call to action
+  const ck = seg(t, T.cta, T.cta + 0.5);
+  if (ck > 0) {
+    const cpx = 28 * u;
+    if (L.tall) {
+      B.pill(ctx, x, ctaY, 'JOIN THE WAVE', cpx * 1.15, { k: ck });
+      B.font(ctx, 'sans', 700, 34 * u); ctx.textAlign = 'center';
+      ctx.globalAlpha = seg(t, T.cta + 0.25, T.cta + 0.8);
+      ctx.fillStyle = C.sand; ctx.fillText('greenwavesociety.org', x, urlY + 12 * u);
+    } else {
+      const p = B.pill(ctx, x, ctaY, 'JOIN THE WAVE', cpx, { k: ck, align: align === 'center' ? 'right' : 'left' });
+      B.font(ctx, 'sans', 700, 30 * u); ctx.textAlign = 'left';
+      ctx.globalAlpha = seg(t, T.cta + 0.25, T.cta + 0.8);
+      ctx.fillStyle = C.sand;
+      const ux = align === 'center' ? x + 22 * u : p.x0 + p.w + 26 * u;
+      ctx.fillText('greenwavesociety.org', ux, ctaY + 11 * u);
+    }
+    ctx.globalAlpha = 1;
+  }
+  ctx.restore();
+}
+
+B.boot({ dur: DUR, draw, events: EV });
+</script>
+</body>
+</html>

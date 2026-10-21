@@ -1,0 +1,363 @@
+<title>Greenwave Media Kit</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: one column of bands; the hero film fills the band in whatever shape your screen is. */
+:root {
+  --bg: oklch(0.975 0.015 85);       /* site sand */
+  --surface: oklch(0.99 0.005 85);
+  --ink: oklch(0.22 0.035 145);
+  --muted: oklch(0.45 0.03 145);
+  --line: oklch(0.9 0.02 85);
+  --forest: oklch(0.35 0.09 145);
+  --gold: oklch(0.74 0.12 80);
+  --gold-ink: oklch(0.52 0.11 75);
+  --stage: oklch(0.16 0.025 145);
+  --stage-ink: oklch(0.96 0.01 85);
+  --display: "Playfair Display", Georgia, "Times New Roman", serif;
+  --body: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --step-0: 1rem; --step-1: 1.25rem; --step-2: 1.6rem; --step-3: clamp(2rem, 5vw, 3.2rem); --step-4: clamp(2.6rem, 8vw, 5.4rem);
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: oklch(0.16 0.025 145); --surface: oklch(0.2 0.028 145); --ink: oklch(0.96 0.01 85); --muted: oklch(0.72 0.03 145);
+  --line: oklch(1 0 0 / 10%); --forest: oklch(0.72 0.12 140); --gold: oklch(0.78 0.12 80); --gold-ink: oklch(0.8 0.12 80);
+  --stage: oklch(0.12 0.02 145); --stage-ink: oklch(0.96 0.01 85); color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: oklch(0.16 0.025 145); --surface: oklch(0.2 0.028 145); --ink: oklch(0.96 0.01 85); --muted: oklch(0.72 0.03 145);
+  --line: oklch(1 0 0 / 10%); --forest: oklch(0.72 0.12 140); --gold: oklch(0.78 0.12 80); --gold-ink: oklch(0.8 0.12 80);
+  --stage: oklch(0.12 0.02 145); --stage-ink: oklch(0.96 0.01 85); color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: var(--step-0); line-height: 1.6; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+section { padding-block: clamp(48px, 8vw, 96px); border-top: 1px solid var(--line); }
+h1, h2, h3 { font-family: var(--display); line-height: 1.05; text-wrap: balance; margin: 0; }
+h2 { font-size: var(--step-3); font-weight: 900; }
+h3 { font-size: var(--step-2); font-weight: 700; }
+p { margin: 0; max-width: 65ch; }
+.eyebrow { font-size: 0.78rem; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold-ink); }
+.lede { color: var(--muted); font-size: var(--step-1); }
+.stack { display: grid; gap: 16px; }
+.dot { color: var(--gold); }
+button, .chip { font: inherit; }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+
+/* ---------- hero ---------- */
+.hero { background: var(--stage); color: var(--stage-ink); padding-block: 28px 56px; border: 0; }
+.hero .eyebrow { color: var(--gold); }
+.hero-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 16px 32px; margin-bottom: 24px; }
+.hero h1 { font-size: var(--step-4); font-weight: 900; }
+.hero h1 em { font-weight: 400; color: oklch(0.86 0.15 128); }
+.hero p { color: oklch(0.96 0.01 85 / 0.78); }
+.screen { position: relative; margin: 0 auto; max-width: 100%; border-radius: 18px; overflow: hidden; background: #000; box-shadow: 0 30px 80px -30px oklch(0 0 0 / 0.7); }
+.screen video { display: block; width: 100%; height: 100%; object-fit: cover; }
+.screen-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; }
+.fit-note { font-size: 0.9rem; color: oklch(0.96 0.01 85 / 0.75); }
+.fit-note b { color: var(--gold); font-weight: 700; }
+.seg { display: inline-flex; flex-wrap: wrap; gap: 4px; padding: 4px; border-radius: 999px; background: oklch(1 0 0 / 0.08); }
+.seg button { border: 0; background: transparent; color: inherit; padding: 6px 14px; border-radius: 999px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+.seg button[aria-pressed="true"] { background: var(--gold); color: oklch(0.16 0.025 145); }
+.light-seg { background: var(--line); }
+.light-seg button[aria-pressed="true"] { background: var(--forest); color: var(--bg); }
+
+/* ---------- films ---------- */
+.films { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 32px; margin-top: 32px; }
+.film { display: grid; gap: 14px; align-content: start; min-width: 0; }
+.film .frame { background: var(--stage); border-radius: 14px; overflow: hidden; display: grid; place-items: center; aspect-ratio: 1 / 1; max-width: 100%; }
+.film video { max-width: 100%; max-height: 100%; display: block; }
+.meta { font-size: 0.9rem; color: var(--muted); }
+.meta code { font-size: 0.82rem; }
+
+/* ---------- where each format goes ---------- */
+.formats { overflow-x: auto; margin-top: 28px; }
+table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 0.95rem; }
+th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); font-weight: 800; }
+td:first-child { font-weight: 700; white-space: nowrap; }
+.ratio { display: inline-block; border: 2px solid var(--forest); border-radius: 3px; vertical-align: middle; margin-right: 8px; }
+
+/* ---------- stills ---------- */
+.gallery { columns: 3 260px; column-gap: 20px; margin-top: 32px; }
+.gallery figure { break-inside: avoid; margin: 0 0 20px; }
+.gallery img { width: 100%; display: block; border-radius: 10px; border: 1px solid var(--line); }
+.gallery figcaption { font-size: 0.85rem; color: var(--muted); margin-top: 8px; display: flex; justify-content: space-between; gap: 8px; }
+.gallery figcaption b { color: var(--ink); font-weight: 700; }
+.carousel { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 12px; margin-top: 20px; scroll-snap-type: x mandatory; }
+.carousel img { width: min(240px, 62vw); flex: none; border-radius: 10px; scroll-snap-align: start; }
+
+/* ---------- copy deck ---------- */
+.copy { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 20px; margin-top: 32px; }
+.post { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px; display: grid; gap: 12px; align-content: start; min-width: 0; }
+.post header { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.post .where { font-weight: 800; font-size: 0.9rem; }
+.post .len { font-size: 0.78rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.post pre { white-space: pre-wrap; font-family: var(--body); margin: 0; font-size: 0.95rem; line-height: 1.55; }
+.copy-btn { justify-self: start; border: 1.5px solid var(--forest); background: transparent; color: var(--forest); border-radius: 999px; padding: 6px 16px; font-weight: 700; font-size: 0.85rem; cursor: pointer; }
+.copy-btn:hover { background: var(--forest); color: var(--bg); }
+
+/* ---------- brand ---------- */
+.brand { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 40px; margin-top: 32px; }
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
+.sw { border-radius: 10px; overflow: hidden; border: 1px solid var(--line); font-size: 0.78rem; }
+.sw i { display: block; height: 64px; }
+.sw span { display: block; padding: 8px 10px; }
+.sw b { display: block; font-size: 0.85rem; }
+.type-a { font-family: var(--display); font-weight: 900; font-size: 3rem; line-height: 1; }
+.type-b { font-family: var(--display); font-style: italic; font-size: 2rem; color: var(--forest); }
+dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; margin: 0; font-size: 0.95rem; }
+dt { font-weight: 700; } dd { margin: 0; color: var(--muted); }
+footer { padding-block: 40px; color: var(--muted); font-size: 0.9rem; border-top: 1px solid var(--line); }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-head">
+      <div class="stack" style="gap:10px">
+        <span class="eyebrow">Greenwave Society · Campaign 2026</span>
+        <h1>Join the <em>wave</em><span class="dot">.</span></h1>
+      </div>
+      <p>Two films, a bumper, and a full set of social stills, all drawn in code from the Greenwave brand. Each film exists in four shapes. The player below picks the one that fits your screen.</p>
+    </div>
+    <div class="screen" id="heroScreen">
+      <video id="hero" playsinline muted loop autoplay preload="metadata"></video>
+    </div>
+    <div class="screen-bar">
+      <span class="fit-note" id="fitNote">Choosing the best format for your screen…</span>
+      <div class="seg" role="group" aria-label="Preview format">
+        <button type="button" data-fmt="auto" aria-pressed="true">Auto</button>
+        <button type="button" data-fmt="16x9" aria-pressed="false">16:9</button>
+        <button type="button" data-fmt="4x5" aria-pressed="false">4:5</button>
+        <button type="button" data-fmt="1x1" aria-pressed="false">1:1</button>
+        <button type="button" data-fmt="9x16" aria-pressed="false">9:16</button>
+        <button type="button" id="sound" aria-pressed="false">Sound on</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+<section>
+  <div class="wrap">
+    <span class="eyebrow">The films</span>
+    <h2>Three cuts, one story<span class="dot">.</span></h2>
+    <div class="films">
+      <article class="film">
+        <div class="frame"><video data-film="anthem" playsinline muted loop preload="metadata" controls></video></div>
+        <h3>The Wave</h3>
+        <p class="meta">30 s brand anthem. One gold seed lands and draws a line; the line becomes 500 young people, then 10,000 trees, then the lights of 25 communities, and finally folds into the Greenwave emblem.</p>
+      </article>
+      <article class="film">
+        <div class="frame"><video data-film="programmes" playsinline muted loop preload="metadata" controls></video></div>
+        <h3>Six Ways In</h3>
+        <p class="meta">20 s programme reel. One beat per programme, from The 50 Percent to Urban Resilience, carried by the wave wipe and closing on membership.</p>
+      </article>
+      <article class="film">
+        <div class="frame"><video data-film="bumper" playsinline muted loop preload="metadata" controls></video></div>
+        <h3>Bumper</h3>
+        <p class="meta">6 s sign-off cut from the anthem's ending. Use it for pre-roll, event screens and the end of partner videos.</p>
+      </article>
+    </div>
+    <div class="screen-bar" style="margin-top:24px">
+      <span class="meta">Format for the three players</span>
+      <div class="seg light-seg" role="group" aria-label="Film format">
+        <button type="button" data-ffmt="auto" aria-pressed="true">Auto</button>
+        <button type="button" data-ffmt="16x9" aria-pressed="false">16:9</button>
+        <button type="button" data-ffmt="4x5" aria-pressed="false">4:5</button>
+        <button type="button" data-ffmt="1x1" aria-pressed="false">1:1</button>
+        <button type="button" data-ffmt="9x16" aria-pressed="false">9:16</button>
+      </div>
+    </div>
+    <div class="formats">
+      <table>
+        <thead><tr><th>Format</th><th>Use it for</th><th>Master file</th></tr></thead>
+        <tbody>
+          <tr><td><span class="ratio" style="width:28px;height:16px"></span>16:9</td><td>YouTube, website hero, event screens, partner decks</td><td class="meta"><code>greenwave-*-16x9.mp4</code> · 1920×1080</td></tr>
+          <tr><td><span class="ratio" style="width:16px;height:20px"></span>4:5</td><td>Instagram and Facebook feed, LinkedIn mobile feed</td><td class="meta"><code>greenwave-*-4x5.mp4</code> · 1080×1350</td></tr>
+          <tr><td><span class="ratio" style="width:18px;height:18px"></span>1:1</td><td>Facebook, LinkedIn, X, WhatsApp Status forwards</td><td class="meta"><code>greenwave-*-1x1.mp4</code> · 1080×1080</td></tr>
+          <tr><td><span class="ratio" style="width:12px;height:22px"></span>9:16</td><td>Reels, TikTok, YouTube Shorts, Stories, WhatsApp Status</td><td class="meta"><code>greenwave-*-9x16.mp4</code> · 1080×1920</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">Stills</span>
+    <h2>Posts, stories, banners and print<span class="dot">.</span></h2>
+    <p class="lede" style="margin-top:12px">Every still is rendered from the same code as the films, at the exact pixel size each platform asks for.</p>
+    <h3 style="margin-top:40px">Programme carousel · 4:5</h3>
+    <div class="carousel" aria-label="Programme carousel slides">
+      <img src="media/programme-1-4x5.jpg" alt="Carousel slide: The 50 Percent social enterprise fellowship" loading="lazy">
+      <img src="media/programme-2-4x5.jpg" alt="Carousel slide: Youth Pulse mental health and barazas" loading="lazy">
+      <img src="media/programme-3-4x5.jpg" alt="Carousel slide: Climate Action advocacy training" loading="lazy">
+      <img src="media/programme-4-4x5.jpg" alt="Carousel slide: Conservation, tree planting and clean-ups" loading="lazy">
+      <img src="media/programme-5-4x5.jpg" alt="Carousel slide: Leadership and mentorship" loading="lazy">
+      <img src="media/programme-6-4x5.jpg" alt="Carousel slide: Urban Resilience" loading="lazy">
+    </div>
+    <div class="gallery">
+      <figure><img src="media/impact-4x5.jpg" alt="Impact post: 500+ young people, 10,000 trees, 25 communities, 50+ events" loading="lazy"><figcaption><b>Impact post</b><span>1080×1350</span></figcaption></figure>
+      <figure><img src="media/join-story-9x16.jpg" alt="Story: Join the wave, membership open to ages 15–35" loading="lazy"><figcaption><b>Join story</b><span>1080×1920</span></figcaption></figure>
+      <figure><img src="media/impact-1x1.jpg" alt="Square impact post" loading="lazy"><figcaption><b>Impact square</b><span>1080×1080</span></figcaption></figure>
+      <figure><img src="media/join-1x1.jpg" alt="Square join post with landscape" loading="lazy"><figcaption><b>Join square</b><span>1080×1080</span></figcaption></figure>
+      <figure><img src="media/poster-a4.jpg" alt="A4 poster: Lead. Build. Connect. with programme list and contacts" loading="lazy"><figcaption><b>A4 poster</b><span>PDF at 300 dpi</span></figcaption></figure>
+      <figure><img src="media/og-1200x630.jpg" alt="Link preview card with emblem and wordmark" loading="lazy"><figcaption><b>Link preview</b><span>1200×630</span></figcaption></figure>
+      <figure><img src="media/banner-x-1500x500.jpg" alt="X header banner" loading="lazy"><figcaption><b>X header</b><span>1500×500</span></figcaption></figure>
+      <figure><img src="media/banner-linkedin-1584x396.jpg" alt="LinkedIn cover banner" loading="lazy"><figcaption><b>LinkedIn cover</b><span>1584×396</span></figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">Copy deck</span>
+    <h2>Ready-to-post captions<span class="dot">.</span></h2>
+    <p class="lede" style="margin-top:12px">Written for each platform's length and tone. Pair each with the film or still named at the top.</p>
+    <div class="copy" id="copy"></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <span class="eyebrow">Brand</span>
+    <h2>Built from the website's own system<span class="dot">.</span></h2>
+    <div class="brand">
+      <div class="stack">
+        <h3>Colour</h3>
+        <div class="swatches">
+          <div class="sw"><i style="background:oklch(0.35 0.09 145)"></i><span><b>Forest</b>oklch(0.35 0.09 145)</span></div>
+          <div class="sw"><i style="background:oklch(0.62 0.16 135)"></i><span><b>Leaf</b>logo green</span></div>
+          <div class="sw"><i style="background:oklch(0.74 0.12 80)"></i><span><b>Gold</b>oklch(0.74 0.12 80)</span></div>
+          <div class="sw"><i style="background:oklch(0.55 0.08 60)"></i><span><b>Earth</b>oklch(0.55 0.08 60)</span></div>
+          <div class="sw"><i style="background:oklch(0.975 0.015 85)"></i><span><b>Sand</b>oklch(0.975 0.015 85)</span></div>
+          <div class="sw"><i style="background:oklch(0.16 0.025 145)"></i><span><b>Night forest</b>oklch(0.16 0.025 145)</span></div>
+        </div>
+      </div>
+      <div class="stack">
+        <h3>Type</h3>
+        <div class="type-a">Lead. Build.</div>
+        <div class="type-b">Connect.</div>
+        <p class="meta">Playfair Display for headlines, Plus Jakarta Sans for everything else. Both are the faces the website already uses.</p>
+      </div>
+      <div class="stack">
+        <h3>Sound and motion</h3>
+        <dl>
+          <dt>Tempo</dt><dd>96 BPM, one bar = 2.5 s</dd>
+          <dt>Key</dt><dd>D major, D · Bm · G · A</dd>
+          <dt>Palette</dt><dd>Kalimba, marimba, shaker, warm bass</dd>
+          <dt>Transition</dt><dd>The wave wipe: a sine-edged panel</dd>
+          <dt>Signature</dt><dd>The gold seed, which returns as the full stop</dd>
+          <dt>Loudness</dt><dd>−14 LUFS, −1 dBTP</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+<footer>
+  <div class="wrap">Greenwave Society · greenwavesociety.org · info@greenwavesociety.org · +254 700 519 130. The films play here as 720p web cuts. The source lives in the website repository under <code>marketing/</code>, and <code>sh build.sh</code> re-renders the full-resolution masters.</div>
+</footer>
+
+<script>
+(() => {
+  const FORMATS = { '16x9': 16 / 9, '4x5': 4 / 5, '1x1': 1, '9x16': 9 / 16 };
+  // Choose the shape closest to the space available: phones held upright get 9:16,
+  // tablets upright get 4:5, near-square windows get 1:1, everything wider gets 16:9.
+  function bestFor(w, h) {
+    const ar = w / h;
+    if (ar >= 1.3) return '16x9';
+    if (ar >= 0.9) return '1x1';
+    if (ar >= 0.68) return '4x5';
+    return '9x16';
+  }
+  const src = (film, fmt) => `media/greenwave-${film}-${fmt}-web.mp4`;
+  const poster = (film, fmt) => film === 'bumper' ? `media/anthem-poster-${fmt}.jpg` : `media/${film}-poster-${fmt}.jpg`;
+  function swap(video, film, fmt) {
+    const next = src(film, fmt);
+    if (video.dataset.src === next) return;
+    const t = video.currentTime || 0, playing = !video.paused;
+    video.dataset.src = next;
+    video.poster = poster(film, fmt);
+    video.src = next;
+    video.addEventListener('loadedmetadata', () => { try { video.currentTime = Math.min(t, video.duration - 0.1); } catch (e) {} if (playing) video.play().catch(() => {}); }, { once: true });
+  }
+
+  // ---- hero ----
+  const hero = document.getElementById('hero'), screen = document.getElementById('heroScreen'), note = document.getElementById('fitNote');
+  let heroChoice = 'auto';
+  function layoutHero() {
+    const vw = document.documentElement.clientWidth, vh = window.innerHeight;
+    const fmt = heroChoice === 'auto' ? bestFor(vw, vh) : heroChoice;
+    const ar = FORMATS[fmt];
+    const maxW = screen.parentElement.clientWidth, maxH = Math.max(320, vh * 0.78);
+    let w = maxW, h = w / ar;
+    if (h > maxH) { h = maxH; w = h * ar; }
+    screen.style.width = `${Math.round(w)}px`; screen.style.height = `${Math.round(h)}px`;
+    swap(hero, 'anthem', fmt);
+    const label = fmt.replace('x', ':');
+    note.innerHTML = heroChoice === 'auto' ? `Showing <b>${label}</b>, the best fit for this screen (${vw}×${vh}).` : `Previewing <b>${label}</b>. Choose Auto to fit your screen.`;
+  }
+  document.querySelectorAll('[data-fmt]').forEach((b) => b.addEventListener('click', () => {
+    heroChoice = b.dataset.fmt;
+    document.querySelectorAll('[data-fmt]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    layoutHero();
+  }));
+  const sound = document.getElementById('sound');
+  sound.addEventListener('click', () => {
+    hero.muted = !hero.muted;
+    sound.setAttribute('aria-pressed', String(!hero.muted));
+    sound.textContent = hero.muted ? 'Sound on' : 'Sound off';
+    if (!hero.muted) { hero.currentTime = 0; hero.play().catch(() => {}); }
+  });
+
+  // ---- film cards ----
+  let filmChoice = 'auto';
+  function layoutFilms() {
+    document.querySelectorAll('video[data-film]').forEach((v) => {
+      const box = v.parentElement;
+      const fmt = filmChoice === 'auto' ? bestFor(document.documentElement.clientWidth, window.innerHeight) : filmChoice;
+      box.style.aspectRatio = String(Math.max(FORMATS[fmt], 0.8));
+      swap(v, v.dataset.film, fmt);
+    });
+  }
+  document.querySelectorAll('[data-ffmt]').forEach((b) => b.addEventListener('click', () => {
+    filmChoice = b.dataset.ffmt;
+    document.querySelectorAll('[data-ffmt]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    layoutFilms();
+  }));
+  let raf;
+  addEventListener('resize', () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => { layoutHero(); layoutFilms(); }); });
+  layoutHero(); layoutFilms();
+  hero.play().catch(() => {});
+
+  // ---- copy deck ----
+  const POSTS = [
+    { where: 'Instagram Reel', with: 'The Wave · 9:16', text: `It starts with one.\n\nOne young person becomes 500. 500 hands plant 10,000 trees. 10,000 trees light up 25 communities.\n\nThat's the wave. Greenwave Society equips young Kenyans aged 15–35 to lead, build, and connect.\n\nMembership is open. Link in bio.\n\n#GreenwaveSociety #JoinTheWave #YouthLeadership #ClimateActionKenya #Nairobi` },
+    { where: 'TikTok', with: 'Six Ways In · 9:16', text: `6 ways to join the wave 🌱 which one is you?\n\n1. The 50 Percent\n2. Youth Pulse\n3. Climate Action\n4. Conservation\n5. Leadership\n6. Urban Resilience\n\nAges 15–35. greenwavesociety.org\n\n#GreenwaveSociety #KenyanYouth #ClimateTok #Nairobi` },
+    { where: 'X', with: 'The Wave · 16:9 or 1:1', text: `500+ young people. 10,000 trees. 25 communities.\n\nIt started with one. Join the wave: greenwavesociety.org/join\n\n#JoinTheWave` },
+    { where: 'LinkedIn', with: 'The Wave · 1:1, then the impact post', text: `Kenya's youth are not waiting for change. They are building it.\n\nAt Greenwave Society we train young people aged 15–35 in social enterprise, systems thinking, and environmental action, then hand them real projects to lead. So far that has meant more than 500 young people reached, 10,000 trees planted and 25 communities served.\n\nWe are growing into a self-sustaining social enterprise, and we are looking for members, volunteers and partners who want to grow with us.\n\nLearn more at greenwavesociety.org` },
+    { where: 'WhatsApp Status', with: 'Bumper · 9:16', text: `Greenwave Society membership is open 🌍 Ages 15–35. Lead, build, connect. greenwavesociety.org/join` },
+    { where: 'Facebook', with: 'Programme carousel · 4:5', text: `Swipe through our six programmes 👉\n\nFrom The 50 Percent social enterprise fellowship to tree planting, Youth Pulse barazas and climate advocacy training, there is a place for every young Kenyan who wants to make a difference.\n\nJoin the wave at greenwavesociety.org/join` },
+  ];
+  const deck = document.getElementById('copy');
+  POSTS.forEach((p, i) => {
+    const el = document.createElement('article');
+    el.className = 'post';
+    el.innerHTML = `<header><span class="where"></span><span class="len"></span></header><span class="meta"></span><pre></pre><button type="button" class="copy-btn" id="copy-${i}">Copy caption</button>`;
+    el.querySelector('.where').textContent = p.where;
+    el.querySelector('.len').textContent = `${[...p.text].length} chars`;
+    el.querySelector('.meta').textContent = `Post with: ${p.with}`;
+    el.querySelector('pre').textContent = p.text;
+    const btn = el.querySelector('button');
+    btn.addEventListener('click', () => {
+      const done = () => { btn.textContent = 'Copied'; setTimeout(() => (btn.textContent = 'Copy caption'), 1600); };
+      const fallback = () => { const r = document.createRange(); r.selectNodeContents(el.querySelector('pre')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = 'Selected, press Ctrl+C'; };
+      if (navigator.clipboard?.writeText) navigator.clipboard.writeText(p.text).then(done, fallback); else fallback();
+    });
+    deck.appendChild(el);
+  });
+})();
+</script>

@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:,">
+<title>Greenwave Society: Six Programmes</title>
+</head>
+<body>
+<script type="module">
+// "Six ways to join the wave" — 20 s programme reel. 96 BPM, 8 bars of 2.5 s.
+// Each programme gets one bar; a sine-edged wave carries us from card to card.
+import * as B from '../../engine/brand.js';
+const { C, E, clamp, lerp, seg } = B;
+
+const BPM = 96, BEAT = 60 / BPM, BAR = BEAT * 4, DUR = BAR * 8;
+const CARDS = [
+  { title: 'The 50 Percent', sub: 'Social enterprise & systems thinking fellowship', tags: ['Flagship', 'Ages 18–35'], bg: C.gold, fg: C.night, accent: C.forest, icon: 'enterprise' },
+  { title: 'Youth Pulse', sub: 'Mental health, peer support & community barazas', tags: ['Volunteers', 'Wellbeing'], bg: C.forest, fg: C.sand, accent: C.gold, icon: 'pulse' },
+  { title: 'Climate Action', sub: 'Advocacy & climate literacy training', tags: ['Workshops', 'Schools'], bg: 'oklch(0.3 0.06 200)', fg: C.sand, accent: C.lime, icon: 'climate' },
+  { title: 'Conservation', sub: 'Tree planting, clean-ups & habitat restoration', tags: ['Tree planting', 'Clean-ups'], bg: C.leaf, fg: C.night, accent: C.goldLight, icon: 'conserve' },
+  { title: 'Leadership', sub: 'Mentorship and real projects to lead', tags: ['Mentorship', 'Facilitation'], bg: C.earth, fg: C.sand, accent: C.goldLight, icon: 'lead' },
+  { title: 'Urban Resilience', sub: 'Sustainable models for thriving communities', tags: ['Social enterprise', 'Cities'], bg: C.sand, fg: C.forest, accent: C.leaf, icon: 'city' },
+];
+const start = (i) => BAR * (i + 1);
+const EV = [];
+CARDS.forEach((c, i) => { EV.push({ t: start(i), type: 'wipe', i }, { t: start(i) + 0.05, type: 'card', i }, { t: start(i) + 0.7, type: 'icon', i }); });
+EV.push({ t: BAR * 7, type: 'wipe', i: 6 }, { t: BAR * 7 + 0.05, type: 'hit' }, { t: BAR * 7 + 1.4, type: 'cta' });
+window.TL = { bpm: BPM, beat: BEAT, bar: BAR, bars: 8, dur: DUR };
+
+function layoutCard(L) {
+  const { W, H, m } = L;
+  if (L.land) return { tx: m * 1.4, ty: H * 0.36, tw: W * 0.48, ix: W * 0.73, iy: H * 0.52, S: H * 0.6, align: 'left' };
+  if (L.tall) return { tx: m, ty: H * 0.62, tw: W - m * 2, ix: W / 2, iy: H * 0.34, S: W * 0.66, align: 'left' };
+  return { tx: m, ty: H * 0.62, tw: W - m * 2, ix: W * 0.5, iy: H * 0.31, S: H * 0.42, align: 'left' };
+}
+
+// ---------- icons (unit box of size S centred at x,y; p = 0..1 build) ----------
+function icon(ctx, kind, x, y, S, p, t, c) {
+  ctx.save(); ctx.translate(x, y);
+  const s = S / 2;
+  const k = E.outBack(clamp(p / 0.6), 1.4);
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  if (kind === 'enterprise') {
+    // half-filled ring ("the 50 percent") around rising bars
+    ctx.lineWidth = s * 0.12; ctx.strokeStyle = B.a(c.fg, 0.15);
+    ctx.beginPath(); ctx.arc(0, 0, s * 0.82, 0, Math.PI * 2); ctx.stroke();
+    ctx.strokeStyle = c.fg;
+    ctx.beginPath(); ctx.arc(0, 0, s * 0.82, -Math.PI / 2, -Math.PI / 2 + Math.PI * E.outCubic(clamp(p / 0.7))); ctx.stroke();
+    const hs = [0.25, 0.42, 0.62, 0.9];
+    hs.forEach((h, i) => {
+      const g = E.outBack(clamp((p - 0.1 - i * 0.08) / 0.4), 1.6);
+      ctx.fillStyle = i === 3 ? c.accent : c.fg;
+      B.roundRect(ctx, -s * 0.42 + i * s * 0.23, s * 0.38 - s * 0.85 * h * g, s * 0.16, s * 0.85 * h * g, s * 0.03); ctx.fill();
+    });
+    const ak = E.outCubic(clamp((p - 0.4) / 0.4));
+    ctx.strokeStyle = c.accent; ctx.lineWidth = s * 0.05;
+    ctx.beginPath(); ctx.moveTo(-s * 0.48, s * 0.1); ctx.lineTo(lerp(-s * 0.48, s * 0.46, ak), lerp(s * 0.1, -s * 0.5, ak)); ctx.stroke();
+  } else if (kind === 'pulse') {
+    // heartbeat line that becomes a heart
+    const pts = [];
+    for (let i = 0; i <= 60; i++) {
+      const u = i / 60, xx = lerp(-s * 0.95, s * 0.95, u);
+      let yy = 0;
+      if (u > 0.3 && u < 0.6) { const v = (u - 0.3) / 0.3; yy = -Math.sin(v * Math.PI * 3) * s * 0.4 * Math.sin(v * Math.PI); }
+      pts.push([xx, yy + s * 0.55]);
+    }
+    const dk = clamp(p / 0.5);
+    ctx.strokeStyle = c.accent; ctx.lineWidth = s * 0.05;
+    ctx.beginPath(); pts.slice(0, Math.max(1, Math.floor(dk * pts.length))).forEach(([xx, yy], i) => (i ? ctx.lineTo(xx, yy) : ctx.moveTo(xx, yy))); ctx.stroke();
+    const hk = E.outBack(clamp((p - 0.35) / 0.45), 2);
+    const beat = 1 + 0.06 * Math.max(0, Math.sin(t * Math.PI * 2 * BPM / 60)) * hk;
+    ctx.save(); ctx.translate(0, -s * 0.12); ctx.scale(hk * beat, hk * beat);
+    ctx.fillStyle = c.fg;
+    ctx.beginPath();
+    ctx.moveTo(0, s * 0.42);
+    ctx.bezierCurveTo(-s * 0.9, -s * 0.1, -s * 0.45, -s * 0.8, 0, -s * 0.32);
+    ctx.bezierCurveTo(s * 0.45, -s * 0.8, s * 0.9, -s * 0.1, 0, s * 0.42);
+    ctx.fill();
+    ctx.restore();
+    for (let i = 0; i < 5; i++) B.person(ctx, -s * 0.6 + i * s * 0.3, s * 0.95, s * 0.36, 40 + i, { k: clamp((p - 0.45 - i * 0.05) / 0.3) });
+  } else if (kind === 'climate') {
+    // megaphone with sound arcs carrying leaves
+    ctx.save(); ctx.scale(k, k); ctx.rotate(-0.12);
+    ctx.fillStyle = c.fg;
+    ctx.beginPath(); ctx.moveTo(-s * 0.7, -s * 0.15); ctx.lineTo(-s * 0.05, -s * 0.5); ctx.lineTo(-s * 0.05, s * 0.5); ctx.lineTo(-s * 0.7, s * 0.15); ctx.closePath(); ctx.fill();
+    B.roundRect(ctx, -s * 0.9, -s * 0.17, s * 0.24, s * 0.34, s * 0.06); ctx.fill();
+    ctx.fillRect(-s * 0.62, s * 0.12, s * 0.1, s * 0.34);
+    ctx.restore();
+    for (let i = 0; i < 3; i++) {
+      const ak = E.outCubic(clamp((p - 0.25 - i * 0.12) / 0.35));
+      if (ak <= 0) continue;
+      ctx.strokeStyle = B.a(c.accent, 1 - i * 0.2); ctx.lineWidth = s * 0.06;
+      const r = s * (0.25 + i * 0.22);
+      ctx.beginPath(); ctx.arc(s * 0.02, -s * 0.06, r, -0.9 * ak, 0.9 * ak); ctx.stroke();
+    }
+    for (let i = 0; i < 3; i++) {
+      const lk = clamp((p - 0.45 - i * 0.1) / 0.5);
+      if (lk <= 0) continue;
+      const lx = s * (0.75 + 0.15 * i) + Math.sin(t * 2 + i) * s * 0.05, ly = -s * (0.5 - i * 0.45);
+      ctx.save(); ctx.translate(lx, ly); ctx.rotate(t * 0.8 + i); ctx.scale(E.outBack(lk), E.outBack(lk));
+      ctx.fillStyle = c.accent;
+      ctx.beginPath(); ctx.moveTo(0, -s * 0.14); ctx.quadraticCurveTo(s * 0.12, 0, 0, s * 0.14); ctx.quadraticCurveTo(-s * 0.12, 0, 0, -s * 0.14); ctx.fill();
+      ctx.restore();
+    }
+  } else if (kind === 'conserve') {
+    const sk = E.outCubic(clamp(p / 0.6));
+    B.glow(ctx, s * 0.45, -s * 0.45, s * 0.6, C.goldLight, 0.6 * sk);
+    ctx.fillStyle = c.accent; ctx.beginPath(); ctx.arc(s * 0.45, -s * 0.45 + (1 - sk) * s * 0.3, s * 0.2, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = B.a(c.fg, 0.9);
+    ctx.beginPath(); ctx.ellipse(0, s * 0.72, s * 0.95, s * 0.22, 0, Math.PI, 0); ctx.fill();
+    B.acacia(ctx, -s * 0.1, s * 0.62, s * 1.4, clamp((p - 0.1) / 0.7), c.fg, 4);
+    B.roundTree(ctx, s * 0.55, s * 0.62, s * 0.6, clamp((p - 0.3) / 0.6), c.fg, 5);
+    B.person(ctx, -s * 0.65, s * 0.62, s * 0.42, 9, { k: clamp((p - 0.5) / 0.3), wave: clamp((p - 0.7) / 0.2) });
+  } else if (kind === 'lead') {
+    // steps with a figure arriving at the top
+    const steps = 4;
+    for (let i = 0; i < steps; i++) {
+      const g = E.outBack(clamp((p - i * 0.08) / 0.35), 1.5);
+      ctx.fillStyle = i === steps - 1 ? c.accent : c.fg;
+      const w = s * 0.42, h = s * 0.32 * (i + 1) * g;
+      ctx.fillRect(-s * 0.84 + i * w, s * 0.8 - h, w - s * 0.04, h);
+    }
+    const ck = E.inOutCubic(clamp((p - 0.3) / 0.45));
+    const fi = ck * (steps - 1);
+    const st = Math.floor(fi), fr = fi - st;
+    const px = -s * 0.84 + s * 0.21 + (st + E.inOutCubic(fr)) * s * 0.42;
+    const py = s * 0.8 - s * 0.32 * (st + 1) - Math.sin(fr * Math.PI) * s * 0.12 - (fr > 0.5 ? s * 0.32 * E.inOutCubic((fr - 0.5) * 2) : 0);
+    B.person(ctx, px, Math.min(py, s * 0.8 - s * 0.32), s * 0.5, 22, { k: clamp(p / 0.25), wave: clamp((p - 0.78) / 0.15), scarf: true });
+  } else if (kind === 'city') {
+    B.glow(ctx, 0, 0, s * 1.1, c.accent, 0.25 * k);
+    B.skyline(ctx, -s * 1.15, s * 0.72, s * 1.6, clamp(p / 0.7));
+    B.turbine(ctx, -s * 0.45, s * 0.72, s * 1.15, t * 2.5, clamp((p - 0.15) / 0.6), C.leafDark);
+    ctx.fillStyle = C.leafDark; ctx.fillRect(-s * 0.95, s * 0.7, s * 1.9, s * 0.05);
+  }
+  ctx.restore();
+}
+
+function draw(ctx, t, L) {
+  const { W, H, u, m } = L;
+  const lc = layoutCard(L);
+  const ci = Math.floor(t / BAR) - 1;
+  // background: current card (or intro / outro), with the wave wiping the next one in
+  const bgOf = (i) => (i < 0 ? C.night : i >= 6 ? C.night : CARDS[i].bg);
+  ctx.fillStyle = bgOf(ci); ctx.fillRect(0, 0, W, H);
+
+  if (ci < 0) intro(ctx, t, L);
+  else if (ci < 6) card(ctx, t, L, ci, t - start(ci));
+  else outro(ctx, t, L, t - BAR * 7);
+
+  // wave wipe into the next section
+  const next = ci + 1;
+  if (next <= 6) {
+    const tw = start(next);
+    const p = seg(t, tw - 0.42, tw);
+    if (p > 0) {
+      B.waveWipe(ctx, W, H, E.inOutCubic(p) * 1.02, B.a(C.sand, 0.2), { dir: next % 2 ? 1 : -1, amp: 0.06, phase: t * 3 });
+      B.waveWipe(ctx, W, H, E.inOutCubic(clamp(p * 1.12 - 0.08)), bgOf(next), { dir: next % 2 ? 1 : -1, amp: 0.05, phase: t * 3 + 1 });
+    }
+  }
+  // persistent brand bug
+  if (ci >= 0 && ci < 6) {
+    const c = CARDS[ci];
+    B.font(ctx, 'sans', 800, 22 * u); ctx.letterSpacing = `${3 * u}px`;
+    ctx.fillStyle = B.a(c.fg, 0.75); ctx.textAlign = 'left';
+    ctx.fillText('GREENWAVE SOCIETY', m, m * 0.9 + 10 * u);
+    ctx.textAlign = 'right';
+    ctx.fillText(`${String(ci + 1).padStart(2, '0')} / 06`, W - m, m * 0.9 + 10 * u);
+    ctx.letterSpacing = '0px'; ctx.textAlign = 'left';
+    // progress ticks
+    for (let i = 0; i < 6; i++) {
+      ctx.fillStyle = B.a(c.fg, i <= ci ? 0.85 : 0.2);
+      const bw = (W - m * 2 - 5 * 8 * u) / 6;
+      ctx.fillRect(m + i * (bw + 8 * u), m * 0.9 + 30 * u, i === ci ? bw * clamp((t - start(ci)) / BAR) : i < ci ? bw : bw, 4 * u);
+    }
+  }
+}
+
+function intro(ctx, t, L) {
+  const { W, H, u, m } = L;
+  // a lime wave travelling across the dark
+  ctx.lineCap = 'round';
+  const reach = E.outExpo(seg(t, 0, 1.1));
+  for (const [lw, al] of [[16, 0.12], [6, 0.3], [3, 1]]) {
+    ctx.strokeStyle = B.a(C.lime, al); ctx.lineWidth = lw * u;
+    ctx.beginPath();
+    for (let x = 0; x <= W * reach; x += 8) {
+      const y = H * (L.tall ? 0.6 : 0.66) + Math.sin(x / (W * 0.12) - t * 4) * 34 * u * (0.4 + 0.6 * x / W);
+      x ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+    }
+    ctx.stroke();
+  }
+  const px = (L.land ? 120 : L.tall ? 118 : 104) * u;
+  const x = L.land ? m * 1.4 : m;
+  const y0 = L.land ? H * 0.36 : L.tall ? H * 0.34 : H * 0.3;
+  B.font(ctx, 'serif', 400, px * 0.72, true);
+  B.riseText(ctx, 'Six ways to', x, y0, seg(t, 0.2, 1.0) * 1.4, { px: px * 0.72, color: C.sand });
+  const sz = B.fitSize(ctx, 'join the wave.', 'serif', 900, px, W - m * 2.4);
+  B.font(ctx, 'serif', 900, sz);
+  B.riseText(ctx, 'join the wave.', x, y0 + sz * 1.08, seg(t, 0.5, 1.4) * 1.4, { px: sz, color: C.gold });
+}
+
+function card(ctx, t, L, i, lt) {
+  const { W, H, u, m } = L;
+  const c = CARDS[i];
+  const lc = layoutCard(L);
+  // giant outlined number
+  B.font(ctx, 'serif', 900, (L.land ? 620 : 560) * u);
+  ctx.strokeStyle = B.a(c.fg, 0.1); ctx.lineWidth = 3 * u; ctx.textAlign = 'right';
+  ctx.strokeText(String(i + 1).padStart(2, '0'), W + 30 * u - lerp(0, 60 * u, lt / BAR), H - m * 0.4);
+  ctx.textAlign = 'left';
+  // icon
+  const drift = lerp(10, -10, lt / BAR) * u;
+  icon(ctx, c.icon, lc.ix, lc.iy + drift, lc.S, seg(lt, 0.15, 1.6), t, c);
+  // text
+  const tpx = B.fitSize(ctx, c.title, 'serif', 900, (L.land ? 128 : L.tall ? 112 : 96) * u, lc.tw);
+  B.font(ctx, 'serif', 900, tpx);
+  B.riseText(ctx, c.title, lc.tx, lc.ty + tpx * 0.8, seg(lt, 0.05, 0.75) * 1.4, { px: tpx, color: c.fg, stagger: 0.15 });
+  const spx = B.fitSize(ctx, c.sub, 'sans', 500, (L.land ? 36 : 34) * u, lc.tw);
+  B.font(ctx, 'sans', 500, spx);
+  ctx.globalAlpha = E.outCubic(seg(lt, 0.35, 0.8));
+  ctx.fillStyle = B.a(c.fg, 0.85);
+  ctx.fillText(c.sub, lc.tx, lc.ty + tpx * 0.8 + spx * 1.9 + (1 - ctx.globalAlpha) * 14 * u);
+  ctx.globalAlpha = 1;
+  // tags
+  let tx = lc.tx;
+  c.tags.forEach((tag, j) => {
+    const k = seg(lt, 0.55 + j * 0.1, 0.85 + j * 0.1);
+    if (k <= 0) return;
+    B.font(ctx, 'sans', 700, 22 * u);
+    const tw = ctx.measureText(tag.toUpperCase()).width + 34 * u;
+    const y = lc.ty + tpx * 0.8 + spx * 1.9 + 70 * u;
+    ctx.globalAlpha = k;
+    ctx.strokeStyle = B.a(c.fg, 0.6); ctx.lineWidth = 2 * u;
+    B.roundRect(ctx, tx, y - 22 * u, tw, 44 * u, 22 * u); ctx.stroke();
+    ctx.fillStyle = c.fg; ctx.letterSpacing = `${1.5 * u}px`;
+    ctx.fillText(tag.toUpperCase(), tx + 17 * u, y + 8 * u);
+    ctx.letterSpacing = '0px'; ctx.globalAlpha = 1;
+    tx += tw + 14 * u;
+  });
+}
+
+function outro(ctx, t, L, lt) {
+  const { W, H, u, m } = L;
+  const R = L.land ? H * 0.24 : L.tall ? W * 0.32 : H * 0.2;
+  const ex = L.land ? W * 0.3 : W / 2;
+  const ey = L.land ? H * 0.6 : L.tall ? H * 0.4 : H * 0.42;
+  const g = seg(lt, 0.0, 1.3);
+  B.emblem(ctx, ex, ey, R, { g, spin: lt * 2.4 + E.outCubic(g) * 4, glowA: 0.5 });
+  const x = L.land ? W * 0.53 : W / 2;
+  const align = L.land ? 'left' : 'center';
+  const maxW = L.land ? W - x - m : W - m * 2;
+  const px = B.fitSize(ctx, 'Greenwave Society', 'serif', 900, (L.land ? 96 : 100) * u, maxW);
+  const y = L.land ? H * 0.46 : ey + R + px * 1.35;
+  B.font(ctx, 'serif', 900, px);
+  B.riseText(ctx, 'Greenwave Society', x, y, seg(lt, 0.4, 1.2) * 1.5, { align, px, color: C.sand });
+  const spx = B.fitSize(ctx, 'Find your programme. Membership is open.', 'sans', 500, 32 * u, maxW);
+  B.font(ctx, 'sans', 500, spx);
+  ctx.globalAlpha = seg(lt, 0.8, 1.3);
+  ctx.fillStyle = B.a(C.sand, 0.85); ctx.textAlign = align;
+  ctx.fillText('Find your programme. Membership is open.', x, y + px * 0.75);
+  ctx.globalAlpha = 1; ctx.textAlign = 'left';
+  const ck = seg(lt, 1.4, 1.9);
+  if (ck > 0) {
+    const cy = y + px * 0.75 + 80 * u;
+    if (L.land) {
+      const p = B.pill(ctx, x, cy, 'JOIN THE WAVE', 28 * u, { k: ck, align: 'left' });
+      B.font(ctx, 'sans', 700, 30 * u); ctx.fillStyle = C.sand; ctx.globalAlpha = ck;
+      ctx.fillText('greenwavesociety.org', p.x0 + p.w + 26 * u, cy + 11 * u);
+    } else {
+      B.pill(ctx, x, cy, 'JOIN THE WAVE', 30 * u, { k: ck });
+      B.font(ctx, 'sans', 700, 32 * u); ctx.fillStyle = C.sand; ctx.globalAlpha = ck; ctx.textAlign = 'center';
+      ctx.fillText('greenwavesociety.org', x, cy + 96 * u);
+    }
+    ctx.globalAlpha = 1; ctx.textAlign = 'left';
+  }
+}
+
+B.boot({ dur: DUR, draw, events: EV });
+</script>
+</body>
+</html>
