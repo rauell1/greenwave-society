@@ -19,7 +19,8 @@ footage or generated imagery, and every piece can be re-rendered at any size.
 | Media kit page | | any screen | `kit/index.html` |
 
 Rendered files land in `out/` (masters in `out/films/`, stills in `out/stills/`) and the
-720p web cuts the media kit plays in `kit/media/`.
+720p web cuts and stills the media kit shows in `kit/media/`. Both folders are
+git-ignored: run `sh build.sh` to produce them.
 
 ## How it scales to every device
 
