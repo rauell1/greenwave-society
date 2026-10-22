@@ -10,6 +10,10 @@ export const CAREER_ROLES = {
     question: "Tell us about a time you shaped an external message, campaign, or public narrative. What did you consider and what changed because of your work?",
     datePosted: "2026-09-07",
     startDate: "7 September",
+    engagement: "Volunteer leadership",
+    meeting: "Thursdays, 8:00 PM",
+    reporting: "Report to the executive team, CEO, and COO. The role includes decision-making authority with oversight for significant commitments.",
+    rhythm: "The executive team meets every Thursday at 8:00 PM. Other meetings and physical attendance are communicated in advance.",
   },
   "internal-communications-assistant": {
     title: "Internal Communications Assistant",
@@ -20,6 +24,10 @@ export const CAREER_ROLES = {
     question: "Imagine members leave a meeting with different understandings of a decision. How would you turn the discussion into one clear and useful internal update?",
     datePosted: "2026-09-07",
     startDate: "7 September",
+    engagement: "Volunteer leadership",
+    meeting: "Thursdays, 8:00 PM",
+    reporting: "Report to the executive team, CEO, and COO. The role includes decision-making authority with oversight for significant commitments.",
+    rhythm: "The executive team meets every Thursday at 8:00 PM. Other meetings and physical attendance are communicated in advance.",
   },
   "partnerships-lead": {
     title: "Partnerships Lead",
@@ -30,6 +38,10 @@ export const CAREER_ROLES = {
     question: "Tell us how you would approach a potential partner whose mission aligns with Greenwave Society but who has never worked with us before.",
     datePosted: "2026-09-07",
     startDate: "7 September",
+    engagement: "Volunteer leadership",
+    meeting: "Thursdays, 8:00 PM",
+    reporting: "Report to the executive team, CEO, and COO. The role includes decision-making authority with oversight for significant commitments.",
+    rhythm: "The executive team meets every Thursday at 8:00 PM. Other meetings and physical attendance are communicated in advance.",
   },
   "talent-manager": {
     title: "Talent Manager",
@@ -40,12 +52,18 @@ export const CAREER_ROLES = {
     question: "Tell us about a time you recruited, onboarded, or supported people in a team or community. How did you find the right people, and what did you do to help them stay and grow?",
     datePosted: "2026-10-22",
     startDate: "As soon as possible",
+    engagement: "Volunteer",
+    meeting: "Tuesdays",
+    reporting: "Work with Greenwave Society's leadership on recruitment and people priorities. This role is not part of the executive team, and significant commitments are agreed with executive leadership.",
+    rhythm: "The Talent Manager meets with their team every Tuesday. Other meetings and physical attendance are communicated in advance.",
+    requiresProfileLink: true,
   },
 } as const;
 
 export type CareerSlug = keyof typeof CAREER_ROLES;
 export const CAREER_SLUGS = Object.keys(CAREER_ROLES) as CareerSlug[];
 export function isCareerSlug(value: string): value is CareerSlug { return value in CAREER_ROLES; }
+export function requiresProfileLink(slug: CareerSlug) { return "requiresProfileLink" in CAREER_ROLES[slug]; }
 
 export async function ensureCareerRoles() {
   const db = getDb();
