@@ -40,12 +40,14 @@ export const CAREER_ROLES = {
     question: "Tell us about a time you recruited, onboarded, or supported people in a team or community. How did you find the right people, and what did you do to help them stay and grow?",
     datePosted: "2026-10-22",
     startDate: "As soon as possible",
+    requiresProfileLink: true,
   },
 } as const;
 
 export type CareerSlug = keyof typeof CAREER_ROLES;
 export const CAREER_SLUGS = Object.keys(CAREER_ROLES) as CareerSlug[];
 export function isCareerSlug(value: string): value is CareerSlug { return value in CAREER_ROLES; }
+export function requiresProfileLink(slug: CareerSlug) { return "requiresProfileLink" in CAREER_ROLES[slug]; }
 
 export async function ensureCareerRoles() {
   const db = getDb();
