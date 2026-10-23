@@ -38,7 +38,7 @@ export const metadata: Metadata = {
 const galleryImages: GalleryImage[] = [
   { src: "/images/20241214_135952.jpg", alt: "Community engagement event in 2024" },
   { src: "/images/g-59.jpg", alt: "Youth leadership workshop" },
-  { src: "/images/g-191.jpg", alt: "Tree planting and conservation" },
+  { src: "/images/20250404_134843.jpg", alt: "Tree planting and conservation" },
   { src: "/images/g-54.jpg", alt: "Mentorship session" },
   { src: "/images/g.jpg", alt: "Community baraza" },
   { src: "/images/20241214_130327.jpg", alt: "Greenwave volunteers" },
