@@ -18,9 +18,9 @@ export function Hero({ impact = IMPACT_STATS }: { impact?: ImpactStats }) {
       <div className="max-w-7xl mx-auto px-6 sm:px-8 w-full">
         <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           
-          {/* Left Text Column */}
+          {/* Left Text Column - Rendered immediately for optimal LCP & FCP */}
           <div className="lg:col-span-7 flex flex-col justify-center text-left">
-            <FadeIn delay={0.1}>
+            <div>
               <Badge
                 variant="secondary"
                 className="mb-6 px-4 py-2 text-xs uppercase tracking-wider font-bold bg-primary/10 text-primary border border-primary/20 rounded-full"
@@ -28,45 +28,39 @@ export function Hero({ impact = IMPACT_STATS }: { impact?: ImpactStats }) {
                 <Sprout className="w-3.5 h-3.5 mr-1.5" />
                 Social Enterprise &bull; Think Tank &bull; Kenya
               </Badge>
-            </FadeIn>
+            </div>
 
-            <FadeIn delay={0.2}>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-serif font-black text-foreground leading-[1.05] tracking-tight">
-                Turning systems <br />
-                thinking into <span className="text-primary italic font-normal">community change</span>
-              </h1>
-            </FadeIn>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-serif font-black text-foreground leading-[1.05] tracking-tight">
+              Turning systems <br />
+              thinking into <span className="text-primary italic font-normal">community change</span>
+            </h1>
 
-            <FadeIn delay={0.35}>
-              <p className="mt-6 text-base sm:text-lg text-muted-foreground leading-relaxed max-w-xl">
-                Greenwave Society is a youth-led social enterprise and think tank in Kenya. We translate complex systems into simple, practical action: enterprise training, community barazas, conservation, and knowledge-driven partnerships that put young people at the centre.
-              </p>
-            </FadeIn>
+            <p className="mt-6 text-base sm:text-lg text-muted-foreground leading-relaxed max-w-xl">
+              Greenwave Society is a youth-led social enterprise and think tank in Kenya. We translate complex systems into simple, practical action: enterprise training, community barazas, conservation, and knowledge-driven partnerships that put young people at the centre.
+            </p>
 
-            <FadeIn delay={0.5}>
-              <div className="mt-8 flex flex-wrap gap-4">
-                <Button
-                  asChild
-                  size="lg"
-                  className="rounded-xl bg-primary hover:bg-primary/95 text-primary-foreground font-semibold px-8 py-6 shadow-[0_10px_30px_oklch(var(--primary)/25%)]"
-                >
-                  <Link href="/contact?interest=volunteer">
-                    Join Our Mission <ArrowRight className="ml-2 w-4 h-4" />
-                  </Link>
-                </Button>
-                <Button
-                  asChild
-                  variant="outline"
-                  size="lg"
-                  className="rounded-xl border-border bg-transparent text-foreground hover:bg-secondary/40 font-semibold px-8 py-6"
-                >
-                  <Link href="/about">Learn More</Link>
-                </Button>
-              </div>
-            </FadeIn>
+            <div className="mt-8 flex flex-wrap gap-4">
+              <Button
+                asChild
+                size="lg"
+                className="rounded-xl bg-primary hover:bg-primary/95 text-primary-foreground font-semibold px-8 py-6 shadow-[0_10px_30px_oklch(var(--primary)/25%)]"
+              >
+                <Link href="/contact?interest=volunteer">
+                  Join Our Mission <ArrowRight className="ml-2 w-4 h-4" />
+                </Link>
+              </Button>
+              <Button
+                asChild
+                variant="outline"
+                size="lg"
+                className="rounded-xl border-border bg-transparent text-foreground hover:bg-secondary/40 font-semibold px-8 py-6"
+              >
+                <Link href="/about" aria-label="Learn more about Greenwave Society">Learn More</Link>
+              </Button>
+            </div>
 
             {/* Typography Stats Row */}
-            <FadeIn delay={0.65}>
+            <FadeIn delay={0.2}>
               <div className="mt-12 pt-8 border-t border-border/60 grid grid-cols-3 gap-6 max-w-lg">
                 <div>
                   <p className="text-3xl sm:text-4xl font-serif font-black text-primary">
@@ -92,17 +86,18 @@ export function Hero({ impact = IMPACT_STATS }: { impact?: ImpactStats }) {
 
           {/* Right Image Collage Column */}
           <div className="lg:col-span-5 relative w-full h-[400px] sm:h-[500px] lg:h-[600px] flex items-center justify-center">
-            <FadeIn direction="left" delay={0.3} className="w-full h-full relative">
+            <FadeIn direction="left" delay={0.2} className="w-full h-full relative">
               {/* Backing structural shape */}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[85%] h-[85%] rounded-[3rem] border-2 border-dashed border-primary/20 rotate-6" />
               
               {/* Main Image */}
               <div className="absolute top-0 right-4 w-[75%] h-[75%] rounded-[2.5rem] overflow-hidden border-8 border-background shadow-2xl z-10 hover:-translate-y-2 transition-transform duration-500">
-                <Image quality={95}
+                <Image
                   src="/images/g-28.jpg"
                   alt="Greenwave Society youth celebrating at a community event in Kenya"
                   fill
                   priority
+                  quality={80}
                   sizes="(max-width: 768px) 75vw, 40vw"
                   className="object-cover"
                 />
@@ -110,10 +105,11 @@ export function Hero({ impact = IMPACT_STATS }: { impact?: ImpactStats }) {
 
               {/* Staggered overlapping Image */}
               <div className="absolute bottom-4 left-4 w-[60%] h-[60%] rounded-[2rem] overflow-hidden border-8 border-background shadow-xl z-20 hover:-translate-y-2 transition-transform duration-500">
-                <Image quality={95}
+                <Image
                   src="/images/g-69.jpg"
                   alt="Young women empowered through Greenwave Society programmes in Kenya"
                   fill
+                  quality={80}
                   sizes="(max-width: 768px) 60vw, 30vw"
                   className="object-cover"
                 />

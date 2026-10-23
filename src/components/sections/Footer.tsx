@@ -15,7 +15,7 @@ export function Footer() {
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
             <Link href="/" className="flex items-center gap-2.5 mb-4 group">
-              <Image quality={95}
+              <Image
                 src="/logo.png"
                 alt="Greenwave Society Logo"
                 width={40}
@@ -65,6 +65,8 @@ export function Footer() {
                 { label: "News & Updates", href: "/news" },
                 { label: "Our Team", href: "/team" },
                 { label: "Careers", href: "/careers" },
+                { label: "Media Kit", href: "/media-kit" },
+                { label: "Cohort II Graduation", href: "/events/graduation-cohort-2" },
                 { label: "Contact", href: "/contact" },
                 { label: "Privacy & Data Rights", href: "/privacy" },
               ].map((l) => (
@@ -146,7 +148,7 @@ export function Footer() {
 
         <Separator className="my-8 bg-zinc-800" />
 
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-zinc-500">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-zinc-400">
           <p>
             &copy; {new Date().getFullYear()} Greenwave Society. All rights
             reserved.

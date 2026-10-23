@@ -41,7 +41,7 @@ export function CookieBanner() {
                 <div className="flex flex-col sm:flex-row gap-3">
                   <button
                     onClick={acceptAll}
-                    className="w-full bg-emerald-600 text-white font-medium py-2.5 px-4 rounded-lg hover:bg-emerald-700 transition-colors"
+                    className="w-full bg-emerald-700 text-white font-medium py-2.5 px-4 rounded-lg hover:bg-emerald-800 transition-colors"
                   >
                     Accept All
                   </button>
@@ -55,7 +55,7 @@ export function CookieBanner() {
                 <div className="mt-4 text-center">
                   <button 
                     onClick={() => setShowPreferences(true)}
-                    className="text-emerald-600 text-sm hover:underline font-medium"
+                    className="text-emerald-700 text-sm hover:underline font-medium"
                   >
                     Manage Preferences
                   </button>
@@ -121,7 +121,7 @@ export function CookieBanner() {
                 <div className="flex flex-col sm:flex-row gap-3 mt-4">
                   <button
                     onClick={() => setShowPreferences(false)}
-                    className="w-full bg-emerald-600 text-white font-medium py-2.5 px-4 rounded-lg hover:bg-emerald-700 transition-colors"
+                    className="w-full bg-emerald-700 text-white font-medium py-2.5 px-4 rounded-lg hover:bg-emerald-800 transition-colors"
                   >
                     Save Preferences
                   </button>
