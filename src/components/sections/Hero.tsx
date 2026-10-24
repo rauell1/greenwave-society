@@ -106,8 +106,8 @@ export function Hero({ impact = IMPACT_STATS }: { impact?: ImpactStats }) {
               {/* Staggered overlapping Image */}
               <div className="absolute bottom-4 left-4 w-[60%] h-[60%] rounded-[2rem] overflow-hidden border-8 border-background shadow-xl z-20 hover:-translate-y-2 transition-transform duration-500">
                 <Image
-                  src="/images/20250215_174908.jpg"
-                  alt="Greenwave Society youth changemakers and community members gathered outdoors in Kenya"
+                  src="/images/20260827_135241.jpg"
+                  alt="Greenwave Society members collaborating during the Members' Meet and Connect in Kenya"
                   fill
                   quality={80}
                   sizes="(max-width: 768px) 60vw, 30vw"
