@@ -7,7 +7,6 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { APP_CONFIG } from "@/config/app.config";
 import { CookieBanner } from "@/components/CookieBanner";
 import { ScriptInjector } from "@/components/ScriptInjector";
-import { WhatsAppWidget } from "@/components/ui/whatsapp-widget";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -287,7 +286,6 @@ export default function RootLayout({
         <SpeedInsights />
         <CookieBanner />
         <ScriptInjector />
-        <WhatsAppWidget />
       </body>
     </html>
   );
