@@ -1,8 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
+import { getCurrentAdmin } from "@/lib/auth/guards";
 
 export async function GET(req: NextRequest) {
   try {
+    const admin = await getCurrentAdmin();
+    if (!admin) {
+      return NextResponse.json(
+        { error: "Unauthorized. Greenwave Society admin session required." },
+        { status: 401 }
+      );
+    }
+
     const { searchParams } = new URL(req.url);
     const slug = searchParams.get("slug") || "graduation-cohort-1-2026";
     const search = searchParams.get("q")?.toLowerCase().trim();
@@ -39,37 +48,72 @@ export async function GET(req: NextRequest) {
         organization: r.organization || meta.vendorName || "",
         status: r.status,
         attendanceStatus: r.attendanceStatus,
-        checkedInAt: r.checkedInAt,
-        role: meta.role || (isVendor ? "Vendor" : "Guest"),
+        checkedInAt: r.checkedInAt ? r.checkedInAt.toISOString() : null,
+        role: isGraduand
+          ? "Empower 360 Graduand"
+          : isVendor
+          ? `Market Vendor (${meta.category || "General"})`
+          : meta.role === "family_friend"
+          ? "Family & Supporter"
+          : meta.role === "partner_collaborator"
+          ? "Partner & Mentor"
+          : "Community Guest",
+        rawRole: meta.role || (isVendor ? "vendor" : "guest"),
         segmentType,
         isGraduand,
         isVendor,
         vendorCategory: meta.category || null,
-        productDescription: meta.productDescription || null,
-        guestCount: Number(meta.guestCount || 1),
+        guestCount: meta.guestCount || 1,
         ticketNumber: `GW-${r.id.slice(-6).toUpperCase()}`,
-        checkInToken: meta.checkInToken || "",
       };
     });
 
-    // Calculate segmented statistics across all registrations
+    // Segment Filter
+    if (segment && segment !== "all") {
+      if (segment === "graduand" || segment === "graduands") {
+        registrations = registrations.filter((r) => r.isGraduand);
+      } else if (segment === "vendor" || segment === "vendors") {
+        registrations = registrations.filter((r) => r.isVendor);
+      } else if (segment === "guest" || segment === "guests") {
+        registrations = registrations.filter((r) => !r.isGraduand && !r.isVendor);
+      }
+    }
+
+    // Search query filter
+    if (search) {
+      registrations = registrations.filter(
+        (r) =>
+          r.fullName.toLowerCase().includes(search) ||
+          r.email.toLowerCase().includes(search) ||
+          r.phone.includes(search) ||
+          r.ticketNumber.toLowerCase().includes(search) ||
+          r.organization.toLowerCase().includes(search)
+      );
+    }
+
+    // Stats
     const totalRegistrations = event.registrations.length;
     const checkedInCount = event.registrations.filter((r) => r.attendanceStatus === "checked_in").length;
     const pendingCount = totalRegistrations - checkedInCount;
 
-    const graduandsList = registrations.filter((r) => r.isGraduand);
-    const totalGraduands = graduandsList.length;
-    const checkedInGraduands = graduandsList.filter((r) => r.attendanceStatus === "checked_in").length;
+    // Graduand stats
+    const allGraduands = event.registrations.filter((r) => {
+      const meta = (r.metadata as Record<string, any>) || {};
+      return meta.role === "graduand";
+    });
+    const checkedInGraduands = allGraduands.filter((r) => r.attendanceStatus === "checked_in").length;
 
-    const vendorsList = registrations.filter((r) => r.isVendor);
-    const totalVendors = vendorsList.length;
-    const checkedInVendors = vendorsList.filter((r) => r.attendanceStatus === "checked_in").length;
+    // Vendor stats
+    const allVendors = event.registrations.filter((r) => {
+      const meta = (r.metadata as Record<string, any>) || {};
+      return Boolean(meta.vendorName);
+    });
+    const checkedInVendors = allVendors.filter((r) => r.attendanceStatus === "checked_in").length;
 
-    const guestsList = registrations.filter((r) => !r.isGraduand && !r.isVendor);
-    const totalGuests = guestsList.length;
-    const checkedInGuests = guestsList.filter((r) => r.attendanceStatus === "checked_in").length;
+    // Guest stats
+    const totalGuests = totalRegistrations - allGraduands.length - allVendors.length;
+    const checkedInGuests = checkedInCount - checkedInGraduands - checkedInVendors;
 
-    // Total headcount including +1s
     const totalExpectedHeadcount = event.registrations.reduce((acc, r) => {
       const meta = (r.metadata as Record<string, any>) || {};
       return acc + (Number(meta.guestCount) || 1);
@@ -81,30 +125,6 @@ export async function GET(req: NextRequest) {
         const meta = (r.metadata as Record<string, any>) || {};
         return acc + (Number(meta.guestCount) || 1);
       }, 0);
-
-    // Apply segment filter if specified
-    if (segment && segment !== "all") {
-      if (segment === "graduands") {
-        registrations = registrations.filter((r) => r.isGraduand);
-      } else if (segment === "vendors") {
-        registrations = registrations.filter((r) => r.isVendor);
-      } else if (segment === "guests") {
-        registrations = registrations.filter((r) => !r.isGraduand && !r.isVendor);
-      }
-    }
-
-    // Apply search filter if specified
-    if (search) {
-      registrations = registrations.filter(
-        (r) =>
-          r.fullName.toLowerCase().includes(search) ||
-          r.email.toLowerCase().includes(search) ||
-          r.phone.toLowerCase().includes(search) ||
-          r.ticketNumber.toLowerCase().includes(search) ||
-          r.organization.toLowerCase().includes(search) ||
-          (r.vendorCategory && r.vendorCategory.toLowerCase().includes(search))
-      );
-    }
 
     return NextResponse.json({
       success: true,
@@ -121,9 +141,9 @@ export async function GET(req: NextRequest) {
         pendingCount,
         totalExpectedHeadcount,
         checkedInHeadcount,
-        totalGraduands,
+        totalGraduands: allGraduands.length,
         checkedInGraduands,
-        totalVendors,
+        totalVendors: allVendors.length,
         checkedInVendors,
         totalGuests,
         checkedInGuests,
@@ -131,9 +151,9 @@ export async function GET(req: NextRequest) {
       registrations,
     });
   } catch (error) {
-    console.error("[EVENT_CHECK_IN_LIST_GET]", error);
+    console.error("[EVENT_CHECK_IN_LIST]", error);
     return NextResponse.json(
-      { error: "Failed to load attendees list" },
+      { error: "Failed to load check-in list" },
       { status: 500 }
     );
   }

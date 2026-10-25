@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
+import { getCurrentAdmin } from "@/lib/auth/guards";
 
 function buildRegistrationPayload(reg: any, meta: Record<string, any>) {
   const isVendor = Boolean(meta.vendorName);
@@ -44,6 +45,14 @@ function buildRegistrationPayload(reg: any, meta: Record<string, any>) {
 
 export async function GET(req: NextRequest) {
   try {
+    const admin = await getCurrentAdmin();
+    if (!admin) {
+      return NextResponse.json(
+        { error: "Unauthorized. Greenwave Society admin session required." },
+        { status: 401 }
+      );
+    }
+
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
     const token = searchParams.get("token");
@@ -74,9 +83,12 @@ export async function GET(req: NextRequest) {
 
     const meta = (registration.metadata as Record<string, any>) || {};
 
-    // Validate security token if token was issued
-    if (meta.checkInToken && token && meta.checkInToken !== token) {
-      return NextResponse.json({ error: "Invalid check-in token or ticket signature" }, { status: 403 });
+    // Validate security token if present in registration metadata
+    if (meta.ticketToken && token && meta.ticketToken !== token) {
+      return NextResponse.json(
+        { error: "Invalid ticket security token" },
+        { status: 403 }
+      );
     }
 
     // Check if already checked in
@@ -95,7 +107,7 @@ export async function GET(req: NextRequest) {
       data: {
         attendanceStatus: "checked_in",
         checkedInAt: new Date(),
-        checkedInBy: "door_qr_scanner",
+        checkedInBy: admin.email || "admin_door_scanner",
       },
     });
 
@@ -116,6 +128,14 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    const admin = await getCurrentAdmin();
+    if (!admin) {
+      return NextResponse.json(
+        { error: "Unauthorized. Greenwave Society admin session required." },
+        { status: 401 }
+      );
+    }
+
     const body = await req.json().catch(() => ({}));
     const { id, token, status = "checked_in" } = body;
 
@@ -143,19 +163,20 @@ export async function POST(req: NextRequest) {
 
     const meta = (registration.metadata as Record<string, any>) || {};
 
-    if (meta.checkInToken && token && meta.checkInToken !== token) {
-      return NextResponse.json({ error: "Invalid check-in token" }, { status: 403 });
+    if (meta.ticketToken && token && meta.ticketToken !== token) {
+      return NextResponse.json(
+        { error: "Invalid ticket security token" },
+        { status: 403 }
+      );
     }
 
-    const newAttendanceStatus = status === "not_checked_in" ? "not_checked_in" : "checked_in";
-    const checkedInAt = newAttendanceStatus === "checked_in" ? new Date() : null;
-
+    const isCheckingIn = status === "checked_in";
     const updated = await db.cmsEventRegistration.update({
       where: { id },
       data: {
-        attendanceStatus: newAttendanceStatus,
-        checkedInAt,
-        checkedInBy: newAttendanceStatus === "checked_in" ? "door_manual_toggle" : null,
+        attendanceStatus: status,
+        checkedInAt: isCheckingIn ? new Date() : null,
+        checkedInBy: isCheckingIn ? (admin.email || "admin_door_scanner") : null,
       },
     });
 

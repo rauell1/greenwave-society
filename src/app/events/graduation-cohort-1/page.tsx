@@ -4,7 +4,6 @@ import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { AttendeeRsvpForm } from "./AttendeeRsvpForm";
 import { FlyerMediaSection } from "./FlyerMediaSection";
-import { GraduationPillarsSection } from "@/components/events/GraduationPillarsSection";
 import { GraduationVendorRedirectHelper } from "./GraduationVendorRedirectHelper";
 import { ShareableLinkBar } from "@/components/events/ShareableLinkBar";
 import { AddToCalendarButton } from "@/components/events/AddToCalendarButton";
@@ -17,8 +16,9 @@ import {
   Store,
   Users,
   ArrowRight,
-  QrCode,
   CheckCircle2,
+  BookOpen,
+  Camera,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -86,246 +86,217 @@ export default function GraduationCohortPage() {
       />
       <Navbar />
 
-      {/* Hero Header */}
-      <section className="pt-32 pb-16 sm:pt-40 sm:pb-20 bg-secondary/15 relative overflow-hidden border-b border-border/50">
+      {/* Split Hero: Direct RSVP Form Right Above The Fold */}
+      <section className="pt-28 pb-12 sm:pt-36 sm:pb-16 bg-gradient-to-b from-secondary/20 via-background to-background relative overflow-hidden border-b border-border/50">
         <div className="absolute top-1/4 -right-32 w-96 h-96 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
         <div className="absolute bottom-10 -left-32 w-96 h-96 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-6 sm:px-8">
-          <div className="max-w-3xl">
-            <div className="flex flex-wrap items-center gap-2 mb-4">
-              <Badge variant="secondary" className="px-3.5 py-1 text-xs uppercase tracking-wider font-bold bg-primary/10 text-primary border border-primary/20 rounded-full">
-                <Sparkles className="w-3.5 h-3.5 mr-1.5 text-gold" />
-                Empower 360 &bull; Graduation Ceremony
-              </Badge>
-              <Badge variant="outline" className="px-3 py-1 text-xs text-muted-foreground border-border rounded-full font-medium">
-                Celebrating Our 2026 Graduands
-              </Badge>
-            </div>
-
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-black tracking-tight text-foreground leading-[1.1] mb-6">
-              Empower 360: Ad Hoc Cohort I <span className="italic font-normal text-primary">Graduation</span>
-            </h1>
-
-            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed mb-8">
-              Celebrating the emerging leaders and changemakers of our inaugural Empower 360 Ad Hoc Cohort I. Join us for a brief graduation ceremony, networking, light refreshments, capstone presentations, and vibrant community connection.
-            </p>
-
-            {/* Event Key Details Strip */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 rounded-2xl bg-background/80 border border-border/70 backdrop-blur-sm shadow-sm">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-                  <Calendar className="w-5 h-5" />
+          <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+            
+            {/* Left Column: Crisp Event Overview & Key Facts */}
+            <div className="lg:col-span-6 space-y-6">
+              <div className="space-y-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge variant="secondary" className="px-3 py-1 text-xs uppercase tracking-wider font-bold bg-primary/10 text-primary border border-primary/20 rounded-full">
+                    <Sparkles className="w-3.5 h-3.5 mr-1.5 text-gold" />
+                    Empower 360 &bull; Graduation Ceremony
+                  </Badge>
+                  <Badge variant="outline" className="px-3 py-1 text-xs text-muted-foreground border-border rounded-full font-medium">
+                    Celebrating Cohort I
+                  </Badge>
                 </div>
-                <div>
-                  <div className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Date</div>
-                  <div className="text-sm font-semibold text-foreground">Friday, 30 Oct 2026</div>
+
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black tracking-tight text-foreground leading-[1.15]">
+                  Empower 360 Cohort I <span className="italic font-normal text-primary">Graduation</span>
+                </h1>
+
+                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+                  Join Greenwave Society as we celebrate our inaugural cohort of youth changemakers. Official certification, capstone showcases, light refreshments, and community connection.
+                </p>
+              </div>
+
+              {/* Key Logistics Strip */}
+              <div className="grid grid-cols-2 gap-3 p-4 rounded-2xl bg-secondary/30 border border-border/70 text-xs">
+                <div className="flex items-center gap-2.5">
+                  <Calendar className="w-4 h-4 text-primary shrink-0" />
+                  <div>
+                    <span className="text-[10px] text-muted-foreground block uppercase font-mono">Date</span>
+                    <strong className="text-foreground">Friday, 30 Oct 2026</strong>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2.5">
+                  <Clock className="w-4 h-4 text-primary shrink-0" />
+                  <div>
+                    <span className="text-[10px] text-muted-foreground block uppercase font-mono">Time</span>
+                    <strong className="text-foreground">10:30 AM to 3:00 PM</strong>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2.5">
+                  <MapPin className="w-4 h-4 text-primary shrink-0" />
+                  <div>
+                    <span className="text-[10px] text-muted-foreground block uppercase font-mono">Venue</span>
+                    <strong className="text-foreground">Ubunifu Hub, Nairobi</strong>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2.5">
+                  <Users className="w-4 h-4 text-gold shrink-0" />
+                  <div>
+                    <span className="text-[10px] text-muted-foreground block uppercase font-mono">Admission</span>
+                    <strong className="text-foreground">Free Entry &bull; +1s Welcome</strong>
+                  </div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-                  <Clock className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Time</div>
-                  <div className="text-sm font-semibold text-foreground">10:30 AM to 3:00 PM</div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-                  <MapPin className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Venue</div>
-                  <div className="text-sm font-semibold text-foreground">Ubunifu Hub, Nairobi</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Bring a Friend Banner & Dual Actions */}
-            <div className="mt-5 p-4 rounded-2xl bg-gradient-to-r from-emerald-600/15 via-primary/15 to-gold/15 border border-primary/20 flex flex-wrap items-center justify-between gap-3 shadow-sm">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-primary text-primary-foreground flex items-center justify-center font-bold text-xs">
-                  +1
-                </div>
-                <div>
-                  <div className="text-xs font-mono uppercase tracking-wider font-bold text-primary">Bring a Friend!</div>
-                  <div className="text-sm font-medium text-foreground">Graduates & Guests Welcome - +1s and collaborators invited!</div>
-                </div>
-              </div>
-              <div className="flex flex-wrap items-center gap-2">
+              {/* Quick Actions & Sister Page Link */}
+              <div className="flex flex-wrap items-center gap-3">
                 <AddToCalendarButton event={EVENT_CALENDAR_DATA} size="sm" />
-                <Button asChild size="sm" className="rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold">
-                  <Link href="#rsvp-form">
-                    RSVP as Attendee <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
-                  </Link>
-                </Button>
+                
                 <Button asChild size="sm" variant="outline" className="rounded-xl border-emerald-600/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10 text-xs font-semibold">
                   <Link href="/events/community-market">
                     <Store className="w-3.5 h-3.5 mr-1.5 text-emerald-500" />
-                    Market Vendor Portal
+                    Community Market Vendor Portal
+                  </Link>
+                </Button>
+
+                {/* Mobile Quick Jump */}
+                <Button asChild size="sm" className="rounded-xl bg-primary text-primary-foreground text-xs font-semibold sm:hidden">
+                  <Link href="#rsvp-form">
+                    RSVP Form Below <ArrowRight className="w-3.5 h-3.5 ml-1" />
                   </Link>
                 </Button>
               </div>
+
+              {/* Shareable Link Bar */}
+              <ShareableLinkBar
+                label="Graduation RSVP"
+                url="https://greenwavesociety.org/events/graduation-cohort-1"
+                shareMessage="Join us for Greenwave Society's Empower 360 Cohort I Graduation on Friday, 30th October 2026 (10:30 AM - 3:00 PM) at Ubunifu Hub, Nairobi! +1s welcome. Free Entry & digital ticket pass. RSVP here:"
+                badge="Direct Share Link"
+              />
             </div>
+
+            {/* Right Column: Direct RSVP Form Right Here */}
+            <div className="lg:col-span-6 w-full" id="rsvp-form">
+              <div id="rsvp" className="scroll-mt-28" />
+              <AttendeeRsvpForm />
+            </div>
+
           </div>
         </div>
       </section>
 
-      {/* Shareable Link Bar */}
-      <section className="py-4 max-w-7xl mx-auto px-6 sm:px-8 w-full">
-        <ShareableLinkBar
-          label="Empower 360 Cohort I Graduation RSVP"
-          url="https://greenwavesociety.org/events/graduation-cohort-1"
-          shareMessage="🎓 Join us for Greenwave Society's Empower 360 Ad Hoc Cohort I Graduation on Friday, 30th October 2026 (10:30 AM - 3:00 PM) at Ubunifu Hub, Nairobi! +1s welcome. Free Entry & digital ticket pass. Details & RSVP:"
-          badge="Shareable RSVP Link"
-        />
+      {/* Ceremony Pillars (4 Key Highlights) */}
+      <section className="py-12 sm:py-16 max-w-7xl mx-auto px-6 sm:px-8 w-full border-b border-border/50">
+        <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
+          <Badge variant="outline" className="text-xs uppercase tracking-wider text-primary border-primary/20 px-3 py-0.5 rounded-full font-bold">
+            Ceremony Highlights
+          </Badge>
+          <h2 className="text-2xl sm:text-3xl font-serif font-black text-foreground">
+            What to Expect on Celebration Day
+          </h2>
+        </div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="p-5 rounded-2xl bg-card border border-border/70 space-y-2.5 shadow-xs">
+            <div className="w-9 h-9 rounded-xl bg-gold/15 text-gold flex items-center justify-center">
+              <Award className="w-4 h-4" />
+            </div>
+            <h3 className="font-serif font-bold text-sm text-foreground">Official Certification</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Presentation of formal completion certificates recognizing systems thinking and youth leadership execution.
+            </p>
+          </div>
+
+          <div className="p-5 rounded-2xl bg-card border border-border/70 space-y-2.5 shadow-xs">
+            <div className="w-9 h-9 rounded-xl bg-primary/15 text-primary flex items-center justify-center">
+              <BookOpen className="w-4 h-4" />
+            </div>
+            <h3 className="font-serif font-bold text-sm text-foreground">Capstone Showcase</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Graduands pitch community interventions addressing climate literacy, youth employment, and mental health barazas.
+            </p>
+          </div>
+
+          <div className="p-5 rounded-2xl bg-card border border-border/70 space-y-2.5 shadow-xs">
+            <div className="w-9 h-9 rounded-xl bg-teal-500/15 text-teal-600 flex items-center justify-center">
+              <Users className="w-4 h-4" />
+            </div>
+            <h3 className="font-serif font-bold text-sm text-foreground">Reserved Seating & +1s</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Priority front seating for graduands, with family members, mentors, and collaborators warmly accommodated.
+            </p>
+          </div>
+
+          <div className="p-5 rounded-2xl bg-card border border-border/70 space-y-2.5 shadow-xs">
+            <div className="w-9 h-9 rounded-xl bg-emerald-500/15 text-emerald-600 flex items-center justify-center">
+              <Camera className="w-4 h-4" />
+            </div>
+            <h3 className="font-serif font-bold text-sm text-foreground">Portraits & Network</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Professional cohort photo sessions, networking over Kenyan refreshments, and induction into the Greenwave network.
+            </p>
+          </div>
+        </div>
+
+        {/* Schedule & Concurrent Market Strip */}
+        <div className="mt-8 grid md:grid-cols-12 gap-5 items-stretch">
+          <div className="md:col-span-7 p-5 rounded-2xl bg-secondary/20 border border-border/60 space-y-3">
+            <div className="text-xs font-mono uppercase tracking-wider font-bold text-primary">
+              Ceremony Schedule (Friday, 30 Oct 2026)
+            </div>
+            <div className="grid sm:grid-cols-2 gap-2.5 text-xs text-muted-foreground">
+              <div className="flex items-start gap-2">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                <span><strong>10:00 AM:</strong> Graduand arrival & badges</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                <span><strong>10:30 AM:</strong> Welcome & keynote</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                <span><strong>11:15 AM:</strong> Certificate presentation</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                <span><strong>12:00 PM:</strong> Capstone project pitches</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                <span><strong>1:00 PM:</strong> Refreshments & market visit</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                <span><strong>3:00 PM:</strong> Portraits & event close</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="md:col-span-5 p-5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex flex-col justify-between space-y-3">
+            <div>
+              <div className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 font-bold text-xs uppercase tracking-wider font-mono">
+                <Store className="w-3.5 h-3.5" /> Concurrent Market
+              </div>
+              <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
+                Local sustainable snacks, artisanal coffee, authors, and eco crafts are setting up at Ubunifu Hub to support all attendees.
+              </p>
+            </div>
+            <Button asChild size="sm" variant="outline" className="rounded-xl border-emerald-600/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10 text-xs font-semibold self-start">
+              <Link href="/events/community-market">
+                View Market Stalls <ArrowRight className="w-3.5 h-3.5 ml-1" />
+              </Link>
+            </Button>
+          </div>
+        </div>
       </section>
 
       {/* Official Graduation Invitation Posters & Social Kit */}
-      <section className="py-12 sm:py-16 max-w-7xl mx-auto px-6 sm:px-8 w-full border-b border-border/50">
+      <section className="py-12 sm:py-16 max-w-7xl mx-auto px-6 sm:px-8 w-full">
         <FlyerMediaSection categoryFilter="attendee" />
-      </section>
-
-      {/* Ceremony Highlights & Pillars */}
-      <section className="py-16 sm:py-20 max-w-7xl mx-auto px-6 sm:px-8 w-full border-b border-border/50 bg-secondary/10">
-        <GraduationPillarsSection />
-      </section>
-
-      {/* Main Content Area: 2 Columns */}
-      <section className="py-16 sm:py-24 max-w-7xl mx-auto px-6 sm:px-8 w-full flex-1">
-        <div className="grid lg:grid-cols-12 gap-12 items-start">
-          
-          {/* Left Column: Event Context & Experience */}
-          <div className="lg:col-span-6 space-y-8">
-            <div className="space-y-4">
-              <div className="inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-wider text-primary font-bold px-3 py-1 bg-primary/10 rounded-full border border-primary/20">
-                <Award className="w-3.5 h-3.5" /> Empower 360 Programme
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-serif font-black text-foreground">
-                Inaugural Cohort I: Youth Leaders in <span className="text-primary italic font-normal">Action</span>
-              </h2>
-              <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
-                Greenwave Society’s <strong>Empower 360</strong> programme bridges youth development with systemic community impact. Over intense hands-on months, our <strong>Ad Hoc Cohort I</strong> innovators diagnosed local community challenges, formulated real-world interventions, and applied systems thinking to climate, social, and economic issues.
-              </p>
-            </div>
-
-            {/* Event Agenda & Highlights */}
-            <div className="space-y-4">
-              <div className="p-5 rounded-2xl bg-secondary/20 border border-border/60 flex gap-4 items-start">
-                <div className="w-10 h-10 rounded-xl bg-gold/15 text-gold flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Award className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-base font-serif font-bold text-foreground mb-1">Brief Recognition Ceremony</h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                    Honoring each graduating member with certification, showcasing capstone initiatives, and celebrating peer achievements with mentors and families.
-                  </p>
-                </div>
-              </div>
-
-              <div className="p-5 rounded-2xl bg-secondary/20 border border-border/60 flex gap-4 items-start">
-                <div className="w-10 h-10 rounded-xl bg-primary/15 text-primary flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Users className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-base font-serif font-bold text-foreground mb-1">Networking & Light Refreshments</h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                    Connect with fellow social innovators, partners, mentors, and friends over curated Kenyan refreshments in an open, welcoming setting.
-                  </p>
-                </div>
-              </div>
-
-              <div className="p-5 rounded-2xl bg-secondary/20 border border-border/60 flex gap-4 items-start">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/15 text-emerald-600 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Store className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-base font-serif font-bold text-foreground mb-1">Curated Community Market</h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                    A vibrant space for local creators, sustainable snack artisans, authors, and craftsmen setting up alongside the ceremony to support attendees.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Event Day Schedule */}
-            <div className="p-5 rounded-2xl bg-secondary/20 border border-border/60 space-y-3">
-              <div className="text-xs font-mono uppercase tracking-wider font-bold text-primary">
-                Event Day Schedule (Friday, 30 Oct 2026)
-              </div>
-              <div className="space-y-2 text-xs text-muted-foreground">
-                <div className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span><strong>10:00 AM:</strong> Graduand arrival, badge collection & front seating setup.</span>
-                </div>
-                <div className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span><strong>10:30 AM:</strong> Welcome remarks, ceremony opening & keynote.</span>
-                </div>
-                <div className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span><strong>11:15 AM:</strong> Presentation of graduation certificates & honors.</span>
-                </div>
-                <div className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span><strong>12:00 PM:</strong> Capstone projects showcase & community pitches.</span>
-                </div>
-                <div className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span><strong>1:00 PM:</strong> Light refreshments, networking & market exploration.</span>
-                </div>
-                <div className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span><strong>3:00 PM:</strong> Event close & cohort portraits.</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Check-in Info Badge for Organizers */}
-            <div className="p-5 rounded-2xl bg-primary/5 border border-primary/20 flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                  <QrCode className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-xs font-bold text-primary font-mono uppercase tracking-wider">Fast QR Check-in</div>
-                  <div className="text-xs text-muted-foreground">Door check-in station active for event day organizers & ushers.</div>
-                </div>
-              </div>
-              <Button asChild size="sm" variant="outline" className="rounded-xl border-primary/30 text-primary hover:bg-primary/10 text-xs">
-                <Link href="/events/check-in">
-                  Door Station <ArrowRight className="w-3.5 h-3.5 ml-1" />
-                </Link>
-              </Button>
-            </div>
-
-            {/* Vendor Partner Spotlight */}
-            <div className="p-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/25 space-y-3">
-              <div className="flex items-center gap-2">
-                <Store className="w-4 h-4 text-emerald-600" />
-                <h4 className="font-serif font-bold text-base text-emerald-800 dark:text-emerald-300">Are You an Eco-Conscious Vendor?</h4>
-              </div>
-              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                If you are a vendor interested in booking a display stall for snacks, crafts, books, or eco merchandise, our dedicated vendor portal has full details, setup guidelines, and the application form.
-              </p>
-              <Button asChild size="sm" variant="outline" className="rounded-xl border-emerald-600/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10 text-xs font-semibold">
-                <Link href="/events/community-market">
-                  Go to Community Market Vendor Portal <ArrowRight className="w-3.5 h-3.5 ml-1" />
-                </Link>
-              </Button>
-            </div>
-          </div>
-
-          {/* Right Column: Direct Attendee & Graduand RSVP Form */}
-          <div className="lg:col-span-6 space-y-6" id="rsvp-form">
-            <div id="rsvp" className="scroll-mt-28" />
-            <AttendeeRsvpForm />
-          </div>
-
-        </div>
       </section>
 
       <Footer />

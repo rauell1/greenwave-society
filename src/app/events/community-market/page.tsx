@@ -11,9 +11,7 @@ import {
   Calendar,
   Clock,
   MapPin,
-  Sparkles,
   ShieldCheck,
-  CheckCircle2,
   Coffee,
   BookOpen,
   ShoppingBag,
@@ -21,7 +19,6 @@ import {
   ArrowRight,
   GraduationCap,
   Leaf,
-  QrCode,
   DollarSign,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -96,292 +93,209 @@ export default function CommunityMarketPage() {
       />
       <Navbar />
 
-      {/* Hero Header */}
-      <section className="pt-32 pb-16 sm:pt-40 sm:pb-20 bg-secondary/15 relative overflow-hidden border-b border-border/50">
+      {/* Split Hero: Direct Vendor Application Form Above The Fold */}
+      <section className="pt-28 pb-12 sm:pt-36 sm:pb-16 bg-gradient-to-b from-emerald-500/10 via-background to-background relative overflow-hidden border-b border-border/50">
         <div className="absolute top-1/4 -right-32 w-96 h-96 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
         <div className="absolute bottom-10 -left-32 w-96 h-96 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-6 sm:px-8">
-          <div className="max-w-3xl">
-            <div className="flex flex-wrap items-center gap-2 mb-4">
-              <Badge variant="secondary" className="px-3.5 py-1 text-xs uppercase tracking-wider font-bold bg-emerald-600/15 text-emerald-700 dark:text-emerald-400 border border-emerald-600/30 rounded-full">
-                <Store className="w-3.5 h-3.5 mr-1.5" />
-                Community Market &bull; Vendor Portal
-              </Badge>
-              <Badge variant="outline" className="px-3 py-1 text-xs text-muted-foreground border-border rounded-full font-medium">
-                Supporting Empower 360 Cohort I
-              </Badge>
+          <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+            
+            {/* Left Column: Crisp Market Overview & Logistics */}
+            <div className="lg:col-span-6 space-y-6">
+              <div className="space-y-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge variant="secondary" className="px-3 py-1 text-xs uppercase tracking-wider font-bold bg-emerald-600/15 text-emerald-700 dark:text-emerald-400 border border-emerald-600/30 rounded-full">
+                    <Store className="w-3.5 h-3.5 mr-1.5" />
+                    Community Market &bull; Vendor Portal
+                  </Badge>
+                  <Badge variant="outline" className="px-3 py-1 text-xs text-muted-foreground border-border rounded-full font-medium">
+                    Supporting Empower 360 Cohort I
+                  </Badge>
+                </div>
+
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black tracking-tight text-foreground leading-[1.15]">
+                  Curated Community Market: <span className="italic font-normal text-emerald-600 dark:text-emerald-400">Call for Vendors</span>
+                </h1>
+
+                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+                  Showcase and vend your sustainable products, healthy snacks, books, and lifestyle goods directly to youth changemakers, families, mentors, and guests at Ubunifu Hub.
+                </p>
+              </div>
+
+              {/* Vendor Logistics Strip */}
+              <div className="grid grid-cols-2 gap-3 p-4 rounded-2xl bg-secondary/30 border border-border/70 text-xs">
+                <div className="flex items-center gap-2.5">
+                  <Calendar className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <div>
+                    <span className="text-[10px] text-muted-foreground block uppercase font-mono">Date</span>
+                    <strong className="text-foreground">Friday, 30 Oct 2026</strong>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2.5">
+                  <Clock className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <div>
+                    <span className="text-[10px] text-muted-foreground block uppercase font-mono">Schedule</span>
+                    <strong className="text-foreground">Setup 9:30 AM &bull; 10:30-3:00</strong>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2.5">
+                  <MapPin className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <div>
+                    <span className="text-[10px] text-muted-foreground block uppercase font-mono">Venue</span>
+                    <strong className="text-foreground">Ubunifu Hub, Nairobi</strong>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2.5">
+                  <DollarSign className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <div>
+                    <span className="text-[10px] text-muted-foreground block uppercase font-mono">Stall Fee</span>
+                    <strong className="text-foreground">KES 1,000 &bull; Tables Provided</strong>
+                  </div>
+                </div>
+              </div>
+
+              {/* Actions & Graduation Ceremony Link */}
+              <div className="flex flex-wrap items-center gap-3">
+                <AddToCalendarButton event={MARKET_CALENDAR_DATA} size="sm" />
+
+                <Button asChild size="sm" variant="outline" className="rounded-xl border-border/80 text-xs font-medium">
+                  <Link href="/events/graduation-cohort-1">
+                    <GraduationCap className="w-3.5 h-3.5 mr-1.5 text-primary" />
+                    Graduation Ceremony RSVP
+                  </Link>
+                </Button>
+
+                {/* Mobile Quick Jump */}
+                <Button asChild size="sm" className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold sm:hidden">
+                  <Link href="#vendor-form">
+                    Application Form Below <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                  </Link>
+                </Button>
+              </div>
+
+              {/* Shareable Link Bar */}
+              <ShareableLinkBar
+                label="Community Market Portal"
+                url="https://greenwavesociety.org/events/community-market"
+                shareMessage="Calling sustainable brands, snack creators, authors & artisans! Showcase your venture at the Empower 360 Community Market on Friday, 30 Oct 2026 at Ubunifu Hub, Nairobi. KES 1,000 flat fee, tables & chairs provided, zero single-use plastics rule. Apply online here:"
+                badge="Vendor Share Link"
+              />
             </div>
 
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-black tracking-tight text-foreground leading-[1.1] mb-6">
-              Curated Community Market: <span className="italic font-normal text-emerald-600 dark:text-emerald-400">Call for Vendors</span>
-            </h1>
-
-            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed mb-8">
-              Are you a local sustainable enterprise, snack artisan, author, or creative? Join us at Ubunifu Hub to showcase and vend directly to the youth changemakers, families, mentors, and community guests arriving to celebrate our inaugural Empower 360 graduation.
-            </p>
-
-            {/* Vendor Logistics Strip */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-2xl bg-background/80 border border-border/70 backdrop-blur-sm shadow-sm mb-6">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 shrink-0">
-                  <Calendar className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Date</div>
-                  <div className="text-xs sm:text-sm font-semibold text-foreground">Fri 30 Oct 2026</div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 shrink-0">
-                  <Clock className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Setup & Hours</div>
-                  <div className="text-xs sm:text-sm font-semibold text-foreground">9:30 AM to 3:00 PM</div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 shrink-0">
-                  <MapPin className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Venue</div>
-                  <div className="text-xs sm:text-sm font-semibold text-foreground">Ubunifu Hub, NBO</div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 shrink-0">
-                  <DollarSign className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Stall Fee</div>
-                  <div className="text-xs sm:text-sm font-semibold text-foreground">KES 1,000 Flat</div>
-                </div>
-              </div>
+            {/* Right Column: Direct Vendor Application Form Right Here */}
+            <div className="lg:col-span-6 w-full" id="vendor-form">
+              <div id="apply" className="scroll-mt-28" />
+              <VendorForm />
             </div>
 
-            {/* Quick Actions & Dual Links */}
-            <div className="flex flex-wrap items-center gap-3">
-              <Button asChild size="default" className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-sm">
-                <Link href="#vendor-form">
-                  <Store className="w-4 h-4 mr-1.5" />
-                  Apply for a Stall
-                </Link>
-              </Button>
-
-              <AddToCalendarButton event={MARKET_CALENDAR_DATA} size="default" />
-
-              <Button asChild size="default" variant="outline" className="rounded-xl border-border/80 text-xs font-medium">
-                <Link href="/events/graduation-cohort-1">
-                  <GraduationCap className="w-4 h-4 mr-1.5 text-primary" />
-                  View Graduation Ceremony
-                </Link>
-              </Button>
-            </div>
           </div>
         </div>
       </section>
 
-      {/* Shareable Link Bar */}
-      <section className="py-4 max-w-7xl mx-auto px-6 sm:px-8 w-full">
-        <ShareableLinkBar
-          label="Community Market Vendor Portal"
-          url="https://greenwavesociety.org/events/community-market"
-          shareMessage="Calling sustainable brands, snack creators, authors & artisans! Showcase your venture at the Greenwave Society Empower 360 Community Market on Friday, 30 Oct 2026 at Ubunifu Hub, Nairobi. KES 1,000 flat fee, tables & chairs provided, zero single-use plastics rule. Apply online here:"
-          badge="Shareable Vendor Link"
-        />
+      {/* Why Vend With Us / Space Standards */}
+      <section className="py-12 sm:py-16 max-w-7xl mx-auto px-6 sm:px-8 w-full border-b border-border/50">
+        <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
+          <Badge variant="outline" className="text-xs uppercase tracking-wider text-emerald-700 dark:text-emerald-400 border-emerald-500/30 px-3 py-0.5 rounded-full font-bold">
+            Vendor Benefits & Standards
+          </Badge>
+          <h2 className="text-2xl sm:text-3xl font-serif font-black text-foreground">
+            Supporting Our Changemakers
+          </h2>
+        </div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="p-5 rounded-2xl bg-card border border-border/70 space-y-2.5 shadow-xs">
+            <div className="w-9 h-9 rounded-xl bg-emerald-500/15 text-emerald-600 flex items-center justify-center">
+              <ShoppingBag className="w-4 h-4" />
+            </div>
+            <h3 className="font-serif font-bold text-sm text-foreground">Direct Footfall</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Positioned in the main reception and networking corridor where 100+ graduates, families, and guests convene throughout the day.
+            </p>
+          </div>
+
+          <div className="p-5 rounded-2xl bg-card border border-border/70 space-y-2.5 shadow-xs">
+            <div className="w-9 h-9 rounded-xl bg-emerald-500/15 text-emerald-600 flex items-center justify-center">
+              <ShieldCheck className="w-4 h-4" />
+            </div>
+            <h3 className="font-serif font-bold text-sm text-foreground">Category Exclusivity</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              We cap stalls to 1 to 2 vetted brands per product niche (snacks, drinks, books, or crafts) to prevent direct competition.
+            </p>
+          </div>
+
+          <div className="p-5 rounded-2xl bg-card border border-border/70 space-y-2.5 shadow-xs">
+            <div className="w-9 h-9 rounded-xl bg-emerald-500/15 text-emerald-600 flex items-center justify-center">
+              <Store className="w-4 h-4" />
+            </div>
+            <h3 className="font-serif font-bold text-sm text-foreground">Turnkey Table Setup</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Tables and chairs are provided and set up on-site by Ubunifu Hub. Simply arrive with your products and signage ready for 9:30 AM setup.
+            </p>
+          </div>
+
+          <div className="p-5 rounded-2xl bg-card border border-border/70 space-y-2.5 shadow-xs">
+            <div className="w-9 h-9 rounded-xl bg-emerald-500/15 text-emerald-600 flex items-center justify-center">
+              <Leaf className="w-4 h-4" />
+            </div>
+            <h3 className="font-serif font-bold text-sm text-foreground">Zero Single-Use Plastics</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Consistent with our environmental mission, single-use plastic carrier bags and cups are prohibited. Reusable or paper packaging only.
+            </p>
+          </div>
+        </div>
+
+        {/* Vendor Categories & Ceremony Link Strip */}
+        <div className="mt-8 grid md:grid-cols-12 gap-5 items-stretch">
+          <div className="md:col-span-7 p-5 rounded-2xl bg-secondary/20 border border-border/60 space-y-3">
+            <div className="text-xs font-mono uppercase tracking-wider font-bold text-emerald-700 dark:text-emerald-400">
+              Welcomed Product Categories
+            </div>
+            <div className="grid sm:grid-cols-2 gap-2.5 text-xs text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <Coffee className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                <span><strong>Healthy Snacks & Drinks:</strong> Baked goods, coffee, juices.</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <BookOpen className="w-3.5 h-3.5 text-teal-600 shrink-0" />
+                <span><strong>Books & Literature:</strong> Kenyan authors & publications.</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <ShoppingBag className="w-3.5 h-3.5 text-primary shrink-0" />
+                <span><strong>Eco Crafts & Fashion:</strong> Upcycled accessories & fashion.</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Palette className="w-3.5 h-3.5 text-gold shrink-0" />
+                <span><strong>Art & Lifestyle:</strong> Natural soaps, crafts & wellness.</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="md:col-span-5 p-5 rounded-2xl bg-primary/10 border border-primary/25 flex flex-col justify-between space-y-3">
+            <div>
+              <div className="flex items-center gap-1.5 text-primary font-bold text-xs uppercase tracking-wider font-mono">
+                <GraduationCap className="w-3.5 h-3.5" /> Empower 360 Ceremony
+              </div>
+              <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
+                Attending as a family member, graduand, mentor, or supporter? RSVP for the ceremony with free admission and digital pass.
+              </p>
+            </div>
+            <Button asChild size="sm" className="rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold self-start">
+              <Link href="/events/graduation-cohort-1">
+                Ceremony RSVP <ArrowRight className="w-3.5 h-3.5 ml-1" />
+              </Link>
+            </Button>
+          </div>
+        </div>
       </section>
 
       {/* Official Call for Vendors Posters & Social Kit */}
-      <section className="py-12 sm:py-16 max-w-7xl mx-auto px-6 sm:px-8 w-full border-b border-border/50">
+      <section className="py-12 sm:py-16 max-w-7xl mx-auto px-6 sm:px-8 w-full">
         <FlyerMediaSection categoryFilter="vendor" />
-      </section>
-
-      {/* Why Vend With Us / Market Highlights */}
-      <section className="py-16 sm:py-20 max-w-7xl mx-auto px-6 sm:px-8 w-full border-b border-border/50 bg-secondary/10">
-        <div className="text-center max-w-3xl mx-auto space-y-3 mb-12">
-          <Badge variant="secondary" className="px-3.5 py-1 text-xs uppercase tracking-wider font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 rounded-full">
-            <Sparkles className="w-3.5 h-3.5 mr-1.5 text-gold" />
-            Vendor Benefits & Space Standards
-          </Badge>
-          <h2 className="text-3xl sm:text-4xl font-serif font-black tracking-tight text-foreground">
-            Supporting Our Changemakers With <span className="text-emerald-600 dark:text-emerald-400 italic font-normal">Local Sustainable Enterprise</span>
-          </h2>
-          <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-            Our market vendors are an essential part of the celebration. By setting up stalls, vendors nourish our attendees, spark new collaborations, and showcase practical sustainable alternatives.
-          </p>
-        </div>
-
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="p-6 rounded-2xl bg-card border border-border/70 space-y-3 shadow-xs">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/15 text-emerald-600 flex items-center justify-center">
-              <ShoppingBag className="w-5 h-5" />
-            </div>
-            <h3 className="font-serif font-bold text-base text-foreground">Direct Community Footfall</h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Stalls are situated right along the main entrance and reception corridor of Ubunifu Hub, where graduands, families, and partners congregate before and after ceremony sessions.
-            </p>
-          </div>
-
-          <div className="p-6 rounded-2xl bg-card border border-border/70 space-y-3 shadow-xs">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/15 text-emerald-600 flex items-center justify-center">
-              <ShieldCheck className="w-5 h-5" />
-            </div>
-            <h3 className="font-serif font-bold text-base text-foreground">Category Exclusivity</h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              We strictly cap stalls to 1 to 2 vetted brands per product niche (such as baked treats, coffee, literature, or apparel) to protect your margins and prevent direct internal competition.
-            </p>
-          </div>
-
-          <div className="p-6 rounded-2xl bg-card border border-border/70 space-y-3 shadow-xs">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/15 text-emerald-600 flex items-center justify-center">
-              <Store className="w-5 h-5" />
-            </div>
-            <h3 className="font-serif font-bold text-base text-foreground">Turnkey Table Setup</h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Display tables and seating chairs are provided and set up on-site by Ubunifu Hub. Simply arrive with your products, branded banner, and packaging ready for setup from 9:30 AM.
-            </p>
-          </div>
-
-          <div className="p-6 rounded-2xl bg-card border border-border/70 space-y-3 shadow-xs">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/15 text-emerald-600 flex items-center justify-center">
-              <Leaf className="w-5 h-5" />
-            </div>
-            <h3 className="font-serif font-bold text-base text-foreground">Zero Single-Use Plastics</h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              In harmony with Greenwave Society’s environmental mission, single-use plastic carrier bags and disposable cups are prohibited. Reusable, paper, and biodegradable wraps are warmly supported.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Main Content Area: 2 Columns */}
-      <section className="py-16 sm:py-24 max-w-7xl mx-auto px-6 sm:px-8 w-full flex-1">
-        <div className="grid lg:grid-cols-12 gap-12 items-start">
-          
-          {/* Left Column: Categories, Schedule, FAQ, and Cross-Link */}
-          <div className="lg:col-span-6 space-y-8">
-            <div className="space-y-4">
-              <div className="inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-wider text-emerald-700 dark:text-emerald-400 font-bold px-3 py-1 bg-emerald-500/10 rounded-full border border-emerald-500/20">
-                <Store className="w-3.5 h-3.5" /> Market Categories
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-serif font-black text-foreground">
-                Who We Are Welcoming to the <span className="text-emerald-600 dark:text-emerald-400 italic font-normal">Market</span>
-              </h2>
-              <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
-                We are curating a thoughtful blend of Kenyan social enterprises, emerging youth businesses, authors, and conscious lifestyle brands.
-              </p>
-            </div>
-
-            {/* Featured Categories Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="p-4 rounded-2xl bg-secondary/20 border border-border/60 flex items-start gap-3">
-                <Coffee className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-                <div>
-                  <div className="text-sm font-semibold text-foreground">Healthy Snacks & Drinks</div>
-                  <div className="text-xs text-muted-foreground mt-0.5">Fresh baked goods, artisanal juices, plant-based treats, herbal teas, or specialty coffee.</div>
-                </div>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-secondary/20 border border-border/60 flex items-start gap-3">
-                <BookOpen className="w-5 h-5 text-teal-600 shrink-0 mt-0.5" />
-                <div>
-                  <div className="text-sm font-semibold text-foreground">Books & Literature</div>
-                  <div className="text-xs text-muted-foreground mt-0.5">Kenyan authors, environmental publications, zines, self-development, and youth poetry.</div>
-                </div>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-secondary/20 border border-border/60 flex items-start gap-3">
-                <ShoppingBag className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <div>
-                  <div className="text-sm font-semibold text-foreground">Eco Crafts & Fashion</div>
-                  <div className="text-xs text-muted-foreground mt-0.5">Upcycled accessories, tote bags, thrifted circular apparel, and handmade stationery.</div>
-                </div>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-secondary/20 border border-border/60 flex items-start gap-3">
-                <Palette className="w-5 h-5 text-gold shrink-0 mt-0.5" />
-                <div>
-                  <div className="text-sm font-semibold text-foreground">Art & Wellness Goods</div>
-                  <div className="text-xs text-muted-foreground mt-0.5">Handcrafted soaps, organic skin care, natural candles, and illustrative prints.</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Vendor Timeline */}
-            <div className="p-5 rounded-2xl bg-secondary/20 border border-border/60 space-y-3">
-              <div className="text-xs font-mono uppercase tracking-wider font-bold text-emerald-700 dark:text-emerald-400">
-                Friday, 30 October 2026 Vendor Timeline
-              </div>
-              <div className="space-y-2.5 text-xs text-muted-foreground">
-                <div className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span><strong>9:30 AM to 10:15 AM:</strong> Vendor arrival, table allocation, and merchandise display setup.</span>
-                </div>
-                <div className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span><strong>10:30 AM:</strong> Market opens to early arrivals, guests, and graduands entering Ubunifu Hub.</span>
-                </div>
-                <div className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span><strong>12:45 PM to 2:15 PM:</strong> Peak footfall during post-ceremony networking and refreshments break.</span>
-                </div>
-                <div className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span><strong>3:00 PM:</strong> Market close and pack-down.</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Cross-Link Card: Attending as Guest or Graduand */}
-            <div className="p-5 rounded-2xl bg-primary/10 border border-primary/25 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0">
-                  <GraduationCap className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-xs font-mono uppercase tracking-wider font-bold text-primary">Attending the Ceremony?</div>
-                  <div className="text-xs text-muted-foreground mt-0.5">RSVP as an Empower 360 graduand, family member, mentor, or general guest.</div>
-                </div>
-              </div>
-              <Button asChild size="sm" className="rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold shrink-0">
-                <Link href="/events/graduation-cohort-1">
-                  Ceremony RSVP <ArrowRight className="w-3.5 h-3.5 ml-1" />
-                </Link>
-              </Button>
-            </div>
-
-            {/* Fast QR Check-in Info for Organizers */}
-            <div className="p-5 rounded-2xl bg-secondary/30 border border-border/70 flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
-                  <QrCode className="w-4 h-4" />
-                </div>
-                <div>
-                  <div className="text-xs font-bold text-foreground font-mono uppercase tracking-wider">Event Day Door Check-in</div>
-                  <div className="text-xs text-muted-foreground">Approved vendors receive quick QR check-in on-site at Ubunifu Hub.</div>
-                </div>
-              </div>
-              <Button asChild size="sm" variant="outline" className="rounded-xl border-border/80 text-xs">
-                <Link href="/events/check-in">
-                  Door Station <ArrowRight className="w-3.5 h-3.5 ml-1" />
-                </Link>
-              </Button>
-            </div>
-
-          </div>
-
-          {/* Right Column: Dedicated Vendor Application Form */}
-          <div className="lg:col-span-6 space-y-6" id="vendor-form">
-            <div id="apply" className="scroll-mt-28" />
-            <VendorForm />
-          </div>
-
-        </div>
       </section>
 
       <Footer />
