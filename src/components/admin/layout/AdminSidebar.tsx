@@ -58,13 +58,6 @@ export default function AdminSidebar({ admin, enabledFeatures, notificationCount
       group: "Website",
     },
     {
-      title: "Programs",
-      href: "/admin/programs",
-      icon: FolderOpen,
-      show: isEnabled("programs") && hasPermission(admin, PERMISSIONS.CONTENT_READ),
-      group: "Website",
-    },
-    {
       title: "Events",
       href: "/admin/events",
       icon: Calendar,
