@@ -56,6 +56,27 @@ export const DEFAULT_SITE_PAGES: SitePageDefinition[] = [
     },
   },
   {
+    type: "page",
+    slug: "our-team",
+    title: "Meet the People Behind the Mission",
+    excerpt: "Our dedicated founder, executive team, and creatives work tirelessly across Kenya.",
+    body: "Our dedicated founder and executive team work tirelessly to design, implement, and govern impactful programs that empower youth and secure environmental resilience across Kenya.",
+  },
+  {
+    type: "page",
+    slug: "contact-us",
+    title: "Contact Us",
+    excerpt: "Have a question, want to volunteer, or interested in partnering with us? We promise to get back to you within 24 hours.",
+    body: "Have a question, want to volunteer, or interested in partnering with us? We would love to hear from you. We promise to get back to you within 24 hours.",
+  },
+  {
+    type: "page",
+    slug: "media-kit",
+    title: "Greenwave Media Kit & Brand Assets",
+    excerpt: "Official press kit, brand guidelines, verified statistics, and organizational boilerplates.",
+    body: "Greenwave Society is a youth-led social enterprise and think tank in Nairobi, Kenya. We equip young Kenyans aged 18-35 to lead, build, and connect by closing the gaps in skills, opportunity, and wellbeing through enterprise training, environmental action, and community-led programmes.",
+  },
+  {
     type: "impact",
     slug: "impact-stats",
     title: "Our Verified Impact Metrics",
@@ -75,6 +96,18 @@ export const DEFAULT_SITE_PAGES: SitePageDefinition[] = [
       eventDate: "2026-10-30",
       venue: "Ubunifu Hub, Nairobi",
       rsvpLink: "/events/graduation-cohort-1",
+    },
+  },
+  {
+    type: "story",
+    slug: "community-market",
+    title: "Community Market & Eco-Conscious Vendor Showcase",
+    excerpt: "Showcase your sustainable products, healthy snacks, books, and lifestyle creations on Friday, 30th October 2026 at Ubunifu Hub, Nairobi.",
+    body: "Calling all eco-conscious vendors, sustainable artisans, healthy snack creators, authors, and ethical brands! Join the community marketplace running alongside the Empower 360 Cohort I Graduation on Friday, 30th October 2026 at Ubunifu Hub, Nairobi.\n\nTables and chairs are provided and stall reservations are completely free. Space is allocated on a first-come, first-served basis.",
+    metadata: {
+      eventDate: "2026-10-30",
+      venue: "Ubunifu Hub, Nairobi",
+      vendorPortal: "/events/community-market",
     },
   },
   {

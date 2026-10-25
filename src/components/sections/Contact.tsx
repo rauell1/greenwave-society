@@ -8,7 +8,17 @@ import { ContactForm } from "@/components/sections/ContactForm";
 import { NewsletterForm } from "@/components/sections/NewsletterForm";
 import { APP_CONFIG } from "@/config/app.config";
 
-export function Contact() {
+export interface ContactContentProps {
+  title?: string;
+  body?: string;
+}
+
+export function Contact({ content }: { content?: ContactContentProps } = {}) {
+  const title = content?.title || "Contact Us";
+  const body =
+    content?.body ||
+    "Have a question, want to volunteer, or interested in partnering with us? We would love to hear from you. We promise to get back to you within 24 hours.";
+
   return (
     <section id="contact" className="py-24 sm:py-32 bg-secondary/15 relative overflow-hidden">
       {/* Background vector accents */}
@@ -21,10 +31,16 @@ export function Contact() {
             Get in Touch
           </Badge>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black tracking-tight text-foreground leading-tight">
-            Contact <span className="italic font-normal text-primary">Us</span>
+            {title.includes("Us") ? (
+              <>
+                Contact <span className="italic font-normal text-primary">Us</span>
+              </>
+            ) : (
+              title
+            )}
           </h2>
           <p className="mt-4 text-muted-foreground text-sm sm:text-base max-w-xl mx-auto">
-            Have a question, want to volunteer, or interested in partnering with us? We would love to hear from you. We promise to get back to you within 24 hours.
+            {body}
           </p>
         </FadeIn>
 
@@ -81,77 +97,82 @@ export function Contact() {
                       </p>
                     </div>
                   </div>
+
+                  <div className="flex items-start gap-4 py-3 border-b border-primary/10">
+                    <div className="text-primary mt-1">
+                      <Globe className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <span className="font-mono text-[10px] uppercase tracking-widest text-gold block mb-0.5">
+                        Coverage
+                      </span>
+                      <p className="text-sm font-medium text-foreground">
+                        Nairobi, Maangani, Ngong & Across Kenya
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
 
+              {/* Social Channels */}
               <div>
-                <h3 className="font-mono text-[10px] uppercase tracking-widest text-gold font-semibold mb-4">Follow Us</h3>
-                <div className="flex flex-wrap gap-2.5">
-                  {[
-                    {
-                      href: APP_CONFIG.social.instagram,
-                      icon: <InstagramIcon className="w-4 h-4" />,
-                      label: "Instagram",
-                    },
-                    {
-                      href: APP_CONFIG.social.twitter,
-                      icon: <TwitterIcon className="w-4 h-4" />,
-                      label: "Twitter",
-                    },
-                    {
-                      href: APP_CONFIG.social.facebook,
-                      icon: <FacebookIcon className="w-4 h-4" />,
-                      label: "Facebook",
-                    },
-                    {
-                      href: APP_CONFIG.social.tiktok,
-                      icon: <TikTokIcon className="w-4 h-4" />,
-                      label: "TikTok",
-                    },
-                    {
-                      href: APP_CONFIG.social.linktree,
-                      icon: <Globe className="w-4 h-4" />,
-                      label: "Linktree",
-                    },
-                  ].map((s) => (
-                    <a
-                      key={s.label}
-                      href={s.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-10 h-10 rounded-full border border-primary/20 bg-background flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all duration-300"
-                      aria-label={s.label}
-                    >
-                      {s.icon}
-                    </a>
-                  ))}
+                <h4 className="font-serif font-bold text-sm text-foreground mb-4">Connect on Social Media</h4>
+                <div className="flex items-center gap-3">
+                  <a
+                    href={APP_CONFIG.social.instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-xl bg-background border border-primary/20 flex items-center justify-center text-foreground hover:bg-primary hover:text-white transition-all duration-300 shadow-sm"
+                    aria-label="Instagram"
+                  >
+                    <InstagramIcon className="w-4 h-4 text-gold" />
+                  </a>
+                  <a
+                    href={APP_CONFIG.social.facebook}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-xl bg-background border border-primary/20 flex items-center justify-center text-foreground hover:bg-primary hover:text-white transition-all duration-300 shadow-sm"
+                    aria-label="Facebook"
+                  >
+                    <FacebookIcon className="w-4 h-4 text-gold" />
+                  </a>
+                  <a
+                    href={APP_CONFIG.social.twitter}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-xl bg-background border border-primary/20 flex items-center justify-center text-foreground hover:bg-primary hover:text-white transition-all duration-300 shadow-sm"
+                    aria-label="Twitter / X"
+                  >
+                    <TwitterIcon className="w-4 h-4 text-gold" />
+                  </a>
+                  <a
+                    href={APP_CONFIG.social.tiktok}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 rounded-xl bg-background border border-primary/20 flex items-center justify-center text-foreground hover:bg-primary hover:text-white transition-all duration-300 shadow-sm"
+                    aria-label="TikTok"
+                  >
+                    <TikTokIcon className="w-4 h-4 text-gold" />
+                  </a>
                 </div>
-              </div>
-
-              {/* Newsletter */}
-              <div className="pt-4">
-                <h3 className="font-mono text-[10px] uppercase tracking-widest text-gold font-semibold mb-2">Subscribe to Newsletter</h3>
-                <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
-                  Stay updated on our latest events, programs, and impact stories.
-                </p>
-                <NewsletterForm />
               </div>
             </div>
           </FadeIn>
 
-          {/* Contact Form Container */}
-          <FadeIn direction="right" className="lg:col-span-3">
-            <div className="bg-background rounded-[2rem] border border-primary/20 p-6 sm:p-8 lg:p-10 shadow-[0_20px_50px_oklch(var(--primary)/4%)] relative">
-              <Suspense fallback={
-                <div className="space-y-6 animate-pulse">
-                  <div className="h-12 bg-secondary/30 rounded w-3/4"></div>
-                  <div className="h-12 bg-secondary/30 rounded w-1/2"></div>
-                  <div className="h-36 bg-secondary/30 rounded"></div>
-                  <div className="h-12 bg-secondary/30 rounded w-1/4"></div>
-                </div>
-              }>
+          {/* Contact Forms & Newsletter */}
+          <FadeIn direction="right" className="lg:col-span-3 space-y-8">
+            <div className="bg-background rounded-3xl border border-primary/20 p-6 sm:p-10 shadow-sm">
+              <h3 className="font-serif font-black text-2xl text-foreground mb-2">Send us a Message</h3>
+              <p className="text-muted-foreground text-xs sm:text-sm mb-8">
+                Fill in the form below and our team will get in touch shortly.
+              </p>
+              <Suspense fallback={<div className="h-48 flex items-center justify-center text-xs text-muted-foreground">Loading form...</div>}>
                 <ContactForm />
               </Suspense>
+            </div>
+
+            <div className="bg-primary/5 rounded-3xl border border-primary/20 p-6 sm:p-8">
+              <NewsletterForm />
             </div>
           </FadeIn>
         </div>

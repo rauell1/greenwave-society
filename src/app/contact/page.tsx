@@ -4,6 +4,8 @@ import { Contact } from "@/components/sections/Contact";
 import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { APP_CONFIG } from "@/config/app.config";
+import { getPublicPageContent } from "@/lib/cms/public-content";
+import { DEFAULT_SITE_PAGES } from "@/lib/cms/site-pages";
 
 export const metadata: Metadata = {
   title: "Contact Greenwave Society | Nairobi, Kenya | Email & WhatsApp",
@@ -27,7 +29,19 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ContactPage() {
+export const revalidate = 60;
+
+const defaultContact = DEFAULT_SITE_PAGES.find((p) => p.slug === "contact-us")!;
+
+export default async function ContactPage() {
+  const content = await getPublicPageContent("contact-us", {
+    title: defaultContact?.title || "Contact Us",
+    excerpt: defaultContact?.excerpt || "",
+    body:
+      defaultContact?.body ||
+      "Have a question, want to volunteer, or interested in partnering with us? We would love to hear from you. We promise to get back to you within 24 hours.",
+  });
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -94,12 +108,10 @@ export default function ContactPage() {
       />
       <Navbar />
       <main className="flex-1 pt-16 sm:pt-20">
-        <Contact />
+        <Contact content={{ title: content.title, body: content.body }} />
       </main>
       <Footer />
       <ScrollToTop />
     </div>
   );
 }
-
-

@@ -49,6 +49,14 @@ export interface PublicHomepageContent {
     ctaText?: string;
     ctaHref?: string;
   };
+  team: {
+    title: string;
+    body: string;
+  };
+  contact: {
+    title: string;
+    body: string;
+  };
   programs: Record<
     string,
     {
@@ -64,6 +72,8 @@ const defaultHeroPage = DEFAULT_SITE_PAGES.find((p) => p.slug === "homepage-hero
 const defaultAboutPage = DEFAULT_SITE_PAGES.find((p) => p.slug === "about-us")!;
 const defaultProgramsPage = DEFAULT_SITE_PAGES.find((p) => p.slug === "our-programs")!;
 const defaultVolunteerPage = DEFAULT_SITE_PAGES.find((p) => p.slug === "volunteer-cta")!;
+const defaultTeamPage = DEFAULT_SITE_PAGES.find((p) => p.slug === "our-team")!;
+const defaultContactPage = DEFAULT_SITE_PAGES.find((p) => p.slug === "contact-us")!;
 
 const defaultProgramItems: Record<
   string,
@@ -144,6 +154,18 @@ export const getPublicHomepageContent = cache(async (): Promise<PublicHomepageCo
       body: defaultVolunteerPage.body,
       ctaText: String(defaultVolunteerPage.metadata?.ctaText ?? "Sign Up to Volunteer"),
       ctaHref: String(defaultVolunteerPage.metadata?.ctaHref ?? "/contact?interest=volunteer"),
+    },
+    team: {
+      title: defaultTeamPage?.title || "Meet the People Behind the Mission",
+      body:
+        defaultTeamPage?.body ||
+        "Our dedicated founder and executive team work tirelessly to design, implement, and govern impactful programs that empower youth and secure environmental resilience across Kenya.",
+    },
+    contact: {
+      title: defaultContactPage?.title || "Contact Us",
+      body:
+        defaultContactPage?.body ||
+        "Have a question, want to volunteer, or interested in partnering with us? We would love to hear from you. We promise to get back to you within 24 hours.",
     },
     programs: { ...defaultProgramItems },
   };
@@ -248,6 +270,24 @@ export const getPublicHomepageContent = cache(async (): Promise<PublicHomepageCo
         body: volunteerEntry.body || fallback.volunteerCta.body,
         ctaText: typeof meta?.ctaText === "string" ? meta.ctaText : fallback.volunteerCta.ctaText,
         ctaHref: typeof meta?.ctaHref === "string" ? meta.ctaHref : fallback.volunteerCta.ctaHref,
+      };
+    }
+
+    // 8. Team Section
+    const teamEntry = entries.find((e) => e.type === "page" && e.slug === "our-team");
+    if (teamEntry) {
+      result.team = {
+        title: teamEntry.title || fallback.team.title,
+        body: teamEntry.body || fallback.team.body,
+      };
+    }
+
+    // 9. Contact Section
+    const contactEntry = entries.find((e) => e.type === "page" && e.slug === "contact-us");
+    if (contactEntry) {
+      result.contact = {
+        title: contactEntry.title || fallback.contact.title,
+        body: contactEntry.body || fallback.contact.body,
       };
     }
 

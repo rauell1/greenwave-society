@@ -4,6 +4,8 @@ import { Team } from "@/components/sections/Team";
 import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { APP_CONFIG } from "@/config/app.config";
+import { getPublicPageContent } from "@/lib/cms/public-content";
+import { DEFAULT_SITE_PAGES } from "@/lib/cms/site-pages";
 
 export const metadata: Metadata = {
   title: "Our Team | Martin Kyalo, Njeri Njoroge, Eugene Shadrack & Roy Okola",
@@ -27,7 +29,19 @@ export const metadata: Metadata = {
   },
 };
 
-export default function TeamPage() {
+export const revalidate = 60;
+
+const defaultTeam = DEFAULT_SITE_PAGES.find((p) => p.slug === "our-team")!;
+
+export default async function TeamPage() {
+  const content = await getPublicPageContent("our-team", {
+    title: defaultTeam?.title || "Meet the People Behind the Mission",
+    excerpt: defaultTeam?.excerpt || "",
+    body:
+      defaultTeam?.body ||
+      "Our dedicated founder and executive team work tirelessly to design, implement, and govern impactful programs that empower youth and secure environmental resilience across Kenya.",
+  });
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -105,12 +119,10 @@ export default function TeamPage() {
       />
       <Navbar />
       <main className="flex-1 pt-16 sm:pt-20">
-        <Team />
+        <Team content={{ title: content.title, body: content.body }} />
       </main>
       <Footer />
       <ScrollToTop />
     </div>
   );
 }
-
-

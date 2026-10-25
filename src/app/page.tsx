@@ -124,7 +124,7 @@ export const revalidate = 60;
 export default async function HomePage() {
   const content = await getPublicHomepageContent();
   const placements = await getPublicImagePlacements();
-  const { impact, activities, hero, about, programsSection, volunteerCta, programs } = content;
+  const { impact, activities, hero, about, programsSection, volunteerCta, programs, team, contact } = content;
 
   const faq = {
     ...faqJsonLd,
@@ -160,10 +160,10 @@ export default async function HomePage() {
           }}
         />
         <Impact impact={impact} />
-        <Team />
+        <Team content={team} />
         <Activities activities={activities} />
         <VolunteerCTA imagePlacement={placements?.volunteer} content={volunteerCta} />
-        <Contact />
+        <Contact content={contact} />
       </main>
       <Footer />
       <ScrollToTop />

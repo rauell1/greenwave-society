@@ -1,4 +1,3 @@
-
 import { Users, Sparkles, Compass, Palette } from "lucide-react";
 import { LinkedinIcon } from "@/components/ui/social-icons";
 import { Badge } from "@/components/ui/badge";
@@ -43,7 +42,17 @@ const designTeam = [
   },
 ];
 
-export function Team() {
+export interface TeamContentProps {
+  title?: string;
+  body?: string;
+}
+
+export function Team({ content }: { content?: TeamContentProps } = {}) {
+  const title = content?.title || "Meet the People Behind the Mission";
+  const body =
+    content?.body ||
+    "Our dedicated founder and executive team work tirelessly to design, implement, and govern impactful programs that empower youth and secure environmental resilience across Kenya.";
+
   return (
     <section id="team" className="py-24 sm:py-32 bg-background relative overflow-hidden">
       {/* Background accents */}
@@ -60,15 +69,20 @@ export function Team() {
                 Our Team
               </Badge>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black tracking-tight text-foreground leading-tight">
-                Meet the <span className="italic font-normal text-primary">People</span> Behind the Mission
+                {title.includes("People") ? (
+                  <>
+                    Meet the <span className="italic font-normal text-primary">People</span> Behind the Mission
+                  </>
+                ) : (
+                  title
+                )}
               </h2>
             </FadeIn>
           </div>
           <div className="lg:col-span-6">
             <FadeIn delay={0.1}>
               <p className="text-muted-foreground text-sm sm:text-base leading-relaxed lg:border-l lg:border-primary/25 lg:pl-6">
-                Our dedicated founder and executive team work tirelessly to design, implement, and govern
-                impactful programs that empower youth and secure environmental resilience across Kenya.
+                {body}
               </p>
             </FadeIn>
           </div>
