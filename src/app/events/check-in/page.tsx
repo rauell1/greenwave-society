@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, Suspense, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
@@ -17,7 +17,13 @@ import {
   RefreshCw,
   Clock,
   UserCheck,
+  Camera,
+  Smartphone,
+  HelpCircle,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
+import { QrCameraScanner } from "@/components/events/QrCameraScanner";
 
 interface CheckInAttendee {
   id: string;
@@ -63,49 +69,55 @@ function CheckInContent() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoadingList, setIsLoadingList] = useState(true);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
 
-  // If URL has id and token, perform auto check-in
-  useEffect(() => {
-    if (id) {
-      setIsVerifying(true);
-      fetch(`/api/events/check-in?id=${encodeURIComponent(id)}${token ? `&token=${encodeURIComponent(token)}` : ""}`)
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.success) {
-            setScannedResult({
-              success: true,
-              alreadyCheckedIn: data.alreadyCheckedIn,
-              registration: data.registration,
-            });
-            if (data.alreadyCheckedIn) {
-              toast.info(`Attendee already checked in: ${data.registration.fullName}`);
-            } else {
-              toast.success(`Check-in successful! Welcome, ${data.registration.fullName}`);
-            }
+  const verifyPass = useCallback((regId: string, regToken?: string | null) => {
+    setIsVerifying(true);
+    fetch(`/api/events/check-in?id=${encodeURIComponent(regId)}${regToken ? `&token=${encodeURIComponent(regToken)}` : ""}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setScannedResult({
+            success: true,
+            alreadyCheckedIn: data.alreadyCheckedIn,
+            registration: data.registration,
+          });
+          if (data.alreadyCheckedIn) {
+            toast.info(`Attendee already checked in: ${data.registration.fullName}`);
           } else {
-            setScannedResult({
-              success: false,
-              alreadyCheckedIn: false,
-              error: data.error || "Invalid ticket pass",
-            });
-            toast.error(data.error || "Ticket verification failed");
+            toast.success(`Check-in successful! Welcome, ${data.registration.fullName}`);
           }
-        })
-        .catch(() => {
+        } else {
           setScannedResult({
             success: false,
             alreadyCheckedIn: false,
-            error: "Network error while checking in",
+            error: data.error || "Invalid ticket pass",
           });
-        })
-        .finally(() => {
-          setIsVerifying(false);
-          loadEventList();
+          toast.error(data.error || "Ticket verification failed");
+        }
+      })
+      .catch(() => {
+        setScannedResult({
+          success: false,
+          alreadyCheckedIn: false,
+          error: "Network error while checking in",
         });
+      })
+      .finally(() => {
+        setIsVerifying(false);
+        loadEventList();
+      });
+  }, []);
+
+  // If URL has id, perform auto check-in on page load
+  useEffect(() => {
+    if (id) {
+      verifyPass(id, token);
     } else {
       loadEventList();
     }
-  }, [id, token]);
+  }, [id, token, verifyPass]);
 
   function loadEventList() {
     setIsLoadingList(true);
@@ -120,6 +132,35 @@ function CheckInContent() {
       .catch((err) => console.error(err))
       .finally(() => setIsLoadingList(false));
   }
+
+  // Handle in-browser QR camera decode
+  const handleCameraScan = useCallback((code: string) => {
+    try {
+      if (code.includes("/events/check-in")) {
+        const url = new URL(code);
+        const scannedId = url.searchParams.get("id");
+        const scannedToken = url.searchParams.get("token");
+        if (scannedId) {
+          verifyPass(scannedId, scannedToken);
+          return;
+        }
+      }
+
+      // If raw ticket number (e.g. GW-XXXXXX) or ID was scanned
+      const matched = attendees.find(
+        (a) => a.id === code || a.ticketNumber.toLowerCase() === code.toLowerCase()
+      );
+      if (matched) {
+        verifyPass(matched.id);
+        return;
+      }
+
+      toast.error("Unrecognized QR code format. Please verify the ticket.");
+    } catch (err) {
+      console.error("Scan parse error:", err);
+      toast.error("Could not parse scanned ticket.");
+    }
+  }, [attendees, verifyPass]);
 
   async function toggleAttendance(attendeeId: string, currentStatus: string) {
     setUpdatingId(attendeeId);
@@ -179,7 +220,20 @@ function CheckInContent() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            size="sm"
+            onClick={() => setIsScannerOpen(!isScannerOpen)}
+            className={`rounded-xl text-xs font-semibold gap-1.5 shadow-sm transition-all ${
+              isScannerOpen
+                ? "bg-slate-800 text-white hover:bg-slate-900"
+                : "bg-primary text-primary-foreground hover:bg-primary/90"
+            }`}
+          >
+            <Camera className="w-4 h-4" />
+            <span>{isScannerOpen ? "Close Camera" : "Open Camera Scanner"}</span>
+          </Button>
+
           <Button
             size="sm"
             variant="outline"
@@ -190,8 +244,61 @@ function CheckInContent() {
             <RefreshCw className={`w-3.5 h-3.5 ${isLoadingList ? "animate-spin" : ""}`} />
             Refresh
           </Button>
+
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => setShowGuide(!showGuide)}
+            className="rounded-xl text-xs text-muted-foreground hover:text-foreground gap-1"
+          >
+            <HelpCircle className="w-3.5 h-3.5" />
+            <span>Instructions</span>
+            {showGuide ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+          </Button>
         </div>
       </div>
+
+      {/* Visual Usher Guide */}
+      {showGuide && (
+        <Card className="border-primary/20 bg-primary/5 rounded-3xl p-6 space-y-4">
+          <div className="flex items-center gap-2">
+            <Smartphone className="w-5 h-5 text-primary" />
+            <h3 className="font-serif font-bold text-base text-foreground">How to Check In Guests on Event Day</h3>
+          </div>
+          <div className="grid sm:grid-cols-3 gap-4 text-xs text-muted-foreground">
+            <div className="p-4 rounded-2xl bg-background/80 border border-border/60 space-y-1.5">
+              <div className="font-bold text-foreground text-sm flex items-center gap-1.5">
+                <span className="w-5 h-5 rounded-full bg-primary text-white flex items-center justify-center text-[11px]">1</span>
+                Using Phone Camera
+              </div>
+              <p>Point any iPhone or Android camera at the attendee&apos;s ticket QR code. Tap the link popup to automatically check them in.</p>
+            </div>
+            <div className="p-4 rounded-2xl bg-background/80 border border-border/60 space-y-1.5">
+              <div className="font-bold text-foreground text-sm flex items-center gap-1.5">
+                <span className="w-5 h-5 rounded-full bg-primary text-white flex items-center justify-center text-[11px]">2</span>
+                In-Page Camera Scanner
+              </div>
+              <p>Tap <strong>&ldquo;Open Camera Scanner&rdquo;</strong> above to scan continuously with audio confirmation directly inside this webpage.</p>
+            </div>
+            <div className="p-4 rounded-2xl bg-background/80 border border-border/60 space-y-1.5">
+              <div className="font-bold text-foreground text-sm flex items-center gap-1.5">
+                <span className="w-5 h-5 rounded-full bg-primary text-white flex items-center justify-center text-[11px]">3</span>
+                Name or Ticket Search
+              </div>
+              <p>If someone forgot their phone, type their name, phone, or ticket code in the search bar below and tap <strong>&ldquo;Check In&rdquo;</strong>.</p>
+            </div>
+          </div>
+        </Card>
+      )}
+
+      {/* Live In-Page Camera Scanner */}
+      {isScannerOpen && (
+        <QrCameraScanner
+          isActive={isScannerOpen}
+          onScan={handleCameraScan}
+          onClose={() => setIsScannerOpen(false)}
+        />
+      )}
 
       {/* Auto-Scanned QR Code Result Banner */}
       {isVerifying && (
