@@ -20,52 +20,50 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
 
   if (!event) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  // Convert to CSV
   const headers = [
-    "Name",
+    "Ticket Number",
+    "Full Name",
     "Email",
     "Phone",
-    "Organization",
-    "Status",
-    "Attendance",
-    "Emergency Contact Name",
-    "Emergency Contact Phone",
-    "Dietary Restrictions",
-    "Liability Consent",
-    "Attended Before",
-    "Expectations",
-    "Makes You Happy",
-    "Accessibility Needs",
-    "Suicidal Ideation",
-    "Knows Someone Attempted",
-    "Stigma Reason",
+    "Organization / Brand",
+    "Registration Type",
+    "Role / Category",
+    "Headcount",
+    "Registration Status",
+    "Attendance Status",
+    "Checked In At",
+    "Checked In By",
+    "Dietary / Notes / Description",
     "Registered At"
   ];
 
   const rows = event.registrations.map(reg => {
     const meta = (reg.metadata as Record<string, any>) || {};
     
+    const ticketNumber = `GW-${reg.id.slice(-6).toUpperCase()}`;
+    const regType = meta.vendorName ? "Market Vendor" : meta.type === "guest" ? "Guest RSVP" : "General Attendee";
+    const roleOrCategory = meta.category || meta.role || (meta.vendorName ? "Vendor" : "Attendee");
+    const headcount = meta.guestCount || 1;
+    const notes = meta.dietaryOrNotes || meta.productDescription || meta.dietaryRestrictions || "";
+    const checkedInAt = reg.checkedInAt ? reg.checkedInAt.toISOString() : "";
+    const checkedInBy = reg.checkedInBy || "";
+
     return [
+      ticketNumber,
       reg.fullName,
       reg.email,
       reg.phone || "",
-      reg.organization || "",
+      reg.organization || meta.vendorName || "",
+      regType,
+      roleOrCategory,
+      headcount,
       reg.status,
       reg.attendanceStatus,
-      meta.emergencyContactName || "",
-      meta.emergencyContactPhone || "",
-      meta.dietaryRestrictions || "",
-      meta.liabilityConsent ? "Yes" : "No",
-      meta.attendedBefore || "",
-      meta.expectations || "",
-      meta.makesYouHappy || "",
-      meta.accessibilityNeeds || "",
-      meta.suicidalIdeation || "",
-      meta.knowsSomeoneAttempted || "",
-      meta.stigmaReason || "",
+      checkedInAt,
+      checkedInBy,
+      notes,
       reg.createdAt.toISOString()
     ].map(field => {
-      // Escape quotes and wrap in quotes to ensure valid CSV
       const str = String(field).replace(/"/g, '""');
       return `"${str}"`;
     }).join(",");

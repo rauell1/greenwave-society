@@ -2,13 +2,14 @@ import { Metadata } from "next";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
-import { VendorForm } from "./VendorForm";
+import { GraduationTabbedSection } from "./GraduationTabbedSection";
 import { FlyerMediaSection } from "./FlyerMediaSection";
-import { Calendar, Clock, MapPin, Sparkles, Award, Store, Leaf, Users, ArrowRight } from "lucide-react";
+import { Calendar, Clock, MapPin, Sparkles, Award, Store, Leaf, Users, ArrowRight, QrCode } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { APP_CONFIG } from "@/config/app.config";
 import Link from "next/link";
+import { AddToCalendarButton } from "@/components/events/AddToCalendarButton";
 
 export const metadata: Metadata = {
   title: "Empower 360: Ad Hoc Cohort I Graduation & Community Market | Greenwave Society",
@@ -24,6 +25,15 @@ export const metadata: Metadata = {
     images: [{ url: "/posters/empower360-cohort-1-graduation-flyer.png", width: 723, height: 1024, alt: "Empower 360 Cohort I Graduation Official Flyer" }],
     type: "website",
   },
+};
+
+const EVENT_CALENDAR_DATA = {
+  title: "Empower 360 Ad Hoc Cohort I Graduation & Community Market",
+  description: "Join Greenwave Society in celebrating the Empower 360 Ad Hoc Cohort I changemakers. Ceremony, networking, refreshments, and curated eco-conscious market.",
+  location: "Ubunifu Hub, Nairobi, Kenya",
+  startsAt: "2026-10-30T07:30:00Z", // 10:30 AM EAT
+  endsAt: "2026-10-30T12:00:00Z",   // 3:00 PM EAT
+  url: "https://greenwavesociety.org/events/graduation-cohort-1",
 };
 
 export default function GraduationCohortPage() {
@@ -104,7 +114,7 @@ export default function GraduationCohortPage() {
                 </div>
                 <div>
                   <div className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Time</div>
-                  <div className="text-sm font-semibold text-foreground">10:30 AM – 3:00 PM</div>
+                  <div className="text-sm font-semibold text-foreground">10:30 AM - 3:00 PM</div>
                 </div>
               </div>
 
@@ -119,7 +129,7 @@ export default function GraduationCohortPage() {
               </div>
             </div>
 
-            {/* Bring a Friend Banner */}
+            {/* Bring a Friend Banner & Actions */}
             <div className="mt-5 p-4 rounded-2xl bg-gradient-to-r from-emerald-600/15 via-primary/15 to-gold/15 border border-primary/20 flex flex-wrap items-center justify-between gap-3 shadow-sm">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-xl bg-primary text-primary-foreground flex items-center justify-center font-bold text-xs">
@@ -127,14 +137,17 @@ export default function GraduationCohortPage() {
                 </div>
                 <div>
                   <div className="text-xs font-mono uppercase tracking-wider font-bold text-primary">Bring a Friend!</div>
-                  <div className="text-sm font-medium text-foreground">Graduates & Guests Welcome — +1s and collaborators invited!</div>
+                  <div className="text-sm font-medium text-foreground">Graduates & Guests Welcome - +1s and collaborators invited!</div>
                 </div>
               </div>
-              <Button asChild size="sm" variant="outline" className="rounded-xl border-primary/30 text-primary hover:bg-primary/10">
-                <Link href="#vendor-application">
-                  Apply for a Vendor Stall <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
-                </Link>
-              </Button>
+              <div className="flex flex-wrap items-center gap-2">
+                <AddToCalendarButton event={EVENT_CALENDAR_DATA} size="sm" />
+                <Button asChild size="sm" className="rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold">
+                  <Link href="#registration-forms">
+                    RSVP as Attendee <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+                  </Link>
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -214,20 +227,38 @@ export default function GraduationCohortPage() {
               </div>
             </div>
 
+            {/* Check-in Info Badge for Organizers */}
+            <div className="p-5 rounded-2xl bg-primary/5 border border-primary/20 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                  <QrCode className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-primary font-mono uppercase tracking-wider">Fast QR Check-in</div>
+                  <div className="text-xs text-muted-foreground">Door check-in station active for event day organizers & ushers.</div>
+                </div>
+              </div>
+              <Button asChild size="sm" variant="outline" className="rounded-xl border-primary/30 text-primary hover:bg-primary/10 text-xs">
+                <Link href="/events/check-in">
+                  Door Station <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                </Link>
+              </Button>
+            </div>
+
             {/* Vendor FAQ Callout */}
             <div className="p-6 rounded-2xl bg-primary/5 border border-primary/20 space-y-3">
               <h4 className="font-serif font-bold text-base text-primary">Information for Prospective Vendors</h4>
               <ul className="text-xs sm:text-sm text-muted-foreground space-y-2 list-disc pl-5">
-                <li><strong>Exclusivity:</strong> Only 1–2 vendors per category will be approved to avoid direct market overlap.</li>
+                <li><strong>Exclusivity:</strong> Only 1-2 vendors per category will be approved to avoid direct market overlap.</li>
                 <li><strong>Logistics:</strong> Tables and chairs are provided by the organizers on-site. Setup runs from 9:30 AM to 10:15 AM.</li>
                 <li><strong>Commitment:</strong> A standard flat commitment fee of KES 1,000 confirms your reserved stall once your application is accepted.</li>
               </ul>
             </div>
           </div>
 
-          {/* Right Column: Vendor Application Form */}
+          {/* Right Column: Tabbed Registration Forms (Guest RSVP & Vendor Stall) */}
           <div className="lg:col-span-6" id="vendor-application">
-            <VendorForm />
+            <GraduationTabbedSection />
           </div>
 
         </div>

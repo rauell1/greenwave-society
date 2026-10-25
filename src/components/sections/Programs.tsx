@@ -1,9 +1,23 @@
 import Image from "next/image";
-import { GraduationCap, TreePine, HandHeart, Sprout, Recycle, HeartHandshake, TrendingUp } from "lucide-react";
+import Link from "next/link";
+import { GraduationCap, TreePine, HandHeart, Sprout, Recycle, HeartHandshake, TrendingUp, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { FadeIn } from "@/components/ui/fade-in";
 
-const programs = [
+interface ProgramItem {
+  image: string;
+  icon: React.ReactNode;
+  title: string;
+  desc: string;
+  tags: string[];
+  span: string;
+  cta?: {
+    text: string;
+    href: string;
+  };
+}
+
+const programs: ProgramItem[] = [
   {
     image: "/images/g-59.jpg",
     icon: <TrendingUp className="w-5 h-5" />,
@@ -43,6 +57,10 @@ const programs = [
     desc: "Through our Empower 360 programme, we build leadership capacity through mentorship, systems thinking training, and rotating meeting leadership so every member develops facilitation and critical thinking skills. Our inaugural Ad Hoc Cohort I changemakers lead community projects, manage budgets, and drive real-world transformation.",
     tags: ["Empower 360", "Leadership", "Mentorship", "Cohort I"],
     span: "md:col-span-2 lg:col-span-2",
+    cta: {
+      text: "Cohort I Graduation & Market (Oct 30)",
+      href: "/events/graduation-cohort-1",
+    },
   },
   {
     image: "/images/20250215_174908.jpg",
@@ -107,15 +125,27 @@ export function Programs() {
                       </p>
                     </div>
 
-                    <div className="flex flex-wrap gap-2 pt-4 border-t border-border/40">
-                      {p.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="text-[10px] uppercase tracking-wider font-extrabold px-3 py-1 bg-secondary text-primary rounded-md"
+                    <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-border/40">
+                      <div className="flex flex-wrap gap-2">
+                        {p.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="text-[10px] uppercase tracking-wider font-extrabold px-3 py-1 bg-secondary text-primary rounded-md"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+
+                      {p.cta && (
+                        <Link
+                          href={p.cta.href}
+                          className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:text-primary/80 transition-colors bg-primary/10 hover:bg-primary/15 px-3 py-1.5 rounded-xl border border-primary/20"
                         >
-                          {tag}
-                        </span>
-                      ))}
+                          <span>{p.cta.text}</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </Link>
+                      )}
                     </div>
                   </div>
 
