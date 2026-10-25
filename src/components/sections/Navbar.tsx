@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
@@ -82,15 +82,21 @@ export function Navbar() {
           })}
         </ul>
 
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-2.5">
           <Link
             href="/contact"
-            className="text-xs uppercase tracking-wider font-bold text-muted-foreground hover:text-foreground px-4 py-2 transition-colors"
+            className="text-xs uppercase tracking-wider font-bold text-muted-foreground hover:text-foreground px-3 py-2 transition-colors"
           >
             Get Involved
           </Link>
-          <Button asChild size="sm" className="rounded-xl px-5 py-4 bg-primary text-primary-foreground font-semibold hover:opacity-95 transition-opacity">
+          <Button asChild size="sm" className="rounded-xl px-4 py-3.5 bg-primary text-primary-foreground font-semibold hover:opacity-95 transition-opacity">
             <Link href="/contact?interest=volunteer">Volunteer</Link>
+          </Button>
+          <Button asChild variant="outline" size="sm" className="rounded-xl px-3 py-3.5 border-border text-xs font-semibold hover:border-primary/50 hover:text-primary gap-1.5 shadow-xs">
+            <Link href="/admin" title="Admin Portal">
+              <ShieldCheck className="w-3.5 h-3.5 text-primary" />
+              <span>Admin</span>
+            </Link>
           </Button>
         </div>
 
@@ -138,6 +144,13 @@ export function Navbar() {
                 </Button>
                 <Button asChild size="sm" className="flex-1 rounded-xl py-4 bg-primary text-primary-foreground">
                   <Link href="/contact?interest=volunteer">Volunteer</Link>
+                </Button>
+              </li>
+              <li className="pt-1">
+                <Button asChild variant="ghost" size="sm" className="w-full rounded-xl py-3 text-xs text-muted-foreground hover:text-foreground justify-center gap-1.5 border border-border/50">
+                  <Link href="/admin">
+                    <ShieldCheck className="w-3.5 h-3.5 text-primary" /> Admin Portal
+                  </Link>
                 </Button>
               </li>
             </ul>

@@ -20,6 +20,8 @@ import {
   Wallet,
   ImageIcon,
   Images,
+  Globe,
+  ExternalLink,
 } from "lucide-react";
 import { AdminUserDto } from "@/lib/auth/types";
 import { hasPermission } from "@/lib/auth/policy";
@@ -152,8 +154,21 @@ export default function AdminSidebar({ admin, enabledFeatures, notificationCount
 
   const navigation = (
     <>
-      <div className="h-16 flex items-center px-6 border-b border-gray-200">
-        <h2 className="text-lg font-bold text-green-700">Greenwave Admin</h2>
+      <div className="h-16 flex items-center justify-between px-6 border-b border-gray-200">
+        <Link href="/admin/dashboard" className="text-lg font-bold text-green-700 hover:text-green-800 transition-colors">
+          Greenwave Admin
+        </Link>
+        <Link
+          href="/"
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors border border-emerald-200"
+          title="Open public website in a new tab"
+        >
+          <Globe className="w-3.5 h-3.5" />
+          <span>Site</span>
+          <ExternalLink className="w-3 h-3 text-emerald-500" />
+        </Link>
       </div>
       
       <div className="p-4 border-b border-gray-100">
@@ -185,7 +200,18 @@ export default function AdminSidebar({ admin, enabledFeatures, notificationCount
         })}
       </nav>
 
-      <div className="p-4 border-t border-gray-200">
+      <div className="p-4 border-t border-gray-200 space-y-2">
+        <Link
+          href="/"
+          target="_blank"
+          rel="noreferrer"
+          className="flex w-full items-center justify-center gap-2 px-3 py-2 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-md border border-emerald-200 transition-colors shadow-xs"
+        >
+          <Globe className="w-4 h-4" />
+          <span>View Public Website</span>
+          <ExternalLink className="w-3.5 h-3.5 text-emerald-500" />
+        </Link>
+
         <form action="/api/admin/logout" method="POST">
           <button 
             type="submit"
@@ -204,7 +230,21 @@ export default function AdminSidebar({ admin, enabledFeatures, notificationCount
       <aside className="hidden w-64 shrink-0 flex-col border-r border-gray-200 bg-white md:flex">{navigation}</aside>
       <div className="fixed inset-x-0 top-0 z-40 flex h-16 items-center justify-between border-b bg-white px-4 md:hidden">
         <span className="font-bold text-green-800">Greenwave Admin</span>
-        <button type="button" aria-label="Open navigation" aria-expanded={mobileOpen} onClick={() => setMobileOpen(true)} className="rounded-md p-2 hover:bg-gray-100"><Menu className="h-5 w-5" /></button>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-lg border border-emerald-200"
+          >
+            <Globe className="w-3.5 h-3.5" />
+            <span>Site</span>
+            <ExternalLink className="w-3 h-3" />
+          </Link>
+          <button type="button" aria-label="Open navigation" aria-expanded={mobileOpen} onClick={() => setMobileOpen(true)} className="rounded-md p-2 hover:bg-gray-100">
+            <Menu className="h-5 w-5" />
+          </button>
+        </div>
       </div>
       {mobileOpen && <div className="fixed inset-0 z-50 md:hidden"><button aria-label="Close navigation" className="absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} /><aside className="relative flex h-full w-72 flex-col bg-white shadow-xl"><button type="button" aria-label="Close navigation" onClick={() => setMobileOpen(false)} className="absolute right-3 top-3 rounded-md p-2 hover:bg-gray-100"><X className="h-5 w-5" /></button>{navigation}</aside></div>}
     </>

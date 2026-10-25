@@ -1,11 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Phone, MapPin, Globe, Heart } from "lucide-react";
+import { Phone, MapPin, Globe, Heart, ShieldCheck } from "lucide-react";
 import { InstagramIcon, FacebookIcon, TwitterIcon, TikTokIcon } from "@/components/ui/social-icons";
 import { Separator } from "@/components/ui/separator";
 import { APP_CONFIG } from "@/config/app.config";
 import { SafeEmailLink } from "@/components/ui/safe-email-link";
-
 
 export function Footer() {
   return (
@@ -69,6 +68,7 @@ export function Footer() {
                 { label: "Cohort I Graduation", href: "/events/graduation-cohort-1" },
                 { label: "Contact", href: "/contact" },
                 { label: "Privacy & Data Rights", href: "/privacy" },
+                { label: "Admin Portal", href: "/admin" },
               ].map((l) => (
                 <li key={l.href}>
                   <Link
@@ -153,11 +153,19 @@ export function Footer() {
             &copy; {new Date().getFullYear()} Greenwave Society. All rights
             reserved.
           </p>
-          <p className="flex items-center gap-1">
-            Made with{" "}
-            <Heart className="w-3.5 h-3.5 text-emerald-500" fill="currentColor" />{" "}
-            for the planet
-          </p>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/admin"
+              className="inline-flex items-center gap-1.5 text-xs text-zinc-400 hover:text-emerald-400 transition-colors bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded-lg px-2.5 py-1"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" /> Admin Portal
+            </Link>
+            <p className="flex items-center gap-1">
+              Made with{" "}
+              <Heart className="w-3.5 h-3.5 text-emerald-500" fill="currentColor" />{" "}
+              for the planet
+            </p>
+          </div>
         </div>
       </div>
     </footer>
