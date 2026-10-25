@@ -4,7 +4,7 @@ import { cache } from "react";
 import { getDb } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { revalidatePath } from "next/cache";
-import { readFile } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import type { GalleryImage } from "@/components/gallery/GalleryGrid";
 
@@ -14,6 +14,12 @@ export interface CuratedGalleryItem {
   caption?: string;
   active: boolean;
   order?: number;
+}
+
+export interface AvailableGalleryImage {
+  src: string;
+  filename: string;
+  source: "repo" | "blob" | "poster";
 }
 
 export const DEFAULT_GALLERY_IMAGES: GalleryImage[] = [
@@ -91,22 +97,101 @@ export const getPublicGalleryImages = cache(async (): Promise<GalleryImage[]> =>
 
 export async function getAdminGalleryConfig(): Promise<{
   curated: CuratedGalleryItem[];
-  available: { src: string; filename: string }[];
+  available: AvailableGalleryImage[];
 }> {
-  // 1. Get all available images from manifest
-  const available: { src: string; filename: string }[] = [];
+  const map = new Map<string, AvailableGalleryImage>();
+
+  // 1. Catalog (all 829 repo images)
+  try {
+    const catalogPath = path.join(process.cwd(), "docs/repo-image-catalog.json");
+    const catalogRaw = await readFile(catalogPath, "utf-8");
+    const catalogFiles = JSON.parse(catalogRaw) as string[];
+    for (const file of catalogFiles) {
+      const src = `/images/${file}`;
+      map.set(src, { src, filename: file, source: "repo" });
+    }
+  } catch (err) {
+    logger.warn("Could not read repo-image-catalog.json for gallery", { err: String(err) });
+  }
+
+  // 2. Read public/images if present
+  try {
+    const imagesDir = path.join(process.cwd(), "public/images");
+    const files = await readdir(imagesDir);
+    for (const file of files) {
+      if (/\.(jpe?g|png|webp|svg)$/i.test(file)) {
+        const src = `/images/${file}`;
+        if (!map.has(src)) {
+          map.set(src, { src, filename: file, source: "repo" });
+        }
+      }
+    }
+  } catch {
+    // Expected in deployments where public/images is gitignored
+  }
+
+  // 3. docs/image-manifest.json
   try {
     const manifestPath = path.join(process.cwd(), "docs/image-manifest.json");
     const manifestRaw = await readFile(manifestPath, "utf-8");
     const manifestFiles = JSON.parse(manifestRaw) as string[];
     for (const file of manifestFiles) {
-      available.push({ src: `/images/${file}`, filename: file });
+      const src = `/images/${file}`;
+      if (!map.has(src)) {
+        map.set(src, { src, filename: file, source: "repo" });
+      }
     }
-  } catch (err) {
-    logger.warn("Could not read image manifest for gallery", { err: String(err) });
+  } catch {
+    // fallback
   }
 
-  // 2. Load stored curation from database
+  // 4. Read posters from public/posters
+  try {
+    const postersDir = path.join(process.cwd(), "public/posters");
+    const posterFiles = await readdir(postersDir);
+    for (const file of posterFiles) {
+      if (/\.(png|jpe?g|webp)$/i.test(file)) {
+        const src = `/posters/${file}`;
+        map.set(src, { src, filename: file, source: "poster" });
+      }
+    }
+  } catch {
+    const defaultPosters = [
+      "empower360-cohort-1-graduation-flyer.png",
+      "empower360-market-vendor-flyer.png",
+      "empower360-graduation-story.png",
+      "empower360-market-vendor-story.png",
+    ];
+    for (const file of defaultPosters) {
+      const src = `/posters/${file}`;
+      map.set(src, { src, filename: file, source: "poster" });
+    }
+  }
+
+  // 5. Blob / external uploads from database
+  try {
+    const mediaAssets = await getDb().cmsMediaAsset.findMany({
+      where: { status: "active" },
+      select: { url: true, filename: true },
+      take: 1000,
+      orderBy: { createdAt: "desc" },
+    });
+    for (const asset of mediaAssets) {
+      if (!map.has(asset.url)) {
+        map.set(asset.url, {
+          src: asset.url,
+          filename: asset.filename,
+          source: "blob",
+        });
+      }
+    }
+  } catch (err) {
+    logger.warn("Could not query cmsMediaAsset for gallery", { err: String(err) });
+  }
+
+  const available = Array.from(map.values());
+
+  // Load stored curation from database
   let storedItems: CuratedGalleryItem[] = [];
   try {
     const entry = await getDb().cmsContent.findUnique({
@@ -124,7 +209,7 @@ export async function getAdminGalleryConfig(): Promise<{
         storedItems = parsed.images;
       }
     }
-  } catch (err) {
+  } catch {
     // fallback
   }
 
@@ -158,8 +243,8 @@ export async function saveAdminGalleryConfig(
       type: "gallery",
       slug: "curated-gallery",
       title: "Curated Public Photo Gallery",
-      excerpt: "Selection of active community, workshop, and conservation photos for /gallery.",
-      body: "Active configuration for public photo gallery.",
+      excerpt: "Curated collection of images for the public /gallery page.",
+      body: "Curated list of public images and alt text.",
       metadata,
       status: "published",
       publishedAt: new Date(),

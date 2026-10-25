@@ -4,7 +4,7 @@ import { cache } from "react";
 import { getDb } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { revalidatePath } from "next/cache";
-import { readFile } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 
 export interface PlacementSlotConfig {
@@ -116,57 +116,104 @@ export const getPublicImagePlacements = cache(async (): Promise<Record<string, {
   }
 });
 
-export async function getAvailableCmsImages(): Promise<{ url: string; filename: string; source: "cdn" | "media_asset" }[]> {
-  const list: { url: string; filename: string; source: "cdn" | "media_asset" }[] = [];
+export interface AvailableCmsImage {
+  url: string;
+  filename: string;
+  source: "repo" | "blob" | "poster";
+}
 
+export async function getAvailableCmsImages(): Promise<AvailableCmsImage[]> {
+  const map = new Map<string, AvailableCmsImage>();
+
+  // 1. Load from docs/repo-image-catalog.json (contains all 829 repo images, checked into git)
+  try {
+    const catalogPath = path.join(process.cwd(), "docs/repo-image-catalog.json");
+    const catalogRaw = await readFile(catalogPath, "utf-8");
+    const catalogFiles = JSON.parse(catalogRaw) as string[];
+    for (const file of catalogFiles) {
+      const url = `/images/${file}`;
+      map.set(url, { url, filename: file, source: "repo" });
+    }
+  } catch (err) {
+    logger.warn("Could not read repo-image-catalog.json", { err: String(err) });
+  }
+
+  // 2. Read public/images directory if present on local disk
+  try {
+    const imagesDir = path.join(process.cwd(), "public/images");
+    const files = await readdir(imagesDir);
+    for (const file of files) {
+      if (/\.(jpe?g|png|webp|svg)$/i.test(file)) {
+        const url = `/images/${file}`;
+        if (!map.has(url)) {
+          map.set(url, { url, filename: file, source: "repo" });
+        }
+      }
+    }
+  } catch {
+    // Expected in deployments where public/images is gitignored
+  }
+
+  // 3. docs/image-manifest.json
   try {
     const manifestPath = path.join(process.cwd(), "docs/image-manifest.json");
     const manifestRaw = await readFile(manifestPath, "utf-8");
     const manifestFiles = JSON.parse(manifestRaw) as string[];
     for (const file of manifestFiles) {
-      list.push({
-        url: `/images/${file}`,
-        filename: file,
-        source: "cdn",
-      });
+      const url = `/images/${file}`;
+      if (!map.has(url)) {
+        map.set(url, { url, filename: file, source: "repo" });
+      }
     }
-  } catch (err) {
-    logger.warn("Could not read image-manifest.json", { err: String(err) });
+  } catch {
+    // fallback
   }
 
+  // 4. Read posters in public/posters
+  try {
+    const postersDir = path.join(process.cwd(), "public/posters");
+    const posterFiles = await readdir(postersDir);
+    for (const file of posterFiles) {
+      if (/\.(png|jpe?g|webp)$/i.test(file)) {
+        const url = `/posters/${file}`;
+        map.set(url, { url, filename: file, source: "poster" });
+      }
+    }
+  } catch {
+    const defaultPosters = [
+      "empower360-cohort-1-graduation-flyer.png",
+      "empower360-market-vendor-flyer.png",
+      "empower360-graduation-story.png",
+      "empower360-market-vendor-story.png",
+    ];
+    for (const file of defaultPosters) {
+      const url = `/posters/${file}`;
+      map.set(url, { url, filename: file, source: "poster" });
+    }
+  }
+
+  // 5. Query cmsMediaAsset from database for all blob/external storage uploads
   try {
     const mediaAssets = await getDb().cmsMediaAsset.findMany({
       where: { status: "active" },
       select: { url: true, filename: true },
-      take: 100,
+      take: 1000,
+      orderBy: { createdAt: "desc" },
     });
     for (const asset of mediaAssets) {
-      if (!list.some(item => item.url === asset.url)) {
-        list.push({
+      if (!map.has(asset.url)) {
+        map.set(asset.url, {
           url: asset.url,
           filename: asset.filename,
-          source: "media_asset",
+          source: "blob",
         });
       }
     }
   } catch (err) {
-    // Media assets table query error fallback
+    logger.warn("Could not query cmsMediaAsset for placements", { err: String(err) });
   }
 
-  // Also include the official generated posters in the picker!
-  const generatedPosters = [
-    { url: "/posters/empower360-cohort-1-graduation-flyer.png", filename: "empower360-cohort-1-graduation-flyer.png", source: "cdn" as const },
-    { url: "/posters/empower360-market-vendor-flyer.png", filename: "empower360-market-vendor-flyer.png", source: "cdn" as const },
-    { url: "/posters/empower360-graduation-story.png", filename: "empower360-graduation-story.png", source: "cdn" as const },
-    { url: "/posters/empower360-market-vendor-story.png", filename: "empower360-market-vendor-story.png", source: "cdn" as const },
-  ];
-  for (const poster of generatedPosters) {
-    if (!list.some(item => item.url === poster.url)) {
-      list.push(poster);
-    }
-  }
-
-  return list;
+  return Array.from(map.values());
 }
 
 export async function saveImagePlacements(
