@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
   const query = request.nextUrl.searchParams.get("q")?.trim();
   const items = await getDb().cmsContent.findMany({
     where: {
-      ...(type ? { type } : {}),
+      type: type ? type : { in: [...CONTENT_TYPES] },
       ...(status ? { status } : {}),
       ...(query ? { OR: [{ title: { contains: query, mode: "insensitive" } }, { slug: { contains: query, mode: "insensitive" } }] } : {}),
     },
