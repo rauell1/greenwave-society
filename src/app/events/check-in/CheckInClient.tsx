@@ -66,6 +66,7 @@ interface EventStats {
 interface CheckInClientProps {
   adminEmail: string;
   adminRoles?: string[];
+  isExecutive?: boolean;
 }
 
 function CheckInContent({ adminEmail }: CheckInClientProps) {
@@ -210,7 +211,7 @@ function CheckInContent({ adminEmail }: CheckInClientProps) {
         <div>
           <div className="flex items-center gap-2 mb-1.5">
             <Badge className="bg-emerald-600/15 text-emerald-700 dark:text-emerald-400 border border-emerald-600/30 text-xs font-mono uppercase tracking-wider px-3 py-0.5">
-              <ShieldCheck className="w-3.5 h-3.5 mr-1" /> Greenwave Admin Station
+              <ShieldCheck className="w-3.5 h-3.5 mr-1" /> Executive Team Station
             </Badge>
             <span className="text-xs font-mono text-muted-foreground">{adminEmail}</span>
           </div>

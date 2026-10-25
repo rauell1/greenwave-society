@@ -5,6 +5,7 @@ import { PERMISSIONS } from "@/lib/auth/permissions";
 import { isCmsFeatureEnabled } from "@/lib/cms/feature-flags";
 import { getDb } from "@/lib/db";
 import EventActions from "./EventActions";
+import EventBroadcastPanel from "./EventBroadcastPanel";
 import { QrCode, Download, Award, Store, Users } from "lucide-react";
 
 export default async function EventPage({
@@ -35,6 +36,11 @@ export default async function EventPage({
   }).length;
 
   const guestsCount = event.registrations.length - graduandsCount - vendorsCount;
+
+  const remindedCount = event.registrations.filter((r) => {
+    const meta = (r.metadata as Record<string, any>) || {};
+    return Boolean(meta.reminderSentAt);
+  }).length;
 
   return (
     <section className="space-y-6">
@@ -83,6 +89,16 @@ export default async function EventPage({
 
       <EventActions
         event={{ id: event.id, status: event.status, capacity: event.capacity }}
+      />
+
+      {/* 1-Day Reminder Broadcast Panel */}
+      <EventBroadcastPanel
+        eventId={event.id}
+        totalCount={event.registrations.length}
+        graduandsCount={graduandsCount}
+        vendorsCount={vendorsCount}
+        guestsCount={guestsCount}
+        remindedCount={remindedCount}
       />
 
       <div className="rounded-xl border bg-white p-5">
@@ -207,6 +223,11 @@ export default async function EventPage({
                       <span className="inline-block px-2 py-0.5 rounded-full bg-slate-100 text-slate-800">
                         {item.status}
                       </span>
+                      {meta.reminderSentAt && (
+                        <div className="text-[10px] text-emerald-700 font-medium mt-1 flex items-center gap-1">
+                          <span>✓ Reminded</span>
+                        </div>
+                      )}
                     </td>
                     <td className="p-2.5 align-top capitalize text-xs">
                       <span className={`inline-block px-2 py-0.5 rounded-full ${

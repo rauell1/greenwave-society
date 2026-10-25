@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
-import { sendEventRegistrationConfirmation } from "@/lib/events/email";
+import { sendGraduationVendorConfirmation } from "@/lib/events/email";
+import { generateQrDataUrl } from "@/lib/events/qr";
+import { SITE_URL } from "@/lib/email-template";
 import { z } from "zod";
+import crypto from "crypto";
 
 const vendorSchema = z.object({
   vendorName: z.string().trim().min(2, "Vendor/Brand name is required").max(100),
@@ -27,7 +30,7 @@ const vendorSchema = z.object({
 const EVENT_SLUG = "graduation-cohort-1-2026";
 const EVENT_TITLE = "Empower 360 Ad Hoc Cohort I Graduation & Community Market";
 const EVENT_LOCATION = "Ubunifu Hub, Nairobi, Kenya";
-const EVENT_DATE_STR = "Friday, 30th October 2026, 10:30 AM EAT";
+const EVENT_DATE_STR = "Friday, 30th October 2026, 10:30 AM EAT (Setup 9:30 AM)";
 
 export async function POST(req: Request) {
   try {
@@ -80,34 +83,55 @@ export async function POST(req: Request) {
       }
     }
 
-    if (event) {
-      // Check duplicate registration
-      const existing = await db.cmsEventRegistration.findUnique({
-        where: {
-          eventId_email: {
-            eventId: event.id,
-            email,
-          },
+    if (!event) {
+      return NextResponse.json({ error: "System initialization pending. Please contact info@greenwavesociety.org." }, { status: 500 });
+    }
+
+    // Check duplicate or existing registration
+    const existing = await db.cmsEventRegistration.findUnique({
+      where: {
+        eventId_email: {
+          eventId: event.id,
+          email,
         },
-      });
+      },
+    });
 
-      if (existing) {
-        return NextResponse.json(
-          { error: "A registration with this email address has already been submitted." },
-          { status: 409 }
-        );
+    let registrationId: string;
+    let checkInToken: string;
+    let isExisting = false;
+
+    if (existing) {
+      registrationId = existing.id;
+      const meta = (existing.metadata as Record<string, any>) || {};
+      checkInToken = meta.checkInToken || crypto.randomUUID();
+
+      if (!meta.checkInToken || !meta.ticketToken) {
+        await db.cmsEventRegistration.update({
+          where: { id: existing.id },
+          data: {
+            metadata: {
+              ...meta,
+              checkInToken,
+              ticketToken: checkInToken,
+            },
+          },
+        });
       }
-
-      await db.cmsEventRegistration.create({
+      isExisting = true;
+    } else {
+      checkInToken = crypto.randomUUID();
+      const created = await db.cmsEventRegistration.create({
         data: {
           eventId: event.id,
           fullName: contactPerson,
           email,
           phone,
           organization: vendorName,
-          status: "pending", // Pending curation/confirmation
+          status: "registered",
           attendanceStatus: "not_checked_in",
           metadata: {
+            type: "vendor",
             vendorName,
             contactPerson,
             category,
@@ -115,17 +139,34 @@ export async function POST(req: Request) {
             socialOrWebsite: socialOrWebsite || null,
             singleUsePlasticAgreement,
             feePolicy: "KES 1,000 baseline stall commitment fee (tables and chairs provided)",
+            checkInToken,
+            ticketToken: checkInToken,
             submittedAt: new Date().toISOString(),
           },
         },
       });
+      registrationId = created.id;
     }
 
-    // Send confirmation email
-    await sendEventRegistrationConfirmation({
+    const ticketNumber = `GW-${registrationId.slice(-6).toUpperCase()}`;
+    const checkInUrl = `${SITE_URL}/events/check-in?id=${registrationId}&token=${checkInToken}`;
+    const passUrl = `${SITE_URL}/events/pass?id=${registrationId}&token=${checkInToken}`;
+
+    const qrCodeDataUrl = await generateQrDataUrl(checkInUrl, {
+      width: 320,
+      margin: 1,
+      darkColor: "#064e3b",
+      lightColor: "#ffffff",
+    });
+
+    // Send vendor confirmation email with scannable QR ticket
+    sendGraduationVendorConfirmation({
       to: email,
       name: contactPerson,
-      eventTitle: `${EVENT_TITLE} (Vendor Application)`,
+      vendorName,
+      category,
+      ticketNumber,
+      checkInUrl,
       eventDate: EVENT_DATE_STR,
       location: EVENT_LOCATION,
     }).catch(() => {
@@ -134,7 +175,18 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       success: true,
-      message: "Thank you! Your vendor application has been received. Our team will review your category and contact you with setup details.",
+      isExisting,
+      ticketNumber,
+      registrationId,
+      checkInUrl,
+      passUrl,
+      qrCodeDataUrl,
+      vendorName,
+      contactPerson,
+      category,
+      message: isExisting
+        ? "We found your existing vendor registration! Here is your digital vendor pass."
+        : "Vendor application confirmed! Your vendor stall pass and check-in QR code have been issued.",
     });
   } catch (error) {
     console.error("[GRADUATION_VENDOR_POST]", error);

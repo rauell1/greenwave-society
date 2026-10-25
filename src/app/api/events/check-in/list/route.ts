@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 import { getCurrentAdmin } from "@/lib/auth/guards";
+import { isExecutiveCommitteeMember } from "@/lib/careers-admin";
 
 export async function GET(req: NextRequest) {
   try {
@@ -9,6 +10,14 @@ export async function GET(req: NextRequest) {
       return NextResponse.json(
         { error: "Unauthorized. Greenwave Society admin session required." },
         { status: 401 }
+      );
+    }
+
+    const isExecutive = await isExecutiveCommitteeMember(admin);
+    if (!isExecutive) {
+      return NextResponse.json(
+        { error: "Forbidden: Only Executive Committee members have access to the door check-in roster." },
+        { status: 403 }
       );
     }
 

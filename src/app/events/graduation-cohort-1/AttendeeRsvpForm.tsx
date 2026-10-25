@@ -52,6 +52,7 @@ interface TicketData {
   guestCount: number;
   qrCodeDataUrl: string;
   checkInUrl: string;
+  passUrl?: string;
   message: string;
 }
 
@@ -105,6 +106,7 @@ export function AttendeeRsvpForm() {
         guestCount: data.guestCount,
         qrCodeDataUrl: data.qrCodeDataUrl,
         checkInUrl: data.checkInUrl,
+        passUrl: data.passUrl,
         message: data.message,
       });
 
@@ -225,6 +227,20 @@ export function AttendeeRsvpForm() {
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2 print:hidden">
             <AddToCalendarButton event={EVENT_CALENDAR_DATA} size="sm" />
             
+            {ticket.passUrl && (
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
+                className="rounded-xl border-border text-foreground hover:bg-secondary/40 gap-1.5"
+              >
+                <a href={ticket.passUrl} target="_blank" rel="noopener noreferrer">
+                  <QrCode className="w-4 h-4 text-emerald-600" />
+                  <span>Open Mobile Pass</span>
+                </a>
+              </Button>
+            )}
+
             <Button
               variant="outline"
               size="sm"

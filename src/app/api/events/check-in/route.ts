@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 import { getCurrentAdmin } from "@/lib/auth/guards";
+import { isExecutiveCommitteeMember } from "@/lib/careers-admin";
 
 function buildRegistrationPayload(reg: any, meta: Record<string, any>) {
   const isVendor = Boolean(meta.vendorName);
@@ -53,6 +54,14 @@ export async function GET(req: NextRequest) {
       );
     }
 
+    const isExecutive = await isExecutiveCommitteeMember(admin);
+    if (!isExecutive) {
+      return NextResponse.json(
+        { error: "Forbidden: Only Executive Committee members are authorized to scan and verify attendee passes." },
+        { status: 403 }
+      );
+    }
+
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
     const token = searchParams.get("token");
@@ -84,7 +93,8 @@ export async function GET(req: NextRequest) {
     const meta = (registration.metadata as Record<string, any>) || {};
 
     // Validate security token if present in registration metadata
-    if (meta.ticketToken && token && meta.ticketToken !== token) {
+    const expectedToken = meta.checkInToken || meta.ticketToken;
+    if (expectedToken && token && expectedToken !== token) {
       return NextResponse.json(
         { error: "Invalid ticket security token" },
         { status: 403 }
@@ -136,6 +146,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const isExecutive = await isExecutiveCommitteeMember(admin);
+    if (!isExecutive) {
+      return NextResponse.json(
+        { error: "Forbidden: Only Executive Committee members are authorized to scan and verify attendee passes." },
+        { status: 403 }
+      );
+    }
+
     const body = await req.json().catch(() => ({}));
     const { id, token, status = "checked_in" } = body;
 
@@ -163,7 +181,8 @@ export async function POST(req: NextRequest) {
 
     const meta = (registration.metadata as Record<string, any>) || {};
 
-    if (meta.ticketToken && token && meta.ticketToken !== token) {
+    const expectedToken = meta.checkInToken || meta.ticketToken;
+    if (expectedToken && token && expectedToken !== token) {
       return NextResponse.json(
         { error: "Invalid ticket security token" },
         { status: 403 }

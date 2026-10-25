@@ -129,6 +129,7 @@ export async function POST(req: Request) {
             guestCount,
             dietaryOrNotes: dietaryOrNotes || null,
             checkInToken,
+            ticketToken: checkInToken,
             registeredAt: new Date().toISOString(),
           },
         },
@@ -161,12 +162,15 @@ export async function POST(req: Request) {
       // Non-fatal if email provider is unconfigured in local development
     });
 
+    const passUrl = `/events/pass?id=${registrationId}&token=${checkInToken}`;
+
     return NextResponse.json({
       success: true,
       isExisting,
       ticketNumber: `GW-${registrationId.slice(-6).toUpperCase()}`,
       registrationId,
       checkInUrl,
+      passUrl,
       qrCodeDataUrl,
       role,
       guestCount,
