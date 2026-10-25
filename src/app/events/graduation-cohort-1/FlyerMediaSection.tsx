@@ -9,9 +9,11 @@ import { Badge } from "@/components/ui/badge";
 interface FlyerAsset {
   id: string;
   category: "attendee" | "vendor";
+  edition: "v1" | "v2";
   format: "standard" | "story";
   title: string;
   badge: string;
+  editionBadge: string;
   description: string;
   imageSrc: string;
   downloadSrc: string;
@@ -21,53 +23,122 @@ interface FlyerAsset {
 }
 
 const FLYER_ASSETS: FlyerAsset[] = [
+  // --- Edition 1: Community Campaign Posters ---
   {
-    id: "attendee-standard",
+    id: "attendee-v1-standard",
     category: "attendee",
+    edition: "v1",
     format: "standard",
-    title: "Official Graduation Invitation Flyer",
-    badge: "Official Master Invitation",
-    description: "Official invitation featuring genuine Kenyan youth changemakers from Empower 360 Cohort I, the Greenwave Society circular emblem, ceremony agenda, and scannable RSVP pass.",
-    imageSrc: "/posters/empower360-cohort-1-graduation-flyer.png",
-    downloadSrc: "/downloads/empower360-cohort-1-graduation-flyer.png",
-    highResSrc: "/downloads/empower360-cohort-1-graduation-flyer-2x.png",
+    title: "Empower 360 Cohort I Graduation: Community Campaign Flyer",
+    badge: "Edition 1: Community Campaign",
+    editionBadge: "Community Campaign Edition",
+    description: "Vibrant grassroots targeting poster featuring our arched emerald banners, Greenwave Society circular emblem, welcoming 'Bring a Friend!' invitation, and verified RSVP pass. Ideal for local community groups, youth networks, and WhatsApp circulars.",
+    imageSrc: "/posters/v1-empower360-graduation-flyer.png",
+    downloadSrc: "/downloads/v1-empower360-graduation-flyer.png",
+    highResSrc: "/downloads/v1-empower360-graduation-flyer-2x.png",
     aspectRatio: "aspect-[723/1024]",
     dimensions: "723 × 1024 px (Print 2X: 1446 × 2048 px)",
   },
   {
-    id: "attendee-story",
+    id: "attendee-v1-story",
     category: "attendee",
+    edition: "v1",
     format: "story",
-    title: "Graduation Mobile Story Cut (9:16)",
-    badge: "WhatsApp Status & Instagram Stories",
-    description: "Full-screen vertical invitation formatted specifically for mobile stories and status updates without cropping. High-contrast typography and large scannable QR code.",
-    imageSrc: "/posters/empower360-graduation-story.png",
-    downloadSrc: "/downloads/empower360-graduation-story.png",
+    title: "Graduation Mobile Story: Community Campaign (9:16)",
+    badge: "Edition 1: WhatsApp & IG Story",
+    editionBadge: "Community Story Cut",
+    description: "Full-bleed 9:16 vertical poster formatted specifically for phone screens and WhatsApp Status updates with high-contrast typography and large scannable QR code.",
+    imageSrc: "/posters/v1-empower360-graduation-story.png",
+    downloadSrc: "/downloads/v1-empower360-graduation-story.png",
     aspectRatio: "aspect-[9/16]",
     dimensions: "1080 × 1920 px (9:16 Vertical)",
   },
   {
-    id: "vendor-standard",
+    id: "vendor-v1-standard",
     category: "vendor",
+    edition: "v1",
     format: "standard",
-    title: "Community Market Call for Vendors",
-    badge: "Eco-Vendors & Creatives",
-    description: "Official recruitment poster for sustainable local vendors, snacks artisans, thrifters, and creators. Highlights subsidized KES 1,000 fee, provided tables/chairs, and zero single-use plastics policy.",
-    imageSrc: "/posters/empower360-market-vendor-flyer.png",
-    downloadSrc: "/downloads/empower360-market-vendor-flyer.png",
-    highResSrc: "/downloads/empower360-market-vendor-flyer-2x.png",
+    title: "Community Market Call for Vendors: Campaign Flyer",
+    badge: "Edition 1: Market Campaign",
+    editionBadge: "Community Campaign Edition",
+    description: "Official recruitment flyer for sustainable vendors and local artisans. Highlights subsidized KES 1,000 fee, provided tables/chairs, and zero single-use plastics policy.",
+    imageSrc: "/posters/v1-empower360-market-vendor-flyer.png",
+    downloadSrc: "/downloads/v1-empower360-market-vendor-flyer.png",
+    highResSrc: "/downloads/v1-empower360-market-vendor-flyer-2x.png",
     aspectRatio: "aspect-[723/1024]",
     dimensions: "723 × 1024 px (Print 2X available)",
   },
   {
-    id: "vendor-story",
+    id: "vendor-v1-story",
     category: "vendor",
+    edition: "v1",
     format: "story",
-    title: "Vendor Recruitment Mobile Story Cut (9:16)",
-    badge: "WhatsApp Status & Instagram Stories",
+    title: "Vendor Recruitment Mobile Story: Campaign Cut (9:16)",
+    badge: "Edition 1: WhatsApp & IG Story",
+    editionBadge: "Community Story Cut",
     description: "Full-bleed 9:16 vertical vendor call poster designed for phone screens. Direct QR link to the online vendor application portal with deadline reminders.",
-    imageSrc: "/posters/empower360-market-vendor-story.png",
-    downloadSrc: "/downloads/empower360-market-vendor-story.png",
+    imageSrc: "/posters/v1-empower360-market-vendor-story.png",
+    downloadSrc: "/downloads/v1-empower360-market-vendor-story.png",
+    aspectRatio: "aspect-[9/16]",
+    dimensions: "1080 × 1920 px (9:16 Vertical)",
+  },
+
+  // --- Edition 2: Cinematic Celebration Posters ---
+  {
+    id: "attendee-v2-standard",
+    category: "attendee",
+    edition: "v2",
+    format: "standard",
+    title: "Empower 360 Cohort I Graduation: Cinematic Celebration Poster",
+    badge: "Edition 2: Cinematic Stage Poster",
+    editionBadge: "Cinematic Celebration Edition",
+    description: "Bold, dramatic targeting poster capturing the triumphant commencement atmosphere on stage with emerald and gold lighting, diplomas held high, and verified RSVP pass. Best for Instagram feeds, LinkedIn, and institutional announcements.",
+    imageSrc: "/posters/v2-empower360-graduation-stage-flyer.png",
+    downloadSrc: "/downloads/v2-empower360-graduation-stage-flyer.png",
+    highResSrc: "/downloads/v2-empower360-graduation-stage-flyer-2x.png",
+    aspectRatio: "aspect-[723/1024]",
+    dimensions: "723 × 1024 px (Print 2X: 1446 × 2048 px)",
+  },
+  {
+    id: "attendee-v2-story",
+    category: "attendee",
+    edition: "v2",
+    format: "story",
+    title: "Graduation Mobile Story: Cinematic Celebration (9:16)",
+    badge: "Edition 2: WhatsApp & IG Story",
+    editionBadge: "Cinematic Story Cut",
+    description: "Full-bleed 9:16 vertical story invitation with dramatic stage celebration lighting, crisp typography, and high-contrast scannable QR code.",
+    imageSrc: "/posters/v2-empower360-graduation-story.png",
+    downloadSrc: "/downloads/v2-empower360-graduation-story.png",
+    aspectRatio: "aspect-[9/16]",
+    dimensions: "1080 × 1920 px (9:16 Vertical)",
+  },
+  {
+    id: "vendor-v2-standard",
+    category: "vendor",
+    edition: "v2",
+    format: "standard",
+    title: "Community Market & Creative Showcase: Atmospheric Poster",
+    badge: "Edition 2: Creative Showcase",
+    editionBadge: "Atmospheric Showcase Edition",
+    description: "Dramatic targeting poster for the open-air courtyard marketplace, featuring eco-creatives and artisans alongside the graduation ceremony.",
+    imageSrc: "/posters/v2-empower360-community-market-flyer.png",
+    downloadSrc: "/downloads/v2-empower360-community-market-flyer.png",
+    highResSrc: "/downloads/v2-empower360-community-market-flyer-2x.png",
+    aspectRatio: "aspect-[723/1024]",
+    dimensions: "723 × 1024 px (Print 2X available)",
+  },
+  {
+    id: "vendor-v2-story",
+    category: "vendor",
+    edition: "v2",
+    format: "story",
+    title: "Vendor Recruitment Mobile Story: Atmospheric Cut (9:16)",
+    badge: "Edition 2: WhatsApp & IG Story",
+    editionBadge: "Atmospheric Story Cut",
+    description: "Full-bleed 9:16 vertical market poster designed for status updates with direct application link.",
+    imageSrc: "/posters/v2-empower360-market-vendor-story.png",
+    downloadSrc: "/downloads/v2-empower360-market-vendor-story.png",
     aspectRatio: "aspect-[9/16]",
     dimensions: "1080 × 1920 px (9:16 Vertical)",
   },
@@ -80,13 +151,18 @@ interface FlyerMediaSectionProps {
 export function FlyerMediaSection({ categoryFilter = "all" }: FlyerMediaSectionProps) {
   const initialCategory = categoryFilter === "vendor" ? "vendor" : "attendee";
   const [selectedCategory, setSelectedCategory] = useState<"attendee" | "vendor">(initialCategory);
+  const [selectedEdition, setSelectedEdition] = useState<"v1" | "v2">("v1");
   const [selectedFormat, setSelectedFormat] = useState<"standard" | "story">("standard");
   const [copied, setCopied] = useState(false);
 
   const effectiveCategory = categoryFilter === "all" ? selectedCategory : categoryFilter;
 
   const activeAsset = FLYER_ASSETS.find((asset) => {
-    return asset.category === effectiveCategory && asset.format === selectedFormat;
+    return (
+      asset.category === effectiveCategory &&
+      asset.edition === selectedEdition &&
+      asset.format === selectedFormat
+    );
   }) || FLYER_ASSETS[0];
 
   const handleShareWhatsApp = () => {
@@ -161,8 +237,38 @@ export function FlyerMediaSection({ categoryFilter = "all" }: FlyerMediaSectionP
         )}
       </div>
 
-      {/* Format Toggle Bar */}
+      {/* Edition & Format Selector Bar */}
       <div className="flex flex-wrap items-center justify-between gap-4 pb-6 mb-8 border-b border-border/50">
+        {/* Edition Selector Tabs */}
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-mono uppercase tracking-wider text-muted-foreground font-semibold">
+            Style:
+          </span>
+          <div className="inline-flex p-1 bg-background/80 rounded-xl border border-border/70 shadow-xs">
+            <button
+              onClick={() => setSelectedEdition("v1")}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                selectedEdition === "v1"
+                  ? "bg-primary text-primary-foreground shadow-xs"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              🌿 Version 1: Community Campaign
+            </button>
+            <button
+              onClick={() => setSelectedEdition("v2")}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                selectedEdition === "v2"
+                  ? "bg-primary text-primary-foreground shadow-xs"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              🌟 Version 2: Cinematic Celebration
+            </button>
+          </div>
+        </div>
+
+        {/* Format Selector */}
         <div className="flex items-center gap-2">
           <span className="text-xs font-mono uppercase tracking-wider text-muted-foreground font-semibold">
             Format:
@@ -186,7 +292,7 @@ export function FlyerMediaSection({ categoryFilter = "all" }: FlyerMediaSectionP
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              <Smartphone className="w-3.5 h-3.5" /> 9:16 Mobile Story (WhatsApp / IG)
+              <Smartphone className="w-3.5 h-3.5" /> 9:16 Mobile Story
             </button>
           </div>
         </div>
@@ -242,7 +348,7 @@ export function FlyerMediaSection({ categoryFilter = "all" }: FlyerMediaSectionP
                 {activeAsset.badge}
               </Badge>
               <Badge variant="secondary" className="text-xs rounded-full font-mono text-muted-foreground">
-                Verified CDN / Local
+                {activeAsset.editionBadge}
               </Badge>
             </div>
             <h3 className="text-xl sm:text-2xl font-serif font-bold text-foreground">
@@ -260,16 +366,16 @@ export function FlyerMediaSection({ categoryFilter = "all" }: FlyerMediaSectionP
               <span className="font-semibold text-foreground">Fri 30 Oct 2026 • Ubunifu Hub</span>
             </div>
             <div>
+              <span className="text-muted-foreground block font-mono uppercase text-[10px]">Style Edition</span>
+              <span className="font-semibold text-primary">{activeAsset.editionBadge}</span>
+            </div>
+            <div>
               <span className="text-muted-foreground block font-mono uppercase text-[10px]">Embedded Feature</span>
               <span className="font-semibold text-foreground">Functional QR Code</span>
             </div>
             <div>
               <span className="text-muted-foreground block font-mono uppercase text-[10px]">Resolution</span>
               <span className="font-semibold text-foreground">{activeAsset.dimensions}</span>
-            </div>
-            <div>
-              <span className="text-muted-foreground block font-mono uppercase text-[10px]">Sustainability Policy</span>
-              <span className="font-semibold text-foreground">Strict Zero Single-Use Plastics</span>
             </div>
           </div>
 
