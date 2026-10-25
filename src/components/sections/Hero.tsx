@@ -8,7 +8,7 @@ import { CountUp } from "@/components/ui/count-up";
 import type { ImpactStats } from "@/lib/cms/content";
 import { IMPACT_STATS } from "@/config/app.config";
 
-export function Hero({ impact = IMPACT_STATS }: { impact?: ImpactStats }) {
+export function Hero({ impact = IMPACT_STATS, placements }: { impact?: ImpactStats; placements?: Record<string, { src: string; alt: string }> }) {
   return (
     <section className="relative min-h-screen flex items-center bg-background pt-24 pb-16 lg:pt-32 overflow-hidden">
       {/* Editorial background shapes */}
@@ -93,8 +93,8 @@ export function Hero({ impact = IMPACT_STATS }: { impact?: ImpactStats }) {
               {/* Main Image */}
               <div className="absolute top-0 right-4 w-[75%] h-[75%] rounded-[2.5rem] overflow-hidden border-8 border-background shadow-2xl z-10 hover:-translate-y-2 transition-transform duration-500">
                 <Image
-                  src="/images/g-28.jpg"
-                  alt="Greenwave Society youth celebrating at a community event in Kenya"
+                  src={placements?.heroSecondary?.src || "/images/g-28.jpg"}
+                  alt={placements?.heroSecondary?.alt || "Greenwave Society youth celebrating at a community event in Kenya"}
                   fill
                   priority
                   quality={80}
@@ -106,8 +106,8 @@ export function Hero({ impact = IMPACT_STATS }: { impact?: ImpactStats }) {
               {/* Staggered overlapping Image */}
               <div className="absolute bottom-4 left-4 w-[60%] h-[60%] rounded-[2rem] overflow-hidden border-8 border-background shadow-xl z-20 hover:-translate-y-2 transition-transform duration-500">
                 <Image
-                  src="/images/20260827_135241.jpg"
-                  alt="Greenwave Society members collaborating during the Members' Meet and Connect in Kenya"
+                  src={placements?.heroPrimary?.src || "/images/20260827_135241.jpg"}
+                  alt={placements?.heroPrimary?.alt || "Greenwave Society members collaborating during the Members' Meet and Connect in Kenya"}
                   fill
                   quality={80}
                   sizes="(max-width: 768px) 60vw, 30vw"

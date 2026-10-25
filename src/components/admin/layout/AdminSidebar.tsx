@@ -18,6 +18,8 @@ import {
   X,
   Scale,
   Wallet,
+  ImageIcon,
+  Images,
 } from "lucide-react";
 import { AdminUserDto } from "@/lib/auth/types";
 import { hasPermission } from "@/lib/auth/policy";
@@ -87,6 +89,20 @@ export default function AdminSidebar({ admin, enabledFeatures, notificationCount
       href: "/admin/media",
       icon: FolderOpen,
       show: isEnabled("media") && hasPermission(admin, PERMISSIONS.MEDIA_READ),
+      group: "Website",
+    },
+    {
+      title: "Placements",
+      href: "/admin/placements",
+      icon: ImageIcon,
+      show: hasPermission(admin, PERMISSIONS.CONTENT_READ),
+      group: "Website",
+    },
+    {
+      title: "Gallery",
+      href: "/admin/gallery",
+      icon: Images,
+      show: hasPermission(admin, PERMISSIONS.CONTENT_READ),
       group: "Website",
     },
     {

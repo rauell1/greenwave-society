@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FadeIn } from "@/components/ui/fade-in";
 
-export function About() {
+export function About({ imagePlacement }: { imagePlacement?: { src: string; alt: string } } = {}) {
   const values = [
     {
       icon: <Leaf className="w-5 h-5" />,
@@ -45,8 +45,8 @@ export function About() {
                 <div className="absolute -inset-4 rounded-[2.5rem] border border-primary/20 -z-10 rotate-2" />
                 <div className="aspect-[4/5] relative rounded-[2rem] overflow-hidden shadow-[0_20px_50px_oklch(var(--primary)/12%)]">
                   <Image quality={95}
-                    src="/images/20241214_135952.jpg"
-                    alt="Youth in community environmental discussion in Kenya"
+                    src={imagePlacement?.src || "/images/20241214_135952.jpg"}
+                    alt={imagePlacement?.alt || "Youth in community environmental discussion in Kenya"}
                     fill
                     sizes="(max-width: 768px) 100vw, 40vw"
                     className="object-cover grayscale-[20%] hover:grayscale-0 transition-all duration-500"

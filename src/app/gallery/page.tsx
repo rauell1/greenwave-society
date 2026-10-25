@@ -3,7 +3,8 @@ import { APP_CONFIG } from "@/config/app.config";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
-import { GalleryGrid, type GalleryImage } from "@/components/gallery/GalleryGrid";
+import { GalleryGrid } from "@/components/gallery/GalleryGrid";
+import { getPublicGalleryImages } from "@/lib/cms/gallery";
 
 export const metadata: Metadata = {
   title: "Photo Gallery | Greenwave Society Impact in Kenya",
@@ -35,45 +36,10 @@ export const metadata: Metadata = {
   },
 };
 
-const galleryImages: GalleryImage[] = [
-  { src: "/images/20241214_135952.jpg", alt: "Community engagement event in 2024" },
-  { src: "/images/g-59.jpg", alt: "Youth leadership workshop" },
-  { src: "/images/20250404_134843.jpg", alt: "Tree planting and conservation" },
-  { src: "/images/g-54.jpg", alt: "Mentorship session" },
-  { src: "/images/g.jpg", alt: "Community baraza" },
-  { src: "/images/20241214_130327.jpg", alt: "Greenwave volunteers" },
-  { src: "/images/g-155.jpg", alt: "Environmental education" },
-  { src: "/images/g-230.jpg", alt: "Team building activities" },
-  { src: "/images/g-211.jpg", alt: "Local community meeting" },
-  { src: "/images/20250215_174908.jpg", alt: "Wellness picnic 2025" },
-  { src: "/images/20241214_180058.jpg", alt: "Conservation training" },
-  { src: "/images/20250401_100800.jpg", alt: "Kangemi restoration efforts" },
-  { src: "/images/g-202.jpg", alt: "Youth enterprise training" },
-  { src: "/images/20240706135832_IMG_2321.JPG", alt: "Ngong hike participants" },
-  { src: "/images/g-101.jpg", alt: "Group discussion" },
-  { src: "/images/20241214_180212.jpg", alt: "School outreach program" },
-  { src: "/images/g-221.jpg", alt: "Greenwave strategic meeting" },
-  { src: "/images/g-3.jpg", alt: "Mental health awareness" },
-  { src: "/images/g-83.jpg", alt: "Field activities" },
-  { src: "/images/g-102.jpg", alt: "Volunteer appreciation" },
-  { src: "/images/g-136.jpg", alt: "Capacity building session" },
-  { src: "/images/g-84.jpg", alt: "Project implementation" },
-  { src: "/images/DSC_8039.jpg", alt: "Team planning" },
-  { src: "/images/IMG_9411.jpg", alt: "Impact overview" },
-  { src: "/images/20250404_134814.jpg", alt: "Community dialogue" },
-  { src: "/images/20250726_183058.jpg", alt: "Environmental action day" },
-  { src: "/images/g-143.jpg", alt: "Youth leaders network" },
-  { src: "/images/g-216.jpg", alt: "Partnership meeting" },
-  { src: "/images/20250215_170104.jpg", alt: "Program launch" },
-  { src: "/images/20250404_134529.jpg", alt: "Field research" },
-  { src: "/images/20250215_173437.jpg", alt: "Awareness campaign" },
-  { src: "/images/g-188.jpg", alt: "Community engagement" },
-  { src: "/images/20241214_135825.jpg", alt: "Training workshop" },
-  { src: "/images/20240706180132_IMG_2493.jpg", alt: "Ngong hike summit" },
-  { src: "/images/20240706123308_IMG_2070.jpg", alt: "Ngong hike trail" },
-];
 
-export default function GalleryPage() {
+
+export default async function GalleryPage() {
+  const galleryImages = await getPublicGalleryImages();
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [

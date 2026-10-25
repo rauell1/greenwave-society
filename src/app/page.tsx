@@ -1,5 +1,6 @@
 import { serializeJsonLd } from "@/lib/seo";
 import { getPublicHomepageContent } from "@/lib/cms/public-content";
+import { getPublicImagePlacements } from "@/lib/cms/placements";
 import type { Metadata } from "next";
 import { APP_CONFIG } from "@/config/app.config";
 import { Navbar } from "@/components/sections/Navbar";
@@ -122,6 +123,7 @@ export const revalidate = 60;
 
 export default async function HomePage() {
   const { impact, activities } = await getPublicHomepageContent();
+  const placements = await getPublicImagePlacements();
   const faq = { ...faqJsonLd, mainEntity: faqJsonLd.mainEntity.map(question => question.name === "What impact has Greenwave Society made?" ? { ...question, acceptedAnswer: { ...question.acceptedAnswer, text: `Greenwave Society has empowered ${impact.youthReached}+ youth, planted ${impact.treesPlanted}+ trees, served ${impact.communitiesServed}+ communities, organised ${impact.eventsOrganized}+ events, delivered ${impact.workshopsDelivered}+ workshops, and recycled ${impact.wasteRecycled} tons of waste across Kenya.` } } : question) };
   return (
     <div className="min-h-screen flex flex-col">
@@ -131,8 +133,8 @@ export default async function HomePage() {
       />
       <Navbar />
       <main className="flex-1">
-        <Hero impact={impact} />
-        <About />
+        <Hero impact={impact} placements={placements} />
+        <About imagePlacement={placements?.about} />
         <Programs />
         <Impact impact={impact} />
         <Team />

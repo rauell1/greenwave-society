@@ -27,7 +27,7 @@ const FLYER_ASSETS: FlyerAsset[] = [
     format: "standard",
     title: "Official Graduation Invitation Flyer",
     badge: "Fellows, Graduands & Guests",
-    description: "Official print and social flyer for the Empower 360 YPG Ad Hoc Cohort I Graduation at Ubunifu Hub. Features date, time, agenda, venue, and a scannable RSVP QR code.",
+    description: "Official print and social flyer for the Empower 360 Ad Hoc Cohort I Graduation at Ubunifu Hub. Features date, time, agenda, venue, and a scannable RSVP QR code.",
     imageSrc: "/posters/empower360-cohort-1-graduation-flyer.png",
     downloadSrc: "/downloads/empower360-cohort-1-graduation-flyer.png",
     highResSrc: "/downloads/empower360-cohort-1-graduation-flyer-2x.png",
@@ -84,7 +84,7 @@ export function FlyerMediaSection() {
 
   const handleShareWhatsApp = () => {
     const text = selectedCategory === "attendee"
-      ? "🎓 Join us for Greenwave Society's Empower 360 Ad Hoc Cohort I Graduation on Friday, 30th October 2026 (10:30 AM – 3:00 PM) at Ubunifu Hub, Nairobi! +1s welcome! Details & RSVP: https://greenwavesociety.org/events/graduation-cohort-1"
+      ? "🎓 Join us for Greenwave Society's Empower 360 Ad Hoc Cohort I Graduation on Friday, 30th October 2026 (10:30 AM - 3:00 PM) at Ubunifu Hub, Nairobi! +1s welcome! Details & RSVP: https://greenwavesociety.org/events/graduation-cohort-1"
       : "🛍️ Calling sustainable brands & creatives! Showcase your venture at the Empower 360 Community Market on Friday, 30th October 2026 at Ubunifu Hub, Nairobi. KES 1,000 flat fee, tables & chairs provided, zero single-use plastics rule. Apply online: https://greenwavesociety.org/events/graduation-cohort-1#vendor-application";
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
   };
