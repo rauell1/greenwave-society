@@ -24,8 +24,8 @@ const vendorSchema = z.object({
   }),
 });
 
-const EVENT_SLUG = "graduation-cohort-2-2026";
-const EVENT_TITLE = "Ad Hoc Cohort II Graduation & Community Market";
+const EVENT_SLUG = "graduation-cohort-1-2026";
+const EVENT_TITLE = "Empower 360 Ad Hoc Cohort I Graduation & Community Market";
 const EVENT_LOCATION = "Ubunifu Hub, Nairobi, Kenya";
 const EVENT_DATE_STR = "Friday, 30th October 2026, 10:30 AM EAT";
 
@@ -67,7 +67,7 @@ export async function POST(req: Request) {
           data: {
             slug: EVENT_SLUG,
             title: EVENT_TITLE,
-            description: "Graduation celebration for Greenwave Society Ad Hoc Cohort II changemakers and curated community vendor showcase.",
+            description: "Graduation celebration for Greenwave Society Empower 360 Ad Hoc Cohort I changemakers and curated community vendor showcase.",
             location: EVENT_LOCATION,
             startsAt: new Date("2026-10-30T10:30:00+03:00"),
             endsAt: new Date("2026-10-30T15:00:00+03:00"),

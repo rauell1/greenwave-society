@@ -57,6 +57,16 @@ const nextConfig: NextConfig = {
     ];
   },
 
+    async redirects() {
+    return [
+      {
+        source: "/events/graduation-cohort-2",
+        destination: "/events/graduation-cohort-1",
+        permanent: true,
+      },
+    ];
+  },
+
   async headers() {
     return [
       // Immutable static assets — Cloudflare CDN will cache these forever

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { Copy, Check, Film, Palette, Type, Download, Layers, Mail } from "lucide-react";
+import { Copy, Check, Film, Palette, Type, Download, Layers, Mail, Award, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
@@ -22,10 +22,10 @@ export function MediaKitClient() {
   }
 
   const shortBoilerplate =
-    "Greenwave Society is a youth-led social enterprise and think tank in Nairobi, Kenya. We translate systems thinking into community action through enterprise training, environmental conservation, and youth leadership.";
+    "Greenwave Society is a youth-led social enterprise and think tank in Nairobi, Kenya. We translate systems thinking into community action through enterprise training, the Empower 360 leadership pipeline, and grassroots environmental action.";
 
   const longBoilerplate =
-    "Greenwave Society is a Kenyan youth-led social enterprise and think tank accelerating climate resilience and equipping young people aged 18–35 as changemakers. Through initiatives like The 50 Percent fellowship, Systems Mtaani analyses, community barazas, and grassroots conservation, the organization bridges the gap between youth potential and systemic community transformation.";
+    "Greenwave Society is a Kenyan youth-led social enterprise and think tank accelerating climate resilience and equipping young people aged 18–35 as changemakers. Through initiatives like The 50 Percent fellowship, the Empower 360 leadership programme (celebrating its inaugural Ad Hoc Cohort I graduands), Systems Mtaani analyses, community barazas, and grassroots conservation, the organization bridges the gap between youth potential and systemic community transformation.";
 
   const brandColors = [
     { name: "Forest Green", hex: "#1b4332", oklch: "oklch(0.35 0.09 145)", role: "Primary Brand Voice & Anchor" },
@@ -100,7 +100,7 @@ export function MediaKitClient() {
                 <Badge variant="outline" className="text-xs font-mono">20 Seconds</Badge>
               </div>
               <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed mb-4">
-                A rapid, energetic walk-through of Greenwave&apos;s key pillars: The 50 Percent, Systems Mtaani, Barazas, and Ecological Action.
+                A rapid, energetic walk-through of Greenwave&apos;s key pillars: The 50 Percent fellowship, Empower 360, Systems Mtaani, Community Barazas, and Ecological Action.
               </p>
               <div className="rounded-xl bg-black/90 p-6 text-center text-white/80 space-y-2 mb-4 border border-zinc-800">
                 <div className="text-xs uppercase tracking-widest text-gold font-mono">Programme Reel ({selectedRatio})</div>
@@ -190,7 +190,78 @@ export function MediaKitClient() {
         </div>
       </section>
 
-      {/* 3. Visual Identity & Brand Tokens */}
+      {/* 3. Key Programmes & Active Focus */}
+      <section id="programmes" className="space-y-8">
+        <div>
+          <div className="inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-wider text-primary font-bold px-3 py-1 bg-primary/10 rounded-full border border-primary/20 mb-2">
+            <Award className="w-3.5 h-3.5" /> Programme Overview
+          </div>
+          <h2 className="text-2xl sm:text-4xl font-serif font-black text-foreground">
+            Active Programmes & Milestones
+          </h2>
+          <p className="text-muted-foreground text-sm sm:text-base mt-2">
+            Reference summaries for reporting on Greenwave Society&apos;s key pillars and upcoming milestones.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-6">
+          {/* Empower 360 Card */}
+          <div className="rounded-2xl bg-card border-2 border-primary/30 p-6 flex flex-col justify-between shadow-sm relative overflow-hidden">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 font-mono text-xs font-bold">
+                  Youth Leadership & Mentorship
+                </Badge>
+                <Badge className="bg-gold/20 text-gold-foreground border-gold/30 text-[11px] font-mono">
+                  Active Milestone
+                </Badge>
+              </div>
+              <h3 className="text-xl font-serif font-bold text-foreground">
+                Empower 360 (Inaugural Cohort I)
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Greenwave Society&apos;s 360-degree youth empowerment initiative equipping emerging changemakers with leadership facilitation, systems-change tools, and vocational mentorship. On Friday, 30th October 2026, we celebrate the graduation of our inaugural <strong>Ad Hoc Cohort I</strong> alongside an eco-conscious community market at Ubunifu Hub, Nairobi.
+              </p>
+            </div>
+            <div className="pt-5 border-t border-border/50 flex flex-wrap items-center justify-between gap-3 mt-4">
+              <span className="text-xs text-muted-foreground font-mono">Friday, 30 Oct 2026 &bull; Ubunifu Hub</span>
+              <Button asChild size="sm" variant="outline" className="rounded-xl border-primary/25 text-primary hover:bg-primary/10">
+                <Link href="/events/graduation-cohort-1">
+                  View Graduation & Market <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+
+          {/* The 50 Percent Card */}
+          <div className="rounded-2xl bg-card border border-border/70 p-6 flex flex-col justify-between shadow-sm">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 font-mono text-xs font-bold">
+                  Flagship Fellowship
+                </Badge>
+                <span className="text-xs text-muted-foreground font-mono">Ages 18–35</span>
+              </div>
+              <h3 className="text-xl font-serif font-bold text-foreground">
+                The 50 Percent
+              </h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Our flagship social enterprise and systems thinking fellowship. We train youth to diagnose systemic roots — addressing the youth employment crisis, enterprise design, and civic engagement through practical grassroots solutions.
+              </p>
+            </div>
+            <div className="pt-5 border-t border-border/50 flex items-center justify-between mt-4">
+              <span className="text-xs text-muted-foreground font-mono">Nairobi Hub & Cohort Cycles</span>
+              <Button asChild size="sm" variant="ghost" className="rounded-xl text-primary hover:bg-primary/10">
+                <Link href="/programs">
+                  Explore Programmes <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. Visual Identity & Brand Tokens */}
       <section id="palette" className="space-y-8">
         <div>
           <div className="inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-wider text-primary font-bold px-3 py-1 bg-primary/10 rounded-full border border-primary/20 mb-2">

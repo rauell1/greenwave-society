@@ -39,9 +39,9 @@ const programs = [
   {
     image: "/images/20241214_142822.jpg",
     icon: <HandHeart className="w-5 h-5" />,
-    title: "Youth Empowerment & Leadership",
-    desc: "We build leadership capacity through mentorship, systems thinking training, and rotating meeting leadership so every member develops facilitation and critical thinking skills. We believe the next generation of leaders learns best by doing: leading meetings, managing budgets, and driving real projects.",
-    tags: ["Leadership", "Mentorship", "Vocational Skills"],
+    title: "Empower 360: Youth Leadership & Mentorship",
+    desc: "Through our Empower 360 programme, we build leadership capacity through mentorship, systems thinking training, and rotating meeting leadership so every member develops facilitation and critical thinking skills. Our inaugural Ad Hoc Cohort I changemakers lead community projects, manage budgets, and drive real-world transformation.",
+    tags: ["Empower 360", "Leadership", "Mentorship", "Cohort I"],
     span: "md:col-span-2 lg:col-span-2",
   },
   {

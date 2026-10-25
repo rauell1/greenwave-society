@@ -66,7 +66,7 @@ export function Footer() {
                 { label: "Our Team", href: "/team" },
                 { label: "Careers", href: "/careers" },
                 { label: "Media Kit", href: "/media-kit" },
-                { label: "Cohort II Graduation", href: "/events/graduation-cohort-2" },
+                { label: "Cohort I Graduation", href: "/events/graduation-cohort-1" },
                 { label: "Contact", href: "/contact" },
                 { label: "Privacy & Data Rights", href: "/privacy" },
               ].map((l) => (

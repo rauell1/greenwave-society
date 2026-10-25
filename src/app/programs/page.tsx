@@ -108,8 +108,8 @@ export default function ProgramsPage() {
             "position": 5,
             "item": {
               "@type": "Service",
-              "name": "Youth Empowerment Programme",
-              "description": "Leadership mentorship, skill-building workshops, and career development pathways for young Kenyans to build confidence and community impact.",
+              "name": "Empower 360: Youth Leadership Programme",
+              "description": "360-degree leadership mentorship, skill-building workshops, and practical project execution pathways through our Empower 360 initiative (featuring Ad Hoc Cohort I) for young Kenyans.",
               "provider": { "@id": `${APP_CONFIG.url}/#organization` },
               "serviceType": "Youth Leadership & Mentorship",
               "areaServed": { "@type": "Country", "name": "Kenya" },
