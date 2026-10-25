@@ -10,6 +10,7 @@ interface FlyerAsset {
   id: string;
   category: "attendee" | "vendor";
   format: "standard" | "story";
+  theme?: "stage" | "portrait" | "documentary";
   title: string;
   badge: string;
   description: string;
@@ -22,17 +23,46 @@ interface FlyerAsset {
 
 const FLYER_ASSETS: FlyerAsset[] = [
   {
-    id: "attendee-standard",
+    id: "attendee-stage",
     category: "attendee",
     format: "standard",
-    title: "Official Graduation Invitation Flyer",
-    badge: "Fellows, Graduands & Guests",
-    description: "Official print and social flyer for the Empower 360 Ad Hoc Cohort I Graduation at Ubunifu Hub. Features date, time, agenda, venue, and a scannable RSVP QR code.",
+    theme: "stage",
+    title: "Option 1: The Grand Stage Celebration",
+    badge: "Official Inaugural Commencement",
+    description: "Cinematic, triumphant editorial artwork featuring our pioneer Kenyan graduands on stage with emerald and gold stoles, diplomas held high, and Nairobi skyline backdrop. Includes verified RSVP QR code.",
     imageSrc: "/posters/empower360-cohort-1-graduation-flyer.png",
     downloadSrc: "/downloads/empower360-cohort-1-graduation-flyer.png",
     highResSrc: "/downloads/empower360-cohort-1-graduation-flyer-2x.png",
     aspectRatio: "aspect-[723/1024]",
-    dimensions: "723 × 1024 px (Print 2X available)",
+    dimensions: "723 × 1024 px (Print 2X: 1446 × 2048 px)",
+  },
+  {
+    id: "attendee-portrait",
+    category: "attendee",
+    format: "standard",
+    theme: "portrait",
+    title: "Option 2: Inspiring Changemakers Portrait",
+    badge: "Editorial Close-Up Edition",
+    description: "Warm, prestigious editorial portrait highlighting our smiling Kenyan graduates in professional attire holding the gold-ribbon ivory diploma. Perfect for institutional announcements and press releases.",
+    imageSrc: "/posters/poster_option_2_portrait_web.png",
+    downloadSrc: "/downloads/poster_option_2_portrait_web.png",
+    highResSrc: "/downloads/poster_option_2_portrait.png",
+    aspectRatio: "aspect-[723/1024]",
+    dimensions: "723 × 1024 px (Print 2X: 1446 × 2048 px)",
+  },
+  {
+    id: "attendee-documentary",
+    category: "attendee",
+    format: "standard",
+    theme: "documentary",
+    title: "Option 3: The Authentic Fellowship",
+    badge: "Documentary Photo Edition",
+    description: "Grounded grassroots documentary poster featuring authentic Greenwave Society field action photography from community labs in Kenya. Framed with high-contrast botanical green and gold borders.",
+    imageSrc: "/posters/poster_option_3_documentary_web.png",
+    downloadSrc: "/downloads/poster_option_3_documentary_web.png",
+    highResSrc: "/downloads/poster_option_3_documentary.png",
+    aspectRatio: "aspect-[723/1024]",
+    dimensions: "723 × 1024 px (Print 2X: 1446 × 2048 px)",
   },
   {
     id: "attendee-story",
@@ -81,13 +111,18 @@ export function FlyerMediaSection({ categoryFilter = "all" }: FlyerMediaSectionP
   const initialCategory = categoryFilter === "vendor" ? "vendor" : "attendee";
   const [selectedCategory, setSelectedCategory] = useState<"attendee" | "vendor">(initialCategory);
   const [selectedFormat, setSelectedFormat] = useState<"standard" | "story">("standard");
+  const [selectedGradTheme, setSelectedGradTheme] = useState<"stage" | "portrait" | "documentary">("stage");
   const [copied, setCopied] = useState(false);
 
   const effectiveCategory = categoryFilter === "all" ? selectedCategory : categoryFilter;
 
-  const activeAsset = FLYER_ASSETS.find(
-    (asset) => asset.category === effectiveCategory && asset.format === selectedFormat
-  ) || FLYER_ASSETS[0];
+  const activeAsset = FLYER_ASSETS.find((asset) => {
+    if (asset.category !== effectiveCategory || asset.format !== selectedFormat) return false;
+    if (effectiveCategory === "attendee" && selectedFormat === "standard") {
+      return asset.theme === selectedGradTheme;
+    }
+    return true;
+  }) || FLYER_ASSETS[0];
 
   const handleShareWhatsApp = () => {
     const text = effectiveCategory === "attendee"
@@ -211,6 +246,50 @@ export function FlyerMediaSection({ categoryFilter = "all" }: FlyerMediaSectionP
           </Button>
         </div>
       </div>
+
+      {/* Graduation Poster Style Theme Selector */}
+      {effectiveCategory === "attendee" && selectedFormat === "standard" && (
+        <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-background/80 rounded-2xl border border-border/80 mb-8 shadow-xs">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-amber-500 ml-1" />
+            <span className="text-xs font-mono uppercase tracking-wider text-muted-foreground font-bold">
+              Design Options:
+            </span>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            <button
+              onClick={() => setSelectedGradTheme("stage")}
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                selectedGradTheme === "stage"
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground bg-muted/40"
+              }`}
+            >
+              Option 1: Grand Stage Celebration
+            </button>
+            <button
+              onClick={() => setSelectedGradTheme("portrait")}
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                selectedGradTheme === "portrait"
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground bg-muted/40"
+              }`}
+            >
+              Option 2: Changemakers Portrait
+            </button>
+            <button
+              onClick={() => setSelectedGradTheme("documentary")}
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                selectedGradTheme === "documentary"
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground bg-muted/40"
+              }`}
+            >
+              Option 3: Authentic Fellowship
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Active Flyer Card Preview & Action Grid */}
       <div className="grid lg:grid-cols-12 gap-8 items-center">
