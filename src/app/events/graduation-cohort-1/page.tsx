@@ -3,6 +3,7 @@ import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { VendorForm } from "./VendorForm";
+import { FlyerMediaSection } from "./FlyerMediaSection";
 import { Calendar, Clock, MapPin, Sparkles, Award, Store, Leaf, Users, ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
     description: "Celebrating our 2026 Graduands under the Empower 360 programme. Friday, 30th October 2026 at Ubunifu Hub, Nairobi. Ceremony, networking, refreshments, and curated local sustainable market.",
     url: `${APP_CONFIG.url}/events/graduation-cohort-1`,
     siteName: "Greenwave Society",
-    images: [{ url: "/images/IMG_9415.jpg", width: 1200, height: 630, alt: "Empower 360 Cohort I Graduation" }],
+    images: [{ url: "/posters/empower360-cohort-1-graduation-flyer.png", width: 723, height: 1024, alt: "Empower 360 Cohort I Graduation Official Flyer" }],
     type: "website",
   },
 };
@@ -137,6 +138,11 @@ export default function GraduationCohortPage() {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Official Posters & Social Kit Section */}
+      <section className="py-12 sm:py-16 max-w-7xl mx-auto px-6 sm:px-8 w-full border-b border-border/50">
+        <FlyerMediaSection />
       </section>
 
       {/* Main Content Area: 2 Columns on desktop */}
