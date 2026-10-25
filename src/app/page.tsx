@@ -135,11 +135,11 @@ export default async function HomePage() {
       <main className="flex-1">
         <Hero impact={impact} placements={placements} />
         <About imagePlacement={placements?.about} />
-        <Programs />
+        <Programs placements={placements} />
         <Impact impact={impact} />
         <Team />
         <Activities activities={activities} />
-        <VolunteerCTA />
+        <VolunteerCTA imagePlacement={placements?.volunteer} />
         <Contact />
       </main>
       <Footer />

@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FadeIn } from "@/components/ui/fade-in";
 
-export function VolunteerCTA() {
+export function VolunteerCTA({ imagePlacement }: { imagePlacement?: { src: string; alt: string } }) {
   return (
     <section id="volunteer" className="py-24 sm:py-32 bg-background relative overflow-hidden">
       {/* Decorative leaf blur accent */}
@@ -22,8 +22,8 @@ export function VolunteerCTA() {
                 <div className="absolute -inset-4 rounded-[3rem] border border-primary/20 -z-10 -rotate-2" />
                 <div className="aspect-[4/5] sm:aspect-[3/2] lg:aspect-[4/5] relative rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_oklch(var(--primary)/8%)]">
                   <Image quality={95}
-                    src="/images/20241214_180058.jpg"
-                    alt="Greenwave Society volunteers and community members gathered in Kenya"
+                    src={imagePlacement?.src || "/images/20241214_180058.jpg"}
+                    alt={imagePlacement?.alt || "Greenwave Society volunteers and community members gathered in Kenya"}
                     fill
                     sizes="(max-width: 768px) 100vw, 40vw"
                     className="object-cover grayscale-[15%] hover:grayscale-0 transition-all duration-500"

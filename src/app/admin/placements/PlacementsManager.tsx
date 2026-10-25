@@ -17,7 +17,8 @@ import {
   ChevronRight,
   HardDrive,
   CloudUpload,
-  FileImage
+  FileImage,
+  Eye
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -62,7 +63,31 @@ export default function PlacementsManager({
   const [isSaving, setIsSaving] = useState(false);
   const [notification, setNotification] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
+  const [sectionFilter, setSectionFilter] = useState<string>("all");
+  const [slotSearch, setSlotSearch] = useState<string>("");
+  const [previewRoute, setPreviewRoute] = useState<string | null>(null);
+
   const slotKeys = Object.keys(defaultPlacements);
+
+  const sections = useMemo(() => {
+    const list = Array.from(new Set(Object.values(defaultPlacements).map((p) => p.section)));
+    return ["all", ...list];
+  }, [defaultPlacements]);
+
+  const displayedSlots = useMemo(() => {
+    return slotKeys.filter((key) => {
+      const meta = defaultPlacements[key];
+      if (sectionFilter !== "all" && meta.section !== sectionFilter) return false;
+      if (slotSearch.trim()) {
+        const query = slotSearch.toLowerCase();
+        const matchesName = meta.name.toLowerCase().includes(query);
+        const matchesDesc = meta.description.toLowerCase().includes(query);
+        const matchesSection = meta.section.toLowerCase().includes(query);
+        if (!matchesName && !matchesDesc && !matchesSection) return false;
+      }
+      return true;
+    });
+  }, [slotKeys, defaultPlacements, sectionFilter, slotSearch]);
 
   const handleSelectImage = (slotKey: string, url: string) => {
     setPlacements((prev) => ({
@@ -244,9 +269,45 @@ export default function PlacementsManager({
         </div>
       )}
 
+      {/* Interactive Section Filter & Slot Search */}
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 p-4 rounded-2xl bg-white border border-slate-200">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
+          {sections.map((sec) => (
+            <button
+              key={sec}
+              type="button"
+              onClick={() => setSectionFilter(sec)}
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+                sectionFilter === sec
+                  ? "bg-emerald-700 text-white shadow-xs"
+                  : "bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200"
+              }`}
+            >
+              {sec === "all" ? `All Sections (${slotKeys.length})` : sec}
+            </button>
+          ))}
+        </div>
+
+        <div className="relative w-full md:w-64">
+          <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <Input
+            value={slotSearch}
+            onChange={(e) => setSlotSearch(e.target.value)}
+            placeholder="Filter slots..."
+            className="text-xs h-9 pl-8"
+          />
+        </div>
+      </div>
+
+      {displayedSlots.length === 0 && (
+        <div className="p-8 text-center bg-white rounded-2xl border border-slate-200 text-xs text-slate-500">
+          No image slots match your current filter.
+        </div>
+      )}
+
       {/* Slots Grid */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {slotKeys.map((key) => {
+        {displayedSlots.map((key) => {
           const meta = defaultPlacements[key];
           const current = placements[key] || { src: meta.src, alt: meta.alt };
           const isCustomized = current.src !== meta.src || current.alt !== meta.alt;
@@ -294,14 +355,24 @@ export default function PlacementsManager({
                 <div className="space-y-1.5">
                   <div className="flex items-start justify-between gap-2">
                     <h3 className="text-sm font-bold text-slate-900 leading-snug">{meta.name}</h3>
-                    <Link
-                      href={meta.route}
-                      target="_blank"
-                      className="text-slate-400 hover:text-emerald-600 transition-colors"
-                      title="View on live page"
-                    >
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </Link>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => setPreviewRoute(meta.route)}
+                        className="text-slate-400 hover:text-emerald-700 transition-colors p-1 rounded hover:bg-slate-100"
+                        title="Live section preview modal"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                      </button>
+                      <Link
+                        href={meta.route}
+                        target="_blank"
+                        className="text-slate-400 hover:text-emerald-600 transition-colors p-1"
+                        title="Open in new window"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </Link>
+                    </div>
                   </div>
                   <p className="text-xs text-slate-500 leading-relaxed">{meta.description}</p>
                 </div>
@@ -550,6 +621,41 @@ export default function PlacementsManager({
                 </Button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Live Section Preview Modal */}
+      {previewRoute && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-5xl w-full h-[85vh] flex flex-col shadow-2xl overflow-hidden border border-slate-200">
+            <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="bg-emerald-100 text-emerald-800 border-emerald-300 font-bold text-xs">
+                  Live View
+                </Badge>
+                <span className="text-xs font-mono text-slate-600">{previewRoute}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button asChild size="sm" variant="outline" className="text-xs h-8">
+                  <a href={previewRoute} target="_blank" rel="noopener noreferrer">
+                    Open in New Window <ExternalLink className="w-3 h-3 ml-1" />
+                  </a>
+                </Button>
+                <button
+                  type="button"
+                  onClick={() => setPreviewRoute(null)}
+                  className="w-8 h-8 rounded-full bg-slate-200 hover:bg-slate-300 flex items-center justify-center text-slate-700 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+            <iframe
+              src={previewRoute}
+              title="Live section preview"
+              className="w-full h-full border-none"
+            />
           </div>
         </div>
       )}

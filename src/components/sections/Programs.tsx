@@ -72,7 +72,16 @@ const programs: ProgramItem[] = [
   },
 ];
 
-export function Programs() {
+const programSlotKeys = [
+  "programEnterprise",
+  "programYouthPulse",
+  "programClimate",
+  "programConservation",
+  "programEmpower",
+  "programResilience",
+];
+
+export function Programs({ placements }: { placements?: Record<string, { src: string; alt: string }> }) {
   return (
     <section id="programs" className="py-24 sm:py-32 bg-secondary/20 relative">
       <div className="max-w-7xl mx-auto px-6 sm:px-8">
@@ -102,8 +111,8 @@ export function Programs() {
                   {/* Image wrapper */}
                   <div className={`relative overflow-hidden min-h-[220px] ${p.span.includes("col-span-2") ? "lg:col-span-5 h-full" : "h-64"}`}>
                     <Image quality={95}
-                      src={p.image}
-                      alt={p.title}
+                      src={placements?.[programSlotKeys[i]]?.src || p.image}
+                      alt={placements?.[programSlotKeys[i]]?.alt || p.title}
                       fill
                       sizes="(max-width: 768px) 100vw, 33vw"
                       className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
