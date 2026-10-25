@@ -20,6 +20,7 @@ const guestRsvpSchema = z.object({
   }),
   guestCount: z.coerce.number().int().min(1, "At least 1 attendee is required").max(6, "Maximum 6 attendees per reservation").default(1),
   organization: z.string().trim().max(100).optional(),
+  celebrationPhoto: z.string().trim().max(10000000).optional(),
   dietaryOrNotes: z.string().trim().max(500).optional(),
 });
 
@@ -48,6 +49,7 @@ export async function POST(req: Request) {
       role,
       guestCount,
       organization,
+      celebrationPhoto,
       dietaryOrNotes,
     } = parsed.data;
 
@@ -127,6 +129,7 @@ export async function POST(req: Request) {
             type: "guest",
             role,
             guestCount,
+            celebrationPhoto: celebrationPhoto || null,
             dietaryOrNotes: dietaryOrNotes || null,
             checkInToken,
             ticketToken: checkInToken,

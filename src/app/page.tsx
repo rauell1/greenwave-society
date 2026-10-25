@@ -18,7 +18,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Greenwave Society | Youth Social Enterprise & Think Tank in Kenya",
-  description: "Greenwave Society is a youth-led social enterprise and think tank in Nairobi, Kenya. We translate systems thinking into community action: The 50 Percent fellowship, conservation, community barazas, and knowledge-driven partnerships for young Kenyans aged 18-35.",
+  description: "Greenwave Society is a youth-led social enterprise and think tank in Nairobi, Kenya. We translate systems thinking into community action: Empower 360 flagship leadership, Young Person's Guide to Systems Thinking in partnership with The 50 Percent, conservation, and knowledge-driven partnerships for young Kenyans aged 18-35.",
   alternates: {
     canonical: APP_CONFIG.url,
   },
@@ -70,10 +70,18 @@ const faqJsonLd = {
     },
     {
       "@type": "Question",
-      "name": "What is The 50 Percent programme?",
+      "name": "What is the Empower 360 flagship programme?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "The 50 Percent is Greenwave Society's flagship social enterprise training programme. It addresses youth unemployment and skills mismatch by expanding thinking and adding value to organisations and communities through five training pillars: who we train, how we train, where we train, what skills we build, and why.",
+        "text": "Empower 360 is Greenwave Society's flagship youth leadership and mentorship initiative. It equips emerging changemakers with practical leadership, community project management, and systems thinking skills to create lasting grassroots impact.",
+      },
+    },
+    {
+      "@type": "Question",
+      "name": "How does Greenwave collaborate with The 50 Percent?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The 50 Percent is a valued partner organisation with whom we collaborate to deliver the Young Person's Guide to Systems Thinking ad hoc training, equipping youth to map root causes and design community-owned solutions.",
       },
     },
     {

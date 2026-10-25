@@ -23,6 +23,9 @@ import {
   QrCode,
   HeartHandshake,
   Sparkles,
+  UploadCloud,
+  Camera,
+  X,
 } from "lucide-react";
 import { AddToCalendarButton } from "@/components/events/AddToCalendarButton";
 
@@ -40,6 +43,7 @@ const attendeeSchema = z.object({
   }),
   guestCount: z.number().int().min(1, "Minimum 1 attendee").max(6, "Maximum 6 attendees per group"),
   organization: z.string().trim().max(100).optional(),
+  celebrationPhoto: z.string().trim().max(10000000).optional(),
   dietaryOrNotes: z.string().trim().max(500).optional(),
 });
 
@@ -68,6 +72,7 @@ const EVENT_CALENDAR_DATA = {
 export function AttendeeRsvpForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [ticket, setTicket] = useState<TicketData | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
 
   const form = useForm<AttendeeFormValues>({
     resolver: zodResolver(attendeeSchema),
@@ -78,11 +83,36 @@ export function AttendeeRsvpForm() {
       role: "graduand",
       guestCount: 1,
       organization: "",
+      celebrationPhoto: "",
       dietaryOrNotes: "",
     },
   });
 
   const selectedRole = form.watch("role");
+
+  const handlePhotoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 8 * 1024 * 1024) {
+      toast.error("Image file is too large. Please select a photo under 8MB.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const result = event.target?.result as string;
+      setPhotoPreview(result);
+      form.setValue("celebrationPhoto", result);
+      toast.success("Picture added for your celebration poster!");
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemovePhoto = () => {
+    setPhotoPreview(null);
+    form.setValue("celebrationPhoto", "");
+  };
 
   async function onSubmit(values: AttendeeFormValues) {
     setIsSubmitting(true);
@@ -419,6 +449,86 @@ export function AttendeeRsvpForm() {
                 <div>
                   <strong className="text-foreground">Graduand Priority Pack:</strong> As an Empower 360 Cohort I graduand, this RSVP reserves your official certificate of completion, ceremony recognition slot, and front-row reserved seating for you and your guests.
                 </div>
+              </div>
+            )}
+
+            {/* Graduand Celebration Poster Photo Upload */}
+            {selectedRole === "graduand" && (
+              <div className="p-4 rounded-2xl bg-secondary/30 border border-primary/20 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Camera className="w-4 h-4 text-primary" />
+                    <span className="text-xs font-bold uppercase tracking-wider text-foreground">
+                      Celebration Poster Photo
+                    </span>
+                  </div>
+                  <Badge variant="outline" className="text-[10px] bg-primary/10 text-primary border-primary/20 font-mono">
+                    Recommended
+                  </Badge>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Share a portrait picture or headshot you would like featured on your personalized celebration poster, ceremony recognition slide, and cohort directory.
+                </p>
+
+                {photoPreview ? (
+                  <div className="flex items-center gap-4 p-3 bg-background/80 rounded-xl border border-border/80">
+                    <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-primary/30 shadow-sm shrink-0 bg-stone-100">
+                      <Image
+                        src={photoPreview}
+                        alt="Celebration Photo Preview"
+                        fill
+                        className="object-cover"
+                        unoptimized
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        <span>Photo attached successfully</span>
+                      </div>
+                      <p className="text-[11px] text-muted-foreground truncate mt-0.5">
+                        Ready for your graduation celebration poster
+                      </p>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleRemovePhoto}
+                      className="rounded-lg h-8 px-2 text-destructive hover:bg-destructive/10"
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-2.5">
+                    <label className="flex flex-col items-center justify-center p-4 border-2 border-dashed border-primary/30 hover:border-primary/60 rounded-xl bg-background/50 hover:bg-primary/5 cursor-pointer transition-all">
+                      <UploadCloud className="w-6 h-6 text-primary mb-1.5" />
+                      <span className="text-xs font-semibold text-foreground">Click to upload your portrait picture</span>
+                      <span className="text-[10px] text-muted-foreground">PNG, JPG, or WebP (up to 8MB)</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handlePhotoFileChange}
+                      />
+                    </label>
+
+                    <div className="flex items-center gap-2">
+                      <Input
+                        placeholder="Or paste a Google Drive / cloud photo link here..."
+                        value={form.watch("celebrationPhoto") || ""}
+                        onChange={(e) => {
+                          form.setValue("celebrationPhoto", e.target.value);
+                          if (e.target.value.startsWith("http")) {
+                            setPhotoPreview(null);
+                          }
+                        }}
+                        className="rounded-xl h-9 text-xs bg-background/60 border-border/70 focus:border-primary"
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 

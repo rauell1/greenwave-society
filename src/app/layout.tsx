@@ -137,8 +137,32 @@ export default function RootLayout({
               "@type": "Offer",
               "itemOffered": {
                 "@type": "Service",
-                "name": "The 50 Percent: Social Enterprise",
-                "description": "Flagship enterprise-skills training programme addressing unemployment and skills mismatch for youth aged 15-35 in Kenya.",
+                "name": "Empower 360: Youth Leadership & Mentorship",
+                "description": "Flagship leadership and mentorship initiative equipping young Kenyans with practical facilitation, project governance, and systems-change skills.",
+              },
+            },
+            {
+              "@type": "Offer",
+              "itemOffered": {
+                "@type": "Service",
+                "name": "Intergenerational Summit",
+                "description": "Signature policy dialogue and mentorship convening connecting Kenya's youth changemakers with seasoned civic and industry leaders.",
+              },
+            },
+            {
+              "@type": "Offer",
+              "itemOffered": {
+                "@type": "Service",
+                "name": "Young Person's Guide to Systems Thinking",
+                "description": "Ad hoc training in partnership with The 50 Percent, equipping youth aged 18-35 to map complex systemic challenges and build community solutions.",
+              },
+            },
+            {
+              "@type": "Offer",
+              "itemOffered": {
+                "@type": "Service",
+                "name": "Conservation & Restoration",
+                "description": "Hands-on ecological restoration including tree-planting with Tatu City and community clean-ups with Jessie K and the Nairobi County Environment.",
               },
             },
             {
@@ -153,32 +177,8 @@ export default function RootLayout({
               "@type": "Offer",
               "itemOffered": {
                 "@type": "Service",
-                "name": "Climate Action Programme",
-                "description": "Direct climate education and advocacy training empowering youth to influence environmental policy across Kenya.",
-              },
-            },
-            {
-              "@type": "Offer",
-              "itemOffered": {
-                "@type": "Service",
-                "name": "Conservation & Restoration",
-                "description": "Hands-on ecological restoration including tree planting, Kangemi riverbank restoration, and school greening projects.",
-              },
-            },
-            {
-              "@type": "Offer",
-              "itemOffered": {
-                "@type": "Service",
-                "name": "Youth Empowerment Programme",
-                "description": "Leadership mentorship, skill-building workshops, and career development for young Kenyans across Nairobi and beyond.",
-              },
-            },
-            {
-              "@type": "Offer",
-              "itemOffered": {
-                "@type": "Service",
-                "name": "Sustainability Education",
-                "description": "Practical sustainable agriculture and eco-literacy curriculum delivered at primary and secondary schools across Kenya.",
+                "name": "Sustainability & Urban Resilience",
+                "description": "Practical sustainable models reducing donor dependency through lean programme delivery, shared community infrastructure, and ecosystem design.",
               },
             },
           ],

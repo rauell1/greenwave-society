@@ -19,11 +19,39 @@ interface ProgramItem {
 
 const programs: ProgramItem[] = [
   {
+    image: "/images/20241214_142822.jpg",
+    icon: <HandHeart className="w-5 h-5" />,
+    title: "Empower 360: Youth Leadership & Mentorship",
+    desc: "Our flagship youth leadership and mentorship initiative. Through Empower 360, we build leadership capacity through mentorship, systems thinking training, and rotating meeting leadership so every member develops facilitation and critical thinking skills. Our inaugural Ad Hoc Cohort I changemakers lead community projects, manage budgets, and drive real-world transformation.",
+    tags: ["Flagship", "Empower 360", "Leadership", "Cohort I"],
+    span: "md:col-span-2 lg:col-span-2",
+    cta: {
+      text: "Cohort I Graduation & Market (Oct 30)",
+      href: "/events/graduation-cohort-1",
+    },
+  },
+  {
+    image: "/images/20241214_130327.jpg",
+    icon: <GraduationCap className="w-5 h-5" />,
+    title: "Intergenerational Summit",
+    desc: "A signature policy dialogue and mentorship convening connecting Kenya's youth changemakers with seasoned civic, environmental, and industry leaders to co-create sustainable community solutions.",
+    tags: ["Signature Program", "Policy Dialogue", "Mentorship"],
+    span: "md:col-span-1 lg:col-span-1",
+  },
+  {
     image: "/images/g-59.jpg",
     icon: <TrendingUp className="w-5 h-5" />,
-    title: "The 50 Percent: Social Enterprise",
-    desc: "Our flagship social enterprise and systems thinking fellowship. We train youth aged 18-35 to map systemic challenges, starting with the employment and skills-mismatch crisis, translate complex concepts into plain language, and build solutions their communities actually understand and own.",
-    tags: ["Flagship", "Social Enterprise", "Skills Training"],
+    title: "Young Person's Guide to Systems Thinking",
+    desc: "Ad hoc training in partnership with The 50 Percent. We equip youth aged 18-35 to map complex root causes, understand interconnected systemic challenges, and design actionable community-owned solutions.",
+    tags: ["In Partnership with The 50 Percent", "Systems Thinking", "Ad Hoc Training"],
+    span: "md:col-span-1 lg:col-span-1",
+  },
+  {
+    image: "/images/20250404_134843.jpg",
+    icon: <TreePine className="w-5 h-5" />,
+    title: "Conservation & Restoration",
+    desc: "From tree-planting with Tatu City to community clean-ups with Jessie K and the Nairobi County Environment and habitat restoration, our conservation work directly protects local ecosystems while giving young people real-world project leadership experience, skills, and accountability that no classroom can replicate.",
+    tags: ["Tree Planting", "Clean-ups", "Habitat Restoration"],
     span: "md:col-span-2 lg:col-span-2",
   },
   {
@@ -35,49 +63,21 @@ const programs: ProgramItem[] = [
     span: "md:col-span-1 lg:col-span-1",
   },
   {
-    image: "/images/20241214_130327.jpg",
-    icon: <GraduationCap className="w-5 h-5" />,
-    title: "Climate Action & Advocacy Training",
-    desc: "Hands-on workshops that apply systems thinking to climate and ecology, helping youth understand the structures driving environmental crises and advocate for policy and community-level change using language that resonates with real people, not just experts.",
-    tags: ["Workshops", "School Programs", "Climate Literacy"],
-    span: "md:col-span-1 lg:col-span-1",
-  },
-  {
-    image: "/images/20250404_134843.jpg",
-    icon: <TreePine className="w-5 h-5" />,
-    title: "Conservation & Restoration",
-    desc: "From tree-planting with Tatu City to community clean-ups at JCK and habitat restoration, our conservation work directly protects local ecosystems while giving young people real-world project leadership experience, skills, and accountability that no classroom can replicate.",
-    tags: ["Tree Planting", "Clean-ups", "Habitat Restoration"],
-    span: "md:col-span-2 lg:col-span-2",
-  },
-  {
-    image: "/images/20241214_142822.jpg",
-    icon: <HandHeart className="w-5 h-5" />,
-    title: "Empower 360: Youth Leadership & Mentorship",
-    desc: "Through our Empower 360 programme, we build leadership capacity through mentorship, systems thinking training, and rotating meeting leadership so every member develops facilitation and critical thinking skills. Our inaugural Ad Hoc Cohort I changemakers lead community projects, manage budgets, and drive real-world transformation.",
-    tags: ["Empower 360", "Leadership", "Mentorship", "Cohort I"],
-    span: "md:col-span-2 lg:col-span-2",
-    cta: {
-      text: "Cohort I Graduation & Market (Oct 30)",
-      href: "/events/graduation-cohort-1",
-    },
-  },
-  {
     image: "/images/20250215_174908.jpg",
     icon: <Sprout className="w-5 h-5" />,
     title: "Sustainability & Urban Resilience",
     desc: "As a social enterprise, we design sustainable models that reduce donor dependency: from lean programme delivery and shared community infrastructure to tiered revenue strategies that keep our work going long after grants run out.",
     tags: ["Urban Planning", "Ecosystem Design", "Community Resilience"],
-    span: "md:col-span-1 lg:col-span-1",
+    span: "md:col-span-2 lg:col-span-2",
   },
 ];
 
 const programSlotKeys = [
-  "programEnterprise",
-  "programYouthPulse",
-  "programClimate",
-  "programConservation",
   "programEmpower",
+  "programIntergenerational",
+  "programSystemsThinking",
+  "programConservation",
+  "programYouthPulse",
   "programResilience",
 ];
 
@@ -134,7 +134,17 @@ export function Programs({
         <div className="grid md:grid-cols-3 gap-6 sm:gap-8">
           {programs.map((p, i) => {
             const slotKey = programSlotKeys[i];
-            const itemOverride = content?.items?.[slotKey];
+            const legacyKeyMap: Record<string, string> = {
+              programEmpower: "programEmpower",
+              programIntergenerational: "programClimate",
+              programSystemsThinking: "programEnterprise",
+              programConservation: "programConservation",
+              programYouthPulse: "programYouthPulse",
+              programResilience: "programResilience",
+            };
+            const legacyKey = legacyKeyMap[slotKey];
+            const itemOverride = content?.items?.[slotKey] || (legacyKey ? content?.items?.[legacyKey] : undefined);
+            const placement = placements?.[slotKey] || (legacyKey ? placements?.[legacyKey] : undefined);
             const cardTitle = itemOverride?.title || p.title;
             const cardDesc = itemOverride?.desc || p.desc;
             const cardTags = itemOverride?.tags || p.tags;
@@ -150,8 +160,8 @@ export function Programs({
                     {/* Image wrapper */}
                     <div className={`relative overflow-hidden min-h-[220px] ${p.span.includes("col-span-2") ? "lg:col-span-5 h-full" : "h-64"}`}>
                       <Image quality={95}
-                        src={placements?.[slotKey]?.src || p.image}
-                        alt={placements?.[slotKey]?.alt || cardTitle}
+                        src={placement?.src || p.image}
+                        alt={placement?.alt || cardTitle}
                         fill
                         sizes="(max-width: 768px) 100vw, 33vw"
                         className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"

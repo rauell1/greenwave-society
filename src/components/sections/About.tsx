@@ -35,7 +35,7 @@ export function About({
     {
       icon: <Users className="w-5 h-5" />,
       title: "Social Enterprise & Skills",
-      desc: "Through The 50 Percent programme and our social enterprise transition, we equip youth aged 18-35 to create economic value, close the skills-to-employment gap, and build organisations that sustain themselves. Aligned with SDG 4, 8, and 10.",
+      desc: "Through our social enterprise transition and collaborative initiatives in partnership with The 50 Percent, we equip youth aged 18-35 to create economic value, close the skills-to-employment gap, and build organisations that sustain themselves. Aligned with SDG 4, 8, and 10.",
     },
     {
       icon: <Heart className="w-5 h-5" />,
@@ -45,7 +45,7 @@ export function About({
     {
       icon: <Globe className="w-5 h-5" />,
       title: "Knowledge-Driven Partnerships",
-      desc: "Operating as a think tank, we build evidence-based partnerships: from urban tree-planting with Tatu City to community cleanup events, ensuring every collaboration delivers measurable, lasting impact aligned with SDG 17.",
+      desc: "Operating as a think tank, we build evidence-based partnerships: from urban tree-planting with Tatu City to community clean-ups with Jessie K and the Nairobi County Environment and habitat restoration, ensuring every collaboration delivers measurable, lasting impact aligned with SDG 17.",
     },
   ];
 

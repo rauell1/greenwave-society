@@ -79,49 +79,63 @@ const defaultProgramItems: Record<
   string,
   { title: string; desc: string; tags: string[]; cta?: { text: string; href: string } }
 > = {
-  programEnterprise: {
-    title: "The 50 Percent: Social Enterprise",
-    desc: "Our flagship social enterprise and systems thinking fellowship. We train youth aged 18-35 to map systemic challenges, starting with the employment and skills-mismatch crisis, translate complex concepts into plain language, and build solutions their communities actually understand and own.",
-    tags: ["Flagship", "Social Enterprise", "Skills Training"],
+  programEmpower: {
+    title: "Empower 360: Youth Leadership & Mentorship",
+    desc: "Our flagship youth leadership and mentorship initiative. Through Empower 360, we build leadership capacity through mentorship, systems thinking training, and rotating meeting leadership so every member develops facilitation and critical thinking skills. Our inaugural Ad Hoc Cohort I changemakers lead community projects, manage budgets, and drive real-world transformation.",
+    tags: ["Flagship", "Empower 360", "Leadership", "Cohort I"],
+    cta: {
+      text: "Cohort I Graduation & Market (Oct 30)",
+      href: "/events/graduation-cohort-1",
+    },
+  },
+  programIntergenerational: {
+    title: "Intergenerational Summit",
+    desc: "A signature policy dialogue and mentorship convening connecting Kenya's youth changemakers with seasoned civic, environmental, and industry leaders to co-create sustainable community solutions.",
+    tags: ["Signature Program", "Policy Dialogue", "Mentorship"],
+  },
+  programSystemsThinking: {
+    title: "Young Person's Guide to Systems Thinking",
+    desc: "Ad hoc training in partnership with The 50 Percent. We equip youth aged 18-35 to map complex root causes, understand interconnected systemic challenges, and design actionable community-owned solutions.",
+    tags: ["In Partnership with The 50 Percent", "Systems Thinking", "Ad Hoc Training"],
+  },
+  programConservation: {
+    title: "Conservation & Restoration",
+    desc: "From tree-planting with Tatu City to community clean-ups with Jessie K and the Nairobi County Environment and habitat restoration, our conservation work directly protects local ecosystems while giving young people real-world project leadership experience, skills, and accountability that no classroom can replicate.",
+    tags: ["Tree Planting", "Clean-ups", "Habitat Restoration"],
   },
   programYouthPulse: {
     title: "Youth Pulse Program",
     desc: "A youth-volunteer initiative centred on intergenerational connection, mental health, and community accountability. The Youth Pulse Program organises community barazas, peer support sessions, and cross-pod collaboration that bring young Kenyans together to build shared responsibility and drive grassroots change.",
     tags: ["Volunteers", "Mental Health", "Intergenerational"],
   },
-  programClimate: {
-    title: "Climate Action & Advocacy Training",
-    desc: "Hands-on workshops that apply systems thinking to climate and ecology, helping youth understand the structures driving environmental crises and advocate for policy and community-level change using language that resonates with real people, not just experts.",
-    tags: ["Workshops", "School Programs", "Climate Literacy"],
-  },
-  programConservation: {
-    title: "Conservation & Restoration",
-    desc: "From tree-planting with Tatu City to community clean-ups at JCK and habitat restoration, our conservation work directly protects local ecosystems while giving young people real-world project leadership experience, skills, and accountability that no classroom can replicate.",
-    tags: ["Tree Planting", "Clean-ups", "Habitat Restoration"],
-  },
-  programEmpower: {
-    title: "Empower 360: Youth Leadership & Mentorship",
-    desc: "Through our Empower 360 programme, we build leadership capacity through mentorship, systems thinking training, and rotating meeting leadership so every member develops facilitation and critical thinking skills. Our inaugural Ad Hoc Cohort I changemakers lead community projects, manage budgets, and drive real-world transformation.",
-    tags: ["Empower 360", "Leadership", "Mentorship", "Cohort I"],
-    cta: {
-      text: "Cohort I Graduation & Market (Oct 30)",
-      href: "/events/graduation-cohort-1",
-    },
-  },
   programResilience: {
     title: "Sustainability & Urban Resilience",
     desc: "As a social enterprise, we design sustainable models that reduce donor dependency: from lean programme delivery and shared community infrastructure to tiered revenue strategies that keep our work going long after grants run out.",
     tags: ["Urban Planning", "Ecosystem Design", "Community Resilience"],
   },
+  // Legacy aliases
+  programEnterprise: {
+    title: "Young Person's Guide to Systems Thinking",
+    desc: "Ad hoc training in partnership with The 50 Percent. We equip youth aged 18-35 to map complex root causes, understand interconnected systemic challenges, and design actionable community-owned solutions.",
+    tags: ["In Partnership with The 50 Percent", "Systems Thinking", "Ad Hoc Training"],
+  },
+  programClimate: {
+    title: "Intergenerational Summit",
+    desc: "A signature policy dialogue and mentorship convening connecting Kenya's youth changemakers with seasoned civic, environmental, and industry leaders to co-create sustainable community solutions.",
+    tags: ["Signature Program", "Policy Dialogue", "Mentorship"],
+  },
 };
 
 const slugToProgramKey: Record<string, string> = {
-  "program-50-percent": "programEnterprise",
-  "program-youth-pulse": "programYouthPulse",
-  "program-climate-action": "programClimate",
-  "program-conservation": "programConservation",
   "program-empower-360": "programEmpower",
+  "program-intergenerational-summit": "programIntergenerational",
+  "program-systems-thinking": "programSystemsThinking",
+  "program-conservation": "programConservation",
+  "program-youth-pulse": "programYouthPulse",
   "program-sustainability": "programResilience",
+  // Legacy aliases
+  "program-50-percent": "programSystemsThinking",
+  "program-climate-action": "programIntergenerational",
 };
 
 export const getPublicHomepageContent = cache(async (): Promise<PublicHomepageContent> => {

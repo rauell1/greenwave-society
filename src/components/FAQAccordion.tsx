@@ -13,8 +13,12 @@ const FAQS = [
     answer: "Greenwave Society is open to youth aged 15-35 in Kenya who are passionate about leadership, community development, environmental conservation, skills building, and social enterprise.",
   },
   {
-    question: "What is The 50 Percent programme?",
-    answer: "The 50 Percent is our flagship social enterprise training programme. It addresses youth unemployment and skills mismatch by expanding thinking and adding value to organisations and communities through five training pillars.",
+    question: "What is the Empower 360 flagship programme?",
+    answer: "Empower 360 is Greenwave Society's flagship youth leadership and mentorship initiative. It equips emerging changemakers with practical leadership, community project management, and systems thinking skills to create lasting grassroots impact.",
+  },
+  {
+    question: "How does Greenwave collaborate with The 50 Percent?",
+    answer: "The 50 Percent is a valued partner organisation with whom we collaborate to deliver the Young Person's Guide to Systems Thinking ad hoc training, equipping youth to map root causes and design community-owned solutions.",
   },
   {
     question: "How can I volunteer with Greenwave Society?",

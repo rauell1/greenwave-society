@@ -90,12 +90,12 @@ export function Footer() {
             </h4>
             <ul className="space-y-2.5">
               {[
-                "The 50 Percent",
-                "Youth Pulse Program",
-                "Climate Action & Advocacy",
+                "Empower 360 (Flagship)",
+                "Intergenerational Summit",
+                "Young Person's Guide to Systems Thinking",
                 "Conservation & Restoration",
-                "Youth Leadership",
-                "Social Enterprise & Sustainability",
+                "Youth Pulse Program",
+                "Sustainability & Urban Resilience",
               ].map((l) => (
                 <li key={l}>
                   <Link
