@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import type { AvailableCmsImage } from "@/lib/cms/placements";
+import { MediaUploadDialog, type UploadedMediaAsset } from "@/components/admin/media/MediaUploadDialog";
 
 interface SlotMeta {
   name: string;
@@ -37,6 +38,7 @@ interface PlacementsManagerProps {
   defaultPlacements: Record<string, { src: string; alt: string } & SlotMeta>;
   availableImages: AvailableCmsImage[];
   canUpdate: boolean;
+  canUploadMedia?: boolean;
 }
 
 type ModalFilter = "all" | "repo" | "blob" | "poster";
@@ -44,14 +46,17 @@ type ModalFilter = "all" | "repo" | "blob" | "poster";
 export default function PlacementsManager({
   initialPlacements,
   defaultPlacements,
-  availableImages,
+  availableImages: initialAvailableImages,
   canUpdate,
+  canUploadMedia = true,
 }: PlacementsManagerProps) {
   const [placements, setPlacements] = useState(initialPlacements);
+  const [availableImages, setAvailableImages] = useState<AvailableCmsImage[]>(initialAvailableImages);
   const [activePickerSlot, setActivePickerSlot] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [modalFilter, setModalFilter] = useState<ModalFilter>("all");
   const [modalPage, setModalPage] = useState(1);
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
   const modalPageSize = 24;
 
   const [isSaving, setIsSaving] = useState(false);
@@ -99,6 +104,40 @@ export default function PlacementsManager({
       res[k] = { src: v.src, alt: v.alt };
     }
     setPlacements(res);
+  };
+
+  const handleUploadSuccess = (asset: UploadedMediaAsset) => {
+    const newImage: AvailableCmsImage = {
+      url: asset.url,
+      filename: asset.filename,
+      source: "blob",
+    };
+
+    setAvailableImages((prev) => [newImage, ...prev]);
+
+    if (activePickerSlot) {
+      const slotName = defaultPlacements[activePickerSlot]?.name || "selected slot";
+      setPlacements((prev) => ({
+        ...prev,
+        [activePickerSlot]: {
+          src: asset.url,
+          alt: asset.altText || prev[activePickerSlot]?.alt || "",
+        },
+      }));
+
+      setNotification({
+        type: "success",
+        message: `Photograph "${asset.filename}" uploaded to storage and selected for ${slotName}! Remember to click Save Placements.`,
+      });
+      setActivePickerSlot(null);
+    } else {
+      setNotification({
+        type: "success",
+        message: `Photograph "${asset.filename}" uploaded to storage successfully.`,
+      });
+    }
+
+    setTimeout(() => setNotification(null), 8000);
   };
 
   const handleSave = async () => {
@@ -160,6 +199,18 @@ export default function PlacementsManager({
         </div>
 
         <div className="flex items-center gap-3">
+          {canUploadMedia && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setIsUploadOpen(true)}
+              className="text-xs gap-1.5"
+            >
+              <CloudUpload className="w-3.5 h-3.5 text-emerald-600" /> Upload to Storage
+            </Button>
+          )}
+
           <Button
             type="button"
             variant="outline"
@@ -314,16 +365,29 @@ export default function PlacementsManager({
                   <Sparkles className="w-4 h-4 text-emerald-600" /> Select Image for {defaultPlacements[activePickerSlot]?.name}
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Browse all {availableImages.length} photographs from repo, blob uploads, and posters.
+                  Browse {availableImages.length} photographs from repo, blob uploads, and posters, or upload a new photo directly to storage.
                 </p>
               </div>
 
-              <button
-                onClick={() => setActivePickerSlot(null)}
-                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
+              <div className="flex items-center gap-2">
+                {canUploadMedia && (
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={() => setIsUploadOpen(true)}
+                    className="text-xs bg-slate-900 hover:bg-slate-800 text-white gap-1.5 shadow-xs font-semibold h-8"
+                  >
+                    <CloudUpload className="w-3.5 h-3.5 text-emerald-400" /> Upload New Photo
+                  </Button>
+                )}
+
+                <button
+                  onClick={() => setActivePickerSlot(null)}
+                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
             </div>
 
             {/* Filter and Search Bar */}
@@ -387,9 +451,19 @@ export default function PlacementsManager({
             {/* Thumbnails Grid */}
             <div className="p-5 overflow-y-auto flex-1">
               {currentModalImages.length === 0 ? (
-                <div className="p-12 text-center text-slate-500 space-y-1">
+                <div className="p-12 text-center text-slate-500 space-y-3">
                   <p className="font-semibold text-slate-700">No matching images found</p>
-                  <p className="text-xs">Try adjusting your search query or filter tab.</p>
+                  <p className="text-xs">Try adjusting your search query or upload a new photo directly.</p>
+                  {canUploadMedia && (
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={() => setIsUploadOpen(true)}
+                      className="text-xs bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5"
+                    >
+                      <CloudUpload className="w-3.5 h-3.5" /> Upload Photo Now
+                    </Button>
+                  )}
                 </div>
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -479,6 +553,15 @@ export default function PlacementsManager({
           </div>
         </div>
       )}
+
+      {/* Direct Upload Dialog */}
+      <MediaUploadDialog
+        open={isUploadOpen}
+        onOpenChange={setIsUploadOpen}
+        onSuccess={handleUploadSuccess}
+        title={activePickerSlot ? `Upload Image for ${defaultPlacements[activePickerSlot]?.name}` : "Upload Media to Storage"}
+        description="Upload a new photograph to Cloud Storage. It will be immediately selected for this placement slot."
+      />
     </div>
   );
 }

@@ -37,6 +37,7 @@ export default async function PlacementsPage() {
         defaultPlacements={DEFAULT_PLACEMENTS}
         availableImages={availableImages}
         canUpdate={hasPermission(admin, PERMISSIONS.CONTENT_UPDATE)}
+        canUploadMedia={hasPermission(admin, PERMISSIONS.MEDIA_UPLOAD)}
       />
     </div>
   );

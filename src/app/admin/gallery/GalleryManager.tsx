@@ -24,11 +24,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import type { CuratedGalleryItem, AvailableGalleryImage } from "@/lib/cms/gallery";
+import { MediaUploadDialog, type UploadedMediaAsset } from "@/components/admin/media/MediaUploadDialog";
 
 interface GalleryManagerProps {
   initialCurated: CuratedGalleryItem[];
   available: AvailableGalleryImage[];
   canUpdate: boolean;
+  canUploadMedia?: boolean;
 }
 
 type FilterMode = "all" | "active" | "inactive" | "repo" | "blob" | "poster";
@@ -37,6 +39,7 @@ export default function GalleryManager({
   initialCurated,
   available,
   canUpdate,
+  canUploadMedia = true,
 }: GalleryManagerProps) {
   // Build initial items map
   const initialMap = useMemo(() => {
@@ -78,6 +81,7 @@ export default function GalleryManager({
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(36);
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [notification, setNotification] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   const allKeys = Object.keys(items);
@@ -124,6 +128,27 @@ export default function GalleryManager({
       }
       return next;
     });
+  };
+
+  const handleUploadSuccess = (asset: UploadedMediaAsset) => {
+    setItems((prev) => ({
+      [asset.url]: {
+        src: asset.url,
+        filename: asset.filename,
+        source: "blob",
+        alt: asset.altText || asset.filename.replace(/\.[^.]+$/, "").replace(/[-_]/g, " "),
+        caption: asset.caption || "",
+        active: true,
+      },
+      ...prev,
+    }));
+
+    setNotification({
+      type: "success",
+      message: `Photograph "${asset.filename}" uploaded to storage and added to gallery! Click Save Gallery to publish.`,
+    });
+    setTimeout(() => setNotification(null), 8000);
+    setCurrentPage(1);
   };
 
   const handleSave = async () => {
@@ -195,11 +220,22 @@ export default function GalleryManager({
             <Images className="w-5 h-5 text-emerald-600" /> Curated Photo Gallery
           </h2>
           <p className="text-xs text-slate-500 mt-1">
-            Browse and manage all photos present in this repo and blob storage. Currently featuring <strong>{activeCount}</strong> of {allKeys.length} photos on the public <Link href="/gallery" target="_blank" className="text-emerald-600 underline font-semibold">/gallery</Link> page.
+            Browse and manage all photos present in this repo and cloud storage. Currently featuring <strong>{activeCount}</strong> of {allKeys.length} photos on the public <Link href="/gallery" target="_blank" className="text-emerald-600 underline font-semibold">/gallery</Link> page.
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
+          {canUploadMedia && (
+            <Button
+              type="button"
+              size="sm"
+              onClick={() => setIsUploadOpen(true)}
+              className="text-xs bg-slate-900 hover:bg-slate-800 text-white gap-1.5 shadow-xs font-semibold"
+            >
+              <CloudUpload className="w-3.5 h-3.5 text-emerald-400" /> Upload to Storage
+            </Button>
+          )}
+
           <Button
             type="button"
             variant="outline"
@@ -358,9 +394,10 @@ export default function GalleryManager({
             <Button
               type="button"
               variant="outline"
-              size="icon" className="h-7 w-7"
+              size="icon"
               onClick={() => goToPage(1)}
               disabled={safeCurrentPage === 1}
+              className="h-7 w-7"
               title="First Page"
             >
               <ChevronsLeft className="w-3.5 h-3.5" />
@@ -368,9 +405,10 @@ export default function GalleryManager({
             <Button
               type="button"
               variant="outline"
-              size="icon" className="h-7 w-7"
+              size="icon"
               onClick={() => goToPage(safeCurrentPage - 1)}
               disabled={safeCurrentPage === 1}
+              className="h-7 w-7"
               title="Previous Page"
             >
               <ChevronLeft className="w-3.5 h-3.5" />
@@ -383,9 +421,10 @@ export default function GalleryManager({
             <Button
               type="button"
               variant="outline"
-              size="icon" className="h-7 w-7"
+              size="icon"
               onClick={() => goToPage(safeCurrentPage + 1)}
               disabled={safeCurrentPage === totalPages}
+              className="h-7 w-7"
               title="Next Page"
             >
               <ChevronRight className="w-3.5 h-3.5" />
@@ -393,9 +432,10 @@ export default function GalleryManager({
             <Button
               type="button"
               variant="outline"
-              size="icon" className="h-7 w-7"
+              size="icon"
               onClick={() => goToPage(totalPages)}
               disabled={safeCurrentPage === totalPages}
+              className="h-7 w-7"
               title="Last Page"
             >
               <ChevronsRight className="w-3.5 h-3.5" />
@@ -569,6 +609,15 @@ export default function GalleryManager({
           </div>
         </div>
       )}
+
+      {/* Upload Dialog */}
+      <MediaUploadDialog
+        open={isUploadOpen}
+        onOpenChange={setIsUploadOpen}
+        onSuccess={handleUploadSuccess}
+        title="Upload Photo to Gallery Storage"
+        description="Upload a high-resolution photograph directly to storage and feature it in the gallery."
+      />
     </div>
   );
 }

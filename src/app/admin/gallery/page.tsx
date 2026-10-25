@@ -33,6 +33,7 @@ export default async function AdminGalleryPage() {
         initialCurated={curated}
         available={available}
         canUpdate={hasPermission(admin, PERMISSIONS.CONTENT_UPDATE)}
+        canUploadMedia={hasPermission(admin, PERMISSIONS.MEDIA_UPLOAD)}
       />
     </div>
   );
