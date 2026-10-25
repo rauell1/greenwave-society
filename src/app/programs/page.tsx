@@ -4,6 +4,7 @@ import { Programs } from "@/components/sections/Programs";
 import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { APP_CONFIG } from "@/config/app.config";
+import { getPublicImagePlacements } from "@/lib/cms/placements";
 
 export const metadata: Metadata = {
   title: "Our Programmes | The 50 Percent, Youth Pulse Program, Conservation & More | Kenya",
@@ -27,7 +28,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ProgramsPage() {
+export default async function ProgramsPage() {
+  const placements = await getPublicImagePlacements();
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -141,7 +143,7 @@ export default function ProgramsPage() {
       />
       <Navbar />
       <main className="flex-1 pt-16 sm:pt-20">
-        <Programs />
+        <Programs placements={placements} />
       </main>
       <Footer />
       <ScrollToTop />
