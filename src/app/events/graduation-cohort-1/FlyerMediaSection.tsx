@@ -73,19 +73,26 @@ const FLYER_ASSETS: FlyerAsset[] = [
   },
 ];
 
-export function FlyerMediaSection() {
-  const [selectedCategory, setSelectedCategory] = useState<"attendee" | "vendor">("attendee");
+interface FlyerMediaSectionProps {
+  categoryFilter?: "attendee" | "vendor" | "all";
+}
+
+export function FlyerMediaSection({ categoryFilter = "all" }: FlyerMediaSectionProps) {
+  const initialCategory = categoryFilter === "vendor" ? "vendor" : "attendee";
+  const [selectedCategory, setSelectedCategory] = useState<"attendee" | "vendor">(initialCategory);
   const [selectedFormat, setSelectedFormat] = useState<"standard" | "story">("standard");
   const [copied, setCopied] = useState(false);
 
+  const effectiveCategory = categoryFilter === "all" ? selectedCategory : categoryFilter;
+
   const activeAsset = FLYER_ASSETS.find(
-    (asset) => asset.category === selectedCategory && asset.format === selectedFormat
+    (asset) => asset.category === effectiveCategory && asset.format === selectedFormat
   ) || FLYER_ASSETS[0];
 
   const handleShareWhatsApp = () => {
-    const text = selectedCategory === "attendee"
+    const text = effectiveCategory === "attendee"
       ? "🎓 Join us for Greenwave Society's Empower 360 Ad Hoc Cohort I Graduation on Friday, 30th October 2026 (10:30 AM - 3:00 PM) at Ubunifu Hub, Nairobi! +1s welcome! Details & RSVP: https://greenwavesociety.org/events/graduation-cohort-1"
-      : "🛍️ Calling sustainable brands & creatives! Showcase your venture at the Empower 360 Community Market on Friday, 30th October 2026 at Ubunifu Hub, Nairobi. KES 1,000 flat fee, tables & chairs provided, zero single-use plastics rule. Apply online: https://greenwavesociety.org/events/graduation-cohort-1#vendor-application";
+      : "🛍️ Calling sustainable brands & creatives! Showcase your venture at the Empower 360 Community Market on Friday, 30th October 2026 at Ubunifu Hub, Nairobi. KES 1,000 flat fee, tables & chairs provided, zero single-use plastics rule. Apply online: https://greenwavesociety.org/events/community-market";
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
   };
 
@@ -97,44 +104,61 @@ export function FlyerMediaSection() {
     }
   };
 
+  const sectionBadge = effectiveCategory === "vendor"
+    ? "Official Market Posters & Vendor Call Kit"
+    : "Official Graduation Posters & Social Media Kit";
+
+  const sectionTitle = effectiveCategory === "vendor"
+    ? "Download & Share the Market Posters"
+    : "Download & Share the Event Flyers";
+
+  const sectionDescription = effectiveCategory === "vendor"
+    ? "Help spread the word to sustainable local brands, snack creators, authors, and craft artisans! Download high-resolution print graphics or ready-to-post 9:16 mobile story cuts for WhatsApp Status and Instagram."
+    : "Help us celebrate our graduating cohort! Grab the official invitations in high-resolution portrait or ready-to-post 9:16 story cuts for WhatsApp Status and Instagram.";
+
   return (
     <div className="rounded-3xl bg-secondary/15 border border-border/70 p-6 sm:p-8 backdrop-blur-sm">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
         <div>
           <div className="inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-wider text-primary font-bold px-3 py-1 bg-primary/10 rounded-full border border-primary/20 mb-3">
-            <Sparkles className="w-3.5 h-3.5 text-gold" /> Official Media & Posters Kit
+            <Sparkles className="w-3.5 h-3.5 text-gold" /> {sectionBadge}
           </div>
           <h2 className="text-2xl sm:text-3xl font-serif font-black text-foreground">
-            Download & Share the Event <span className="italic font-normal text-primary">Flyers</span>
+            {sectionTitle.slice(0, sectionTitle.lastIndexOf(" "))}{" "}
+            <span className="italic font-normal text-primary">
+              {sectionTitle.slice(sectionTitle.lastIndexOf(" ") + 1)}
+            </span>
           </h2>
           <p className="text-xs sm:text-sm text-muted-foreground mt-2 max-w-2xl leading-relaxed">
-            Help us spread the word! Grab the official invitations and vendor recruitment graphics in high-resolution portrait or ready-to-post 9:16 story cuts for WhatsApp Status and Instagram.
+            {sectionDescription}
           </p>
         </div>
 
-        {/* Category Selector Tabs */}
-        <div className="inline-flex p-1.5 bg-background/80 rounded-2xl border border-border/80 shadow-inner">
-          <button
-            onClick={() => setSelectedCategory("attendee")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
-              selectedCategory === "attendee"
-                ? "bg-primary text-primary-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            <GraduationCap className="w-4 h-4" /> Graduation Invite
-          </button>
-          <button
-            onClick={() => setSelectedCategory("vendor")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
-              selectedCategory === "vendor"
-                ? "bg-primary text-primary-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            <Store className="w-4 h-4" /> Vendor Call Flyer
-          </button>
-        </div>
+        {/* Category Selector Tabs only when categoryFilter === "all" */}
+        {categoryFilter === "all" && (
+          <div className="inline-flex p-1.5 bg-background/80 rounded-2xl border border-border/80 shadow-inner">
+            <button
+              onClick={() => setSelectedCategory("attendee")}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+                selectedCategory === "attendee"
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <GraduationCap className="w-4 h-4" /> Graduation Invite
+            </button>
+            <button
+              onClick={() => setSelectedCategory("vendor")}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
+                selectedCategory === "vendor"
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <Store className="w-4 h-4" /> Vendor Call Flyer
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Format Toggle Bar */}
@@ -237,7 +261,7 @@ export function FlyerMediaSection() {
             </div>
             <div>
               <span className="text-muted-foreground block font-mono uppercase text-[10px]">Embedded Feature</span>
-              <span className="font-semibold text-foreground">Functional RSVP QR Code</span>
+              <span className="font-semibold text-foreground">Functional QR Code</span>
             </div>
             <div>
               <span className="text-muted-foreground block font-mono uppercase text-[10px]">Resolution</span>
@@ -277,7 +301,9 @@ export function FlyerMediaSection() {
 
           {/* Note */}
           <p className="text-[11px] text-muted-foreground/80 leading-relaxed">
-            Graduands are encouraged to post the invitation on their WhatsApp status and social channels with their personal invitation notes. Prospective market vendors can share the vendor call flyer with artisan networks.
+            {effectiveCategory === "vendor"
+              ? "Vendors and partners are encouraged to share this call with eco-conscious brands, snack artisans, sustainable fashion makers, and community creators."
+              : "Graduands and guests are encouraged to post the invitation on their WhatsApp status and social channels with their personal invitation notes."}
           </p>
         </div>
       </div>

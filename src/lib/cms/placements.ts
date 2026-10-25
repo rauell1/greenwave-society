@@ -255,6 +255,7 @@ export async function saveImagePlacements(
   revalidatePath("/about");
   revalidatePath("/programs");
   revalidatePath("/events/graduation-cohort-1");
+  revalidatePath("/events/community-market");
   revalidatePath("/media-kit");
 
   return saved;

@@ -66,6 +66,7 @@ export function Footer() {
                 { label: "Careers", href: "/careers" },
                 { label: "Media Kit", href: "/media-kit" },
                 { label: "Cohort I Graduation", href: "/events/graduation-cohort-1" },
+                { label: "Community Market", href: "/events/community-market" },
                 { label: "Contact", href: "/contact" },
                 { label: "Privacy & Data Rights", href: "/privacy" },
                 { label: "Admin Portal", href: "/admin" },
