@@ -5,7 +5,27 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FadeIn } from "@/components/ui/fade-in";
 
-export function VolunteerCTA({ imagePlacement }: { imagePlacement?: { src: string; alt: string } }) {
+export interface VolunteerCTAContentProps {
+  title?: string;
+  body?: string;
+  ctaText?: string;
+  ctaHref?: string;
+}
+
+export function VolunteerCTA({
+  imagePlacement,
+  content,
+}: {
+  imagePlacement?: { src: string; alt: string };
+  content?: VolunteerCTAContentProps;
+}) {
+  const title = content?.title || "Become a Volunteer Today";
+  const body =
+    content?.body ||
+    "Join a growing network of young Kenyans who are doing real things: leading systems thinking sessions, organising community barazas, planting trees, running clean-ups, and building an organisation that sustains itself. There is a role here for you.";
+  const ctaText = content?.ctaText || "Sign Up to Volunteer";
+  const ctaHref = content?.ctaHref || "/contact?interest=volunteer";
+
   return (
     <section id="volunteer" className="py-24 sm:py-32 bg-background relative overflow-hidden">
       {/* Decorative leaf blur accent */}
@@ -41,10 +61,16 @@ export function VolunteerCTA({ imagePlacement }: { imagePlacement?: { src: strin
                 Get Involved
               </Badge>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black tracking-tight text-foreground leading-tight">
-                Become a <span className="italic font-normal text-primary">Volunteer</span> Today
+                {title.includes("Volunteer") ? (
+                  <>
+                    Become a <span className="italic font-normal text-primary">Volunteer</span> Today
+                  </>
+                ) : (
+                  title
+                )}
               </h2>
               <p className="mt-6 text-muted-foreground text-sm sm:text-base leading-relaxed">
-                Join a growing network of young Kenyans who are doing real things: leading systems thinking sessions, organising community barazas, planting trees, running clean-ups, and building an organisation that sustains itself. There is a role here for you.
+                {body}
               </p>
 
               {/* High-end list structure */}
@@ -66,8 +92,8 @@ export function VolunteerCTA({ imagePlacement }: { imagePlacement?: { src: strin
 
               <div className="mt-10">
                 <Button asChild size="lg" className="rounded-full bg-primary hover:bg-primary/90 text-white font-semibold shadow-md px-8 py-6 group">
-                  <Link href="/contact?interest=volunteer">
-                    Sign Up to Volunteer 
+                  <Link href={ctaHref}>
+                    {ctaText} 
                     <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform animate-pulse" />
                   </Link>
                 </Button>

@@ -122,9 +122,25 @@ const faqJsonLd = {
 export const revalidate = 60;
 
 export default async function HomePage() {
-  const { impact, activities } = await getPublicHomepageContent();
+  const content = await getPublicHomepageContent();
   const placements = await getPublicImagePlacements();
-  const faq = { ...faqJsonLd, mainEntity: faqJsonLd.mainEntity.map(question => question.name === "What impact has Greenwave Society made?" ? { ...question, acceptedAnswer: { ...question.acceptedAnswer, text: `Greenwave Society has empowered ${impact.youthReached}+ youth, planted ${impact.treesPlanted}+ trees, served ${impact.communitiesServed}+ communities, organised ${impact.eventsOrganized}+ events, delivered ${impact.workshopsDelivered}+ workshops, and recycled ${impact.wasteRecycled} tons of waste across Kenya.` } } : question) };
+  const { impact, activities, hero, about, programsSection, volunteerCta, programs } = content;
+
+  const faq = {
+    ...faqJsonLd,
+    mainEntity: faqJsonLd.mainEntity.map((question) =>
+      question.name === "What impact has Greenwave Society made?"
+        ? {
+            ...question,
+            acceptedAnswer: {
+              ...question.acceptedAnswer,
+              text: `Greenwave Society has empowered ${impact.youthReached}+ youth, planted ${impact.treesPlanted}+ trees, served ${impact.communitiesServed}+ communities, organised ${impact.eventsOrganized}+ events, delivered ${impact.workshopsDelivered}+ workshops, and recycled ${impact.wasteRecycled} tons of waste across Kenya.`,
+            },
+          }
+        : question
+    ),
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <script
@@ -133,13 +149,20 @@ export default async function HomePage() {
       />
       <Navbar />
       <main className="flex-1">
-        <Hero impact={impact} placements={placements} />
-        <About imagePlacement={placements?.about} />
-        <Programs placements={placements} />
+        <Hero impact={impact} placements={placements} content={hero} />
+        <About imagePlacement={placements?.about} content={about} />
+        <Programs
+          placements={placements}
+          content={{
+            sectionTitle: programsSection.title,
+            sectionBody: programsSection.body,
+            items: programs,
+          }}
+        />
         <Impact impact={impact} />
         <Team />
         <Activities activities={activities} />
-        <VolunteerCTA imagePlacement={placements?.volunteer} />
+        <VolunteerCTA imagePlacement={placements?.volunteer} content={volunteerCta} />
         <Contact />
       </main>
       <Footer />

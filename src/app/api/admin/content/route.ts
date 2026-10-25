@@ -4,10 +4,15 @@ import { PERMISSIONS } from "@/lib/auth/permissions";
 import { getDb } from "@/lib/db";
 import { CONTENT_TYPES, contentInputSchema, serializeMetadata } from "@/lib/cms/content";
 import { AUDIT_ACTIONS, logAuditEvent } from "@/lib/audit/audit-service";
+import { ensureDefaultSiteContentSeeded } from "@/lib/cms/site-pages";
 
 export async function GET(request: NextRequest) {
   const auth = await authorizeRoute(PERMISSIONS.CONTENT_READ);
   if (!auth.ok) return auth.response;
+
+  // Auto-seed any missing default pages so they are immediately visible and editable in the CMS
+  await ensureDefaultSiteContentSeeded();
+
   const status = request.nextUrl.searchParams.get("status");
   const requestedType = request.nextUrl.searchParams.get("type");
   const type = requestedType && CONTENT_TYPES.some(type => type === requestedType) ? requestedType : undefined;

@@ -8,7 +8,35 @@ import { CountUp } from "@/components/ui/count-up";
 import type { ImpactStats } from "@/lib/cms/content";
 import { IMPACT_STATS } from "@/config/app.config";
 
-export function Hero({ impact = IMPACT_STATS, placements }: { impact?: ImpactStats; placements?: Record<string, { src: string; alt: string }> }) {
+export interface HeroContentProps {
+  title?: string;
+  body?: string;
+  badge?: string;
+  primaryCtaText?: string;
+  primaryCtaHref?: string;
+  secondaryCtaText?: string;
+  secondaryCtaHref?: string;
+}
+
+export function Hero({
+  impact = IMPACT_STATS,
+  placements,
+  content,
+}: {
+  impact?: ImpactStats;
+  placements?: Record<string, { src: string; alt: string }>;
+  content?: HeroContentProps;
+}) {
+  const title = content?.title || "Turning systems thinking into community change";
+  const body =
+    content?.body ||
+    "Greenwave Society is a youth-led social enterprise and think tank in Kenya. We translate complex systems into simple, practical action: enterprise training, community barazas, conservation, and knowledge-driven partnerships that put young people at the centre.";
+  const badgeText = content?.badge || "Social Enterprise • Think Tank • Kenya";
+  const primaryCta = content?.primaryCtaText || "Join Our Mission";
+  const primaryHref = content?.primaryCtaHref || "/contact?interest=volunteer";
+  const secondaryCta = content?.secondaryCtaText || "Learn More";
+  const secondaryHref = content?.secondaryCtaHref || "/about";
+
   return (
     <section className="relative min-h-screen flex items-center bg-background pt-24 pb-16 lg:pt-32 overflow-hidden">
       {/* Editorial background shapes */}
@@ -26,17 +54,23 @@ export function Hero({ impact = IMPACT_STATS, placements }: { impact?: ImpactSta
                 className="mb-6 px-4 py-2 text-xs uppercase tracking-wider font-bold bg-primary/10 text-primary border border-primary/20 rounded-full"
               >
                 <Sprout className="w-3.5 h-3.5 mr-1.5" />
-                Social Enterprise &bull; Think Tank &bull; Kenya
+                {badgeText}
               </Badge>
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-serif font-black text-foreground leading-[1.05] tracking-tight">
-              Turning systems <br />
-              thinking into <span className="text-primary italic font-normal">community change</span>
+              {title.includes("community change") ? (
+                <>
+                  Turning systems <br />
+                  thinking into <span className="text-primary italic font-normal">community change</span>
+                </>
+              ) : (
+                title
+              )}
             </h1>
 
             <p className="mt-6 text-base sm:text-lg text-muted-foreground leading-relaxed max-w-xl">
-              Greenwave Society is a youth-led social enterprise and think tank in Kenya. We translate complex systems into simple, practical action: enterprise training, community barazas, conservation, and knowledge-driven partnerships that put young people at the centre.
+              {body}
             </p>
 
             <div className="mt-8 flex flex-wrap gap-4">
@@ -45,8 +79,8 @@ export function Hero({ impact = IMPACT_STATS, placements }: { impact?: ImpactSta
                 size="lg"
                 className="rounded-xl bg-primary hover:bg-primary/95 text-primary-foreground font-semibold px-8 py-6 shadow-[0_10px_30px_oklch(var(--primary)/25%)]"
               >
-                <Link href="/contact?interest=volunteer">
-                  Join Our Mission <ArrowRight className="ml-2 w-4 h-4" />
+                <Link href={primaryHref}>
+                  {primaryCta} <ArrowRight className="ml-2 w-4 h-4" />
                 </Link>
               </Button>
               <Button
@@ -55,7 +89,9 @@ export function Hero({ impact = IMPACT_STATS, placements }: { impact?: ImpactSta
                 size="lg"
                 className="rounded-xl border-border bg-transparent text-foreground hover:bg-secondary/40 font-semibold px-8 py-6"
               >
-                <Link href="/about" aria-label="Learn more about Greenwave Society">Learn More</Link>
+                <Link href={secondaryHref} aria-label="Learn more about Greenwave Society">
+                  {secondaryCta}
+                </Link>
               </Button>
             </div>
 

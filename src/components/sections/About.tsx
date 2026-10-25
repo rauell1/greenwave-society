@@ -5,7 +5,27 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FadeIn } from "@/components/ui/fade-in";
 
-export function About({ imagePlacement }: { imagePlacement?: { src: string; alt: string } } = {}) {
+export interface AboutContentProps {
+  title?: string;
+  quote?: string;
+  body?: string;
+}
+
+export function About({
+  imagePlacement,
+  content,
+}: {
+  imagePlacement?: { src: string; alt: string };
+  content?: AboutContentProps;
+} = {}) {
+  const title = content?.title || "Mission, Vision & Global Alignment";
+  const quote =
+    content?.quote ||
+    "We exist to translate systems thinking into everyday action: equipping young Kenyans to diagnose the challenges in their communities, build enterprises that outlast donor cycles, and lead change from the ground up.";
+  const body =
+    content?.body ||
+    "We are transitioning from a non-governmental model to a self-sustaining social enterprise, reducing dependency on donor funding and building an organisation that generates its own impact and value. Our vision is a generation of equipped, confident young Kenyans: leading enterprises, applying systems thinking in their communities, and driving lasting change from the ground up.";
+
   const values = [
     {
       icon: <Leaf className="w-5 h-5" />,
@@ -66,7 +86,13 @@ export function About({ imagePlacement }: { imagePlacement?: { src: string; alt:
             </FadeIn>
             <FadeIn delay={0.1}>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black tracking-tight text-foreground leading-tight">
-                Mission, Vision & <span className="text-primary italic font-normal">Global Alignment</span>
+                {title.includes("Global Alignment") ? (
+                  <>
+                    Mission, Vision & <span className="text-primary italic font-normal">Global Alignment</span>
+                  </>
+                ) : (
+                  title
+                )}
               </h2>
             </FadeIn>
             
@@ -74,14 +100,14 @@ export function About({ imagePlacement }: { imagePlacement?: { src: string; alt:
             <FadeIn delay={0.2}>
               <div className="mt-6 border-l-4 border-primary pl-6 py-2">
                 <p className="font-serif italic text-lg sm:text-xl text-muted-foreground leading-relaxed">
-                  "We exist to translate systems thinking into everyday action: equipping young Kenyans to diagnose the challenges in their communities, build enterprises that outlast donor cycles, and lead change from the ground up."
+                  &ldquo;{quote}&rdquo;
                 </p>
               </div>
             </FadeIn>
 
             <FadeIn delay={0.3}>
               <p className="mt-6 text-muted-foreground text-sm sm:text-base leading-relaxed">
-                We are transitioning from a non-governmental model to a self-sustaining social enterprise, reducing dependency on donor funding and building an organisation that generates its own impact and value. Our vision is a generation of equipped, confident young Kenyans: leading enterprises, applying systems thinking in their communities, and driving lasting change from the ground up.
+                {body}
               </p>
             </FadeIn>
             
@@ -96,7 +122,7 @@ export function About({ imagePlacement }: { imagePlacement?: { src: string; alt:
 
         </div>
 
-        {/* Minimalist Typographical Core Values (Anti-AI card style) */}
+        {/* Minimalist Typographical Core Pillars */}
         <div className="mt-24 pt-16 border-t border-border/80">
           <FadeIn className="text-center max-w-xl mx-auto mb-16">
             <h3 className="text-2xl font-serif font-black tracking-tight text-foreground">

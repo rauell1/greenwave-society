@@ -4,6 +4,9 @@ import { About } from "@/components/sections/About";
 import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { APP_CONFIG } from "@/config/app.config";
+import { getPublicImagePlacements } from "@/lib/cms/placements";
+import { getPublicPageContent } from "@/lib/cms/public-content";
+import { DEFAULT_SITE_PAGES } from "@/lib/cms/site-pages";
 
 export const metadata: Metadata = {
   title: "About Greenwave Society | Mission, Vision & Strategy in Kenya",
@@ -27,7 +30,24 @@ export const metadata: Metadata = {
   },
 };
 
-export default function AboutPage() {
+export const revalidate = 60;
+
+const defaultAbout = DEFAULT_SITE_PAGES.find((p) => p.slug === "about-us")!;
+
+export default async function AboutPage() {
+  const placements = await getPublicImagePlacements();
+  const cmsContent = await getPublicPageContent("about-us", {
+    title: defaultAbout.title,
+    excerpt: defaultAbout.excerpt,
+    body: defaultAbout.body,
+    metadata: defaultAbout.metadata,
+  });
+
+  const quote =
+    typeof cmsContent.metadata?.quote === "string"
+      ? cmsContent.metadata.quote
+      : (cmsContent.excerpt || "We exist to translate systems thinking into everyday action: equipping young Kenyans to diagnose the challenges in their communities, build enterprises that outlast donor cycles, and lead change from the ground up.");
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -74,12 +94,17 @@ export default function AboutPage() {
       />
       <Navbar />
       <main className="flex-1 pt-16 sm:pt-20">
-        <About />
+        <About
+          imagePlacement={placements?.about}
+          content={{
+            title: cmsContent.title,
+            quote,
+            body: cmsContent.body,
+          }}
+        />
       </main>
       <Footer />
       <ScrollToTop />
     </div>
   );
 }
-
-

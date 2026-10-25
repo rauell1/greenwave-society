@@ -81,7 +81,32 @@ const programSlotKeys = [
   "programResilience",
 ];
 
-export function Programs({ placements }: { placements?: Record<string, { src: string; alt: string }> }) {
+export interface ProgramsContentProps {
+  sectionTitle?: string;
+  sectionBody?: string;
+  items?: Record<
+    string,
+    {
+      title: string;
+      desc: string;
+      tags: string[];
+      cta?: { text: string; href: string };
+    }
+  >;
+}
+
+export function Programs({
+  placements,
+  content,
+}: {
+  placements?: Record<string, { src: string; alt: string }>;
+  content?: ProgramsContentProps;
+}) {
+  const sectionTitle = content?.sectionTitle || "Our Programs & Initiatives";
+  const sectionBody =
+    content?.sectionBody ||
+    "Six interconnected programmes, from social enterprise training to environmental action, all working together to equip Kenya's youth with the skills, leadership, and community connection to create lasting change.";
+
   return (
     <section id="programs" className="py-24 sm:py-32 bg-secondary/20 relative">
       <div className="max-w-7xl mx-auto px-6 sm:px-8">
@@ -92,77 +117,92 @@ export function Programs({ placements }: { placements?: Record<string, { src: st
             What We Do
           </Badge>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black tracking-tight text-foreground leading-tight">
-            Our Programs & <span className="text-primary italic font-normal">Initiatives</span>
+            {sectionTitle.includes("Initiatives") ? (
+              <>
+                Our Programs & <span className="text-primary italic font-normal">Initiatives</span>
+              </>
+            ) : (
+              sectionTitle
+            )}
           </h2>
           <p className="mt-4 text-muted-foreground text-sm sm:text-base max-w-xl mx-auto">
-            Six interconnected programmes, from social enterprise training to environmental action, all working together to equip Kenya's youth with the skills, leadership, and community connection to create lasting change.
+            {sectionBody}
           </p>
         </FadeIn>
 
         {/* Bento Grid layout */}
         <div className="grid md:grid-cols-3 gap-6 sm:gap-8">
-          {programs.map((p, i) => (
-            <FadeIn key={p.title} delay={i * 0.1} className={p.span}>
-              <div className="group h-full flex flex-col justify-between overflow-hidden rounded-[2rem] border border-border/60 bg-background hover:shadow-[0_20px_50px_oklch(var(--primary)/6%)] hover:border-primary/20 transition-all duration-500">
-                
-                {/* Asymmetric layout depending on span */}
-                <div className={`grid h-full ${p.span.includes("col-span-2") ? "lg:grid-cols-12" : "grid-cols-1"}`}>
+          {programs.map((p, i) => {
+            const slotKey = programSlotKeys[i];
+            const itemOverride = content?.items?.[slotKey];
+            const cardTitle = itemOverride?.title || p.title;
+            const cardDesc = itemOverride?.desc || p.desc;
+            const cardTags = itemOverride?.tags || p.tags;
+            const cardCta = itemOverride?.cta || p.cta;
+
+            return (
+              <FadeIn key={p.title} delay={i * 0.1} className={p.span}>
+                <div className="group h-full flex flex-col justify-between overflow-hidden rounded-[2rem] border border-border/60 bg-background hover:shadow-[0_20px_50px_oklch(var(--primary)/6%)] hover:border-primary/20 transition-all duration-500">
                   
-                  {/* Image wrapper */}
-                  <div className={`relative overflow-hidden min-h-[220px] ${p.span.includes("col-span-2") ? "lg:col-span-5 h-full" : "h-64"}`}>
-                    <Image quality={95}
-                      src={placements?.[programSlotKeys[i]]?.src || p.image}
-                      alt={placements?.[programSlotKeys[i]]?.alt || p.title}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                      className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-background/30 to-transparent" />
-                  </div>
+                  {/* Asymmetric layout depending on span */}
+                  <div className={`grid h-full ${p.span.includes("col-span-2") ? "lg:grid-cols-12" : "grid-cols-1"}`}>
+                    
+                    {/* Image wrapper */}
+                    <div className={`relative overflow-hidden min-h-[220px] ${p.span.includes("col-span-2") ? "lg:col-span-5 h-full" : "h-64"}`}>
+                      <Image quality={95}
+                        src={placements?.[slotKey]?.src || p.image}
+                        alt={placements?.[slotKey]?.alt || cardTitle}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-background/30 to-transparent" />
+                    </div>
 
-                  {/* Content wrapper */}
-                  <div className={`p-6 sm:p-8 flex flex-col justify-between ${p.span.includes("col-span-2") ? "lg:col-span-7" : ""}`}>
-                    <div>
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0 shadow-sm">
-                          {p.icon}
+                    {/* Content wrapper */}
+                    <div className={`p-6 sm:p-8 flex flex-col justify-between ${p.span.includes("col-span-2") ? "lg:col-span-7" : ""}`}>
+                      <div>
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0 shadow-sm">
+                            {p.icon}
+                          </div>
+                          <h3 className="text-lg font-bold tracking-tight text-foreground">{cardTitle}</h3>
                         </div>
-                        <h3 className="text-lg font-bold tracking-tight text-foreground">{p.title}</h3>
+                        <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+                          {cardDesc}
+                        </p>
                       </div>
-                      <p className="text-sm text-muted-foreground leading-relaxed mb-6">
-                        {p.desc}
-                      </p>
-                    </div>
 
-                    <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-border/40">
-                      <div className="flex flex-wrap gap-2">
-                        {p.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="text-[10px] uppercase tracking-wider font-extrabold px-3 py-1 bg-secondary text-primary rounded-md"
+                      <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-border/40">
+                        <div className="flex flex-wrap gap-2">
+                          {cardTags.map((tag) => (
+                            <span
+                              key={tag}
+                              className="text-[10px] uppercase tracking-wider font-extrabold px-3 py-1 bg-secondary text-primary rounded-md"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+
+                        {cardCta && (
+                          <Link
+                            href={cardCta.href}
+                            className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:text-primary/80 transition-colors bg-primary/10 hover:bg-primary/15 px-3 py-1.5 rounded-xl border border-primary/20"
                           >
-                            {tag}
-                          </span>
-                        ))}
+                            <span>{cardCta.text}</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </Link>
+                        )}
                       </div>
-
-                      {p.cta && (
-                        <Link
-                          href={p.cta.href}
-                          className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:text-primary/80 transition-colors bg-primary/10 hover:bg-primary/15 px-3 py-1.5 rounded-xl border border-primary/20"
-                        >
-                          <span>{p.cta.text}</span>
-                          <ArrowRight className="w-3.5 h-3.5" />
-                        </Link>
-                      )}
                     </div>
+
                   </div>
 
                 </div>
-
-              </div>
-            </FadeIn>
-          ))}
+              </FadeIn>
+            );
+          })}
         </div>
 
       </div>

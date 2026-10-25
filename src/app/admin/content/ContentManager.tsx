@@ -262,7 +262,7 @@ export default function ContentManager({
 
           {/* Type Filter Pills */}
           <div className="flex items-center gap-1 overflow-x-auto pb-1 text-[11px]">
-            {["all", "news", "page", "story", "impact"].map((t) => (
+            {["all", "page", "program", "news", "story", "impact"].map((t) => (
               <button
                 key={t}
                 type="button"
