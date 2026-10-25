@@ -4,6 +4,7 @@ import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { GraduationTabbedSection } from "./GraduationTabbedSection";
 import { FlyerMediaSection } from "./FlyerMediaSection";
+import { GraduationPillarsSection } from "@/components/events/GraduationPillarsSection";
 import { Calendar, Clock, MapPin, Sparkles, Award, Store, Leaf, Users, ArrowRight, QrCode } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -158,6 +159,11 @@ export default function GraduationCohortPage() {
         <FlyerMediaSection />
       </section>
 
+      {/* Segmented Dual Tracks Section (Graduands & Vendors) */}
+      <section className="py-16 sm:py-20 max-w-7xl mx-auto px-6 sm:px-8 w-full border-b border-border/50 bg-secondary/10">
+        <GraduationPillarsSection />
+      </section>
+
       {/* Main Content Area: 2 Columns on desktop */}
       <section className="py-16 sm:py-24 max-w-7xl mx-auto px-6 sm:px-8 w-full flex-1">
         <div className="grid lg:grid-cols-12 gap-12 items-start">
@@ -257,7 +263,7 @@ export default function GraduationCohortPage() {
           </div>
 
           {/* Right Column: Tabbed Registration Forms (Guest RSVP & Vendor Stall) */}
-          <div className="lg:col-span-6" id="vendor-application">
+          <div className="lg:col-span-6" id="registration-forms">
             <GraduationTabbedSection />
           </div>
 

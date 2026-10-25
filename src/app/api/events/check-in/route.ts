@@ -1,6 +1,47 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 
+function buildRegistrationPayload(reg: any, meta: Record<string, any>) {
+  const isVendor = Boolean(meta.vendorName);
+  const isGraduand = meta.role === "graduand";
+  
+  let roleTitle = "Guest";
+  let specialInstructions = "Issue Guest Pass. Direct to General Seating and Community Market.";
+
+  if (isGraduand) {
+    roleTitle = "Empower 360 Graduand (Cohort I)";
+    specialInstructions = "Issue Graduation Certificate & Honor Badge. Escort to Front Reserved Graduand Seating.";
+  } else if (isVendor) {
+    roleTitle = `Market Vendor (${meta.category || "Sustainable Goods"})`;
+    specialInstructions = `Confirm Vendor Category (${meta.category || "General"}). Escort to Assigned Table & Chairs at Ubunifu Hub Market Area.`;
+  } else if (meta.role === "family_friend") {
+    roleTitle = "Family & Supporter";
+    specialInstructions = "Welcome family member. Guide to Family Reserved Rows adjacent to Graduands.";
+  } else if (meta.role === "partner_collaborator") {
+    roleTitle = "Partner & Mentor";
+    specialInstructions = "Welcome partner or mentor. Guide to Partner Networking & Reserved Seating.";
+  }
+
+  return {
+    id: reg.id,
+    fullName: reg.fullName,
+    email: reg.email,
+    phone: reg.phone || "",
+    organization: reg.organization || meta.vendorName || "",
+    attendanceStatus: reg.attendanceStatus,
+    checkedInAt: reg.checkedInAt,
+    role: roleTitle,
+    rawRole: meta.role || (isVendor ? "vendor" : "guest"),
+    isGraduand,
+    isVendor,
+    vendorCategory: meta.category || null,
+    vendorName: meta.vendorName || null,
+    guestCount: meta.guestCount || 1,
+    ticketNumber: `GW-${reg.id.slice(-6).toUpperCase()}`,
+    specialInstructions,
+  };
+}
+
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
@@ -43,18 +84,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({
         success: true,
         alreadyCheckedIn: true,
-        registration: {
-          id: registration.id,
-          fullName: registration.fullName,
-          email: registration.email,
-          phone: registration.phone,
-          organization: registration.organization,
-          attendanceStatus: registration.attendanceStatus,
-          checkedInAt: registration.checkedInAt,
-          role: meta.role || (meta.vendorName ? "Vendor" : "Guest"),
-          guestCount: meta.guestCount || 1,
-          ticketNumber: `GW-${registration.id.slice(-6).toUpperCase()}`,
-        },
+        registration: buildRegistrationPayload(registration, meta),
         event: registration.event,
       });
     }
@@ -72,18 +102,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       success: true,
       alreadyCheckedIn: false,
-      registration: {
-        id: updated.id,
-        fullName: updated.fullName,
-        email: updated.email,
-        phone: updated.phone,
-        organization: updated.organization,
-        attendanceStatus: updated.attendanceStatus,
-        checkedInAt: updated.checkedInAt,
-        role: meta.role || (meta.vendorName ? "Vendor" : "Guest"),
-        guestCount: meta.guestCount || 1,
-        ticketNumber: `GW-${updated.id.slice(-6).toUpperCase()}`,
-      },
+      registration: buildRegistrationPayload(updated, meta),
       event: registration.event,
     });
   } catch (error) {
@@ -142,18 +161,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      registration: {
-        id: updated.id,
-        fullName: updated.fullName,
-        email: updated.email,
-        phone: updated.phone,
-        organization: updated.organization,
-        attendanceStatus: updated.attendanceStatus,
-        checkedInAt: updated.checkedInAt,
-        role: meta.role || (meta.vendorName ? "Vendor" : "Guest"),
-        guestCount: meta.guestCount || 1,
-        ticketNumber: `GW-${updated.id.slice(-6).toUpperCase()}`,
-      },
+      registration: buildRegistrationPayload(updated, meta),
     });
   } catch (error) {
     console.error("[EVENT_CHECK_IN_POST]", error);

@@ -1,14 +1,17 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { authorizeRoute } from "@/lib/auth/route-authorization";
 import { PERMISSIONS } from "@/lib/auth/permissions";
 import { getDb } from "@/lib/db";
 import { AUDIT_ACTIONS } from "@/lib/audit/audit-service";
 
-export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const auth = await authorizeRoute(PERMISSIONS.EVENTS_READ); 
   if (!auth.ok) return auth.response;
 
   const { id } = await params; 
+  const { searchParams } = new URL(req.url);
+  const segment = searchParams.get("segment")?.toLowerCase().trim(); // "all" | "graduands" | "vendors" | "guests"
+
   const db = getDb();
   
   const event = await db.cmsEvent.findUnique({
@@ -19,6 +22,20 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
   });
 
   if (!event) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+  let registrations = event.registrations;
+
+  if (segment && segment !== "all") {
+    registrations = registrations.filter(r => {
+      const meta = (r.metadata as Record<string, any>) || {};
+      const isVendor = Boolean(meta.vendorName);
+      const isGraduand = meta.role === "graduand";
+      if (segment === "graduands") return isGraduand;
+      if (segment === "vendors") return isVendor;
+      if (segment === "guests") return !isGraduand && !isVendor;
+      return true;
+    });
+  }
 
   const headers = [
     "Ticket Number",
@@ -37,12 +54,14 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
     "Registered At"
   ];
 
-  const rows = event.registrations.map(reg => {
+  const rows = registrations.map(reg => {
     const meta = (reg.metadata as Record<string, any>) || {};
     
     const ticketNumber = `GW-${reg.id.slice(-6).toUpperCase()}`;
-    const regType = meta.vendorName ? "Market Vendor" : meta.type === "guest" ? "Guest RSVP" : "General Attendee";
-    const roleOrCategory = meta.category || meta.role || (meta.vendorName ? "Vendor" : "Attendee");
+    const isVendor = Boolean(meta.vendorName);
+    const isGraduand = meta.role === "graduand";
+    const regType = isVendor ? "Market Vendor" : isGraduand ? "Empower 360 Graduand" : "Guest / Supporter";
+    const roleOrCategory = meta.category || meta.role || (isVendor ? "Vendor" : "Attendee");
     const headcount = meta.guestCount || 1;
     const notes = meta.dietaryOrNotes || meta.productDescription || meta.dietaryRestrictions || "";
     const checkedInAt = reg.checkedInAt ? reg.checkedInAt.toISOString() : "";
@@ -79,14 +98,16 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
       resourceType: "cms_event_registrations",
       resourceId: id,
       outcome: "SUCCESS",
-      detail: `Exported ${event.registrations.length} registrations`
+      detail: `Exported ${registrations.length} registrations (${segment || "all"})`
     }
   });
+
+  const filePrefix = segment && segment !== "all" ? `event_${event.slug}_${segment}` : `event_${event.slug}_all`;
 
   return new NextResponse(csv, {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="event_${event.slug}_attendees.csv"`,
+      "Content-Disposition": `attachment; filename="${filePrefix}_roster.csv"`,
     }
   });
 }
