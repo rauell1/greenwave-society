@@ -94,24 +94,80 @@ def prepare_cleaned_stage_base():
     crop_x = (new_w - W) // 2
     bg_sub = scaled_base[:int(H * 0.72), crop_x:crop_x + W].copy()
 
-    # 1. Flawless inpainting to eliminate duplicate EMPOWER 360 COHORT I stage lettering
-    gray = cv2.cvtColor(bg_sub, cv2.COLOR_BGR2GRAY)
-    mask = np.zeros(bg_sub.shape[:2], dtype=np.uint8)
+    # 1. Flawless clean plate reconstruction to eliminate duplicate EMPOWER 360 COHORT I stage lettering
+    y_top = 765
+    y_mid = 850
+    x_left = 480
+    x_right = 965
+    W_plate = x_right - x_left
 
-    # Box 1: EMPOWER 360 (y: 785 to 852, x: 505 to 945)
-    mask[785:852, 505:945] = (gray[785:852, 505:945] > 68).astype(np.uint8) * 255
-    # Box 2: Left CO (y: 852 to 930, x: 565 to 670)
-    mask[852:930, 565:670] = (gray[852:930, 565:670] > 68).astype(np.uint8) * 255
-    # Box 3: Right ORT I (y: 852 to 898, x: 736 to 900)
-    mask[852:898, 736:900] = (gray[852:898, 736:900] > 68).astype(np.uint8) * 255
-    # Strictly protect center fellow head & hair:
-    mask[852:, 670:736] = 0
+    top_raw = np.median(bg_sub[755:775, x_left:x_right], axis=0)
+    row_raw = np.median(bg_sub[847:853, x_left:x_right], axis=0)
 
-    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (7, 7))
-    mask_dil = cv2.dilate(mask, kernel)
-    mask_dil[852:, 670:736] = 0
+    top_s = cv2.GaussianBlur(top_raw.reshape(1, -1, 3), (45, 1), 0).reshape(-1, 3)
+    row_s = cv2.GaussianBlur(row_raw.reshape(1, -1, 3), (45, 1), 0).reshape(-1, 3)
 
-    clean_stage = cv2.inpaint(bg_sub, mask_dil, 4, cv2.INPAINT_TELEA)
+    y_start = 765
+    y_end = 910
+    H_plate = y_end - y_start
+
+    clean_plate = np.zeros((H_plate, W_plate, 3), dtype=np.float32)
+    for y_idx in range(H_plate):
+        y_curr = y_start + y_idx
+        if y_curr <= y_mid:
+            t = (y_curr - y_top) / float(y_mid - y_top)
+            row_c = (1.0 - t) * top_s + t * row_s
+        else:
+            t_bot = (y_curr - y_mid) / float(y_end - y_mid)
+            row_c = row_s * (1.0 - t_bot * 0.08)
+        clean_plate[y_idx] = row_c
+
+    np.random.seed(42)
+    noise = np.random.normal(0, 2.1, clean_plate.shape).astype(np.float32)
+    clean_plate = np.clip(clean_plate + noise, 0, 255)
+
+    full_plate = bg_sub.copy().astype(np.float32)
+    full_plate[y_start:y_end, x_left:x_right] = clean_plate
+
+    # Build exact composite mask:
+    mask = np.zeros(bg_sub.shape[:2], dtype=np.float32)
+
+    # Upper band (EMPOWER 360): y: 780 to 850, x: 508 to 945
+    mask[780:850, 508:945] = 1.0
+
+    # Left pocket (CO): y: 850 to 898, x: 605 to 671
+    mask[850:898, 605:671] = 1.0
+
+    # Right pocket (ORT I): y: 850 to 898, x: 734 to 852
+    mask[850:898, 734:852] = 1.0
+
+    # Smooth feathering:
+    feather = cv2.GaussianBlur(mask, (15, 15), 0)
+
+    # Force alpha = 1.0 on core letter pixels:
+    feather[786:846, 514:940] = 1.0
+    feather[858:896, 612:670] = 1.0
+    feather[858:896, 735:848] = 1.0
+
+    # Fellow protection:
+    # 1. At y: 850 to 898, protect x: 672 to 733 (fellow's head and buzzcut)
+    feather[850:898, 672:733] = 0.0
+    # 2. At y >= 898, protect x: 660 to 740 (fellow's ears and body)
+    feather[898:, 660:740] = 0.0
+    # 3. Female fellow locs: y >= 905, x: 740 to 950
+    feather[905:, 740:950] = 0.0
+    # 4. Left female fellow: y >= 885, x <= 568
+    feather[885:, :568] = 0.0
+
+    # Blend:
+    clean_stage = bg_sub.astype(np.float32) * (1.0 - feather[:, :, None]) + full_plate * feather[:, :, None]
+    clean_stage = np.clip(clean_stage, 0, 255).astype(np.uint8)
+
+    # Re-paste 100% authentic raw photographic pixels for fellows:
+    clean_stage[850:898, 672:733] = bg_sub[850:898, 672:733]
+    clean_stage[898:, 660:740] = bg_sub[898:, 660:740]
+    clean_stage[905:, 740:950] = bg_sub[905:, 740:950]
+    clean_stage[885:, :568] = bg_sub[885:, :568]
 
     # 2. Blend Official Greenwave Emblem seamlessly into authentic stage disc fixture
     cx, cy, r = 739, 632, 62
