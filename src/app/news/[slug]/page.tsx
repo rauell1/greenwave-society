@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { format } from "date-fns";
 import { Calendar, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import ReactMarkdown from "react-markdown";
 import { APP_CONFIG } from "@/config/app.config";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
@@ -114,10 +115,9 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             </h1>
           </header>
 
-          <div 
-            className="prose prose-emerald lg:prose-lg max-w-none text-muted-foreground font-sans leading-relaxed"
-            dangerouslySetInnerHTML={{ __html: article.body }}
-          />
+          <div className="prose prose-emerald lg:prose-lg max-w-none text-muted-foreground font-sans leading-relaxed">
+            <ReactMarkdown>{article.body}</ReactMarkdown>
+          </div>
         </article>
       </main>
       <Footer />

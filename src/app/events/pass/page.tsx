@@ -51,7 +51,7 @@ export default async function PassPage(props: PageProps) {
   }
 
   const db = getDb();
-  const registration = await db.cmsEventRegistration.findUnique({
+  let registration = await db.cmsEventRegistration.findUnique({
     where: { id },
     include: {
       event: {
@@ -65,6 +65,30 @@ export default async function PassPage(props: PageProps) {
       },
     },
   });
+
+  if (!registration) {
+    const cleanId = id.trim();
+    const suffix = cleanId.replace(/^GW-/i, "").toLowerCase();
+    registration = await db.cmsEventRegistration.findFirst({
+      where: {
+        OR: [
+          { id: { endsWith: suffix } },
+          { email: { equals: cleanId, mode: "insensitive" } },
+        ],
+      },
+      include: {
+        event: {
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+            startsAt: true,
+            location: true,
+          },
+        },
+      },
+    });
+  }
 
   if (!registration) {
     return (

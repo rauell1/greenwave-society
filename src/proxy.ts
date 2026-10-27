@@ -90,6 +90,8 @@ export async function proxy(request: NextRequest) {
       request.method !== "GET" &&
       (pathname.startsWith("/api/contact") ||
         pathname.startsWith("/api/registrations") ||
+        pathname.startsWith("/api/privacy") ||
+        pathname.startsWith("/api/apply") ||
         strictAdminAuthRoutes.has(pathname) ||
         pathname.startsWith("/api/newsletter"));
 

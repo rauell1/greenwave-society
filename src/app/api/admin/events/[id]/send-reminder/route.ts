@@ -106,12 +106,13 @@ export async function POST(
           isVendor,
           ticketNumber,
           checkInUrl,
+          passUrl: `${SITE_URL}/events/pass?id=${reg.id}&token=${checkInToken}`,
           vendorName: meta.vendorName,
           category: meta.category,
           vendorCategory: meta.category,
           guestCount: meta.guestCount || 1,
-          eventDate: "Tomorrow, Friday, 30th October 2026, 10:30 AM EAT (Vendor Setup 9:30 AM)",
-          location: event.location || "Ubunifu Hub, Nairobi, Kenya",
+          eventDate: "Friday, 30th October 2026, 10:00 AM - 3:00 PM EAT (Vendor Setup 9:30 AM)",
+          location: event.location || "Ubunifu Hub, Garden Estate, Nairobi",
         });
 
         // Record reminder timestamp in metadata

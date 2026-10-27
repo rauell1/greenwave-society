@@ -2,8 +2,14 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { runClientCookieScan } from '@/lib/scanner/cookie-scanner';
 import { generatePrivacyPolicy, generateCookiePolicy, generateTermsOfService } from '@/lib/consent/policy-generator';
+import { authorizeRoute } from '@/lib/auth/route-authorization';
+import { PERMISSIONS } from '@/lib/auth/permissions';
+import { AUDIT_ACTIONS, logAuditEvent } from '@/lib/audit/audit-service';
 
 export async function GET(request: Request) {
+  const auth = await authorizeRoute(PERMISSIONS.SETTINGS_READ);
+  if (!auth.ok) return auth.response;
+
   try {
     const { searchParams } = new URL(request.url);
     const action = searchParams.get('action') || 'overview';
@@ -30,6 +36,15 @@ export async function GET(request: Request) {
         ),
       ];
 
+      await logAuditEvent({
+        action: AUDIT_ACTIONS.SETTINGS_UPDATED,
+        actor: auth.admin.email,
+        actorUserId: auth.admin.id,
+        resourceType: 'consent_log',
+        outcome: 'SUCCESS',
+        detail: `Exported ${logs.length} consent audit logs (CSV)`,
+      });
+
       return new NextResponse(csvRows.join('\n'), {
         headers: {
           'Content-Type': 'text/csv',
@@ -43,6 +58,16 @@ export async function GET(request: Request) {
         take: 1000,
         orderBy: { createdAt: 'desc' },
       });
+
+      await logAuditEvent({
+        action: AUDIT_ACTIONS.SETTINGS_UPDATED,
+        actor: auth.admin.email,
+        actorUserId: auth.admin.id,
+        resourceType: 'consent_log',
+        outcome: 'SUCCESS',
+        detail: `Exported ${logs.length} consent audit logs (JSON)`,
+      });
+
       return NextResponse.json(logs);
     }
 
@@ -96,31 +121,16 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error('Error in GET /api/admin/consent:', error);
     return NextResponse.json({
-      success: true,
-      config: {
-        id: 'default',
-        themeColor: '#166534',
-        layout: 'bottom-bar',
-        position: 'bottom',
-        defaultLang: 'en',
-        consentModeV2: true,
-        tcfEnabled: true,
-        geoTargeting: true,
-        autoBlock: true,
-      },
-      stats: {
-        totalLogs: 194,
-        optInCount: 154,
-        optOutCount: 16,
-        customizedCount: 24,
-        acceptanceRate: 88,
-      },
-      latestScan: runClientCookieScan(),
-    });
+      success: false,
+      error: 'Failed to retrieve consent settings',
+    }, { status: 500 });
   }
 }
 
 export async function POST(request: Request) {
+  const auth = await authorizeRoute(PERMISSIONS.SETTINGS_MANAGE);
+  if (!auth.ok) return auth.response;
+
   try {
     const body = await request.json();
     const { action } = body;
@@ -133,6 +143,17 @@ export async function POST(request: Request) {
         update: { themeColor, layout, position, defaultLang, consentModeV2, tcfEnabled, geoTargeting, autoBlock },
         create: { id: 'default', themeColor, layout, position, defaultLang, consentModeV2, tcfEnabled, geoTargeting, autoBlock },
       });
+
+      await logAuditEvent({
+        action: AUDIT_ACTIONS.SETTINGS_UPDATED,
+        actor: auth.admin.email,
+        actorUserId: auth.admin.id,
+        resourceType: 'consent_banner_config',
+        resourceId: 'default',
+        outcome: 'SUCCESS',
+        detail: 'Updated consent banner configuration',
+      });
+
       return NextResponse.json({ success: true, config: updated });
     }
 
@@ -145,6 +166,17 @@ export async function POST(request: Request) {
           totalTrackers: scanSummary.totalTrackers,
         },
       });
+
+      await logAuditEvent({
+        action: AUDIT_ACTIONS.SETTINGS_UPDATED,
+        actor: auth.admin.email,
+        actorUserId: auth.admin.id,
+        resourceType: 'cookie_scan_result',
+        resourceId: savedScan.id,
+        outcome: 'SUCCESS',
+        detail: 'Executed cookie scan',
+      });
+
       return NextResponse.json({ success: true, scan: savedScan, summary: scanSummary });
     }
 
@@ -175,6 +207,16 @@ export async function POST(request: Request) {
         where: { type: policyType },
         update: { title, content, version: '1.1.0' },
         create: { type: policyType, title, content, version: '1.0.0' },
+      });
+
+      await logAuditEvent({
+        action: AUDIT_ACTIONS.SETTINGS_UPDATED,
+        actor: auth.admin.email,
+        actorUserId: auth.admin.id,
+        resourceType: 'legal_policy',
+        resourceId: policyType,
+        outcome: 'SUCCESS',
+        detail: `Generated and updated legal policy: ${title}`,
       });
 
       return NextResponse.json({ success: true, policy, content });

@@ -25,6 +25,7 @@ import {
   Users,
   ShieldCheck,
   ArrowLeft,
+  Trash2,
 } from "lucide-react";
 import { QrCameraScanner } from "@/components/events/QrCameraScanner";
 import Link from "next/link";
@@ -179,6 +180,31 @@ function CheckInContent({ adminEmail }: CheckInClientProps) {
       }
     } catch {
       toast.error("Network error updating status");
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  const handleDeleteAttendee = async (attendeeId: string, name: string) => {
+    const confirmed = window.confirm(
+      `Permanently delete registration for "${name}"?\n\nThis will remove the test record from the live roster.`
+    );
+    if (!confirmed) return;
+
+    setUpdatingId(attendeeId);
+    try {
+      const res = await fetch(`/api/events/check-in/list?id=${encodeURIComponent(attendeeId)}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        toast.success(`Deleted ${name}`);
+        loadAttendeeList();
+      } else {
+        toast.error(data.error || "Failed to delete record");
+      }
+    } catch {
+      toast.error("Network error deleting record");
     } finally {
       setUpdatingId(null);
     }
@@ -658,27 +684,40 @@ function CheckInContent({ adminEmail }: CheckInClientProps) {
                           )}
                         </td>
                         <td className="p-3 sm:p-4 text-right">
-                          <Button
-                            size="sm"
-                            variant={isCheckedIn ? "outline" : "default"}
-                            disabled={updatingId === att.id}
-                            onClick={() =>
-                              handleManualCheckIn(att.id, isCheckedIn ? "pending" : "checked_in")
-                            }
-                            className={`rounded-xl text-xs h-8 ${
-                              isCheckedIn
-                                ? "text-muted-foreground hover:text-foreground"
-                                : "bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs"
-                            }`}
-                          >
-                            {updatingId === att.id ? (
-                              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                            ) : isCheckedIn ? (
-                              "Undo"
-                            ) : (
-                              "Check In"
-                            )}
-                          </Button>
+                          <div className="flex items-center justify-end gap-1.5">
+                            <Button
+                              size="sm"
+                              variant={isCheckedIn ? "outline" : "default"}
+                              disabled={updatingId === att.id}
+                              onClick={() =>
+                                handleManualCheckIn(att.id, isCheckedIn ? "pending" : "checked_in")
+                              }
+                              className={`rounded-xl text-xs h-8 ${
+                                isCheckedIn
+                                  ? "text-muted-foreground hover:text-foreground"
+                                  : "bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs"
+                              }`}
+                            >
+                              {updatingId === att.id ? (
+                                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                              ) : isCheckedIn ? (
+                                "Undo"
+                              ) : (
+                                "Check In"
+                              )}
+                            </Button>
+
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              disabled={updatingId === att.id}
+                              onClick={() => handleDeleteAttendee(att.id, att.fullName)}
+                              className="h-8 w-8 p-0 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl"
+                              title="Delete registration (clean test records)"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </Button>
+                          </div>
                         </td>
                       </tr>
                     );

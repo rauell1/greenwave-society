@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import QRCode from "qrcode";
 import { logger } from "../logger";
 import { brandedEmail, CONTACT_EMAIL, emailButton, escapeHtml, FROM_EMAIL, SITE_URL } from "../email-template";
 
@@ -136,15 +137,36 @@ export async function sendGraduationGuestConfirmation(opts: GraduationGuestEmail
        </div>`
     : "";
 
+  let attachments: Array<{ filename: string; content: Buffer }> = [];
+  try {
+    const qrBuffer = await QRCode.toBuffer(opts.checkInUrl, {
+      width: 320,
+      margin: 1,
+      color: {
+        dark: "#064e3b",
+        light: "#ffffff",
+      },
+    });
+    attachments = [
+      {
+        filename: `greenwave-digital-pass-${opts.ticketNumber}.png`,
+        content: qrBuffer,
+      },
+    ];
+  } catch (qrErr) {
+    logger.warn("Could not generate QR buffer for guest pass", { error: qrErr });
+  }
+
   try {
     await resend.emails.send({
       from: FROM_EMAIL,
       to: opts.to,
       subject: `Your Digital Pass: Empower 360 Cohort I Graduation (${opts.ticketNumber})`,
+      attachments: attachments.length > 0 ? attachments : undefined,
       html: brandedEmail({
         eyebrow: "Empower 360 Graduation Entry Pass",
         title: "Your Event Pass is Ready!",
-        preheader: `Digital pass confirmed for ${opts.name} - Empower 360 Cohort I Graduation at Ubunifu Hub.`,
+        preheader: `Digital pass confirmed for ${opts.name} • Empower 360 Cohort I Graduation at Ubunifu Hub.`,
         body: `<p style="margin:0 0 16px; font-size: 16px;">Dear ${escapeHtml(opts.name)},</p>
                <p style="margin:0 0 16px; font-size: 15px;">Your RSVP for the <strong>Empower 360 Ad Hoc Cohort I Graduation & Community Market</strong> has been confirmed.</p>
                
@@ -155,6 +177,7 @@ export async function sendGraduationGuestConfirmation(opts: GraduationGuestEmail
                  <div style="margin-top:8px;font-family:monospace;font-size:13px;font-weight:bold;color:#1A5C38;">
                    Ticket: ${escapeHtml(opts.ticketNumber)}
                  </div>
+                 <p style="margin:6px 0 0;font-size:11px;color:#607068;">Digital pass image also attached to this email for offline saving.</p>
                </div>
 
                <div style="margin:20px 0;padding:20px;background:#EFF9E9;border-radius:12px;border:1px solid #DDF0D6;">
@@ -196,15 +219,36 @@ export async function sendGraduationVendorConfirmation(opts: GraduationVendorEma
   const passUrl = opts.passUrl || `${SITE_URL}/events/pass?id=${encodeURIComponent(opts.ticketNumber)}`;
   const qrImageSrc = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(opts.checkInUrl)}&color=4c1d95&bgcolor=ffffff&margin=1`;
 
+  let attachments: Array<{ filename: string; content: Buffer }> = [];
+  try {
+    const qrBuffer = await QRCode.toBuffer(opts.checkInUrl, {
+      width: 320,
+      margin: 1,
+      color: {
+        dark: "#4c1d95",
+        light: "#ffffff",
+      },
+    });
+    attachments = [
+      {
+        filename: `greenwave-vendor-pass-${opts.ticketNumber}.png`,
+        content: qrBuffer,
+      },
+    ];
+  } catch (qrErr) {
+    logger.warn("Could not generate QR buffer for vendor pass", { error: qrErr });
+  }
+
   try {
     await resend.emails.send({
       from: FROM_EMAIL,
       to: opts.to,
       subject: `Vendor Stall Pass: Empower 360 Community Market (${opts.ticketNumber})`,
+      attachments: attachments.length > 0 ? attachments : undefined,
       html: brandedEmail({
         eyebrow: "Community Market Vendor Stall Pass",
         title: "Vendor Stall Pass Confirmed!",
-        preheader: `Vendor pass for ${opts.vendorName} - Empower 360 Community Market at Ubunifu Hub.`,
+        preheader: `Vendor pass for ${opts.vendorName} • Empower 360 Community Market at Ubunifu Hub.`,
         body: `<p style="margin:0 0 16px; font-size: 16px;">Dear ${escapeHtml(opts.name)},</p>
                <p style="margin:0 0 16px; font-size: 15px;">Your vendor registration for <strong>${escapeHtml(opts.vendorName)}</strong> at the <strong>Empower 360 Community Market</strong> on Friday, 30th October 2026 has been received.</p>
                
@@ -215,14 +259,15 @@ export async function sendGraduationVendorConfirmation(opts: GraduationVendorEma
                  <div style="margin-top:8px;font-family:monospace;font-size:13px;font-weight:bold;color:#5B21B6;">
                    Stall Ticket: ${escapeHtml(opts.ticketNumber)}
                  </div>
+                 <p style="margin:6px 0 0;font-size:11px;color:#607068;">Digital pass image also attached to this email for offline saving.</p>
                </div>
 
                <div style="margin:20px 0;padding:20px;background:#F5F3FF;border-radius:12px;border:1px solid #DDD6FE;">
                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;color:#2E1065;">
                    <tr><td style="padding:6px 0;font-weight:bold;width:130px;">Brand Name:</td><td><strong>${escapeHtml(opts.vendorName)}</strong></td></tr>
                    <tr><td style="padding:6px 0;font-weight:bold;">Category:</td><td>${escapeHtml(opts.category)}</td></tr>
-                   <tr><td style="padding:6px 0;font-weight:bold;">Setup Window:</td><td>9:30 AM to 10:15 AM EAT</td></tr>
-                   <tr><td style="padding:6px 0;font-weight:bold;">Market Hours:</td><td>10:30 AM to 3:00 PM EAT</td></tr>
+                   <tr><td style="padding:6px 0;font-weight:bold;">Setup Window:</td><td>9:30 AM to 10:00 AM EAT</td></tr>
+                   <tr><td style="padding:6px 0;font-weight:bold;">Market Hours:</td><td>10:00 AM to 3:00 PM EAT</td></tr>
                    <tr><td style="padding:6px 0;font-weight:bold;">Venue:</td><td>${escapeHtml(opts.location)}</td></tr>
                    <tr><td style="padding:6px 0;font-weight:bold;">Stall Logistics:</td><td>Tables and chairs provided on-site</td></tr>
                  </table>
@@ -298,17 +343,38 @@ export async function sendOneDayEventReminder(opts: OneDayReminderOptions): Prom
     `;
   }
 
+  let attachments: Array<{ filename: string; content: Buffer }> = [];
+  try {
+    const qrBuffer = await QRCode.toBuffer(opts.checkInUrl, {
+      width: 320,
+      margin: 1,
+      color: {
+        dark: opts.isVendor ? "#4c1d95" : "#064e3b",
+        light: "#ffffff",
+      },
+    });
+    attachments = [
+      {
+        filename: `greenwave-digital-pass-${opts.ticketNumber}.png`,
+        content: qrBuffer,
+      },
+    ];
+  } catch (qrErr) {
+    logger.warn("Could not generate QR buffer for reminder pass", { error: qrErr });
+  }
+
   try {
     await resend.emails.send({
       from: FROM_EMAIL,
       to: opts.to,
       subject,
+      attachments: attachments.length > 0 ? attachments : undefined,
       html: brandedEmail({
         eyebrow: "24-Hour Final Event Reminder",
         title: "See You Tomorrow at Ubunifu Hub!",
-        preheader: `Final event reminder and digital pass for ${opts.name} - Empower 360 Cohort I Graduation.`,
+        preheader: `Final event reminder and digital pass for ${opts.name} • Empower 360 Cohort I Graduation.`,
         body: `<p style="margin:0 0 16px; font-size: 16px;">Dear ${escapeHtml(opts.name)},</p>
-               <p style="margin:0 0 16px; font-size: 15px;">This is your 24-hour reminder that the <strong>Empower 360 Ad Hoc Cohort I Graduation & Community Market</strong> takes place <strong>tomorrow, Friday, 30th October 2026</strong> at Ubunifu Hub, Nairobi.</p>
+               <p style="margin:0 0 16px; font-size: 15px;">This is your final reminder that the <strong>Empower 360 Ad Hoc Cohort I Graduation & Community Market</strong> takes place on <strong>Friday, 30th October 2026</strong> at Ubunifu Hub, Garden Estate, Nairobi.</p>
                
                ${highlightInstructions}
 
@@ -319,6 +385,7 @@ export async function sendOneDayEventReminder(opts: OneDayReminderOptions): Prom
                  <div style="margin-top:8px;font-family:monospace;font-size:13px;font-weight:bold;color:#1A5C38;">
                    Ticket: ${escapeHtml(opts.ticketNumber)}
                  </div>
+                 <p style="margin:6px 0 0;font-size:11px;color:#607068;">Digital pass image also attached to this email for offline saving.</p>
                </div>
 
                <div style="margin:20px 0;padding:16px;background:#F8FAFC;border-radius:10px;border:1px solid #E2E8F0;font-size:13px;color:#334155;">

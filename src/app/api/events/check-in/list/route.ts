@@ -167,3 +167,38 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const admin = await getCurrentAdmin();
+    if (!admin) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    const isExecutive = await isExecutiveCommitteeMember(admin);
+    if (!isExecutive) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+    if (!id) {
+      return NextResponse.json({ error: "Registration ID is required" }, { status: 400 });
+    }
+
+    const db = getDb();
+    const deleted = await db.cmsEventRegistration.delete({
+      where: { id },
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: `Deleted registration for ${deleted.fullName}.`,
+    });
+  } catch (error: any) {
+    console.error("[EVENT_CHECK_IN_LIST_DELETE_ERROR]", error);
+    return NextResponse.json(
+      { error: error?.message || "Failed to delete registration" },
+      { status: 500 }
+    );
+  }
+}

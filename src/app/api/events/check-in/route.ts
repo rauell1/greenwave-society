@@ -71,7 +71,7 @@ export async function GET(req: NextRequest) {
     }
 
     const db = getDb();
-    const registration = await db.cmsEventRegistration.findUnique({
+    let registration = await db.cmsEventRegistration.findUnique({
       where: { id },
       include: {
         event: {
@@ -87,16 +87,41 @@ export async function GET(req: NextRequest) {
     });
 
     if (!registration) {
+      const cleanId = id.trim();
+      const suffix = cleanId.replace(/^GW-/i, "").toLowerCase();
+      registration = await db.cmsEventRegistration.findFirst({
+        where: {
+          OR: [
+            { id: { endsWith: suffix } },
+            { email: { equals: cleanId, mode: "insensitive" } },
+            { phone: { equals: cleanId } },
+          ],
+        },
+        include: {
+          event: {
+            select: {
+              id: true,
+              title: true,
+              slug: true,
+              startsAt: true,
+              location: true,
+            },
+          },
+        },
+      });
+    }
+
+    if (!registration) {
       return NextResponse.json({ error: "Registration pass not found" }, { status: 404 });
     }
 
     const meta = (registration.metadata as Record<string, any>) || {};
 
-    // Validate security token if present in registration metadata
+    // Validate security token if present in registration metadata and provided
     const expectedToken = meta.checkInToken || meta.ticketToken;
-    if (expectedToken && token && expectedToken !== token) {
+    if (token && expectedToken && expectedToken !== token) {
       return NextResponse.json(
-        { error: "Invalid ticket security token" },
+        { error: "Invalid or missing ticket security token" },
         { status: 403 }
       );
     }
@@ -162,7 +187,7 @@ export async function POST(req: NextRequest) {
     }
 
     const db = getDb();
-    const registration = await db.cmsEventRegistration.findUnique({
+    let registration = await db.cmsEventRegistration.findUnique({
       where: { id },
       include: {
         event: {
@@ -176,13 +201,36 @@ export async function POST(req: NextRequest) {
     });
 
     if (!registration) {
+      const cleanId = id.trim();
+      const suffix = cleanId.replace(/^GW-/i, "").toLowerCase();
+      registration = await db.cmsEventRegistration.findFirst({
+        where: {
+          OR: [
+            { id: { endsWith: suffix } },
+            { email: { equals: cleanId, mode: "insensitive" } },
+            { phone: { equals: cleanId } },
+          ],
+        },
+        include: {
+          event: {
+            select: {
+              id: true,
+              title: true,
+              slug: true,
+            },
+          },
+        },
+      });
+    }
+
+    if (!registration) {
       return NextResponse.json({ error: "Registration not found" }, { status: 404 });
     }
 
     const meta = (registration.metadata as Record<string, any>) || {};
 
     const expectedToken = meta.checkInToken || meta.ticketToken;
-    if (expectedToken && token && expectedToken !== token) {
+    if (token && expectedToken && expectedToken !== token) {
       return NextResponse.json(
         { error: "Invalid ticket security token" },
         { status: 403 }
@@ -191,7 +239,7 @@ export async function POST(req: NextRequest) {
 
     const isCheckingIn = status === "checked_in";
     const updated = await db.cmsEventRegistration.update({
-      where: { id },
+      where: { id: registration.id },
       data: {
         attendanceStatus: status,
         checkedInAt: isCheckingIn ? new Date() : null,

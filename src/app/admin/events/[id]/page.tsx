@@ -4,8 +4,9 @@ import { requirePermission } from "@/lib/auth/guards";
 import { PERMISSIONS } from "@/lib/auth/permissions";
 import { isCmsFeatureEnabled } from "@/lib/cms/feature-flags";
 import { getDb } from "@/lib/db";
-import EventActions from "./EventActions";
+import EventActions, { CleanTestRecordsButton } from "./EventActions";
 import EventBroadcastPanel from "./EventBroadcastPanel";
+import AdminQuickScanner from "./AdminQuickScanner";
 import { QrCode, Download, Award, Store, Users } from "lucide-react";
 
 export default async function EventPage({
@@ -40,6 +41,12 @@ export default async function EventPage({
   const remindedCount = event.registrations.filter((r) => {
     const meta = (r.metadata as Record<string, any>) || {};
     return Boolean(meta.reminderSentAt);
+  }).length;
+
+  const testCount = event.registrations.filter((r) => {
+    const name = r.fullName.toLowerCase();
+    const email = r.email.toLowerCase();
+    return name.includes("test") || email.includes("test");
   }).length;
 
   return (
@@ -113,6 +120,8 @@ export default async function EventPage({
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
+            <CleanTestRecordsButton eventId={event.id} testCount={testCount} />
+
             <Link
               href="/events/check-in"
               target="_blank"
@@ -149,6 +158,10 @@ export default async function EventPage({
               </a>
             </div>
           </div>
+        </div>
+
+        <div className="mt-4">
+          <AdminQuickScanner eventId={event.id} />
         </div>
 
         <div className="mt-4 overflow-x-auto">
@@ -251,6 +264,9 @@ export default async function EventPage({
                           capacity: event.capacity,
                         }}
                         registrationId={item.id}
+                        attendeeName={item.fullName}
+                        attendeeEmail={item.email}
+                        checkInToken={meta.checkInToken || meta.ticketToken}
                       />
                     </td>
                   </tr>
