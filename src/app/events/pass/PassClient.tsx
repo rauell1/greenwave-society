@@ -44,6 +44,8 @@ export interface PassProps {
     startsAt: string;
     location: string;
     slug?: string;
+    /** Public event page URL, computed on the server so SSR and hydration match. */
+    url: string;
   };
 }
 
@@ -75,7 +77,8 @@ export function PassClient({ pass }: { pass: PassProps }) {
     location: pass.event.location,
     startsAt: pass.isVendor ? "2026-10-30T06:30:00Z" : "2026-10-30T07:30:00Z",
     endsAt: "2026-10-30T12:00:00Z",
-    url: window?.location?.href || "https://greenwavesociety.org/events/graduation-cohort-1",
+    // Never read `window` during render: this component is also server-rendered.
+    url: pass.event.url,
   };
 
   return (
