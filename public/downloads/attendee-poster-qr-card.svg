@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 525" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <filter id="card-shadow" x="-8%" y="-6%" width="116%" height="114%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#001810" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  <!-- Main Card Background -->
+  <rect x="8" y="8" width="404" height="509" rx="24" fill="#ffffff" stroke="#d4af37" stroke-width="3" filter="url(#card-shadow)"/>
+  
+  <!-- Header Title -->
+  <text x="210" y="52" text-anchor="middle" font-family="Segoe UI, -apple-system, Roboto, sans-serif" font-weight="700" font-size="22" fill="#002d1e" letter-spacing="1">RSVP & GUEST PASS</text>
+  
+  <!-- Embedded Scalable QR Code -->
+  <svg x="55" y="75" width="310" height="310" viewBox="0 0 45 45" preserveAspectRatio="xMidYMid meet" shape-rendering="crispEdges">
+    <path fill="#ffffff" d="M0 0h45v45H0z"/><path stroke="#002d1e" d="M2 2.5h7m5 0h2m1 0h2m2 0h2m1 0h3m1 0h3m1 0h1m3 0h7M2 3.5h1m5 0h1m1 0h2m2 0h1m1 0h3m2 0h3m9 0h2m1 0h1m5 0h1M2 4.5h1m1 0h3m1 0h1m2 0h3m1 0h1m1 0h1m1 0h1m7 0h1m1 0h1m1 0h1m1 0h1m2 0h1m1 0h3m1 0h1M2 5.5h1m1 0h3m1 0h1m2 0h2m1 0h1m1 0h2m1 0h3m1 0h1m1 0h2m1 0h3m3 0h1m1 0h1m1 0h3m1 0h1M2 6.5h1m1 0h3m1 0h1m3 0h1m1 0h1m1 0h1m1 0h1m1 0h1m2 0h3m1 0h3m2 0h1m3 0h1m1 0h3m1 0h1M2 7.5h1m5 0h1m1 0h1m1 0h3m2 0h1m5 0h2m2 0h2m1 0h2m1 0h2m1 0h1m5 0h1M2 8.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M10 9.5h1m1 0h5m1 0h2m3 0h1m2 0h1m1 0h1m2 0h2m1 0h1M6 10.5h4m1 0h2m1 0h6m1 0h1m2 0h2m4 0h2m1 0h2m1 0h2m3 0h1M2 11.5h1m1 0h1m4 0h3m2 0h1m2 0h4m3 0h3m1 0h4m3 0h5m2 0h1M6 12.5h1m1 0h6m2 0h1m1 0h1m2 0h1m5 0h1m1 0h3m2 0h1m2 0h1m4 0h1M2 13.5h3m4 0h2m1 0h2m4 0h1m1 0h4m1 0h3m3 0h4m4 0h1M2 14.5h8m1 0h1m1 0h1m2 0h4m1 0h1m2 0h2m2 0h5m2 0h1m5 0h2M4 15.5h2m1 0h1m1 0h2m1 0h1m2 0h1m1 0h3m1 0h4m1 0h1m1 0h1m3 0h1m3 0h3m1 0h3M2 16.5h1m2 0h1m2 0h3m2 0h3m2 0h3m1 0h8m1 0h1m3 0h2m1 0h1m1 0h1m1 0h1M2 17.5h1m1 0h1m1 0h2m1 0h2m1 0h2m2 0h3m1 0h1m2 0h11m4 0h2m2 0h1M3 18.5h2m1 0h3m2 0h9m1 0h1m2 0h1m1 0h1m3 0h2m1 0h1m3 0h1m1 0h1m1 0h1M2 19.5h4m1 0h1m2 0h1m1 0h2m1 0h1m4 0h2m2 0h1m2 0h6m2 0h4m1 0h3M6 20.5h1m1 0h1m1 0h1m6 0h1m2 0h1m2 0h1m4 0h2m1 0h2m1 0h4m2 0h1m1 0h1M2 21.5h3m1 0h2m2 0h1m1 0h2m2 0h1m2 0h1m2 0h1m1 0h1m3 0h7m2 0h1m1 0h1m2 0h1M2 22.5h2m2 0h3m4 0h3m2 0h3m2 0h2m3 0h1m2 0h3m1 0h1m3 0h1M2 23.5h5m3 0h1m6 0h1m2 0h3m4 0h4m5 0h3m3 0h1M3 24.5h3m2 0h1m1 0h1m3 0h1m3 0h1m3 0h9m3 0h3m1 0h1m1 0h1m1 0h1M4 25.5h2m1 0h1m2 0h3m1 0h1m3 0h2m2 0h1m2 0h2m1 0h1m1 0h2m2 0h1m2 0h1M2 26.5h2m1 0h4m3 0h1m1 0h3m1 0h1m2 0h3m1 0h4m2 0h1m1 0h2m2 0h1m1 0h1m1 0h1M3 27.5h1m5 0h4m1 0h1m1 0h2m1 0h2m1 0h4m2 0h5m1 0h1m1 0h3m1 0h1m1 0h1M4 28.5h1m1 0h1m1 0h2m1 0h2m1 0h1m1 0h3m1 0h1m2 0h1m1 0h3m1 0h1m2 0h1m1 0h2m1 0h2m3 0h1M2 29.5h2m3 0h1m1 0h2m1 0h1m1 0h1m1 0h1m1 0h2m1 0h3m2 0h1m2 0h1m1 0h1m1 0h4m1 0h2m2 0h1M6 30.5h4m1 0h1m3 0h1m3 0h1m1 0h4m1 0h3m2 0h1m3 0h1m6 0h1M2 31.5h5m2 0h2m1 0h1m1 0h2m1 0h2m2 0h2m3 0h3m1 0h1m1 0h1m3 0h3m1 0h1m1 0h1M5 32.5h2m1 0h8m2 0h3m1 0h1m1 0h1m5 0h3m1 0h2m2 0h2m2 0h1M5 33.5h1m4 0h3m1 0h1m3 0h1m3 0h2m3 0h2m2 0h1m1 0h3m1 0h1m1 0h1M2 34.5h2m1 0h1m2 0h2m3 0h1m4 0h1m1 0h1m3 0h3m2 0h1m1 0h1m2 0h5m2 0h2M10 35.5h3m3 0h2m7 0h6m2 0h2m3 0h1m1 0h1m1 0h1M2 36.5h7m1 0h4m2 0h1m1 0h4m1 0h1m1 0h1m1 0h3m1 0h1m1 0h2m1 0h1m1 0h2m2 0h1M2 37.5h1m5 0h1m1 0h1m1 0h3m1 0h2m2 0h3m2 0h3m1 0h1m1 0h4m3 0h2M2 38.5h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h2m3 0h1m2 0h1m2 0h1m4 0h1m1 0h8m1 0h1M2 39.5h1m1 0h3m1 0h1m2 0h2m2 0h1m2 0h1m2 0h2m3 0h5m1 0h1m4 0h1m3 0h2M2 40.5h1m1 0h3m1 0h1m2 0h1m2 0h2m1 0h1m2 0h2m3 0h3m1 0h1m1 0h5m3 0h1m1 0h2M2 41.5h1m5 0h1m3 0h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h1m5 0h2m1 0h2m1 0h1m1 0h1m1 0h2M2 42.5h7m3 0h3m2 0h2m1 0h2m1 0h1m1 0h5m1 0h1m2 0h2m1 0h3m1 0h1"/>
+
+  </svg>
+  
+  <!-- Bottom Action & Labels -->
+  <text x="210" y="425" text-anchor="middle" font-family="Segoe UI, -apple-system, Roboto, sans-serif" font-weight="700" font-size="19" fill="#025c3e" letter-spacing="0.5">SCAN TO REGISTER</text>
+  <text x="210" y="452" text-anchor="middle" font-family="Segoe UI, -apple-system, Roboto, sans-serif" font-weight="400" font-size="15" fill="#64746e">greenwavesociety.org/events</text>
+  <text x="210" y="478" text-anchor="middle" font-family="Segoe UI, -apple-system, Roboto, sans-serif" font-weight="600" font-size="14" fill="#c38e20">Free • Instant Pass Confirmation</text>
+</svg>
