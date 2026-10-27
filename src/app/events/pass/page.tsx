@@ -166,6 +166,7 @@ export default async function PassPage(props: PageProps) {
         : "2026-10-30T10:30:00+03:00",
       location: registration.event?.location || "Ubunifu Hub, Nairobi, Kenya",
       slug: registration.event?.slug || "graduation-cohort-1-2026",
+      url: `${SITE_URL}/events/${registration.event?.slug || "graduation-cohort-1"}`,
     },
   };
 
