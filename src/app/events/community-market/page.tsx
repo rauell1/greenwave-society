@@ -5,7 +5,6 @@ import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { VendorForm } from "../graduation-cohort-1/VendorForm";
 import { FlyerMediaSection } from "../graduation-cohort-1/FlyerMediaSection";
 import { ShareableLinkBar } from "@/components/events/ShareableLinkBar";
-import { AddToCalendarButton } from "@/components/events/AddToCalendarButton";
 import {
   Store,
   Calendar,
@@ -27,14 +26,14 @@ import { APP_CONFIG } from "@/config/app.config";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Green Community Market: Call for Eco-Conscious Vendors | Greenwave Society",
-  description: "Showcase your sustainable products, healthy snacks, books, and lifestyle creations on Friday, 30th October 2026 at Ubunifu Hub, Nairobi. Tables and chairs provided.",
+  title: "Green Community Market: Empower 360 Cohort I (Concluded) | Greenwave Society",
+  description: "The curated eco-conscious community market ran on Friday, 30th October 2026 alongside the Empower 360 Cohort I Graduation at Ubunifu Hub, Nairobi. Vendor applications are now closed.",
   alternates: {
     canonical: `${APP_CONFIG.url}/events/community-market`,
   },
   openGraph: {
-    title: "Green Community Market: Call for Eco-Conscious Vendors | Greenwave Society",
-    description: "Calling sustainable brands and artisans! Join the community marketplace running alongside the Empower 360 Cohort I Graduation on Friday, 30th October 2026 at Ubunifu Hub, Nairobi.",
+    title: "Green Community Market: Empower 360 Cohort I (Concluded) | Greenwave Society",
+    description: "The community marketplace ran alongside the Empower 360 Cohort I Graduation on Friday, 30th October 2026 at Ubunifu Hub, Nairobi. Vendor applications are closed.",
     url: `${APP_CONFIG.url}/events/community-market`,
     siteName: "Greenwave Society",
     images: [
@@ -47,15 +46,6 @@ export const metadata: Metadata = {
     ],
     type: "website",
   },
-};
-
-const MARKET_CALENDAR_DATA = {
-  title: "Greenwave Society Community Market - Vendor Stall",
-  description: "Curated eco-conscious community market supporting the Empower 360 Cohort I Graduation. Vendor setup starts at 9:30 AM. Event runs until 3:00 PM at Ubunifu Hub, Nairobi.",
-  location: "Ubunifu Hub, Nairobi, Kenya",
-  startsAt: "2026-10-30T06:30:00Z", // 9:30 AM EAT for vendors
-  endsAt: "2026-10-30T12:00:00Z",   // 3:00 PM EAT
-  url: "https://greenwavesociety.org/events/community-market",
 };
 
 export default function CommunityMarketPage() {
@@ -105,9 +95,9 @@ export default function CommunityMarketPage() {
             <div className="lg:col-span-6 space-y-6">
               <div className="space-y-3">
                 <div className="flex flex-wrap items-center gap-2">
-                  <Badge variant="secondary" className="px-3 py-1 text-xs uppercase tracking-wider font-bold bg-emerald-600/15 text-emerald-700 dark:text-emerald-400 border border-emerald-600/30 rounded-full">
+                  <Badge variant="secondary" className="px-3 py-1 text-xs uppercase tracking-wider font-bold bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30 rounded-full">
                     <Store className="w-3.5 h-3.5 mr-1.5" />
-                    Community Market &bull; Vendor Portal
+                    Market Concluded &bull; Friday, 30 Oct 2026
                   </Badge>
                   <Badge variant="outline" className="px-3 py-1 text-xs text-muted-foreground border-border rounded-full font-medium">
                     Supporting Empower 360 Cohort I
@@ -115,11 +105,11 @@ export default function CommunityMarketPage() {
                 </div>
 
                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black tracking-tight text-foreground leading-[1.15]">
-                  Curated Community Market: <span className="italic font-normal text-emerald-600 dark:text-emerald-400">Call for Vendors</span>
+                  Curated Community Market: <span className="italic font-normal text-emerald-600 dark:text-emerald-400">Market Concluded</span>
                 </h1>
 
                 <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                  Showcase and vend your sustainable products, healthy snacks, books, and lifestyle goods directly to youth changemakers, families, mentors, and guests at Ubunifu Hub.
+                  The Empower 360 Community Market ran on Friday, 30th October 2026 alongside the Cohort I Graduation at Ubunifu Hub, Nairobi. Vendor stall applications are now closed. A heartfelt thank you to all conscious artisans, book vendors, and refreshment partners.
                 </p>
               </div>
 
@@ -128,7 +118,7 @@ export default function CommunityMarketPage() {
                 <div className="flex items-center gap-2.5">
                   <Calendar className="w-4 h-4 text-emerald-600 shrink-0" />
                   <div>
-                    <span className="text-[10px] text-muted-foreground block uppercase font-mono">Date</span>
+                    <span className="text-[10px] text-muted-foreground block uppercase font-mono">Date Held</span>
                     <strong className="text-foreground">Friday, 30 Oct 2026</strong>
                   </div>
                 </div>
@@ -137,7 +127,7 @@ export default function CommunityMarketPage() {
                   <Clock className="w-4 h-4 text-emerald-600 shrink-0" />
                   <div>
                     <span className="text-[10px] text-muted-foreground block uppercase font-mono">Schedule</span>
-                    <strong className="text-foreground">Setup 9:30 AM &bull; 10:30-3:00</strong>
+                    <strong className="text-foreground">Held 9:30 AM to 3:00 PM</strong>
                   </div>
                 </div>
 
@@ -152,44 +142,49 @@ export default function CommunityMarketPage() {
                 <div className="flex items-center gap-2.5">
                   <DollarSign className="w-4 h-4 text-emerald-600 shrink-0" />
                   <div>
-                    <span className="text-[10px] text-muted-foreground block uppercase font-mono">Stall Fee</span>
-                    <strong className="text-foreground">KES 1,000 &bull; Tables Provided</strong>
+                    <span className="text-[10px] text-muted-foreground block uppercase font-mono">Stalls</span>
+                    <strong className="text-amber-600 dark:text-amber-400 font-semibold">Concluded &bull; Closed</strong>
                   </div>
                 </div>
               </div>
 
               {/* Actions & Graduation Ceremony Link */}
               <div className="flex flex-wrap items-center gap-3">
-                <AddToCalendarButton event={MARKET_CALENDAR_DATA} size="sm" />
-
                 <Button asChild size="sm" variant="outline" className="rounded-xl border-border/80 text-xs font-medium">
                   <Link href="/events/graduation-cohort-1">
                     <GraduationCap className="w-3.5 h-3.5 mr-1.5 text-primary" />
-                    Graduation Ceremony RSVP
+                    Graduation Ceremony Recap
+                  </Link>
+                </Button>
+
+                <Button asChild size="sm" variant="outline" className="rounded-xl border-border text-xs font-semibold">
+                  <Link href="/media-kit">
+                    <Store className="w-3.5 h-3.5 mr-1.5 text-gold" />
+                    Official Posters & Media Kit
                   </Link>
                 </Button>
 
                 {/* Mobile Quick Jump */}
                 <Button asChild size="sm" className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold sm:hidden">
                   <Link href="#vendor-form">
-                    Application Form Below <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                    Market Summary & Passes <ArrowRight className="w-3.5 h-3.5 ml-1" />
                   </Link>
                 </Button>
               </div>
 
               {/* Shareable Link Bar */}
               <ShareableLinkBar
-                label="Community Market Portal"
+                label="Community Market"
                 url="https://greenwavesociety.org/events/community-market"
-                shareMessage="Calling sustainable brands, snack creators, authors & artisans! Showcase your venture at the Empower 360 Community Market on Friday, 30 Oct 2026 at Ubunifu Hub, Nairobi. KES 1,000 flat fee, tables & chairs provided, zero single-use plastics rule. Apply online here:"
-                badge="Vendor Share Link"
+                shareMessage="The Empower 360 Community Market ran alongside the Graduation on Friday, 30 Oct 2026 at Ubunifu Hub, Nairobi. Stalls and applications are now closed. View market details here:"
+                badge="Market Concluded"
               />
             </div>
 
             {/* Right Column: Direct Vendor Application Form Right Here */}
             <div className="lg:col-span-6 w-full" id="vendor-form">
               <div id="apply" className="scroll-mt-28" />
-              <VendorForm />
+              <VendorForm isClosed={true} />
             </div>
 
           </div>

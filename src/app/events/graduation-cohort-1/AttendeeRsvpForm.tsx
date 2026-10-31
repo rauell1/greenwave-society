@@ -26,6 +26,7 @@ import {
   UploadCloud,
   Camera,
   X,
+  Store,
 } from "lucide-react";
 import { AddToCalendarButton } from "@/components/events/AddToCalendarButton";
 
@@ -69,10 +70,12 @@ const EVENT_CALENDAR_DATA = {
   url: "https://greenwavesociety.org/events/graduation-cohort-1",
 };
 
-export function AttendeeRsvpForm() {
+export function AttendeeRsvpForm({ isClosed = true }: { isClosed?: boolean }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [ticket, setTicket] = useState<TicketData | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [lookupEmail, setLookupEmail] = useState("");
+  const [isLookingUp, setIsLookingUp] = useState(false);
 
   const form = useForm<AttendeeFormValues>({
     resolver: zodResolver(attendeeSchema),
@@ -114,6 +117,56 @@ export function AttendeeRsvpForm() {
     form.setValue("celebrationPhoto", "");
   };
 
+  async function handleLookupPass(e: React.FormEvent) {
+    e.preventDefault();
+    if (!lookupEmail.trim()) {
+      toast.error("Please enter your registered email address.");
+      return;
+    }
+    setIsLookingUp(true);
+    try {
+      const res = await fetch("/api/events/graduation-rsvp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullName: "Registered Attendee",
+          email: lookupEmail.trim(),
+          phone: "0700000000",
+          role: "graduand",
+          guestCount: 1,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        if (data.isClosed) {
+          toast.error("No registration found under this email. Please verify spelling or contact support.");
+        } else {
+          toast.error(data.error || "Could not retrieve pass.");
+        }
+        return;
+      }
+
+      setTicket({
+        ticketNumber: data.ticketNumber,
+        fullName: data.fullName,
+        role: data.role,
+        guestCount: data.guestCount,
+        qrCodeDataUrl: data.qrCodeDataUrl,
+        checkInUrl: data.checkInUrl,
+        passUrl: data.passUrl,
+        message: data.message,
+      });
+
+      toast.success("Found your digital admission pass!");
+    } catch {
+      toast.error("Something went wrong retrieving your pass.");
+    } finally {
+      setIsLookingUp(false);
+    }
+  }
+
   async function onSubmit(values: AttendeeFormValues) {
     setIsSubmitting(true);
     try {
@@ -154,6 +207,107 @@ export function AttendeeRsvpForm() {
     partner_collaborator: "Partner & Collaborator",
     community_guest: "Community Guest",
   };
+
+  if (isClosed && !ticket) {
+    return (
+      <Card className="border-border/70 shadow-xl rounded-3xl overflow-hidden bg-card/95 backdrop-blur-sm">
+        <CardHeader className="bg-gradient-to-r from-amber-500/10 via-primary/5 to-emerald-500/10 border-b border-border/50 pb-6">
+          <div className="flex flex-wrap items-center gap-2 mb-2">
+            <Badge variant="secondary" className="px-3 py-1 text-xs uppercase tracking-wider font-bold bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30 rounded-full">
+              <Sparkles className="w-3.5 h-3.5 mr-1.5 text-gold" /> Event Concluded &bull; Registrations Closed
+            </Badge>
+            <Badge variant="outline" className="text-xs text-muted-foreground border-border rounded-full font-medium">
+              30 October 2026
+            </Badge>
+          </div>
+          <CardTitle className="text-2xl sm:text-3xl font-serif font-black text-foreground">
+            Empower 360 Cohort I Graduation Has Concluded
+          </CardTitle>
+          <CardDescription className="text-sm text-muted-foreground leading-relaxed mt-2">
+            Thank you to all our graduands, honorees, families, partners, and community members who joined us at Ubunifu Hub, Nairobi to celebrate this inaugural cohort. Registrations are now closed.
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent className="p-6 sm:p-8 space-y-6">
+          {/* Milestone stats banner */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div className="p-3.5 rounded-2xl bg-secondary/30 border border-border/60 text-center">
+              <span className="text-[10px] text-muted-foreground uppercase font-mono block">Cohort</span>
+              <strong className="text-sm sm:text-base font-serif font-black text-foreground">Cohort I</strong>
+            </div>
+            <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-center">
+              <span className="text-[10px] text-amber-700 dark:text-amber-400 uppercase font-mono block">Graduands</span>
+              <strong className="text-sm sm:text-base font-serif font-black text-gold">26 Changemakers</strong>
+            </div>
+            <div className="col-span-2 sm:col-span-1 p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-center">
+              <span className="text-[10px] text-emerald-700 dark:text-emerald-400 uppercase font-mono block">Market & Venue</span>
+              <strong className="text-sm sm:text-base font-serif font-black text-emerald-600 dark:text-emerald-400">Ubunifu Hub</strong>
+            </div>
+          </div>
+
+          {/* Pass retrieval section for existing attendees */}
+          <div className="p-5 rounded-2xl bg-secondary/20 border border-border/70 space-y-3">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <QrCode className="w-4 h-4" />
+              </div>
+              <div>
+                <h4 className="font-serif font-bold text-sm text-foreground">Already Registered? Retrieve Your Pass</h4>
+                <p className="text-xs text-muted-foreground">
+                  Enter your registered email to view or download your admission ticket pass.
+                </p>
+              </div>
+            </div>
+
+            <form onSubmit={handleLookupPass} className="flex flex-col sm:flex-row gap-2 pt-1">
+              <Input
+                type="email"
+                placeholder="Enter your registered email..."
+                value={lookupEmail}
+                onChange={(e) => setLookupEmail(e.target.value)}
+                className="rounded-xl h-10 bg-background border-border/80 text-xs"
+              />
+              <Button
+                type="submit"
+                disabled={isLookingUp}
+                size="sm"
+                className="rounded-xl bg-primary text-primary-foreground text-xs font-semibold shrink-0"
+              >
+                {isLookingUp ? "Looking up..." : "Find My Pass"}
+              </Button>
+            </form>
+          </div>
+
+          {/* Useful navigation links */}
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 pt-2">
+            <Button asChild size="sm" variant="outline" className="rounded-xl border-border text-xs font-semibold">
+              <a href="/media-kit">
+                <Award className="w-3.5 h-3.5 mr-1.5 text-gold" />
+                Media Kit & Official Posters
+              </a>
+            </Button>
+
+            <Button asChild size="sm" variant="outline" className="rounded-xl border-border text-xs font-semibold">
+              <a href="/events/community-market">
+                <Store className="w-3.5 h-3.5 mr-1.5 text-emerald-600" />
+                Community Market Portal
+              </a>
+            </Button>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-primary/5 border border-primary/20 text-xs text-muted-foreground leading-relaxed flex items-start gap-2.5">
+            <ShieldCheck className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+            <div>
+              <strong>Questions or Inquiries?</strong> If you attended or were a graduand and need your certificate, please email{" "}
+              <a href="mailto:info@greenwavesociety.org" className="text-primary hover:underline font-semibold">
+                info@greenwavesociety.org
+              </a>.
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (ticket) {
     const isGraduandTicket = ticket.role === "graduand";

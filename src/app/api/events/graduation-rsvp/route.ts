@@ -92,6 +92,22 @@ export async function POST(req: Request) {
       },
     });
 
+    const isClosed =
+      event.status === "completed" ||
+      event.status === "cancelled" ||
+      (event.registrationClosesAt && new Date() > event.registrationClosesAt);
+
+    if (isClosed && !existing) {
+      return NextResponse.json(
+        {
+          error:
+            "Registrations for this celebration have closed. The Empower 360 Cohort I Graduation Ceremony has concluded.",
+          isClosed: true,
+        },
+        { status: 400 }
+      );
+    }
+
     let registrationId: string;
     let checkInToken: string;
     let isExisting = false;

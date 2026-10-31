@@ -58,7 +58,20 @@ export default async function EventPage({
         >
           ← Back to events
         </a>
-        <h1 className="mt-2 text-2xl font-bold">{event.title}</h1>
+        <div className="mt-2 flex flex-wrap items-center gap-3">
+          <h1 className="text-2xl font-bold">{event.title}</h1>
+          <span
+            className={`rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize border ${
+              event.status === "completed"
+                ? "bg-purple-50 text-purple-700 border-purple-200"
+                : event.status === "published"
+                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                : "bg-slate-100 text-slate-700 border-slate-200"
+            }`}
+          >
+            {event.status === "completed" ? "Concluded • Completed" : event.status}
+          </span>
+        </div>
         <p className="text-sm text-slate-500">
           {event.startsAt.toLocaleString("en-KE")} -{" "}
           {event.endsAt.toLocaleString("en-KE")} · {event.location || "Online"}

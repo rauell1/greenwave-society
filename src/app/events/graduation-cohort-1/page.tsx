@@ -6,7 +6,6 @@ import { AttendeeRsvpForm } from "./AttendeeRsvpForm";
 import { FlyerMediaSection } from "./FlyerMediaSection";
 import { GraduationVendorRedirectHelper } from "./GraduationVendorRedirectHelper";
 import { ShareableLinkBar } from "@/components/events/ShareableLinkBar";
-import { AddToCalendarButton } from "@/components/events/AddToCalendarButton";
 import {
   Calendar,
   Clock,
@@ -26,28 +25,19 @@ import { APP_CONFIG } from "@/config/app.config";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Empower 360: Ad Hoc Cohort I Graduation Ceremony | Greenwave Society",
-  description: "Join us on Friday, 30th October 2026 at Ubunifu Hub, Nairobi to celebrate the Empower 360 Ad Hoc Cohort I graduands. Free entry, networking, and capstone showcase.",
+  title: "Empower 360: Ad Hoc Cohort I Graduation Ceremony (Concluded) | Greenwave Society",
+  description: "Greenwave Society celebrated the Empower 360 Ad Hoc Cohort I graduands on Friday, 30th October 2026 at Ubunifu Hub, Nairobi. Registrations are now closed.",
   alternates: {
     canonical: `${APP_CONFIG.url}/events/graduation-cohort-1`,
   },
   openGraph: {
-    title: "Empower 360: Ad Hoc Cohort I Graduation Ceremony | Greenwave Society",
-    description: "Celebrating our 2026 Graduands under the Empower 360 programme. Friday, 30th October 2026 at Ubunifu Hub, Nairobi. Ceremony, networking, refreshments, and capstone showcase.",
+    title: "Empower 360: Ad Hoc Cohort I Graduation Ceremony (Concluded) | Greenwave Society",
+    description: "Celebrating our 2026 Graduands under the Empower 360 programme. Friday, 30th October 2026 at Ubunifu Hub, Nairobi. Registrations are closed.",
     url: `${APP_CONFIG.url}/events/graduation-cohort-1`,
     siteName: "Greenwave Society",
     images: [{ url: "/posters/empower360-cohort-1-graduation-flyer.png", width: 723, height: 1024, alt: "Empower 360 Cohort I Graduation Official Flyer" }],
     type: "website",
   },
-};
-
-const EVENT_CALENDAR_DATA = {
-  title: "Empower 360 Ad Hoc Cohort I Graduation Ceremony",
-  description: "Join Greenwave Society in celebrating the Empower 360 Ad Hoc Cohort I changemakers. Ceremony, networking, refreshments, and capstone showcase.",
-  location: "Ubunifu Hub, Nairobi, Kenya",
-  startsAt: "2026-10-30T07:30:00Z", // 10:30 AM EAT
-  endsAt: "2026-10-30T12:00:00Z",   // 3:00 PM EAT
-  url: "https://greenwavesociety.org/events/graduation-cohort-1",
 };
 
 export default function GraduationCohortPage() {
@@ -98,12 +88,12 @@ export default function GraduationCohortPage() {
             <div className="lg:col-span-6 space-y-6">
               <div className="space-y-3">
                 <div className="flex flex-wrap items-center gap-2">
-                  <Badge variant="secondary" className="px-3 py-1 text-xs uppercase tracking-wider font-bold bg-primary/10 text-primary border border-primary/20 rounded-full">
+                  <Badge variant="secondary" className="px-3 py-1 text-xs uppercase tracking-wider font-bold bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30 rounded-full">
                     <Sparkles className="w-3.5 h-3.5 mr-1.5 text-gold" />
-                    Empower 360 &bull; Graduation Ceremony
+                    Event Concluded &bull; Friday, 30 Oct 2026
                   </Badge>
                   <Badge variant="outline" className="px-3 py-1 text-xs text-muted-foreground border-border rounded-full font-medium">
-                    Celebrating Cohort I
+                    Cohort I Successfully Concluded
                   </Badge>
                 </div>
 
@@ -112,7 +102,7 @@ export default function GraduationCohortPage() {
                 </h1>
 
                 <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                  Join Greenwave Society as we celebrate our inaugural cohort of youth changemakers. Official certification, capstone showcases, light refreshments, and community connection.
+                  Greenwave Society celebrated our inaugural cohort of youth changemakers on Friday, 30th October 2026 at Ubunifu Hub, Nairobi. Official certifications, capstone showcases, and sustainable community market are now completed. Registrations are closed.
                 </p>
               </div>
 
@@ -121,7 +111,7 @@ export default function GraduationCohortPage() {
                 <div className="flex items-center gap-2.5">
                   <Calendar className="w-4 h-4 text-primary shrink-0" />
                   <div>
-                    <span className="text-[10px] text-muted-foreground block uppercase font-mono">Date</span>
+                    <span className="text-[10px] text-muted-foreground block uppercase font-mono">Date Held</span>
                     <strong className="text-foreground">Friday, 30 Oct 2026</strong>
                   </div>
                 </div>
@@ -145,16 +135,14 @@ export default function GraduationCohortPage() {
                 <div className="flex items-center gap-2.5">
                   <Users className="w-4 h-4 text-gold shrink-0" />
                   <div>
-                    <span className="text-[10px] text-muted-foreground block uppercase font-mono">Admission</span>
-                    <strong className="text-foreground">Free Entry &bull; +1s Welcome</strong>
+                    <span className="text-[10px] text-muted-foreground block uppercase font-mono">Status</span>
+                    <strong className="text-amber-600 dark:text-amber-400 font-semibold">Concluded &bull; Closed</strong>
                   </div>
                 </div>
               </div>
 
               {/* Quick Actions & Sister Page Link */}
               <div className="flex flex-wrap items-center gap-3">
-                <AddToCalendarButton event={EVENT_CALENDAR_DATA} size="sm" />
-                
                 <Button asChild size="sm" variant="outline" className="rounded-xl border-emerald-600/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10 text-xs font-semibold">
                   <Link href="/events/community-market">
                     <Store className="w-3.5 h-3.5 mr-1.5 text-emerald-500" />
@@ -162,27 +150,34 @@ export default function GraduationCohortPage() {
                   </Link>
                 </Button>
 
+                <Button asChild size="sm" variant="outline" className="rounded-xl border-border text-xs font-semibold">
+                  <Link href="/media-kit">
+                    <Award className="w-3.5 h-3.5 mr-1.5 text-gold" />
+                    Event Posters & Media Kit
+                  </Link>
+                </Button>
+
                 {/* Mobile Quick Jump */}
                 <Button asChild size="sm" className="rounded-xl bg-primary text-primary-foreground text-xs font-semibold sm:hidden">
                   <Link href="#rsvp-form">
-                    RSVP Form Below <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                    Event Summary & Passes <ArrowRight className="w-3.5 h-3.5 ml-1" />
                   </Link>
                 </Button>
               </div>
 
               {/* Shareable Link Bar */}
               <ShareableLinkBar
-                label="Graduation RSVP"
+                label="Graduation Event"
                 url="https://greenwavesociety.org/events/graduation-cohort-1"
-                shareMessage="Join us for Greenwave Society's Empower 360 Cohort I Graduation on Friday, 30th October 2026 (10:30 AM - 3:00 PM) at Ubunifu Hub, Nairobi! +1s welcome. Free Entry & digital ticket pass. RSVP here:"
-                badge="Direct Share Link"
+                shareMessage="Greenwave Society's Empower 360 Cohort I Graduation was celebrated on Friday, 30th October 2026 at Ubunifu Hub, Nairobi. View highlights and passes here:"
+                badge="Event Concluded"
               />
             </div>
 
-            {/* Right Column: Direct RSVP Form Right Here */}
+            {/* Right Column: Direct Concluded Form / Pass Retrieval */}
             <div className="lg:col-span-6 w-full" id="rsvp-form">
               <div id="rsvp" className="scroll-mt-28" />
-              <AttendeeRsvpForm />
+              <AttendeeRsvpForm isClosed={true} />
             </div>
 
           </div>

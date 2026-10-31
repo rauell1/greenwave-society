@@ -13,3 +13,4 @@ graphify-out/cache/
 .task-*/
 .task-*.cjs
 .task-*.mjs
+scratch/

@@ -25,6 +25,7 @@ import {
   MapPin,
   Clock,
   Printer,
+  GraduationCap,
 } from "lucide-react";
 import { AddToCalendarButton } from "@/components/events/AddToCalendarButton";
 
@@ -71,9 +72,11 @@ const VENDOR_CALENDAR_DATA = {
   url: "https://greenwavesociety.org/events/community-market",
 };
 
-export function VendorForm() {
+export function VendorForm({ isClosed = true }: { isClosed?: boolean }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [ticket, setTicket] = useState<VendorTicketData | null>(null);
+  const [lookupEmail, setLookupEmail] = useState("");
+  const [isLookingUp, setIsLookingUp] = useState(false);
 
   const form = useForm<VendorFormValues>({
     resolver: zodResolver(vendorSchema),
@@ -88,6 +91,58 @@ export function VendorForm() {
       singleUsePlasticAgreement: false,
     },
   });
+
+  async function handleLookupVendorPass(e: React.FormEvent) {
+    e.preventDefault();
+    if (!lookupEmail.trim()) {
+      toast.error("Please enter your registered vendor email address.");
+      return;
+    }
+    setIsLookingUp(true);
+    try {
+      const res = await fetch("/api/events/graduation-vendor", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          vendorName: "Registered Vendor",
+          contactPerson: "Vendor Representative",
+          email: lookupEmail.trim(),
+          phone: "0700000000",
+          category: "refreshments",
+          productDescription: "Existing Vendor Stall",
+          singleUsePlasticAgreement: true,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        if (data.isClosed) {
+          toast.error("No registered vendor found under this email. Please verify spelling or contact support.");
+        } else {
+          toast.error(data.error || "Could not retrieve vendor pass.");
+        }
+        return;
+      }
+
+      setTicket({
+        ticketNumber: data.ticketNumber,
+        vendorName: data.vendorName || "Community Vendor",
+        contactPerson: data.contactPerson || "Vendor Representative",
+        category: data.category || "refreshments",
+        qrCodeDataUrl: data.qrCodeDataUrl,
+        checkInUrl: data.checkInUrl,
+        passUrl: data.passUrl,
+        message: data.message,
+      });
+
+      toast.success("Found your vendor admission pass!");
+    } catch {
+      toast.error("Something went wrong retrieving your vendor pass.");
+    } finally {
+      setIsLookingUp(false);
+    }
+  }
 
   async function onSubmit(values: VendorFormValues) {
     setIsSubmitting(true);
@@ -130,6 +185,107 @@ export function VendorForm() {
     lifestyle: "Eco-Home & Care",
     other: "Curated Goods",
   };
+
+  if (isClosed && !ticket) {
+    return (
+      <Card className="border-border/70 shadow-xl rounded-3xl overflow-hidden bg-card/95 backdrop-blur-sm">
+        <CardHeader className="bg-gradient-to-r from-emerald-500/10 via-background to-amber-500/10 border-b border-border/50 pb-6">
+          <div className="flex flex-wrap items-center gap-2 mb-2">
+            <Badge variant="secondary" className="px-3 py-1 text-xs uppercase tracking-wider font-bold bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30 rounded-full">
+              <Sparkles className="w-3.5 h-3.5 mr-1.5 text-gold" /> Market Concluded &bull; Applications Closed
+            </Badge>
+            <Badge variant="outline" className="text-xs text-muted-foreground border-border rounded-full font-medium">
+              30 October 2026
+            </Badge>
+          </div>
+          <CardTitle className="text-2xl sm:text-3xl font-serif font-black text-foreground">
+            Community Market Applications Have Concluded
+          </CardTitle>
+          <CardDescription className="text-sm text-muted-foreground leading-relaxed mt-2">
+            The Empower 360 Community Market ran on Friday, 30th October 2026 alongside the Cohort I Graduation at Ubunifu Hub, Nairobi. Vendor stall applications are now closed. A heartfelt thank you to all our sustainable artisans and vendors.
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent className="p-6 sm:p-8 space-y-6">
+          {/* Key Market Metrics */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div className="p-3.5 rounded-2xl bg-secondary/30 border border-border/60 text-center">
+              <span className="text-[10px] text-muted-foreground uppercase font-mono block">Policy</span>
+              <strong className="text-xs sm:text-sm font-semibold text-foreground">Zero Single-Use Plastics</strong>
+            </div>
+            <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-center">
+              <span className="text-[10px] text-emerald-700 dark:text-emerald-400 uppercase font-mono block">Showcase</span>
+              <strong className="text-xs sm:text-sm font-semibold text-emerald-700 dark:text-emerald-300">Eco-Conscious Brands</strong>
+            </div>
+            <div className="col-span-2 sm:col-span-1 p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-center">
+              <span className="text-[10px] text-amber-700 dark:text-amber-400 uppercase font-mono block">Venue</span>
+              <strong className="text-xs sm:text-sm font-semibold text-gold">Ubunifu Hub</strong>
+            </div>
+          </div>
+
+          {/* Pass retrieval section for existing vendors */}
+          <div className="p-5 rounded-2xl bg-secondary/20 border border-border/70 space-y-3">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-xl bg-emerald-600/10 text-emerald-600 flex items-center justify-center shrink-0">
+                <QrCode className="w-4 h-4" />
+              </div>
+              <div>
+                <h4 className="font-serif font-bold text-sm text-foreground">Already Registered as a Vendor?</h4>
+                <p className="text-xs text-muted-foreground">
+                  Enter your registered email to view or reprint your vendor stall pass.
+                </p>
+              </div>
+            </div>
+
+            <form onSubmit={handleLookupVendorPass} className="flex flex-col sm:flex-row gap-2 pt-1">
+              <Input
+                type="email"
+                placeholder="Enter your registered vendor email..."
+                value={lookupEmail}
+                onChange={(e) => setLookupEmail(e.target.value)}
+                className="rounded-xl h-10 bg-background border-border/80 text-xs"
+              />
+              <Button
+                type="submit"
+                disabled={isLookingUp}
+                size="sm"
+                className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shrink-0"
+              >
+                {isLookingUp ? "Looking up..." : "Find Vendor Pass"}
+              </Button>
+            </form>
+          </div>
+
+          {/* Useful navigation links */}
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 pt-2">
+            <Button asChild size="sm" variant="outline" className="rounded-xl border-border text-xs font-semibold">
+              <a href="/events/graduation-cohort-1">
+                <GraduationCap className="w-3.5 h-3.5 mr-1.5 text-primary" />
+                Graduation Ceremony Recap
+              </a>
+            </Button>
+
+            <Button asChild size="sm" variant="outline" className="rounded-xl border-border text-xs font-semibold">
+              <a href="/media-kit">
+                <Store className="w-3.5 h-3.5 mr-1.5 text-gold" />
+                Official Event Media Kit
+              </a>
+            </Button>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-emerald-500/5 border border-emerald-500/20 text-xs text-muted-foreground leading-relaxed flex items-start gap-2.5">
+            <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+            <div>
+              <strong>Future Vendor Opportunities:</strong> To join upcoming Greenwave Society community markets and popups, contact our team at{" "}
+              <a href="mailto:info@greenwavesociety.org" className="text-emerald-600 hover:underline font-semibold">
+                info@greenwavesociety.org
+              </a>.
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (ticket) {
     return (
