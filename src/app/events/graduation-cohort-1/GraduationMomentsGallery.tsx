@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,7 +38,8 @@ export interface EventPhotoItem {
   index?: number;
 }
 
-const GRADUATION_ALBUM_URL = "https://photos.app.goo.gl/9wmows3AZ1XrzS4J6";
+const SELF_HOSTED_ALBUM_URL = "/events/graduation-cohort-1/album";
+const PUBLIC_ALBUM_URL = "https://greenwavesociety.org/events/graduation-cohort-1/album";
 
 export const CURATED_MOMENTS: EventPhotoItem[] = [
   {
@@ -156,8 +158,8 @@ On Friday, 30th October 2026 at Ubunifu Hub, Nairobi, 26 youth changemakers offi
 
 Alongside the ceremony, our zero single-use plastic Community Market connected local artisans, book publishers, and eco-innovators with hundreds of attendees.
 
-📸 Explore the official 290+ celebration photo album:
-${GRADUATION_ALBUM_URL}
+📸 Explore the official 296 celebration photo album:
+${PUBLIC_ALBUM_URL}
 
 Recap & event details:
 https://greenwavesociety.org/events/graduation-cohort-1
@@ -224,8 +226,8 @@ export function GraduationMomentsGallery({ allPhotos = [] }: GraduationMomentsGa
   };
 
   const handleShareX = () => {
-    const text = encodeURIComponent("🎓 Celebrating Greenwave Society's Empower 360 Cohort I Graduation! 26 changemakers certified on 30 Oct 2026 at Ubunifu Hub, Nairobi. View the 290+ photo album here:");
-    const url = encodeURIComponent(GRADUATION_ALBUM_URL);
+    const text = encodeURIComponent("🎓 Celebrating Greenwave Society's Empower 360 Cohort I Graduation! 26 changemakers certified on 30 Oct 2026 at Ubunifu Hub, Nairobi. View the 296 photo album here:");
+    const url = encodeURIComponent(PUBLIC_ALBUM_URL);
     window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, "_blank", "noopener,noreferrer");
   };
 
@@ -311,10 +313,10 @@ export function GraduationMomentsGallery({ allPhotos = [] }: GraduationMomentsGa
               asChild
               className="rounded-xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white font-semibold text-xs shadow-md gap-2"
             >
-              <a href={GRADUATION_ALBUM_URL} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="w-3.5 h-3.5" />
-                <span>Open Google Photos Album</span>
-              </a>
+              <Link href={SELF_HOSTED_ALBUM_URL}>
+                <Camera className="w-3.5 h-3.5" />
+                <span>Open Self-Hosted Album (296 Photos)</span>
+              </Link>
             </Button>
 
             <Button
@@ -544,11 +546,11 @@ export function GraduationMomentsGallery({ allPhotos = [] }: GraduationMomentsGa
               </Badge>
 
               <h3 className="text-2xl sm:text-3xl font-serif font-black tracking-tight text-white">
-                Access All 290+ High-Resolution Event Photographs
+                Access All 296 High-Resolution Event Photographs
               </h3>
 
               <p className="text-white/80 text-xs sm:text-sm leading-relaxed max-w-xl">
-                All authentic camera photographs from Friday, 30th October 2026 are published in the shared Google Photos repository and preserved on the official Greenwave CDN storage.
+                All 296 authentic camera photographs from Friday, 30th October 2026 are hosted directly on Greenwave Society&apos;s high-speed CDN infrastructure with zero third-party dependencies.
               </p>
 
               <div className="flex flex-wrap items-center gap-3 pt-2">
@@ -556,10 +558,10 @@ export function GraduationMomentsGallery({ allPhotos = [] }: GraduationMomentsGa
                   asChild
                   className="rounded-xl bg-gold hover:bg-gold/90 text-slate-950 font-bold text-xs shadow-lg gap-2"
                 >
-                  <a href={GRADUATION_ALBUM_URL} target="_blank" rel="noopener noreferrer">
-                    <ExternalLink className="w-4 h-4" />
-                    <span>Open Google Photos Shared Album</span>
-                  </a>
+                  <Link href={SELF_HOSTED_ALBUM_URL}>
+                    <Camera className="w-4 h-4" />
+                    <span>Open Interactive Photo Album (296 Photos)</span>
+                  </Link>
                 </Button>
 
                 <Button
@@ -575,7 +577,7 @@ export function GraduationMomentsGallery({ allPhotos = [] }: GraduationMomentsGa
               <div className="text-[11px] text-white/70 pt-1 flex items-center gap-2">
                 <Download className="w-3.5 h-3.5 text-gold shrink-0" />
                 <span>
-                  <strong>Tip to download all:</strong> Open the Google Photos album, click the three dots (<strong>⋮</strong>) in the top-right corner, and select <strong>&quot;Download all&quot;</strong> (or press <strong>Shift + D</strong>) to save the full archive as a single ZIP.
+                  <strong>Fast CDN Delivery:</strong> Browse responsive thumbnails with zero lag, switch between grid and masonry views, or open any photograph to inspect in full HD and download the original camera master JPG.
                 </span>
               </div>
             </div>
@@ -660,6 +662,18 @@ export function GraduationMomentsGallery({ allPhotos = [] }: GraduationMomentsGa
               </div>
 
               <div className="flex items-center gap-2">
+                <Button
+                  asChild
+                  size="sm"
+                  variant="outline"
+                  className="rounded-xl border-slate-700 text-slate-200 hover:text-white hover:bg-slate-800 text-xs gap-1.5 h-8"
+                >
+                  <Link href={SELF_HOSTED_ALBUM_URL}>
+                    <Grid className="w-3.5 h-3.5 text-emerald-400" />
+                    <span className="hidden sm:inline">All 296 Photos</span>
+                  </Link>
+                </Button>
+
                 {lightboxPhoto.originalUrl && (
                   <Button
                     asChild
