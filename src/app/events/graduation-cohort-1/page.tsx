@@ -3,6 +3,7 @@ import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { AttendeeRsvpForm } from "./AttendeeRsvpForm";
+import { GraduationMomentsGallery } from "./GraduationMomentsGallery";
 import { FlyerMediaSection } from "./FlyerMediaSection";
 import { GraduationVendorRedirectHelper } from "./GraduationVendorRedirectHelper";
 import { ShareableLinkBar } from "@/components/events/ShareableLinkBar";
@@ -143,6 +144,13 @@ export default function GraduationCohortPage() {
 
               {/* Quick Actions & Sister Page Link */}
               <div className="flex flex-wrap items-center gap-3">
+                <Button asChild size="sm" className="rounded-xl bg-gold hover:bg-gold/90 text-slate-950 font-bold text-xs shadow-sm">
+                  <Link href="#photos">
+                    <Camera className="w-3.5 h-3.5 mr-1.5" />
+                    Celebration Photos (290+)
+                  </Link>
+                </Button>
+
                 <Button asChild size="sm" variant="outline" className="rounded-xl border-emerald-600/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10 text-xs font-semibold">
                   <Link href="/events/community-market">
                     <Store className="w-3.5 h-3.5 mr-1.5 text-emerald-500" />
@@ -184,6 +192,9 @@ export default function GraduationCohortPage() {
         </div>
       </section>
 
+      {/* Official Photo Gallery & Celebration Moments */}
+      <GraduationMomentsGallery />
+
       {/* Ceremony Pillars (4 Key Highlights) */}
       <section className="py-12 sm:py-16 max-w-7xl mx-auto px-6 sm:px-8 w-full border-b border-border/50">
         <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
@@ -191,7 +202,7 @@ export default function GraduationCohortPage() {
             Ceremony Highlights
           </Badge>
           <h2 className="text-2xl sm:text-3xl font-serif font-black text-foreground">
-            What to Expect on Celebration Day
+            What Made Celebration Day Special
           </h2>
         </div>
 

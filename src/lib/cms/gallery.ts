@@ -23,6 +23,12 @@ export interface AvailableGalleryImage {
 }
 
 export const DEFAULT_GALLERY_IMAGES: GalleryImage[] = [
+  { src: "https://lh3.googleusercontent.com/pw/AP1GczNOwine1J1HZHRFOx5xIkLVXIq7pY6UzEKrJwbie03PXiVBz-nxEDTpwN8MZSmwAvnWu75x4kqLy52J4VlHRYM3HRDtfstaWAWX1hf3qtKRokeTGiA=w1200-h800-no", alt: "Empower 360 Cohort I graduation ceremony certification at Ubunifu Hub" },
+  { src: "https://lh3.googleusercontent.com/pw/AP1GczPCqkf5PUDNaeSDBWAoUGSARnDv0o1PpbnkYj5-SvfuziAkQ0DCd24S1vPzalM8cTAQOr-9bp3byHHJ3BADJulXNQinXqSx2YDv8n2xcQb-ZjzTYNg=w1200-h800-no", alt: "Empower 360 Cohort I inaugural graduands commemorative portrait" },
+  { src: "https://lh3.googleusercontent.com/pw/AP1GczP_mZy27fJKP5_K3pX1OiNhsUABOOFaeZNQH0fYid9apvDYdPgGKH-rKyC49949ghyNbb2zXNnN2nXTdlMK-3A90CSrmh_4XTnZOsbYfsSSDcrnH5o=w1200-h800-no", alt: "Youth leadership and environmental systems address" },
+  { src: "https://lh3.googleusercontent.com/pw/AP1GczNJNbNh_-yIjbc8VMODE6lZ70rKQUohZyVCaDdcOlKcBjLN--p-x0Y0ZcHb7Xx9DV60lxsvIxZurWRSzORNN8CEsqi-1IJYUAktCHVlFFhQaALGtVE=w1200-h800-no", alt: "Empower 360 Community Market sustainable artisan showcase" },
+  { src: "https://lh3.googleusercontent.com/pw/AP1GczOX9ZxkEFRZLUTKg6bwSoHTvMVAOTXRZkuh_Ud58Xg-dQLuBsMTU7oQfMmf8Oke6-faMerdLX3egoyduFn_9pmlV0CiL6ydq1E1fUxJGoX0eABhyrU=w1200-h800-no", alt: "Honors presentation for grassroots community execution" },
+  { src: "https://lh3.googleusercontent.com/pw/AP1GczPhBsZdktzcJUXG7wOowtPsY5LxDumnU-IWRTesyHvQiMzTkQAkozk6D1ELN7patWEPRhBeXTCPgPrLj27YAJzQ0Two_QyPJgWeGVNtYVBTqOOBjWw=w1200-h800-no", alt: "Youth changemakers capstone pitch and presentation" },
   { src: "/images/20241214_135952.jpg", alt: "Community engagement event in 2024" },
   { src: "/images/g-59.jpg", alt: "Youth leadership workshop" },
   { src: "/images/20250404_134843.jpg", alt: "Tree planting and conservation" },

@@ -15,6 +15,7 @@
     "db:migrate": "prisma migrate dev",
     "db:reset": "prisma migrate reset",
     "images:check": "node scripts/check-images.mjs",
+    "download:graduation-photos": "node scripts/download-graduation-photos.mjs",
     "test:integration": "node scripts/run-integration-tests.mjs",
     "typecheck": "next typegen && tsc --noEmit",
     "db:deploy": "prisma migrate deploy"
