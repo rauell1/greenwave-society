@@ -218,6 +218,10 @@ export const getPublicHomepageContent = cache(async (): Promise<PublicHomepageCo
             date: metadata.data.date,
             type: metadata.data.category,
             mediaUrl: metadata.data.mediaUrl,
+            imageUrl: metadata.data.imageUrl,
+            imageAlt: metadata.data.imageAlt,
+            location: metadata.data.location,
+            highlight: metadata.data.highlight,
           },
         ];
       })

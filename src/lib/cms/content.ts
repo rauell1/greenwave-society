@@ -20,6 +20,10 @@ export const activityMetadataSchema = z.object({
   mediaUrl: z.string().trim().max(2000).refine(value =>
     /^\/(?!\/)[^\\\s]*$/.test(value) || /^https:\/\/[^\s\\]+$/.test(value),
   "Use a local path or an HTTPS URL"),
+  imageUrl: z.string().trim().max(2000).optional(),
+  imageAlt: z.string().trim().max(200).optional(),
+  location: z.string().trim().max(120).optional(),
+  highlight: z.string().trim().max(120).optional(),
 });
 
 export const contentInputSchema = z.object({

@@ -1,5 +1,6 @@
-import { Calendar, ExternalLink } from "lucide-react";
+import { Calendar, ExternalLink, MapPin } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { FadeIn } from "@/components/ui/fade-in";
 
@@ -52,34 +53,68 @@ export function Activities({ activities = DEFAULT_ACTIVITIES }: { activities?: A
                   </div>
 
                   {/* Right Column: Content Card */}
-                  <div className="flex-1 bg-background rounded-[1.5rem] border border-primary/10 p-6 sm:p-8 hover:shadow-[0_20px_50px_oklch(var(--primary)/5%)] transition-all duration-300 group-hover:border-primary/20">
-                    <h3 className="text-xl font-serif font-black text-foreground group-hover:text-primary transition-colors duration-300">
-                      {a.title}
-                    </h3>
-                    <p className="mt-3 text-sm text-muted-foreground leading-relaxed font-sans">
-                      {a.desc}
-                    </p>
-                    
-                    <div className="mt-5 flex items-center">
-                      {a.mediaUrl.startsWith('/') ? (
-                        <Link
-                          href={a.mediaUrl}
-                          className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary hover:underline hover:gap-2 transition-all duration-300"
-                        >
-                          Explore Event Media
-                          <ExternalLink className="w-3.5 h-3.5 text-gold" />
-                        </Link>
-                      ) : (
-                        <a
-                          href={a.mediaUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary hover:underline hover:gap-2 transition-all duration-300"
-                        >
-                          Explore Event Media
-                          <ExternalLink className="w-3.5 h-3.5 text-gold" />
-                        </a>
-                      )}
+                  <div className="flex-1 bg-background rounded-[1.5rem] border border-primary/10 overflow-hidden hover:shadow-[0_20px_50px_oklch(var(--primary)/5%)] transition-all duration-300 group-hover:border-primary/20 flex flex-col">
+                    {a.imageUrl && (
+                      <div className="relative aspect-[16/9] sm:aspect-[21/9] w-full bg-muted overflow-hidden">
+                        <Image
+                          src={a.imageUrl}
+                          alt={a.imageAlt || a.title}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 768px"
+                          className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+                        {a.highlight && (
+                          <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4">
+                            <span className="inline-flex items-center text-[11px] font-semibold text-white bg-black/65 backdrop-blur-xs px-2.5 py-1 rounded-md border border-white/20 shadow-xs">
+                              {a.highlight}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    <div className="p-6 sm:p-8 flex-1 flex flex-col justify-between">
+                      <div>
+                        {a.location && (
+                          <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-mono mb-2">
+                            <MapPin className="w-3.5 h-3.5 text-gold shrink-0" />
+                            <span>{a.location}</span>
+                          </div>
+                        )}
+                        <h3 className="text-xl sm:text-2xl font-serif font-black text-foreground group-hover:text-primary transition-colors duration-300">
+                          {a.title}
+                        </h3>
+                        <p className="mt-3 text-sm text-muted-foreground leading-relaxed font-sans">
+                          {a.desc}
+                        </p>
+                      </div>
+
+                      <div className="mt-6 pt-4 border-t border-border/50 flex items-center justify-between">
+                        {a.mediaUrl.startsWith('/') ? (
+                          <Link
+                            href={a.mediaUrl}
+                            className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary hover:underline hover:gap-2 transition-all duration-300"
+                          >
+                            <span>Explore Event Media</span>
+                            <ExternalLink className="w-3.5 h-3.5 text-gold" />
+                          </Link>
+                        ) : (
+                          <a
+                            href={a.mediaUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary hover:underline hover:gap-2 transition-all duration-300"
+                          >
+                            <span>Watch Impact Story</span>
+                            <ExternalLink className="w-3.5 h-3.5 text-gold" />
+                          </a>
+                        )}
+
+                        <span className="text-[11px] font-mono text-muted-foreground/70 hidden sm:inline-block">
+                          Greenwave Society
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
