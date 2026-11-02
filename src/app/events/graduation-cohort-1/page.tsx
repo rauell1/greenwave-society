@@ -4,6 +4,7 @@ import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { AttendeeRsvpForm } from "./AttendeeRsvpForm";
 import { GraduationMomentsGallery } from "./GraduationMomentsGallery";
+import { getGraduationPhotos } from "@/lib/cms/graduation-photos";
 import { FlyerMediaSection } from "./FlyerMediaSection";
 import { GraduationVendorRedirectHelper } from "./GraduationVendorRedirectHelper";
 import { ShareableLinkBar } from "@/components/events/ShareableLinkBar";
@@ -41,7 +42,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function GraduationCohortPage() {
+export default async function GraduationCohortPage() {
+  const graduationPhotos = await getGraduationPhotos();
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Event",
@@ -193,7 +195,7 @@ export default function GraduationCohortPage() {
       </section>
 
       {/* Official Photo Gallery & Celebration Moments */}
-      <GraduationMomentsGallery />
+      <GraduationMomentsGallery allPhotos={graduationPhotos} />
 
       {/* Ceremony Pillars (4 Key Highlights) */}
       <section className="py-12 sm:py-16 max-w-7xl mx-auto px-6 sm:px-8 w-full border-b border-border/50">
