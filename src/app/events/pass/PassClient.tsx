@@ -40,6 +40,8 @@ export interface PassProps {
   qrCodeDataUrl: string;
   isConcluded?: boolean;
   concludedDate?: string;
+  certificatePassUrl?: string | null;
+  credentialId?: string | null;
   event: {
     title: string;
     startsAt: string;
@@ -99,6 +101,31 @@ export function PassClient({ pass }: { pass: PassProps }) {
             </p>
           </div>
         </div>
+
+        {/* Graduand Verified Certificate Alert */}
+        {pass.certificatePassUrl && (
+          <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-r from-amber-500/20 via-emerald-950/40 to-slate-900 border-2 border-amber-500/50 text-xs flex flex-col sm:flex-row items-center justify-between gap-3.5 shadow-xl">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-gold flex items-center justify-center shrink-0">
+                <Award className="w-5 h-5" />
+              </div>
+              <div className="space-y-0.5 text-center sm:text-left">
+                <div className="font-bold text-sm text-gold uppercase tracking-wider font-mono">
+                  Official Certificate Ready
+                </div>
+                <p className="text-slate-300 text-[11px]">
+                  Your YPG Cohort I Certificate of Completion ({pass.credentialId || "Verified"}) is available for instant download in high-res PNG and PDF.
+                </p>
+              </div>
+            </div>
+            <Button asChild size="sm" className="rounded-xl bg-gold hover:bg-gold/90 text-slate-950 font-bold text-xs gap-1.5 shrink-0 shadow-md">
+              <Link href={pass.certificatePassUrl}>
+                <span>Open Certificate</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </Link>
+            </Button>
+          </div>
+        )}
 
         {/* Pass Card Container */}
         <div className="rounded-3xl overflow-hidden shadow-2xl border border-rose-500/30 bg-slate-900/90 backdrop-blur-xl relative">

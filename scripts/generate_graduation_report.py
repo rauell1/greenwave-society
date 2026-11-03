@@ -998,18 +998,18 @@ def build_report():
 
     grad_list = [
         ("Candidate No.", "Certified Graduand Name", "Pod Specialization", "Capstone Project Lead"),
-        ("GWS-YPG-001", "Faith M. Wanjiku", "Systems Dynamics & Climate", "Capstone Alpha: Grassroots Climate Literacy"),
-        ("GWS-YPG-002", "Kevin O. Otieno", "Regenerative Economics", "Capstone Beta: Decentralized Waste Diversion"),
-        ("GWS-YPG-003", "Mercy C. Cherono", "Community Wellbeing", "Capstone Gamma: Youth Mental Health Barazas"),
-        ("GWS-YPG-004", "Brian K. Kiprop", "Systems Dynamics & Climate", "Capstone Alpha: Participatory Eco-Mapping"),
-        ("GWS-YPG-005", "Esther N. Muthoni", "Regenerative Economics", "Capstone Beta: Circular Material Recovery"),
-        ("GWS-YPG-006", "Dennis M. Mutua", "Community Wellbeing", "Capstone Gamma: Peer Counseling Networks"),
-        ("GWS-YPG-007", "Grace A. Akinyi", "Systems Dynamics & Climate", "Capstone Alpha: School Green Club Integration"),
-        ("GWS-YPG-008", "Samuel N. Ndung'u", "Regenerative Economics", "Capstone Beta: Aggregator Livelihood Models"),
-        ("GWS-YPG-009", "Joy W. Kamau", "Community Wellbeing", "Capstone Gamma: Anti-Stigma Youth Barazas"),
-        ("GWS-YPG-010", "Evans O. Onyango", "Systems Dynamics & Climate", "Capstone Alpha: Biodiversity Nursery Tracking"),
-        ("GWS-YPG-011", "Prudence B. Chebet", "Regenerative Economics", "Capstone Beta: Riverbank Plastic Audit"),
-        ("GWS-YPG-012", "Victor M. Mwangi", "Community Wellbeing", "Capstone Gamma: Crisis Triage & Safe Circles")
+        ("GWS-YPG-2026-001", "Victor Frankline", "Systems Dynamics & Climate Pod", "Grassroots Climate Literacy & Eco-Mapping"),
+        ("GWS-YPG-2026-002", "Meek Amani", "Regenerative Economics Pod", "Decentralized Waste Diversion & Circular Hubs"),
+        ("GWS-YPG-2026-003", "Faith Mwaka", "Community Wellbeing Pod", "Youth Mental Health Barazas & Safe Circles"),
+        ("GWS-YPG-2026-004", "Nicole Akoya", "Systems Dynamics & Climate Pod", "Grassroots Climate Literacy & Eco-Mapping"),
+        ("GWS-YPG-2026-005", "Stanley Museti", "Regenerative Economics Pod", "Decentralized Waste Diversion & Circular Hubs"),
+        ("GWS-YPG-2026-006", "Gladys Kiiru", "Community Wellbeing Pod", "Youth Mental Health Barazas & Safe Circles"),
+        ("GWS-YPG-2026-007", "Ron Mulamba", "Regenerative Economics Pod", "Decentralized Waste Diversion & Circular Hubs"),
+        ("GWS-YPG-2026-008", "James Mwangi", "Systems Dynamics & Climate Pod", "Grassroots Climate Literacy & Eco-Mapping"),
+        ("GWS-YPG-2026-009", "Simon Wachira", "Systems Dynamics & Climate Pod", "Grassroots Climate Literacy & Eco-Mapping"),
+        ("GWS-YPG-2026-010", "Jeremiah Muuo", "Regenerative Economics Pod", "Decentralized Waste Diversion & Circular Hubs"),
+        ("GWS-YPG-2026-011", "Elifet Ouma", "Systems Dynamics & Climate Pod", "Grassroots Climate Literacy & Eco-Mapping"),
+        ("GWS-YPG-2026-012", "Grace Immaculate", "Community Wellbeing Pod", "Youth Mental Health Barazas & Safe Circles"),
     ]
 
     g_table = doc.add_table(rows=len(grad_list), cols=4)

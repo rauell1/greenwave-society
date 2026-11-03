@@ -440,6 +440,89 @@ export async function sendOneDayEventReminder(opts: OneDayReminderOptions): Prom
   }
 }
 
+export interface GraduationCertificateEmailOptions {
+  to: string;
+  name: string;
+  credentialId: string;
+  ticketNumber: string;
+  certificatePortalUrl: string;
+  pod?: string;
+  capstoneTitle?: string;
+  certBuffer?: Buffer;
+}
+
+export async function sendGraduationCertificateEmail(opts: GraduationCertificateEmailOptions): Promise<boolean> {
+  const resend = getResend();
+
+  if (!resend) {
+    logger.info("RESEND_API_KEY not set - graduation certificate email simulated", { name: opts.name, to: opts.to });
+    return true;
+  }
+
+  const attachments: Array<{ filename: string; content: Buffer }> = [];
+  if (opts.certBuffer) {
+    attachments.push({
+      filename: `greenwave-ypg-certificate-${opts.credentialId}.png`,
+      content: opts.certBuffer,
+    });
+  }
+
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: opts.to,
+      subject: `Official Certificate of Completion: YPG Cohort I Fellowship (${opts.name})`,
+      attachments: attachments.length > 0 ? attachments : undefined,
+      html: brandedEmail({
+        eyebrow: "Official Conferment • YPG Cohort I",
+        title: "Certificate of Completion",
+        preheader: `Congratulations ${opts.name}! Your official completion certificate for YPG Cohort I is ready.`,
+        body: `<div style="margin:0 0 20px;padding:16px;background:#EFF9E9;border-radius:12px;border:1px solid #DDF0D6;color:#173126;font-size:14px;line-height:1.6;">
+                 <strong>Congratulations, ${escapeHtml(opts.name)}!</strong><br/>
+                 In recognition of your dedication, leadership, and successful completion of the <strong>Young Person's Guide to Systems Change (YPG Cohort I) Fellowship</strong>, Greenwave Society and The 50 Percent are proud to confer your official Certificate of Completion.
+               </div>
+
+               <p style="margin:0 0 16px; font-size: 16px;">Dear ${escapeHtml(opts.name)},</p>
+               <p style="margin:0 0 16px; font-size: 15px;">Your certified graduation pass and high-resolution digital certificate are now officially active. You can view, verify, and download both PNG and PDF formats at any time using your permanent credential link.</p>
+
+               <div style="margin:20px 0;padding:20px;background:#F8FAFC;border-radius:12px;border:1px solid #E2E8F0;">
+                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;color:#1E293B;">
+                   <tr><td style="padding:6px 0;font-weight:bold;width:140px;">Certified Fellow:</td><td><strong>${escapeHtml(opts.name)}</strong></td></tr>
+                   <tr><td style="padding:6px 0;font-weight:bold;">Credential ID:</td><td><strong style="color:#059669;font-family:monospace;">${escapeHtml(opts.credentialId)}</strong></td></tr>
+                   <tr><td style="padding:6px 0;font-weight:bold;">Ceremony Pass:</td><td><span style="font-family:monospace;">${escapeHtml(opts.ticketNumber)}</span></td></tr>
+                   <tr><td style="padding:6px 0;font-weight:bold;">Program:</td><td>Young Person's Guide to Systems Change</td></tr>
+                   <tr><td style="padding:6px 0;font-weight:bold;">Conferred Date:</td><td>Friday, 30th October 2026</td></tr>
+                   <tr><td style="padding:6px 0;font-weight:bold;">Awarding Bodies:</td><td>Greenwave Society &bull; The 50 Percent</td></tr>
+                   ${opts.pod ? `<tr><td style="padding:6px 0;font-weight:bold;">Pod Focus:</td><td>${escapeHtml(opts.pod)}</td></tr>` : ""}
+                   ${opts.capstoneTitle ? `<tr><td style="padding:6px 0;font-weight:bold;">Capstone Pitch:</td><td>${escapeHtml(opts.capstoneTitle)}</td></tr>` : ""}
+                 </table>
+               </div>
+
+               ${emailButton("Access Digital Pass & Download Certificate", opts.certificatePortalUrl)}
+
+               <p style="margin:20px 0 0;font-size:13px;color:#64748b;text-align:center;">
+                 Your high-resolution digital certificate is also attached directly to this email for offline saving.
+               </p>
+
+               <div style="text-align:center;margin-top:14px;font-size:13px;">
+                 <a href="${SITE_URL}/events/graduation-cohort-1/album" style="color:#1A5C38;font-weight:bold;text-decoration:underline;">Explore Ceremony Photo Album</a>
+                 &nbsp;&bull;&nbsp;
+                 <a href="${SITE_URL}/events/graduation-cohort-1" style="color:#64748b;text-decoration:underline;">Convocation Retrospective</a>
+               </div>
+
+               <p style="margin:24px 0 0;color:#607068;font-size:13px;text-align:center;">
+                 Welcome to the active Greenwave Society Alumni Network! If you need assistance, reply to this email or WhatsApp us at +254 794 287 400.
+               </p>`,
+      }),
+    });
+    logger.info("Graduation certificate email sent", { name: opts.name, to: opts.to, credentialId: opts.credentialId });
+    return true;
+  } catch (error) {
+    logger.error("Failed to send graduation certificate email", error as Error, { to: opts.to });
+    return false;
+  }
+}
+
 export async function sendEventReminderEmail(opts: EventRegistrationEmailOptions): Promise<boolean> {
   const resend = getResend();
 

@@ -2,6 +2,7 @@ import { getDb } from "@/lib/db";
 import { generateQrDataUrl } from "@/lib/events/qr";
 import { SITE_URL } from "@/lib/email-template";
 import { PassClient, PassProps } from "./PassClient";
+import { findGraduandByEmail, findGraduandBySlugOrId } from "@/lib/events/graduand-registry";
 import Link from "next/link";
 import { ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -168,6 +169,11 @@ export default async function PassPage(props: PageProps) {
     lightColor: "#ffffff",
   });
 
+  // Check if attendee is one of the 12 certified graduands
+  const verifiedGraduand =
+    findGraduandByEmail(registration.email) ||
+    findGraduandBySlugOrId(registration.fullName);
+
   const passProps: PassProps = {
     id: registration.id,
     ticketNumber: `GW-${registration.id.slice(-6).toUpperCase()}`,
@@ -185,6 +191,10 @@ export default async function PassPage(props: PageProps) {
     qrCodeDataUrl,
     isConcluded: true,
     concludedDate: "Friday, 30th October 2026",
+    certificatePassUrl: verifiedGraduand
+      ? `/events/graduation-cohort-1/certificate?token=${verifiedGraduand.accessToken}`
+      : null,
+    credentialId: verifiedGraduand?.credentialId || null,
     event: {
       title: registration.event?.title || "YPG: Young Person's Guide to Systems Change Cohort I Graduation & Community Market",
       startsAt: registration.event?.startsAt

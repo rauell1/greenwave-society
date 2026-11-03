@@ -29,6 +29,7 @@ import {
   X,
   XCircle,
   Store,
+  ArrowRight,
 } from "lucide-react";
 
 const attendeeSchema = z.object({
@@ -241,6 +242,37 @@ export function AttendeeRsvpForm({ isClosed = true }: { isClosed?: boolean }) {
             </div>
           </div>
 
+          {/* Dedicated Graduand Certificate Pass Portal */}
+          <div className="p-5 rounded-2xl bg-gradient-to-r from-amber-500/10 via-primary/10 to-emerald-500/10 border-2 border-amber-500/40 space-y-3">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-amber-500/20 text-gold flex items-center justify-center shrink-0">
+                  <Award className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <h4 className="font-serif font-black text-sm text-foreground">
+                      YPG Graduand Certificate Pass
+                    </h4>
+                    <Badge className="bg-gold text-slate-950 font-bold text-[9px] uppercase px-1.5 py-0 font-mono">
+                      Exclusive to 12 Graduands
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Access and download your verified Certificate of Completion pass (High-Res PNG &amp; PDF).
+                  </p>
+                </div>
+              </div>
+
+              <Button asChild size="sm" className="rounded-xl bg-gold hover:bg-gold/90 text-slate-950 font-bold text-xs gap-1.5 shrink-0 shadow-sm">
+                <Link href="/events/graduation-cohort-1/certificate">
+                  <span>Open Certificate Pass</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+
           {/* Pass retrieval section for existing attendees */}
           <div className="p-5 rounded-2xl bg-secondary/20 border border-border/70 space-y-3">
             <div className="flex items-center gap-2">
@@ -369,13 +401,24 @@ export function AttendeeRsvpForm({ isClosed = true }: { isClosed?: boolean }) {
               </div>
             </div>
 
-            {/* Graduand Record Notice */}
+            {/* Graduand Record Notice & Certificate Action */}
             {isGraduandTicket && (
-              <div className="my-4 p-3.5 rounded-2xl bg-gold/10 border border-gold/30 text-xs text-foreground flex items-start gap-2.5">
-                <Award className="w-4 h-4 text-gold shrink-0 mt-0.5" />
-                <div>
-                  <strong className="text-foreground">Certified Graduand Record:</strong> Officially recognized as one of the 12 certified graduands of YPG: Young Person&apos;s Guide to Systems Change Cohort I (from 28 enrolled members).
+              <div className="my-4 p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-primary/10 to-emerald-500/10 border-2 border-amber-500/50 text-xs text-foreground flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md">
+                <div className="flex items-start gap-2.5">
+                  <Award className="w-5 h-5 text-gold shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-foreground block text-sm font-serif">Certified Graduand Record &bull; Certificate Ready</strong>
+                    <span className="text-muted-foreground text-xs">
+                      Officially recognized as one of the 12 certified graduands of YPG Cohort I. Your digital certificate pass is ready for download in high-res PNG and PDF.
+                    </span>
+                  </div>
                 </div>
+                <Button asChild size="sm" className="rounded-xl bg-gold hover:bg-gold/90 text-slate-950 font-bold text-xs gap-1.5 shrink-0 shadow-md">
+                  <Link href="/events/graduation-cohort-1/certificate">
+                    <span>View Certificate</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </Button>
               </div>
             )}
 
