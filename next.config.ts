@@ -72,6 +72,16 @@ const nextConfig: NextConfig = {
         destination: "/events/graduation-cohort-1",
         permanent: true,
       },
+      {
+        source: "/careers/cfo",
+        destination: "/careers/chief-financial-officer",
+        permanent: false,
+      },
+      {
+        source: "/careers/apply/cfo",
+        destination: "/careers/apply/chief-financial-officer",
+        permanent: false,
+      },
     ];
   },
 

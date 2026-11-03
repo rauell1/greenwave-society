@@ -7,6 +7,7 @@ import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { APP_CONFIG } from "@/config/app.config";
 import { CAREER_ROLES, isCareerRoleOpen, isCareerSlug } from "@/lib/careers";
+import { CareerShareBar } from "@/components/careers/CareerShareBar";
 
 export const dynamic = "force-dynamic";
 
@@ -43,6 +44,8 @@ export default async function CareerRolePage({ params }: { params: Promise<{ rol
   if (!isCareerSlug(slug)) notFound();
   const role = CAREER_ROLES[slug];
   const open = await isCareerRoleOpen(slug);
+  const shareUrl = `${APP_CONFIG.url}/careers/${slug}`;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -89,10 +92,115 @@ export default async function CareerRolePage({ params }: { params: Promise<{ rol
       }] : []),
     ],
   };
-  return <div className="min-h-screen bg-[#f7f3ea]">
-    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-    <Navbar /><main className="pt-24"><article className="mx-auto max-w-6xl px-5 py-14"><Link href="/careers" className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-800"><ArrowLeft size={16}/> All roles</Link><div className="mt-12 grid gap-12 lg:grid-cols-[1.5fr_.65fr]"><div><span className={`inline-flex rounded-full px-3 py-1 text-xs font-bold uppercase ${open ? "bg-emerald-100 text-emerald-800" : "bg-red-100 text-red-800"}`}>{open ? "Applications open" : "Applications closed"}</span><p className="mt-5 text-xs font-bold uppercase tracking-[.14em] text-emerald-800">{role.focus}</p><h1 className="mt-4 font-serif text-5xl leading-none tracking-tight text-zinc-900 sm:text-7xl">{role.title}</h1><p className="mt-7 max-w-3xl text-xl leading-8 text-zinc-600">{role.summary}</p></div><aside className="border-t-4 border-lime-600 bg-white p-6 shadow-lg"><dl className="space-y-5 text-sm"><Fact icon={<Users size={18}/>} label="Engagement" value={role.engagement}/><Fact icon={<CalendarDays size={18}/>} label="Start date" value={role.startDate}/><Fact icon={<Clock3 size={18}/>} label="Core meeting" value={role.meeting}/><Fact icon={<MapPin size={18}/>} label="Format" value="Mostly online"/></dl></aside></div><div className="mt-16 grid gap-14 bg-white p-8 sm:p-12 lg:grid-cols-[1.4fr_.6fr]"><div><p className="text-xs font-bold uppercase tracking-widest text-emerald-800">Purpose</p><h2 className="mt-3 font-serif text-4xl">Why this role matters</h2><p className="mt-5 text-lg leading-8 text-zinc-600">{role.purpose}</p><p className="mt-12 text-xs font-bold uppercase tracking-widest text-emerald-800">Responsibility</p><h2 className="mt-3 font-serif text-4xl">What you will own</h2><ul className="mt-6 space-y-4">{role.responsibilities.map(item => <li key={item} className="flex gap-3 leading-7 text-zinc-700"><Check className="mt-1 shrink-0 text-emerald-700" size={18}/>{item}</li>)}</ul></div><aside className="space-y-5"><Info title="Reporting">{role.reporting}</Info><Info title="Working rhythm">{role.rhythm}</Info><Info title="Team structure">The role may work independently or manage and collaborate with a team as the organization grows.</Info></aside></div><section className="mt-16 bg-emerald-900 p-8 text-white sm:p-12"><h2 className="font-serif text-4xl">{open ? "Start the conversation." : "Applications are currently closed."}</h2><p className="mt-4 max-w-2xl leading-7 text-emerald-100">{open ? "No CV is required. Tell us about your motivation, experience, and how you would approach the work." : "You can still review this role and check the careers page for other open opportunities."}</p><div className="mt-7 flex gap-5">{open && <Link href={`/careers/apply/${slug}`} className="rounded-full bg-white px-5 py-3 font-bold text-emerald-900">Apply for this role</Link>}<Link href="/careers" className="py-3 font-semibold underline">Explore other roles</Link></div></section></article></main><Footer /></div>;
+
+  return (
+    <div className="min-h-screen bg-[#f7f3ea]">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <Navbar />
+      <main className="pt-24">
+        <article className="mx-auto max-w-6xl px-5 py-14">
+          <Link href="/careers" className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-800 hover:underline">
+            <ArrowLeft size={16}/> All roles
+          </Link>
+
+          <div className="mt-12 grid gap-12 lg:grid-cols-[1.5fr_.65fr]">
+            <div>
+              <span className={`inline-flex rounded-full px-3 py-1 text-xs font-bold uppercase ${open ? "bg-emerald-100 text-emerald-800" : "bg-red-100 text-red-800"}`}>
+                {open ? "Applications open" : "Applications closed"}
+              </span>
+              <p className="mt-5 text-xs font-bold uppercase tracking-[.14em] text-emerald-800">{role.focus}</p>
+              <h1 className="mt-4 font-serif text-5xl leading-none tracking-tight text-zinc-900 sm:text-7xl">{role.title}</h1>
+              <p className="mt-7 max-w-3xl text-xl leading-8 text-zinc-600">{role.summary}</p>
+
+              {/* Shareable Link Bar in Hero Column */}
+              <div className="mt-8">
+                <CareerShareBar roleTitle={role.title} roleSummary={role.summary} shareUrl={shareUrl} />
+              </div>
+            </div>
+
+            <aside className="border-t-4 border-lime-600 bg-white p-6 shadow-lg self-start">
+              <dl className="space-y-5 text-sm">
+                <Fact icon={<Users size={18}/>} label="Engagement" value={role.engagement}/>
+                <Fact icon={<CalendarDays size={18}/>} label="Start date" value={role.startDate}/>
+                <Fact icon={<Clock3 size={18}/>} label="Core meeting" value={role.meeting}/>
+                <Fact icon={<MapPin size={18}/>} label="Format" value="Mostly online"/>
+              </dl>
+            </aside>
+          </div>
+
+          <div className="mt-16 grid gap-14 bg-white p-8 sm:p-12 lg:grid-cols-[1.4fr_.6fr]">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-widest text-emerald-800">Purpose</p>
+              <h2 className="mt-3 font-serif text-4xl">Why this role matters</h2>
+              <p className="mt-5 text-lg leading-8 text-zinc-600">{role.purpose}</p>
+
+              <p className="mt-12 text-xs font-bold uppercase tracking-widest text-emerald-800">Responsibility</p>
+              <h2 className="mt-3 font-serif text-4xl">What you will own</h2>
+              <ul className="mt-6 space-y-4">
+                {role.responsibilities.map(item => (
+                  <li key={item} className="flex gap-3 leading-7 text-zinc-700">
+                    <Check className="mt-1 shrink-0 text-emerald-700" size={18}/>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <aside className="space-y-5">
+              <Info title="Reporting">{role.reporting}</Info>
+              <Info title="Working rhythm">{role.rhythm}</Info>
+              <Info title="Team structure">The role collaborates with executive leadership and may lead a finance and audit committee as Greenwave Society scales.</Info>
+            </aside>
+          </div>
+
+          {/* Bottom Share Bar */}
+          <div className="mt-12">
+            <CareerShareBar roleTitle={role.title} roleSummary={role.summary} shareUrl={shareUrl} />
+          </div>
+
+          <section className="mt-12 bg-emerald-900 p-8 text-white sm:p-12 rounded-3xl shadow-xl">
+            <h2 className="font-serif text-4xl">{open ? "Start the conversation." : "Applications are currently closed."}</h2>
+            <p className="mt-4 max-w-2xl leading-7 text-emerald-100">
+              {open 
+                ? "No lengthy CV required upfront. Share your professional profile link and tell us about your financial leadership experience, judgment, and how you would steward Greenwave Society's resources." 
+                : "You can still review this role description and check the careers page for other open opportunities."
+              }
+            </p>
+            <div className="mt-7 flex flex-wrap gap-5">
+              {open && (
+                <Link href={`/careers/apply/${slug}`} className="rounded-full bg-white px-6 py-3.5 font-bold text-emerald-900 shadow-md hover:bg-emerald-50 transition-colors">
+                  Apply for this role
+                </Link>
+              )}
+              <Link href="/careers" className="py-3.5 font-semibold text-white/90 hover:text-white underline">
+                Explore other roles
+              </Link>
+            </div>
+          </section>
+        </article>
+      </main>
+      <Footer />
+    </div>
+  );
 }
 
-function Fact({icon,label,value}:{icon:ReactNode;label:string;value:string}) { return <div className="flex gap-3 text-emerald-900">{icon}<div><dt className="text-xs uppercase tracking-wide text-zinc-500">{label}</dt><dd className="mt-1 font-semibold">{value}</dd></div></div> }
-function Info({title,children}:{title:string;children:ReactNode}) { return <section className="border border-zinc-200 bg-[#f7f3ea] p-5"><h3 className="font-serif text-2xl">{title}</h3><p className="mt-3 text-sm leading-6 text-zinc-600">{children}</p></section> }
+function Fact({icon,label,value}:{icon:ReactNode;label:string;value:string}) { 
+  return (
+    <div className="flex gap-3 text-emerald-900">
+      {icon}
+      <div>
+        <dt className="text-xs uppercase tracking-wide text-zinc-500">{label}</dt>
+        <dd className="mt-1 font-semibold">{value}</dd>
+      </div>
+    </div>
+  ); 
+}
+
+function Info({title,children}:{title:string;children:ReactNode}) { 
+  return (
+    <section className="border border-zinc-200 bg-[#f7f3ea] p-5 rounded-2xl">
+      <h3 className="font-serif text-2xl text-zinc-900">{title}</h3>
+      <p className="mt-3 text-sm leading-6 text-zinc-600">{children}</p>
+    </section>
+  ); 
+}

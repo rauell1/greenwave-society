@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
-import { CAREER_ROLES, isCareerRoleOpen, isCareerSlug, requiresProfileLink } from "@/lib/careers";
+import { CAREER_ROLES, isCareerRoleOpen, normalizeCareerSlug, requiresProfileLink } from "@/lib/careers";
 import { getDb } from "@/lib/db";
 import { brandedEmail, CONTACT_EMAIL, escapeHtml, FROM_EMAIL } from "@/lib/email-template";
 import { logger } from "@/lib/logger";
@@ -10,8 +10,10 @@ function clean(value: unknown, max=3000) { return typeof value === "string" ? va
 
 export async function POST(request: NextRequest) {
   try {
-    const body=await request.json() as Record<string,unknown>; const roleSlug=clean(body.roleSlug,80);
-    if(!isCareerSlug(roleSlug)) return NextResponse.json({error:"Choose a valid role."},{status:400});
+    const body=await request.json() as Record<string,unknown>;
+    const rawRoleSlug=clean(body.roleSlug,80);
+    const roleSlug=normalizeCareerSlug(rawRoleSlug);
+    if(!roleSlug) return NextResponse.json({error:"Choose a valid role."},{status:400});
     if(!(await isCareerRoleOpen(roleSlug))) return NextResponse.json({error:"Applications for this role are currently closed."},{status:409});
     const values=Object.fromEntries(required.map(key=>[key,clean(body[key])])) as Record<typeof required[number],string>;
     if(required.some(key=>!values[key])) return NextResponse.json({error:"Please answer every required question."},{status:400});

@@ -58,11 +58,44 @@ export const CAREER_ROLES = {
     rhythm: "The Talent Manager meets with their team every Tuesday. Other meetings and physical attendance are communicated in advance.",
     requiresProfileLink: true,
   },
+  "chief-financial-officer": {
+    title: "Chief Financial Officer (CFO)",
+    focus: "Financial governance, capital strategy, and sustainability",
+    summary: "Lead financial strategy, accounting stewardship, statutory compliance, and enterprise sustainability to resource Greenwave Society's mission.",
+    purpose: "Provide strategic financial leadership and executive stewardship across Greenwave Society. As a growing youth-led social enterprise and think tank, we balance transparent donor fund accountability with earned revenue streams and lean operational design. The CFO anchors our fiscal discipline, budget governance, risk management, and capital allocation to ensure long-term viability and impact for Kenyan youth.",
+    responsibilities: [
+      "Design, implement, and steward financial systems, internal accounting controls, and operating budgets across all programs.",
+      "Oversee statutory compliance, tax obligations, financial disclosures, and risk governance under Kenyan law and social enterprise standards.",
+      "Lead strategic financial planning for grant acquisitions, donor fund accountability, earned-revenue initiatives, and grassroots program allocations.",
+      "Provide executive-level financial reporting, quarterly statements, cash-flow projections, and fiscal analysis for the Board, CEO, and leadership team.",
+      "Institute zero-tolerance internal fraud prevention, procurement transparency, and sustainable treasury management.",
+      "Collaborate with the CEO, COO, and Partnerships Lead on resource mobilization, partner co-investments, and long-term sustainability models.",
+    ],
+    question: "Describe a financial framework, operating budget, or internal control system you designed or stewarded. How did you balance statutory compliance and fiscal rigor with strategic organizational growth?",
+    datePosted: "2026-11-03",
+    startDate: "Immediate / Negotiable",
+    engagement: "Executive volunteer leadership",
+    meeting: "Thursdays, 8:00 PM EAT",
+    reporting: "Executive leader reporting directly to the Board and CEO, working closely with the COO and Executive Team on organizational governance.",
+    rhythm: "The executive team meets every Thursday at 8:00 PM EAT. Strategic financial reviews, audit preparations, and physical executive retreats are scheduled in advance.",
+    requiresProfileLink: true,
+  },
 } as const;
 
 export type CareerSlug = keyof typeof CAREER_ROLES;
 export const CAREER_SLUGS = Object.keys(CAREER_ROLES) as CareerSlug[];
+export const CAREER_ALIASES: Record<string, CareerSlug> = {
+  cfo: "chief-financial-officer",
+};
+
 export function isCareerSlug(value: string): value is CareerSlug { return value in CAREER_ROLES; }
+
+export function normalizeCareerSlug(value: string): CareerSlug | null {
+  if (isCareerSlug(value)) return value;
+  if (value in CAREER_ALIASES) return CAREER_ALIASES[value];
+  return null;
+}
+
 export function requiresProfileLink(slug: CareerSlug) { return "requiresProfileLink" in CAREER_ROLES[slug]; }
 
 export async function ensureCareerRoles() {
