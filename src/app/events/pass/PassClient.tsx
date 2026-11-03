@@ -5,10 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { AddToCalendarButton } from "@/components/events/AddToCalendarButton";
 import { toast } from "sonner";
 import {
-  CheckCircle2,
   Calendar,
   MapPin,
   Clock,
@@ -17,11 +15,12 @@ import {
   Award,
   Store,
   Users,
-  ShieldCheck,
   Sparkles,
-  ExternalLink,
   ChevronRight,
   Leaf,
+  AlertOctagon,
+  XCircle,
+  Camera,
 } from "lucide-react";
 
 export interface PassProps {
@@ -39,6 +38,8 @@ export interface PassProps {
   attendanceStatus: "not_checked_in" | "checked_in" | "cancelled";
   checkedInAt: string | null;
   qrCodeDataUrl: string;
+  isConcluded?: boolean;
+  concludedDate?: string;
   event: {
     title: string;
     startsAt: string;
@@ -65,19 +66,6 @@ export function PassClient({ pass }: { pass: PassProps }) {
     }
   };
 
-  const calendarData = {
-    title: pass.isVendor
-      ? "Community Market - Vendor Stall Setup & Showcase"
-      : pass.event.title,
-    description: pass.isVendor
-      ? "Vendor stall setup (9:30 AM) and showcase at Ubunifu Hub, Nairobi for Greenwave Society YPG: Young Person's Guide to Systems Change Cohort I Graduation."
-      : "Graduation celebration for Greenwave Society YPG: Young Person's Guide to Systems Change Cohort I changemakers with community market.",
-    location: pass.event.location,
-    startsAt: pass.isVendor ? "2026-10-30T06:30:00Z" : "2026-10-30T07:30:00Z",
-    endsAt: "2026-10-30T12:00:00Z",
-    url: window?.location?.href || "https://greenwavesociety.org/events/graduation-cohort-1",
-  };
-
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-between py-8 px-4 sm:px-6">
       <div className="max-w-md mx-auto w-full space-y-6">
@@ -94,44 +82,59 @@ export function PassClient({ pass }: { pass: PassProps }) {
           <h1 className="text-xl sm:text-2xl font-serif font-black tracking-tight text-white">
             Official Event Admission Pass
           </h1>
-          <p className="text-xs text-slate-400">
-            Present this scannable QR ticket to the Executive Door Station upon arrival
+          <p className="text-xs text-rose-400 font-medium">
+            Event Concluded &bull; Pass Expired &amp; Invalid for Entry
           </p>
         </div>
 
+        {/* Prominent Event Concluded / Pass Invalid Alert */}
+        <div className="p-4 sm:p-5 rounded-3xl bg-rose-500/15 border border-rose-500/35 text-rose-200 text-xs flex items-start gap-3.5 shadow-xl">
+          <AlertOctagon className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <div className="font-bold text-sm text-rose-200 uppercase tracking-wider font-mono">
+              Event Concluded &bull; Pass Expired &amp; Invalid
+            </div>
+            <p className="text-rose-200/90 leading-relaxed text-[11px]">
+              This event concluded on <strong>Friday, 30th October 2026</strong> at Ubunifu Hub, Nairobi. Admission passes are permanently expired and can no longer be used for door check-in or venue entry.
+            </p>
+          </div>
+        </div>
+
         {/* Pass Card Container */}
-        <div className="rounded-3xl overflow-hidden shadow-2xl border border-emerald-500/20 bg-slate-900/90 backdrop-blur-xl relative">
+        <div className="rounded-3xl overflow-hidden shadow-2xl border border-rose-500/30 bg-slate-900/90 backdrop-blur-xl relative">
           
           {/* Header Banner */}
           <div
             className={`p-6 text-white text-center relative overflow-hidden ${
               pass.isGraduand
-                ? "bg-gradient-to-r from-emerald-950 via-emerald-800 to-emerald-950 border-b-4 border-amber-400"
+                ? "bg-gradient-to-r from-slate-950 via-emerald-950 to-slate-950 border-b-4 border-amber-500/50"
                 : pass.isVendor
-                ? "bg-gradient-to-r from-emerald-900 via-teal-800 to-emerald-950 border-b-4 border-amber-400"
-                : "bg-gradient-to-r from-emerald-900 via-emerald-800 to-emerald-950 border-b-4 border-emerald-500"
+                ? "bg-gradient-to-r from-slate-950 via-teal-950 to-slate-950 border-b-4 border-amber-500/50"
+                : "bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border-b-4 border-rose-500/50"
             }`}
           >
-            <div className="flex items-center justify-center gap-2 mb-2">
-              {isCheckedIn ? (
-                <Badge className="bg-emerald-500 text-slate-950 font-bold text-xs uppercase tracking-wider px-3 py-1 border-none shadow-md">
-                  <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Checked In
-                </Badge>
-              ) : (
-                <Badge className="bg-white/20 text-white font-mono text-[11px] uppercase tracking-wider px-3 py-0.5 border-none">
-                  <ShieldCheck className="w-3.5 h-3.5 mr-1 text-amber-300" /> Door Pass Verified
+            <div className="flex flex-wrap items-center justify-center gap-2 mb-2">
+              <Badge className="bg-rose-600 text-white font-bold text-xs uppercase tracking-wider px-3 py-1 border-none shadow-md">
+                <XCircle className="w-3.5 h-3.5 mr-1 text-white" /> Pass Expired &bull; Invalid
+              </Badge>
+              <Badge variant="outline" className="border-rose-400/40 text-rose-300 text-[10px] font-mono uppercase bg-rose-500/10">
+                Event Concluded
+              </Badge>
+              {isCheckedIn && (
+                <Badge className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] uppercase font-mono">
+                  Attended on 30 Oct
                 </Badge>
               )}
             </div>
 
             <h2 className="font-serif font-black text-2xl tracking-tight text-white">
               {pass.isGraduand
-                ? "Graduand Official Pass"
+                ? "Graduand Pass (Concluded)"
                 : pass.isVendor
-                ? "Vendor Stall Pass"
-                : "Digital Entry Ticket"}
+                ? "Vendor Pass (Concluded)"
+                : "Admission Pass (Concluded)"}
             </h2>
-            <p className="text-white/80 text-xs mt-1 max-w-xs mx-auto line-clamp-2">
+            <p className="text-white/70 text-xs mt-1 max-w-xs mx-auto line-clamp-2">
               {pass.event.title}
             </p>
           </div>
@@ -211,29 +214,34 @@ export function PassClient({ pass }: { pass: PassProps }) {
               </div>
             )}
 
-            {/* QR Code Container */}
-            <div className="flex flex-col items-center justify-center p-6 bg-slate-950/60 rounded-2xl border border-slate-800/80">
-              <div className="p-3 bg-white rounded-2xl shadow-xl inline-block mb-3">
+            {/* QR Code Container (Deactivated & Invalidated) */}
+            <div className="flex flex-col items-center justify-center p-6 bg-slate-950/80 rounded-2xl border border-rose-500/30 relative overflow-hidden">
+              <div className="relative p-3 bg-white rounded-2xl shadow-xl inline-block mb-3 filter grayscale contrast-125 opacity-40">
                 <Image
                   src={pass.qrCodeDataUrl}
-                  alt={`Door Pass QR Code for ${pass.fullName}`}
+                  alt={`Concluded Door Pass QR Code for ${pass.fullName}`}
                   width={220}
                   height={220}
                   className="rounded-lg"
                   priority
                   unoptimized
                 />
+                <div className="absolute inset-0 bg-slate-950/30 rounded-2xl flex items-center justify-center p-2">
+                  <div className="transform -rotate-12 bg-rose-600 text-white font-mono font-black text-xs sm:text-sm uppercase px-3 py-1.5 rounded-lg border-2 border-white shadow-2xl tracking-widest text-center">
+                    INVALID &bull; CONCLUDED
+                  </div>
+                </div>
               </div>
 
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-400">
-                <ShieldCheck className="w-4 h-4" />
-                <span>Executive Door Scanner Code</span>
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-rose-400">
+                <XCircle className="w-4 h-4" />
+                <span>Door Scanner Deactivated &bull; Pass Expired</span>
               </div>
 
-              <p className="text-[11px] text-slate-400 max-w-xs text-center mt-1">
+              <p className="text-[11px] text-slate-400 max-w-xs text-center mt-1 leading-relaxed">
                 {isCheckedIn
-                  ? `Checked in at ${pass.checkedInAt ? new Date(pass.checkedInAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "the door"}. Enjoy the event!`
-                  : "Keep your screen brightness high. Present this code at the reception desk for instant check-in."}
+                  ? `This pass was recorded as attended on event day at ${pass.checkedInAt ? new Date(pass.checkedInAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "the door"}. The event is now concluded.`
+                  : "This admission pass is permanently expired and invalid. Venue admission is closed."}
               </p>
             </div>
 
@@ -241,7 +249,7 @@ export function PassClient({ pass }: { pass: PassProps }) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-400 pt-2 border-t border-slate-800">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>Friday, 30 Oct 2026 {pass.isVendor ? "(9:30 AM Setup)" : "(10:30 AM EAT)"}</span>
+                <span>Friday, 30 Oct 2026 (Concluded)</span>
               </div>
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-emerald-400 shrink-0" />
@@ -249,39 +257,44 @@ export function PassClient({ pass }: { pass: PassProps }) {
               </div>
             </div>
 
-            {/* Venue Google Maps Link */}
-            <a
-              href="https://maps.google.com/?q=Ubunifu+Hub,+Nairobi,+Kenya"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-between p-3 rounded-xl bg-slate-800/50 hover:bg-slate-800 border border-slate-700/60 text-xs text-slate-200 transition-colors"
-            >
-              <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-emerald-400" />
-                <span>Get directions to Ubunifu Hub</span>
-              </div>
-              <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
-            </a>
-
             {/* Action Buttons */}
             <div className="flex flex-wrap items-center justify-center gap-2.5 pt-2">
-              <AddToCalendarButton event={calendarData} size="sm" />
+              <Button
+                asChild
+                className="rounded-xl bg-gold hover:bg-gold/90 text-slate-950 font-bold text-xs shadow-md gap-1.5"
+              >
+                <Link href="/events/graduation-cohort-1/album">
+                  <Camera className="w-4 h-4" />
+                  <span>View 296 Ceremony Photos</span>
+                </Link>
+              </Button>
+
+              <Button
+                asChild
+                variant="outline"
+                className="rounded-xl border-slate-700 text-slate-200 hover:bg-slate-800 text-xs font-semibold gap-1.5"
+              >
+                <Link href="/events/graduation-cohort-1">
+                  <Award className="w-4 h-4 text-gold" />
+                  <span>Ceremony Retrospective</span>
+                </Link>
+              </Button>
 
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => window.print()}
-                className="rounded-xl border-slate-700 text-slate-200 hover:bg-slate-800 gap-1.5"
+                className="rounded-xl border-slate-700 text-slate-200 hover:bg-slate-800 text-xs gap-1.5"
               >
                 <Printer className="w-4 h-4" />
-                <span>Print / Save</span>
+                <span>Print Record</span>
               </Button>
 
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleShare}
-                className="rounded-xl border-slate-700 text-slate-200 hover:bg-slate-800 gap-1.5"
+                className="rounded-xl border-slate-700 text-slate-200 hover:bg-slate-800 text-xs gap-1.5"
               >
                 <Share2 className="w-4 h-4" />
                 <span>{copied ? "Link Copied!" : "Share Link"}</span>

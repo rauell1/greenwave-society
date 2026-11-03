@@ -15,7 +15,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import {
   Sparkles,
-  CheckCircle2,
   Store,
   Leaf,
   ShieldCheck,
@@ -26,6 +25,7 @@ import {
   Clock,
   Printer,
   GraduationCap,
+  XCircle,
 } from "lucide-react";
 import { AddToCalendarButton } from "@/components/events/AddToCalendarButton";
 
@@ -230,9 +230,9 @@ export function VendorForm({ isClosed = true }: { isClosed?: boolean }) {
                 <QrCode className="w-4 h-4" />
               </div>
               <div>
-                <h4 className="font-serif font-bold text-sm text-foreground">Already Registered as a Vendor?</h4>
+                <h4 className="font-serif font-bold text-sm text-foreground">Registered Vendor? View Stall Record</h4>
                 <p className="text-xs text-muted-foreground">
-                  Enter your registered email to view or reprint your vendor stall pass.
+                  The market concluded on Friday, 30 Oct 2026. Enter your registered email to view your pass record.
                 </p>
               </div>
             </div>
@@ -292,11 +292,11 @@ export function VendorForm({ isClosed = true }: { isClosed?: boolean }) {
       <Card className="border-primary/30 shadow-2xl rounded-3xl overflow-hidden bg-card/95 backdrop-blur-sm print:border-none print:shadow-none">
         <div className="bg-gradient-to-r from-emerald-950 via-primary to-emerald-900 p-6 text-white text-center relative overflow-hidden border-b-4 border-gold">
           <div className="absolute -top-12 -right-12 w-36 h-36 rounded-full bg-white/10 blur-xl pointer-events-none" />
-          <Badge className="mb-2 bg-white/20 hover:bg-white/30 text-white border-none text-[11px] font-mono tracking-wider uppercase">
-            <CheckCircle2 className="w-3.5 h-3.5 mr-1 text-gold" /> Vendor Pass Confirmed
+          <Badge className="mb-2 bg-rose-600 text-white border-none text-[11px] font-mono tracking-wider uppercase">
+            <XCircle className="w-3.5 h-3.5 mr-1 text-white" /> Market Concluded &bull; Pass Expired
           </Badge>
           <h3 className="font-serif font-black text-2xl sm:text-3xl tracking-tight text-white">
-            Market Vendor Stall Pass
+            Market Vendor Stall Pass (Concluded)
           </h3>
           <p className="text-white/80 text-xs sm:text-sm mt-1 max-w-sm mx-auto">
             YPG: Young Person&apos;s Guide to Systems Change Cohort I Graduation &amp; Community Market
@@ -339,9 +339,9 @@ export function VendorForm({ isClosed = true }: { isClosed?: boolean }) {
               </ul>
             </div>
 
-            {/* QR Code Section */}
+            {/* QR Code Section (Concluded & Invalidated) */}
             <div className="py-6 flex flex-col items-center justify-center text-center">
-              <div className="p-3 bg-white rounded-2xl shadow-md border border-border inline-block mb-3">
+              <div className="relative p-3 bg-white rounded-2xl shadow-md border border-border inline-block mb-3 filter grayscale contrast-125 opacity-40">
                 <Image
                   src={ticket.qrCodeDataUrl}
                   alt={`Vendor Pass QR Code for ${ticket.vendorName}`}
@@ -350,13 +350,18 @@ export function VendorForm({ isClosed = true }: { isClosed?: boolean }) {
                   className="rounded-lg"
                   unoptimized
                 />
+                <div className="absolute inset-0 bg-slate-950/20 rounded-2xl flex items-center justify-center p-2">
+                  <div className="transform -rotate-12 bg-rose-600 text-white font-mono font-black text-xs uppercase px-2.5 py-1 rounded-md border border-white shadow-xl tracking-widest text-center">
+                    CONCLUDED &bull; INVALID
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-800 dark:text-emerald-400">
-                <QrCode className="w-4 h-4" />
-                <span>Vendor Check-in & Stall Allocation QR</span>
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-rose-500">
+                <XCircle className="w-4 h-4" />
+                <span>Stall Allocation Deactivated &bull; Pass Expired</span>
               </div>
               <p className="text-[11px] text-muted-foreground max-w-xs mt-1">
-                Present this QR code to the Executive Team at the door upon arrival at Ubunifu Hub to receive your assigned stall number.
+                The community market concluded on Friday, 30th October 2026. This stall pass is permanently expired and invalid.
               </p>
             </div>
 

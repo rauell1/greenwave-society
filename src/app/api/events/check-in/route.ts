@@ -126,32 +126,15 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Check if already checked in
-    if (registration.attendanceStatus === "checked_in") {
-      return NextResponse.json({
-        success: true,
-        alreadyCheckedIn: true,
-        registration: buildRegistrationPayload(registration, meta),
-        event: registration.event,
-      });
-    }
-
-    // Mark as checked in
-    const updated = await db.cmsEventRegistration.update({
-      where: { id },
-      data: {
-        attendanceStatus: "checked_in",
-        checkedInAt: new Date(),
-        checkedInBy: admin.email || "admin_door_scanner",
-      },
-    });
-
+    // The event concluded on Friday, 30th October 2026. Passes are now expired and invalid for check-in.
     return NextResponse.json({
-      success: true,
-      alreadyCheckedIn: false,
-      registration: buildRegistrationPayload(updated, meta),
+      success: false,
+      error: "Event Concluded: This event ended on Friday, 30 October 2026. Passes are permanently expired and invalid for check-in.",
+      eventConcluded: true,
+      alreadyCheckedIn: registration.attendanceStatus === "checked_in",
+      registration: buildRegistrationPayload(registration, meta),
       event: registration.event,
-    });
+    }, { status: 400 });
   } catch (error) {
     console.error("[EVENT_CHECK_IN_GET]", error);
     return NextResponse.json(
@@ -180,7 +163,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json().catch(() => ({}));
-    const { id, token, status = "checked_in" } = body;
+    const { id, token } = body;
 
     if (!id) {
       return NextResponse.json({ error: "Registration ID is required" }, { status: 400 });
@@ -237,20 +220,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const isCheckingIn = status === "checked_in";
-    const updated = await db.cmsEventRegistration.update({
-      where: { id: registration.id },
-      data: {
-        attendanceStatus: status,
-        checkedInAt: isCheckingIn ? new Date() : null,
-        checkedInBy: isCheckingIn ? (admin.email || "admin_door_scanner") : null,
-      },
-    });
-
+    // The event concluded on Friday, 30th October 2026. Door check-in is permanently closed.
     return NextResponse.json({
-      success: true,
-      registration: buildRegistrationPayload(updated, meta),
-    });
+      success: false,
+      error: "Event Concluded: This event ended on Friday, 30 October 2026. Door check-in is permanently closed and passes are invalid.",
+      eventConcluded: true,
+    }, { status: 400 });
   } catch (error) {
     console.error("[EVENT_CHECK_IN_POST]", error);
     return NextResponse.json(

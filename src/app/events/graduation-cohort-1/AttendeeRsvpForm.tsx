@@ -252,9 +252,9 @@ export function AttendeeRsvpForm({ isClosed = true }: { isClosed?: boolean }) {
                 <QrCode className="w-4 h-4" />
               </div>
               <div>
-                <h4 className="font-serif font-bold text-sm text-foreground">Already Registered? Retrieve Your Pass</h4>
+                <h4 className="font-serif font-bold text-sm text-foreground">Registered Attendee? View Pass Record</h4>
                 <p className="text-xs text-muted-foreground">
-                  Enter your registered email to view or download your admission ticket pass.
+                  The event has concluded and passes are expired. Enter your email to view your commemorative record.
                 </p>
               </div>
             </div>

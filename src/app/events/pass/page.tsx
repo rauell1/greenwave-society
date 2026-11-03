@@ -7,8 +7,8 @@ import { ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export const metadata = {
-  title: "Official Event Admission Pass | Greenwave Society",
-  description: "Digital admission ticket and door check-in pass for Greenwave Society events.",
+  title: "Official Event Admission Pass (Concluded / Expired) | Greenwave Society",
+  description: "Digital admission ticket pass for Greenwave Society events (Concluded).",
   robots: { index: false, follow: false },
 };
 
@@ -183,6 +183,8 @@ export default async function PassPage(props: PageProps) {
     attendanceStatus: registration.attendanceStatus as "not_checked_in" | "checked_in" | "cancelled",
     checkedInAt: registration.checkedInAt ? registration.checkedInAt.toISOString() : null,
     qrCodeDataUrl,
+    isConcluded: true,
+    concludedDate: "Friday, 30th October 2026",
     event: {
       title: registration.event?.title || "YPG: Young Person's Guide to Systems Change Cohort I Graduation & Community Market",
       startsAt: registration.event?.startsAt

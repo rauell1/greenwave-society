@@ -26,6 +26,7 @@ import {
   ShieldCheck,
   ArrowLeft,
   Trash2,
+  AlertOctagon,
 } from "lucide-react";
 import { QrCameraScanner } from "@/components/events/QrCameraScanner";
 import Link from "next/link";
@@ -275,6 +276,19 @@ function CheckInContent({ adminEmail }: CheckInClientProps) {
             <RefreshCw className={`w-3.5 h-3.5 ${isLoadingList ? "animate-spin" : ""}`} />
             <span className="hidden sm:inline">Refresh</span>
           </Button>
+        </div>
+      </div>
+
+      {/* Event Concluded Alert Banner */}
+      <div className="p-4 sm:p-5 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-start gap-3 shadow-sm">
+        <AlertOctagon className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
+        <div className="space-y-1">
+          <strong className="text-sm font-bold text-rose-200 block uppercase font-mono tracking-wider">
+            Event Concluded &bull; Door Station Closed
+          </strong>
+          <p className="text-rose-300/90 leading-relaxed text-xs">
+            The YPG Cohort I Graduation Ceremony &amp; Community Market concluded on <strong>Friday, 30th October 2026</strong>. All admission passes are now permanently expired and invalid for check-in.
+          </p>
         </div>
       </div>
 
