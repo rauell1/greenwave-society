@@ -24,6 +24,7 @@ import {
   ExternalLink,
   ShieldCheck,
   FileText,
+  Download,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -138,10 +139,17 @@ export default function GraduationCohortPage() {
                 </Link>
               </Button>
 
+              <Button asChild size="lg" variant="outline" className="rounded-xl border-emerald-600/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10 text-sm font-semibold gap-2">
+                <a href="/downloads/YPG_Cohort_I_Graduation_Comprehensive_Event_Report.docx" download>
+                  <FileText className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                  <span>Download Full Word Report (.docx)</span>
+                </a>
+              </Button>
+
               <Button asChild size="lg" variant="outline" className="rounded-xl border-border text-sm font-semibold gap-2">
                 <Link href="#milestones">
                   <Award className="w-4 h-4 text-primary" />
-                  <span>Ceremony Highlights &amp; Milestones</span>
+                  <span>Highlights &amp; Milestones</span>
                 </Link>
               </Button>
 
@@ -418,23 +426,56 @@ export default function GraduationCohortPage() {
         </div>
       </section>
 
-      {/* SECTION 4: SEPARATE SISTER INITIATIVES (CLEANLY DECOUPLED) */}
+      {/* SECTION 4: SEPARATE SISTER INITIATIVES & DOCUMENTATION */}
       <section className="py-16 sm:py-20 max-w-7xl mx-auto px-6 sm:px-8 w-full border-b border-border/50">
         <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
           <Badge variant="outline" className="text-xs uppercase tracking-wider text-muted-foreground border-border px-3 py-0.5 rounded-full font-bold">
-            Related Initiatives
+            Official Records &amp; Sister Hubs
           </Badge>
           <h2 className="text-2xl sm:text-3xl font-serif font-black text-foreground">
-            Explore Sister Hubs &amp; Media
+            Explore Reports, Media &amp; Marketplace
           </h2>
         </div>
 
-        <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-6">
-          {/* Card 1: Green Community Market */}
+        <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-6">
+          {/* Card 1: Comprehensive Event Report (Word Docx) */}
+          <div className="p-6 rounded-2xl bg-card border-2 border-primary/30 shadow-sm flex flex-col justify-between space-y-4 hover:border-primary transition-all">
+            <div className="space-y-2.5">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                <FileText className="w-5 h-5" />
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge className="bg-primary/15 text-primary border-primary/30 text-[10px] font-mono uppercase font-semibold">
+                  Official Record
+                </Badge>
+                <span className="text-[11px] text-muted-foreground font-mono">Word • 1.16 MB</span>
+              </div>
+              <h3 className="font-serif font-black text-lg text-foreground">
+                Comprehensive Event Report
+              </h3>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Exhaustive 10-section executive post-session report covering cohort metrics, the 4 curricular pillars, all 3 capstone defenses, master chronology, vendor audit, and permanent graduand roll.
+              </p>
+            </div>
+
+            <Button asChild size="sm" className="rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold self-start gap-1.5 shadow-sm">
+              <a href="/downloads/YPG_Cohort_I_Graduation_Comprehensive_Event_Report.docx" download>
+                <Download className="w-3.5 h-3.5" />
+                <span>Download Report (.docx)</span>
+              </a>
+            </Button>
+          </div>
+
+          {/* Card 2: Green Community Market */}
           <div className="p-6 rounded-2xl bg-card border border-border/80 shadow-sm flex flex-col justify-between space-y-4 hover:border-emerald-500/40 transition-colors">
             <div className="space-y-2.5">
               <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
                 <Store className="w-5 h-5" />
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="border-border text-muted-foreground text-[10px] font-mono uppercase">
+                  Market Concluded
+                </Badge>
               </div>
               <h3 className="font-serif font-black text-lg text-foreground">
                 Green Community Market
@@ -446,20 +487,25 @@ export default function GraduationCohortPage() {
 
             <Button asChild variant="outline" size="sm" className="rounded-xl border-emerald-600/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10 text-xs font-semibold self-start gap-1.5">
               <Link href="/events/community-market">
-                <span>View Community Market Portal</span>
+                <span>View Market Portal</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </Button>
           </div>
 
-          {/* Card 2: Media Kit & Official Assets */}
+          {/* Card 3: Media Kit & Official Assets */}
           <div className="p-6 rounded-2xl bg-card border border-border/80 shadow-sm flex flex-col justify-between space-y-4 hover:border-gold/40 transition-colors">
             <div className="space-y-2.5">
               <div className="w-10 h-10 rounded-xl bg-gold/15 text-gold flex items-center justify-center">
-                <FileText className="w-5 h-5" />
+                <Camera className="w-5 h-5" />
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="border-border text-muted-foreground text-[10px] font-mono uppercase">
+                  Press &amp; Branding
+                </Badge>
               </div>
               <h3 className="font-serif font-black text-lg text-foreground">
-                Official Media Kit &amp; Press Assets
+                Official Media Kit &amp; Press
               </h3>
               <p className="text-xs text-muted-foreground leading-relaxed">
                 Access official commemorative event flyers, high-resolution ceremony posters, mobile story cards, and Greenwave Society brand assets.

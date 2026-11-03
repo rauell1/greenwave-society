@@ -225,11 +225,19 @@ export function MediaKitClient() {
             </div>
             <div className="pt-5 border-t border-border/50 flex flex-wrap items-center justify-between gap-3 mt-4">
               <span className="text-xs text-muted-foreground font-mono">Friday, 30 Oct 2026 &bull; Ubunifu Hub</span>
-              <Button asChild size="sm" variant="outline" className="rounded-xl border-primary/25 text-primary hover:bg-primary/10">
-                <Link href="/events/graduation-cohort-1">
-                  View Graduation &amp; Market <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
-                </Link>
-              </Button>
+              <div className="flex flex-wrap items-center gap-2">
+                <Button asChild size="sm" variant="outline" className="rounded-xl border-emerald-600/30 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10 text-xs">
+                  <a href="/downloads/YPG_Cohort_I_Graduation_Comprehensive_Event_Report.docx" download>
+                    <Download className="w-3.5 h-3.5 mr-1.5" />
+                    Event Report (.docx)
+                  </a>
+                </Button>
+                <Button asChild size="sm" variant="outline" className="rounded-xl border-primary/25 text-primary hover:bg-primary/10 text-xs">
+                  <Link href="/events/graduation-cohort-1">
+                    View Retrospective <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+                  </Link>
+                </Button>
+              </div>
             </div>
           </div>
 
