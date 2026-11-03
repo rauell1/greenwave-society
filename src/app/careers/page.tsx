@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, BriefcaseBusiness, CalendarDays, Users } from "lucide-react";
+import { ArrowRight, BriefcaseBusiness, CalendarDays, Sparkles, Users } from "lucide-react";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { APP_CONFIG } from "@/config/app.config";
@@ -77,33 +77,38 @@ export default async function CareersPage() {
     <div className="min-h-screen bg-[#f7f3ea]">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <Navbar />
+
       <main className="pt-16 sm:pt-20">
-        <section className="bg-[#121817] px-5 py-24 text-center text-white sm:py-32">
+        {/* Hero Section */}
+        <section className="bg-[#121817] px-4 sm:px-6 py-16 sm:py-24 lg:py-32 text-center text-white">
           <div className="mx-auto max-w-4xl">
-            <p className="mb-5 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[.16em] text-lime-400">
-              <BriefcaseBusiness size={16}/> Volunteer leadership roles
+            <p className="mb-4 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[.16em] text-lime-400">
+              <BriefcaseBusiness size={16} /> Volunteer leadership roles
             </p>
-            <h1 className="font-serif text-5xl leading-none tracking-tight sm:text-7xl">
+            <h1 className="font-serif text-3xl sm:text-5xl lg:text-7xl leading-tight sm:leading-none tracking-tight">
               Help us build a more sustainable future.
             </h1>
-            <p className="mx-auto mt-7 max-w-2xl text-lg leading-8 text-zinc-300">
-              Join a team equipping young Kenyans to lead, build, and connect. Bring your judgment, energy, and ideas to the Greenwave.
+            <p className="mx-auto mt-4 sm:mt-7 max-w-2xl text-sm sm:text-base lg:text-lg leading-relaxed text-zinc-300">
+              Join a team equipping young Kenyans to lead, build, and connect. Bring your judgment, energy, and ideas to Greenwave Society.
             </p>
-            <div className="mt-8 flex flex-wrap justify-center gap-3 text-sm">
-              <span className="flex items-center gap-2 rounded-full border border-white/20 px-4 py-2">
-                <Users size={17}/> Volunteer leadership
+            <div className="mt-6 sm:mt-8 flex flex-wrap justify-center gap-2.5 sm:gap-3 text-xs sm:text-sm">
+              <span className="flex items-center gap-1.5 rounded-full border border-white/20 px-3.5 py-1.5 bg-white/5">
+                <Users size={15} /> Executive &amp; Volunteer Leadership
               </span>
-              <span className="flex items-center gap-2 rounded-full border border-white/20 px-4 py-2">
-                <CalendarDays size={17}/> Start dates listed on each role
+              <span className="flex items-center gap-1.5 rounded-full border border-white/20 px-3.5 py-1.5 bg-white/5">
+                <CalendarDays size={15} /> Rolling &amp; Immediate Intakes
               </span>
             </div>
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-5 py-20 sm:py-28">
-          <div className="mb-12 max-w-3xl">
-            <p className="text-xs font-bold uppercase tracking-[.16em] text-emerald-800">Current openings</p>
-            <h2 className="mt-3 font-serif text-4xl tracking-tight text-zinc-900 sm:text-5xl">
+        {/* Roles Grid */}
+        <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 sm:py-20 lg:py-28">
+          <div className="mb-8 sm:mb-12 max-w-3xl">
+            <p className="text-xs font-bold uppercase tracking-[.16em] text-emerald-800">
+              Current Openings
+            </p>
+            <h2 className="mt-2 sm:mt-3 font-serif text-2xl sm:text-4xl lg:text-5xl tracking-tight text-zinc-900">
               Choose where you can make the greatest difference.
             </h2>
           </div>
@@ -112,40 +117,63 @@ export default async function CareersPage() {
             {CAREER_SLUGS.map((slug, index) => {
               const role = CAREER_ROLES[slug];
               const open = statuses[slug] !== false;
+              const isCfo = slug === "chief-financial-officer";
+
               return (
                 <Link
                   key={slug}
                   href={`/careers/${slug}`}
-                  className={`flex min-h-96 flex-col justify-between rounded-2xl border p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg ${
-                    open ? "bg-white border-zinc-200" : "bg-zinc-100 border-zinc-300"
+                  className={`flex flex-col justify-between rounded-2xl border p-5 sm:p-7 shadow-xs transition hover:-translate-y-1 hover:shadow-lg relative overflow-hidden ${
+                    isCfo
+                      ? "bg-white border-emerald-700/40 ring-1 ring-emerald-600/20"
+                      : open
+                      ? "bg-white border-zinc-200"
+                      : "bg-zinc-100 border-zinc-300"
                   }`}
                 >
-                  <span className="font-serif text-zinc-400">0{index + 1}</span>
-                  <div>
-                    <span className={`inline-flex rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide ${
-                      open ? "bg-emerald-100 text-emerald-800" : "bg-red-100 text-red-800"
-                    }`}>
+                  {isCfo && (
+                    <div className="absolute top-0 right-0 bg-emerald-800 text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-bl-xl flex items-center gap-1">
+                      <Sparkles className="h-3 w-3 text-amber-400" /> Executive Board
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="font-serif text-sm font-bold text-zinc-400">0{index + 1}</span>
+                    <span
+                      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide ${
+                        open ? "bg-emerald-100 text-emerald-800" : "bg-red-100 text-red-800"
+                      }`}
+                    >
+                      <span className={`h-1.5 w-1.5 rounded-full ${open ? "bg-emerald-600 animate-pulse" : "bg-red-500"}`} />
                       {open ? "Applications open" : "Applications closed"}
                     </span>
-                    <p className="mt-5 text-xs font-bold uppercase tracking-[.12em] text-emerald-800">
+                  </div>
+
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-[.12em] text-emerald-800">
                       {role.focus}
                     </p>
-                    <h3 className="mt-3 font-serif text-4xl leading-none text-zinc-900">
+                    <h3 className="mt-2 font-serif text-xl sm:text-2xl lg:text-3xl font-bold text-zinc-900 leading-snug">
                       {role.title}
                     </h3>
-                    <p className="mt-5 leading-7 text-zinc-600">
+                    <p className="mt-3 text-sm sm:text-base leading-relaxed text-zinc-600 line-clamp-3">
                       {role.summary}
                     </p>
                   </div>
-                  <span className="flex items-center gap-2 font-semibold text-emerald-800">
-                    View role <ArrowRight size={18}/>
-                  </span>
+
+                  <div className="mt-6 pt-4 border-t border-zinc-100 flex items-center justify-between text-xs sm:text-sm font-semibold text-emerald-800">
+                    <span className="text-zinc-500 font-normal">{role.engagement}</span>
+                    <span className="flex items-center gap-1 text-emerald-800 font-bold group-hover:gap-2 transition-all">
+                      View role &amp; apply <ArrowRight size={16} />
+                    </span>
+                  </div>
                 </Link>
               );
             })}
           </div>
         </section>
       </main>
+
       <Footer />
     </div>
   );
