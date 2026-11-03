@@ -84,7 +84,7 @@ const defaultProgramItems: Record<
     desc: "Our flagship youth leadership and mentorship initiative. Through Empower 360, we build leadership capacity through mentorship, systems thinking training, and rotating meeting leadership so every member develops facilitation and critical thinking skills. Our inaugural Ad Hoc Cohort I changemakers lead community projects, manage budgets, and drive real-world transformation.",
     tags: ["Flagship", "Empower 360", "Leadership", "Cohort I"],
     cta: {
-      text: "Cohort I Graduation & Market (Oct 30)",
+      text: "Explore Cohort I Graduation Showcase",
       href: "/events/graduation-cohort-1",
     },
   },

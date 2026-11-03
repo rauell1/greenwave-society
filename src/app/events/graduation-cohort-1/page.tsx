@@ -1,11 +1,11 @@
 import { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { AttendeeRsvpForm } from "./AttendeeRsvpForm";
 import { GraduationMomentsGallery } from "./GraduationMomentsGallery";
-import { getGraduationPhotos } from "@/lib/cms/graduation-photos";
-import { FlyerMediaSection } from "./FlyerMediaSection";
 import { GraduationVendorRedirectHelper } from "./GraduationVendorRedirectHelper";
 import { ShareableLinkBar } from "@/components/events/ShareableLinkBar";
 import {
@@ -20,38 +20,47 @@ import {
   CheckCircle2,
   BookOpen,
   Camera,
+  ChevronRight,
+  ExternalLink,
+  ShieldCheck,
+  FileText,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { APP_CONFIG } from "@/config/app.config";
-import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Empower 360: Ad Hoc Cohort I Graduation Ceremony (Concluded) | Greenwave Society",
-  description: "Greenwave Society celebrated the Empower 360 Ad Hoc Cohort I graduands on Friday, 30th October 2026 at Ubunifu Hub, Nairobi. Registrations are now closed.",
+  title: "Empower 360 Inaugural Cohort Graduation Ceremony | Greenwave Society",
+  description: "Official convocation and milestone retrospective celebrating the 26 youth changemakers of Empower 360 Cohort I on Friday, 30th October 2026 at Ubunifu Hub, Nairobi.",
   alternates: {
     canonical: `${APP_CONFIG.url}/events/graduation-cohort-1`,
   },
   openGraph: {
-    title: "Empower 360: Ad Hoc Cohort I Graduation Ceremony (Concluded) | Greenwave Society",
-    description: "Celebrating our 2026 Graduands under the Empower 360 programme. Friday, 30th October 2026 at Ubunifu Hub, Nairobi. Registrations are closed.",
+    title: "Empower 360 Inaugural Cohort Graduation Ceremony | Greenwave Society",
+    description: "Honoring 26 certified youth leaders in systems thinking, grassroots climate action, and community leadership on Friday, 30th October 2026 at Ubunifu Hub, Nairobi.",
     url: `${APP_CONFIG.url}/events/graduation-cohort-1`,
     siteName: "Greenwave Society",
-    images: [{ url: "/posters/empower360-cohort-1-graduation-flyer.png", width: 723, height: 1024, alt: "Empower 360 Cohort I Graduation Official Flyer" }],
+    images: [
+      {
+        url: "https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_290.webp",
+        width: 1600,
+        height: 1067,
+        alt: "The 26 Changemakers of Empower 360 Cohort I Assembled at Ubunifu Hub",
+      },
+    ],
     type: "website",
   },
 };
 
-export default async function GraduationCohortPage() {
-  const graduationPhotos = await getGraduationPhotos();
+export default function GraduationCohortPage() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Event",
-    "name": "Greenwave Society Empower 360 Ad Hoc Cohort I Graduation Ceremony",
+    "name": "Greenwave Society Empower 360 Cohort I Graduation Ceremony",
     "startDate": "2026-10-30T10:30:00+03:00",
     "endDate": "2026-10-30T15:00:00+03:00",
     "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-    "eventStatus": "https://schema.org/EventScheduled",
+    "eventStatus": "https://schema.org/EventCompleted",
     "location": {
       "@type": "Place",
       "name": "Ubunifu Hub",
@@ -61,8 +70,8 @@ export default async function GraduationCohortPage() {
         "addressCountry": "KE",
       },
     },
-    "image": [`${APP_CONFIG.url}/posters/empower360-cohort-1-graduation-flyer.png`],
-    "description": "Graduation celebration for Greenwave Society Empower 360 Ad Hoc Cohort I changemakers.",
+    "image": ["https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_290.webp"],
+    "description": "Official graduation ceremony celebrating the 26 inaugural youth leaders of Empower 360 Cohort I.",
     "organizer": {
       "@type": "Organization",
       "name": "Greenwave Society",
@@ -79,232 +88,410 @@ export default async function GraduationCohortPage() {
       />
       <Navbar />
 
-      {/* Split Hero: Direct RSVP Form Right Above The Fold */}
-      <section className="pt-28 pb-12 sm:pt-36 sm:pb-16 bg-gradient-to-b from-secondary/20 via-background to-background relative overflow-hidden border-b border-border/50">
-        <div className="absolute top-1/4 -right-32 w-96 h-96 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-10 -left-32 w-96 h-96 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
-
+      {/* Breadcrumb Navigation */}
+      <div className="pt-24 sm:pt-28 pb-4 border-b border-border/40 bg-secondary/10">
         <div className="max-w-7xl mx-auto px-6 sm:px-8">
-          <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-            
-            {/* Left Column: Crisp Event Overview & Key Facts */}
-            <div className="lg:col-span-6 space-y-6">
-              <div className="space-y-3">
-                <div className="flex flex-wrap items-center gap-2">
-                  <Badge variant="secondary" className="px-3 py-1 text-xs uppercase tracking-wider font-bold bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30 rounded-full">
-                    <Sparkles className="w-3.5 h-3.5 mr-1.5 text-gold" />
-                    Event Concluded &bull; Friday, 30 Oct 2026
-                  </Badge>
-                  <Badge variant="outline" className="px-3 py-1 text-xs text-muted-foreground border-border rounded-full font-medium">
-                    Cohort I Successfully Concluded
-                  </Badge>
-                </div>
+          <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-muted-foreground font-mono">
+            <Link href="/" className="hover:text-primary transition-colors">Home</Link>
+            <ChevronRight className="w-3 h-3 text-muted-foreground/60" />
+            <Link href="/programs" className="hover:text-primary transition-colors">Programs</Link>
+            <ChevronRight className="w-3 h-3 text-muted-foreground/60" />
+            <span className="text-foreground font-semibold">Empower 360 Cohort I Graduation</span>
+          </nav>
+        </div>
+      </div>
 
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black tracking-tight text-foreground leading-[1.15]">
-                  Empower 360 Cohort I <span className="italic font-normal text-primary">Graduation</span>
-                </h1>
+      {/* EXECUTIVE COMMEMORATIVE HERO */}
+      <section className="py-12 sm:py-20 bg-gradient-to-b from-secondary/20 via-background to-background relative overflow-hidden border-b border-border/50">
+        <div className="absolute top-1/4 -right-32 w-96 h-96 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
+        <div className="absolute bottom-10 -left-32 w-96 h-96 rounded-full bg-gold/10 blur-3xl pointer-events-none" />
 
-                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                  Greenwave Society celebrated our inaugural cohort of youth changemakers on Friday, 30th October 2026 at Ubunifu Hub, Nairobi. Official certifications, capstone showcases, and sustainable community market are now completed. Registrations are closed.
-                </p>
-              </div>
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 space-y-10">
+          
+          {/* Header Title Block */}
+          <div className="max-w-4xl mx-auto text-center space-y-4">
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              <Badge variant="secondary" className="px-3.5 py-1 text-xs uppercase tracking-wider font-bold bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30 rounded-full">
+                <Sparkles className="w-3.5 h-3.5 mr-1.5 text-gold" />
+                Official Convocation &bull; Friday, 30 Oct 2026
+              </Badge>
+              <Badge variant="outline" className="px-3 py-1 text-xs text-emerald-700 dark:text-emerald-400 border-emerald-500/30 bg-emerald-500/10 rounded-full font-medium">
+                26 Changemakers Certified
+              </Badge>
+            </div>
 
-              {/* Key Logistics Strip */}
-              <div className="grid grid-cols-2 gap-3 p-4 rounded-2xl bg-secondary/30 border border-border/70 text-xs">
-                <div className="flex items-center gap-2.5">
-                  <Calendar className="w-4 h-4 text-primary shrink-0" />
-                  <div>
-                    <span className="text-[10px] text-muted-foreground block uppercase font-mono">Date Held</span>
-                    <strong className="text-foreground">Friday, 30 Oct 2026</strong>
-                  </div>
-                </div>
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-black tracking-tight text-foreground leading-[1.12]">
+              Empower 360 Inaugural Cohort <br />
+              <span className="italic font-normal text-primary">Graduation Ceremony</span>
+            </h1>
 
-                <div className="flex items-center gap-2.5">
-                  <Clock className="w-4 h-4 text-primary shrink-0" />
-                  <div>
-                    <span className="text-[10px] text-muted-foreground block uppercase font-mono">Time</span>
-                    <strong className="text-foreground">10:30 AM to 3:00 PM</strong>
-                  </div>
-                </div>
+            <p className="text-sm sm:text-lg text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+              On Friday, 30th October 2026, Greenwave Society officially conferred leadership honors upon 26 inaugural youth leaders at Ubunifu Hub, Nairobi. Following months of intensive systems thinking, grassroots climate action, and community mentorship, these changemakers now advance into the active Greenwave alumni network.
+            </p>
 
-                <div className="flex items-center gap-2.5">
-                  <MapPin className="w-4 h-4 text-primary shrink-0" />
-                  <div>
-                    <span className="text-[10px] text-muted-foreground block uppercase font-mono">Venue</span>
-                    <strong className="text-foreground">Ubunifu Hub, Nairobi</strong>
-                  </div>
-                </div>
+            {/* Quick Action Buttons */}
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+              <Button asChild size="lg" className="rounded-xl bg-gold hover:bg-gold/90 text-slate-950 font-bold text-sm shadow-md gap-2">
+                <Link href="/events/graduation-cohort-1/album">
+                  <Camera className="w-4 h-4" />
+                  <span>Open Interactive Photo Album (296 Photos)</span>
+                </Link>
+              </Button>
 
-                <div className="flex items-center gap-2.5">
-                  <Users className="w-4 h-4 text-gold shrink-0" />
-                  <div>
-                    <span className="text-[10px] text-muted-foreground block uppercase font-mono">Status</span>
-                    <strong className="text-amber-600 dark:text-amber-400 font-semibold">Concluded &bull; Closed</strong>
-                  </div>
-                </div>
-              </div>
+              <Button asChild size="lg" variant="outline" className="rounded-xl border-border text-sm font-semibold gap-2">
+                <Link href="#milestones">
+                  <Award className="w-4 h-4 text-primary" />
+                  <span>Ceremony Highlights &amp; Milestones</span>
+                </Link>
+              </Button>
 
-              {/* Quick Actions & Sister Page Link */}
-              <div className="flex flex-wrap items-center gap-3">
-                <Button asChild size="sm" className="rounded-xl bg-gold hover:bg-gold/90 text-slate-950 font-bold text-xs shadow-sm">
-                  <Link href="#photos">
-                    <Camera className="w-3.5 h-3.5 mr-1.5" />
-                    Celebration Photos (290+)
-                  </Link>
-                </Button>
+              <Button asChild size="lg" variant="ghost" className="rounded-xl text-xs sm:text-sm text-muted-foreground hover:text-foreground">
+                <Link href="#pass-lookup">
+                  Retrieve Attendee Pass &bull; Verify Record
+                </Link>
+              </Button>
+            </div>
+          </div>
 
-                <Button asChild size="sm" variant="outline" className="rounded-xl border-emerald-600/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10 text-xs font-semibold">
-                  <Link href="/events/community-market">
-                    <Store className="w-3.5 h-3.5 mr-1.5 text-emerald-500" />
-                    Community Market Vendor Portal
-                  </Link>
-                </Button>
-
-                <Button asChild size="sm" variant="outline" className="rounded-xl border-border text-xs font-semibold">
-                  <Link href="/media-kit">
-                    <Award className="w-3.5 h-3.5 mr-1.5 text-gold" />
-                    Event Posters & Media Kit
-                  </Link>
-                </Button>
-
-                {/* Mobile Quick Jump */}
-                <Button asChild size="sm" className="rounded-xl bg-primary text-primary-foreground text-xs font-semibold sm:hidden">
-                  <Link href="#rsvp-form">
-                    Event Summary & Passes <ArrowRight className="w-3.5 h-3.5 ml-1" />
-                  </Link>
-                </Button>
-              </div>
-
-              {/* Shareable Link Bar */}
-              <ShareableLinkBar
-                label="Graduation Event"
-                url="https://greenwavesociety.org/events/graduation-cohort-1"
-                shareMessage="Greenwave Society's Empower 360 Cohort I Graduation was celebrated on Friday, 30th October 2026 at Ubunifu Hub, Nairobi. View highlights and passes here:"
-                badge="Event Concluded"
+          {/* Featured Commemorative Photograph */}
+          <div className="max-w-5xl mx-auto">
+            <div className="relative aspect-[16/9] sm:aspect-[21/9] w-full rounded-2xl sm:rounded-3xl overflow-hidden border border-border/80 shadow-2xl bg-slate-950 group">
+              <Image
+                src="https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_290.webp"
+                alt="The 26 Changemakers of Empower 360 Cohort I Assembled at Ubunifu Hub, Nairobi"
+                fill
+                priority
+                sizes="(max-width: 1280px) 100vw, 1200px"
+                className="object-cover group-hover:scale-[1.02] transition-transform duration-700"
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              
+              <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 flex flex-col sm:flex-row sm:items-end justify-between gap-3 text-white">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <Badge className="bg-gold text-slate-950 border-none font-bold text-[10px] tracking-wider uppercase">
+                      Cohort I Assembly
+                    </Badge>
+                    <span className="text-xs text-white/80 font-mono">Friday, 30 Oct 2026 &bull; Ubunifu Hub</span>
+                  </div>
+                  <h3 className="font-serif font-black text-lg sm:text-2xl text-white tracking-tight">
+                    The 26 Certified Leaders of Empower 360 Cohort I
+                  </h3>
+                </div>
+
+                <Button
+                  asChild
+                  size="sm"
+                  className="rounded-xl bg-white/20 hover:bg-white/30 text-white backdrop-blur-md border border-white/20 text-xs font-semibold shrink-0 gap-1.5"
+                >
+                  <Link href="/events/graduation-cohort-1/album">
+                    <span>View in Full Album</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Key Executive Logistics Strip */}
+          <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 p-5 sm:p-6 rounded-2xl bg-card border border-border/80 shadow-sm text-xs">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <Calendar className="w-5 h-5" />
+              </div>
+              <div>
+                <span className="text-[10px] text-muted-foreground uppercase font-mono block">Date Held</span>
+                <strong className="text-sm font-serif font-bold text-foreground">Friday, 30 Oct 2026</strong>
+              </div>
             </div>
 
-            {/* Right Column: Direct Concluded Form / Pass Retrieval */}
-            <div className="lg:col-span-6 w-full" id="rsvp-form">
-              <div id="rsvp" className="scroll-mt-28" />
-              <AttendeeRsvpForm isClosed={true} />
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gold/15 text-gold flex items-center justify-center shrink-0">
+                <Clock className="w-5 h-5" />
+              </div>
+              <div>
+                <span className="text-[10px] text-muted-foreground uppercase font-mono block">Time</span>
+                <strong className="text-sm font-serif font-bold text-foreground">10:30 AM to 3:00 PM</strong>
+              </div>
             </div>
 
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                <MapPin className="w-5 h-5" />
+              </div>
+              <div>
+                <span className="text-[10px] text-muted-foreground uppercase font-mono block">Venue</span>
+                <strong className="text-sm font-serif font-bold text-foreground">Ubunifu Hub, Nairobi</strong>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+                <CheckCircle2 className="w-5 h-5" />
+              </div>
+              <div>
+                <span className="text-[10px] text-muted-foreground uppercase font-mono block">Status</span>
+                <strong className="text-sm font-serif font-bold text-foreground">Concluded &bull; Certified</strong>
+              </div>
+            </div>
+          </div>
+
+          {/* Shareable Link Bar */}
+          <div className="max-w-5xl mx-auto">
+            <ShareableLinkBar
+              label="Official Graduation Retrospective"
+              url="https://greenwavesociety.org/events/graduation-cohort-1"
+              shareMessage="Celebrating Greenwave Society's Empower 360 Cohort I Graduation: 26 youth changemakers certified on 30 Oct 2026 at Ubunifu Hub, Nairobi. View the official ceremony showcase and photo album:"
+              badge="Concluded Celebration"
+            />
+          </div>
+
+        </div>
+      </section>
+
+      {/* SECTION 1: THE COHORT JOURNEY & ACADEMIC RIGOR */}
+      <section id="milestones" className="py-16 sm:py-24 max-w-7xl mx-auto px-6 sm:px-8 w-full border-b border-border/50 scroll-mt-16">
+        <div className="text-center max-w-3xl mx-auto mb-14 space-y-3">
+          <Badge variant="outline" className="text-xs uppercase tracking-wider text-primary border-primary/20 px-3.5 py-1 rounded-full font-bold">
+            Curriculum &amp; Leadership Rigor
+          </Badge>
+          <h2 className="text-3xl sm:text-4xl font-serif font-black text-foreground tracking-tight">
+            Translating Systems Thinking into Community Action
+          </h2>
+          <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+            Delivered in partnership with <strong>The 50 Percent</strong>, the Empower 360 program challenged youth leaders to move beyond symptoms to solve root causes of local ecological, economic, and social challenges.
+          </p>
+        </div>
+
+        {/* 4 Pillars Grid */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="p-6 rounded-2xl bg-card border border-border/80 space-y-3 shadow-xs hover:border-primary/30 transition-all duration-300">
+            <div className="w-10 h-10 rounded-xl bg-gold/15 text-gold flex items-center justify-center">
+              <Award className="w-5 h-5" />
+            </div>
+            <h3 className="font-serif font-bold text-base text-foreground">Official Certification</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Formal stage conferment honoring 26 graduands for completing comprehensive training in systems thinking and grassroots civic engagement.
+            </p>
+          </div>
+
+          <div className="p-6 rounded-2xl bg-card border border-border/80 space-y-3 shadow-xs hover:border-primary/30 transition-all duration-300">
+            <div className="w-10 h-10 rounded-xl bg-primary/15 text-primary flex items-center justify-center">
+              <BookOpen className="w-5 h-5" />
+            </div>
+            <h3 className="font-serif font-bold text-base text-foreground">Capstone Showcases</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Graduand teams pitched actionable community interventions addressing climate literacy, vocational employment, and youth mental health support.
+            </p>
+          </div>
+
+          <div className="p-6 rounded-2xl bg-card border border-border/80 space-y-3 shadow-xs hover:border-primary/30 transition-all duration-300">
+            <div className="w-10 h-10 rounded-xl bg-teal-500/15 text-teal-600 dark:text-teal-400 flex items-center justify-center">
+              <Users className="w-5 h-5" />
+            </div>
+            <h3 className="font-serif font-bold text-base text-foreground">Democratic Governance</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Every member learned peer facilitation, rotated chairing weekly meetings, managed practical project budgets, and led debate.
+            </p>
+          </div>
+
+          <div className="p-6 rounded-2xl bg-card border border-border/80 space-y-3 shadow-xs hover:border-primary/30 transition-all duration-300">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+              <Camera className="w-5 h-5" />
+            </div>
+            <h3 className="font-serif font-bold text-base text-foreground">Lifelong Alumni Network</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Induction into Greenwave Society&apos;s active changemaker directory, unlocking ongoing mentorship, project funding, and civic partnerships.
+            </p>
+          </div>
+        </div>
+
+        {/* Executive Milestone Metrics */}
+        <div className="mt-10 p-6 sm:p-8 rounded-3xl bg-secondary/30 border border-border/70 grid grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+          <div className="space-y-1">
+            <span className="text-3xl sm:text-4xl font-serif font-black text-primary">26</span>
+            <span className="text-xs font-semibold text-muted-foreground block uppercase font-mono">Leaders Certified</span>
+          </div>
+
+          <div className="space-y-1">
+            <span className="text-3xl sm:text-4xl font-serif font-black text-gold">100%</span>
+            <span className="text-xs font-semibold text-muted-foreground block uppercase font-mono">Capstone Completion</span>
+          </div>
+
+          <div className="space-y-1">
+            <span className="text-3xl sm:text-4xl font-serif font-black text-emerald-600 dark:text-emerald-400">6 Months</span>
+            <span className="text-xs font-semibold text-muted-foreground block uppercase font-mono">Rigorous Training</span>
+          </div>
+
+          <div className="space-y-1">
+            <span className="text-3xl sm:text-4xl font-serif font-black text-foreground">296</span>
+            <span className="text-xs font-semibold text-muted-foreground block uppercase font-mono">Archive Photographs</span>
           </div>
         </div>
       </section>
 
-      {/* Official Photo Gallery & Celebration Moments */}
-      <GraduationMomentsGallery allPhotos={graduationPhotos} />
+      {/* SECTION 2: OFFICIAL CEREMONY MOMENTS GALLERY */}
+      <section id="photos" className="scroll-mt-16 border-b border-border/50">
+        <GraduationMomentsGallery />
+      </section>
 
-      {/* Ceremony Pillars (4 Key Highlights) */}
-      <section className="py-12 sm:py-16 max-w-7xl mx-auto px-6 sm:px-8 w-full border-b border-border/50">
+      {/* SECTION 3: FORMAL ORDER OF PROCEEDINGS */}
+      <section id="schedule" className="py-16 sm:py-24 max-w-7xl mx-auto px-6 sm:px-8 w-full border-b border-border/50">
+        <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
+          <Badge variant="outline" className="text-xs uppercase tracking-wider text-primary border-primary/20 px-3.5 py-1 rounded-full font-bold">
+            Proceedings of the Day
+          </Badge>
+          <h2 className="text-2xl sm:text-3xl font-serif font-black text-foreground tracking-tight">
+            Ceremony Schedule &bull; Friday, 30 October 2026
+          </h2>
+          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+            Record of official proceedings conducted at Ubunifu Hub, Nairobi.
+          </p>
+        </div>
+
+        <div className="max-w-4xl mx-auto grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="p-4 rounded-2xl bg-card border border-border/70 space-y-2">
+            <div className="flex items-center gap-2 text-xs font-mono font-bold text-primary">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>10:00 AM</span>
+            </div>
+            <h4 className="font-serif font-bold text-sm text-foreground">Graduand Arrival &amp; Badging</h4>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Registration, badge issuance, and seating arrangement at the auditorium.
+            </p>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-card border border-border/70 space-y-2">
+            <div className="flex items-center gap-2 text-xs font-mono font-bold text-primary">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>10:30 AM</span>
+            </div>
+            <h4 className="font-serif font-bold text-sm text-foreground">Convocation Address</h4>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Opening reflection on youth systems thinking and community leadership in Kenya.
+            </p>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-card border border-border/70 space-y-2">
+            <div className="flex items-center gap-2 text-xs font-mono font-bold text-primary">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>11:15 AM</span>
+            </div>
+            <h4 className="font-serif font-bold text-sm text-foreground">Certificate Conferment</h4>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Official stage presentation of completion certificates to all 26 graduands.
+            </p>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-card border border-border/70 space-y-2">
+            <div className="flex items-center gap-2 text-xs font-mono font-bold text-primary">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>12:00 PM</span>
+            </div>
+            <h4 className="font-serif font-bold text-sm text-foreground">Capstone Pitches</h4>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Changemaker groups presented community initiatives to invited mentors and guests.
+            </p>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-card border border-border/70 space-y-2">
+            <div className="flex items-center gap-2 text-xs font-mono font-bold text-primary">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>1:00 PM</span>
+            </div>
+            <h4 className="font-serif font-bold text-sm text-foreground">Fellowship &amp; Refreshments</h4>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Networking luncheon and visits to the concurrent zero-plastic community market.
+            </p>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-card border border-border/70 space-y-2">
+            <div className="flex items-center gap-2 text-xs font-mono font-bold text-primary">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>3:00 PM</span>
+            </div>
+            <h4 className="font-serif font-bold text-sm text-foreground">Portraits &amp; Event Close</h4>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Formal cohort photography session, mentor congratulations, and induction close.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 4: SEPARATE SISTER INITIATIVES (CLEANLY DECOUPLED) */}
+      <section className="py-16 sm:py-20 max-w-7xl mx-auto px-6 sm:px-8 w-full border-b border-border/50">
         <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
-          <Badge variant="outline" className="text-xs uppercase tracking-wider text-primary border-primary/20 px-3 py-0.5 rounded-full font-bold">
-            Ceremony Highlights
+          <Badge variant="outline" className="text-xs uppercase tracking-wider text-muted-foreground border-border px-3 py-0.5 rounded-full font-bold">
+            Related Initiatives
           </Badge>
           <h2 className="text-2xl sm:text-3xl font-serif font-black text-foreground">
-            What Made Celebration Day Special
+            Explore Sister Hubs &amp; Media
           </h2>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          <div className="p-5 rounded-2xl bg-card border border-border/70 space-y-2.5 shadow-xs">
-            <div className="w-9 h-9 rounded-xl bg-gold/15 text-gold flex items-center justify-center">
-              <Award className="w-4 h-4" />
-            </div>
-            <h3 className="font-serif font-bold text-sm text-foreground">Official Certification</h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Presentation of formal completion certificates recognizing systems thinking and youth leadership execution.
-            </p>
-          </div>
-
-          <div className="p-5 rounded-2xl bg-card border border-border/70 space-y-2.5 shadow-xs">
-            <div className="w-9 h-9 rounded-xl bg-primary/15 text-primary flex items-center justify-center">
-              <BookOpen className="w-4 h-4" />
-            </div>
-            <h3 className="font-serif font-bold text-sm text-foreground">Capstone Showcase</h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Graduands pitch community interventions addressing climate literacy, youth employment, and mental health barazas.
-            </p>
-          </div>
-
-          <div className="p-5 rounded-2xl bg-card border border-border/70 space-y-2.5 shadow-xs">
-            <div className="w-9 h-9 rounded-xl bg-teal-500/15 text-teal-600 flex items-center justify-center">
-              <Users className="w-4 h-4" />
-            </div>
-            <h3 className="font-serif font-bold text-sm text-foreground">Reserved Seating & +1s</h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Priority front seating for graduands, with family members, mentors, and collaborators warmly accommodated.
-            </p>
-          </div>
-
-          <div className="p-5 rounded-2xl bg-card border border-border/70 space-y-2.5 shadow-xs">
-            <div className="w-9 h-9 rounded-xl bg-emerald-500/15 text-emerald-600 flex items-center justify-center">
-              <Camera className="w-4 h-4" />
-            </div>
-            <h3 className="font-serif font-bold text-sm text-foreground">Portraits & Network</h3>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Professional cohort photo sessions, networking over Kenyan refreshments, and induction into the Greenwave network.
-            </p>
-          </div>
-        </div>
-
-        {/* Schedule & Concurrent Market Strip */}
-        <div className="mt-8 grid md:grid-cols-12 gap-5 items-stretch">
-          <div className="md:col-span-7 p-5 rounded-2xl bg-secondary/20 border border-border/60 space-y-3">
-            <div className="text-xs font-mono uppercase tracking-wider font-bold text-primary">
-              Ceremony Schedule (Friday, 30 Oct 2026)
-            </div>
-            <div className="grid sm:grid-cols-2 gap-2.5 text-xs text-muted-foreground">
-              <div className="flex items-start gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                <span><strong>10:00 AM:</strong> Graduand arrival & badges</span>
+        <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-6">
+          {/* Card 1: Green Community Market */}
+          <div className="p-6 rounded-2xl bg-card border border-border/80 shadow-sm flex flex-col justify-between space-y-4 hover:border-emerald-500/40 transition-colors">
+            <div className="space-y-2.5">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                <Store className="w-5 h-5" />
               </div>
-              <div className="flex items-start gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                <span><strong>10:30 AM:</strong> Welcome & keynote</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                <span><strong>11:15 AM:</strong> Certificate presentation</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                <span><strong>12:00 PM:</strong> Capstone project pitches</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                <span><strong>1:00 PM:</strong> Refreshments & market visit</span>
-              </div>
-              <div className="flex items-start gap-2">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                <span><strong>3:00 PM:</strong> Portraits & event close</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="md:col-span-5 p-5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex flex-col justify-between space-y-3">
-            <div>
-              <div className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 font-bold text-xs uppercase tracking-wider font-mono">
-                <Store className="w-3.5 h-3.5" /> Concurrent Market
-              </div>
-              <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
-                Local sustainable snacks, artisanal coffee, authors, and eco crafts are setting up at Ubunifu Hub to support all attendees.
+              <h3 className="font-serif font-black text-lg text-foreground">
+                Green Community Market
+              </h3>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                The zero single-use plastic artisan market that ran concurrently at Ubunifu Hub, connecting sustainable crafters, authors, and healthy food innovators with attendees.
               </p>
             </div>
-            <Button asChild size="sm" variant="outline" className="rounded-xl border-emerald-600/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10 text-xs font-semibold self-start">
+
+            <Button asChild variant="outline" size="sm" className="rounded-xl border-emerald-600/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10 text-xs font-semibold self-start gap-1.5">
               <Link href="/events/community-market">
-                View Market Stalls <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                <span>View Community Market Portal</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </Button>
+          </div>
+
+          {/* Card 2: Media Kit & Official Assets */}
+          <div className="p-6 rounded-2xl bg-card border border-border/80 shadow-sm flex flex-col justify-between space-y-4 hover:border-gold/40 transition-colors">
+            <div className="space-y-2.5">
+              <div className="w-10 h-10 rounded-xl bg-gold/15 text-gold flex items-center justify-center">
+                <FileText className="w-5 h-5" />
+              </div>
+              <h3 className="font-serif font-black text-lg text-foreground">
+                Official Media Kit &amp; Press Assets
+              </h3>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Access official commemorative event flyers, high-resolution ceremony posters, mobile story cards, and Greenwave Society brand assets.
+              </p>
+            </div>
+
+            <Button asChild variant="outline" size="sm" className="rounded-xl border-border text-xs font-semibold self-start gap-1.5">
+              <Link href="/media-kit">
+                <span>Access Media Kit Hub</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </Button>
           </div>
         </div>
       </section>
 
-      {/* Official Graduation Invitation Posters & Social Kit */}
-      <section className="py-12 sm:py-16 max-w-7xl mx-auto px-6 sm:px-8 w-full">
-        <FlyerMediaSection categoryFilter="attendee" />
+      {/* SECTION 5: DISCRETE ATTENDEE RECORD & PASS LOOKUP */}
+      <section id="pass-lookup" className="py-16 sm:py-24 max-w-4xl mx-auto px-6 sm:px-8 w-full scroll-mt-16">
+        <div className="text-center space-y-2 mb-8">
+          <div className="inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider text-muted-foreground font-semibold">
+            <ShieldCheck className="w-4 h-4 text-primary" />
+            Verified Attendance Records
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-serif font-black text-foreground">
+            Retrieve Your Admission Pass &amp; Certificate
+          </h2>
+          <p className="text-xs sm:text-sm text-muted-foreground max-w-md mx-auto">
+            If you were registered as an attendee or graduand for Cohort I, enter your email below to retrieve your pass record.
+          </p>
+        </div>
+
+        <AttendeeRsvpForm isClosed={true} />
       </section>
 
       <Footer />

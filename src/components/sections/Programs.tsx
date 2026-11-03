@@ -26,7 +26,7 @@ const programs: ProgramItem[] = [
     tags: ["Flagship", "Empower 360", "Leadership", "Cohort I"],
     span: "md:col-span-2 lg:col-span-2",
     cta: {
-      text: "Cohort I Graduation & Market (Oct 30)",
+      text: "Explore Cohort I Graduation Showcase",
       href: "/events/graduation-cohort-1",
     },
   },

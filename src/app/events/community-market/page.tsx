@@ -276,12 +276,12 @@ export default function CommunityMarketPage() {
                 <GraduationCap className="w-3.5 h-3.5" /> Empower 360 Ceremony
               </div>
               <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
-                Attending as a family member, graduand, mentor, or supporter? RSVP for the ceremony with free admission and digital pass.
+                Celebrated on Friday, 30th October 2026 at Ubunifu Hub. Explore the 26 certified leaders and 296-photo retrospective.
               </p>
             </div>
             <Button asChild size="sm" className="rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold self-start">
               <Link href="/events/graduation-cohort-1">
-                Ceremony RSVP <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                Ceremony Retrospective <ArrowRight className="w-3.5 h-3.5 ml-1" />
               </Link>
             </Button>
           </div>
