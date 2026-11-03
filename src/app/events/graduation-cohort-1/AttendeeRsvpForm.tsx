@@ -237,7 +237,7 @@ export function AttendeeRsvpForm({ isClosed = true }: { isClosed?: boolean }) {
             </div>
             <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-center">
               <span className="text-[10px] text-amber-700 dark:text-amber-400 uppercase font-mono block">Graduands</span>
-              <strong className="text-sm sm:text-base font-serif font-black text-gold">26 Changemakers</strong>
+              <strong className="text-sm sm:text-base font-serif font-black text-gold">12 Graduands (28 Enrolled)</strong>
             </div>
             <div className="col-span-2 sm:col-span-1 p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-center">
               <span className="text-[10px] text-emerald-700 dark:text-emerald-400 uppercase font-mono block">Market & Venue</span>

@@ -24,8 +24,8 @@ export const DEFAULT_NEWS_ARTICLES: PublicArticle[] = [
   {
     id: "news-ypg-grad-2026",
     slug: "ypg-cohort-1-graduation-historic-milestone",
-    title: "YPG Cohort I Concludes with Historic 26-Changemaker Graduation & Zero-Plastic Market",
-    excerpt: "On Friday, 30th October 2026, Greenwave Society conferred honors upon 26 youth leaders at Ubunifu Hub, Nairobi, alongside launching our self-hosted 296-photo interactive archive.",
+    title: "YPG Cohort I Concludes with Historic 12-Changemaker Graduation & Zero-Plastic Market",
+    excerpt: "On Friday, 30th October 2026, Greenwave Society conferred honors upon 12 youth leaders (from 28 cohort members) at Ubunifu Hub, Nairobi, alongside launching our self-hosted 296-photo interactive archive.",
     category: "Convocation",
     readTime: "4 min read",
     author: "Greenwave Society Communications",
@@ -45,7 +45,7 @@ export const DEFAULT_NEWS_ARTICLES: PublicArticle[] = [
 
 On Friday, 30th October 2026, the auditoriums and grounds of Ubunifu Hub in Nairobi came alive as Greenwave Society celebrated the official graduation of **YPG Cohort I: Young Person's Guide to Systems Change**.
 
-Twenty-six young changemakers aged 18 to 35 formally received their completion certificates following six months of intensive, hands-on training delivered in collaboration with **The 50 Percent**. Moving far beyond traditional classroom theory, the curriculum challenged each fellow to diagnose complex, interconnected root causes of ecological and socio-economic vulnerability in Nairobi and secondary towns.
+Twelve young changemakers aged 18 to 35 formally received their completion certificates following six months of intensive, hands-on training delivered in collaboration with **The 50 Percent** (from an initial cohort of 28 enrolled members). Moving far beyond traditional classroom theory, the curriculum challenged each fellow to diagnose complex, interconnected root causes of ecological and socio-economic vulnerability in Nairobi and secondary towns.
 
 #### Capstone Pitches Translating Theory into Community Action
 
@@ -66,7 +66,7 @@ To celebrate and preserve these authentic memories, Greenwave Society has deploy
 * **[Explore the Official 296-Photo Album](/events/graduation-cohort-1/album)**
 * **[Read the Full Convocation Retrospective](/events/graduation-cohort-1)**
 
-All 26 graduates now enter Greenwave's active changemaker alumni directory, unlocking ongoing mentorship, seed incubation, and civic partnership opportunities across Kenya.`,
+All 12 graduates now enter Greenwave's active changemaker alumni directory, unlocking ongoing mentorship, seed incubation, and civic partnership opportunities across Kenya.`,
   },
   {
     id: "news-ypg-cohort-2-apps",
@@ -227,7 +227,7 @@ Read more about our signature policy dialogues in the **[Programs Section](/prog
     id: "news-cohort-1-legacy",
     slug: "empower360-cohort-1-graduation",
     title: "YPG: Young Person's Guide to Systems Change Graduation Ceremony & Community Market",
-    excerpt: "Celebrated on Friday, 30th October 2026 at Ubunifu Hub, Nairobi: honoring 26 certified youth changemakers in systems thinking.",
+    excerpt: "Celebrated on Friday, 30th October 2026 at Ubunifu Hub, Nairobi: honoring 12 certified youth changemakers in systems thinking (from 28 cohort members).",
     category: "Milestones",
     readTime: "3 min read",
     author: "Greenwave Editorial",

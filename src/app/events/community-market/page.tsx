@@ -276,7 +276,7 @@ export default function CommunityMarketPage() {
                 <GraduationCap className="w-3.5 h-3.5" /> YPG Ceremony
               </div>
               <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
-                Celebrated on Friday, 30th October 2026 at Ubunifu Hub. Explore the 26 certified leaders and 296-photo retrospective.
+                Celebrated on Friday, 30th October 2026 at Ubunifu Hub. Explore the 12 certified leaders and 296-photo retrospective.
               </p>
             </div>
             <Button asChild size="sm" className="rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold self-start">

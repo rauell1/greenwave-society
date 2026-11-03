@@ -144,7 +144,7 @@ export const CURATED_MOMENTS: EventPhotoItem[] = [
   {
     id: "graduation_cohort_1_290",
     title: "The YPG Inaugural Cohort",
-    description: "The 26 changemakers of YPG: Young Person's Guide to Systems Change Cohort I standing together at Ubunifu Hub.",
+    description: "The 12 graduands and peers of YPG: Young Person's Guide to Systems Change Cohort I standing together at Ubunifu Hub.",
     category: "fellowship",
     url: "https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_290.webp",
     originalUrl: "https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/original/graduation_cohort_1_290.jpg",
@@ -154,7 +154,7 @@ export const CURATED_MOMENTS: EventPhotoItem[] = [
 
 const CELEBRATION_POST_TEXT = `🎓 Celebrating Greenwave Society's YPG: Young Person's Guide to Systems Change Cohort I Graduation!
 
-On Friday, 30th October 2026 at Ubunifu Hub, Nairobi, 26 youth changemakers officially graduated after rigorous hands-on training in systems thinking, grassroots climate action, and community leadership through the Young Person's Guide to Systems Change (YPG) program in partnership with The 50 Percent.
+On Friday, 30th October 2026 at Ubunifu Hub, Nairobi, 12 youth changemakers officially graduated after rigorous hands-on training in systems thinking, grassroots climate action, and community leadership through the Young Person's Guide to Systems Change (YPG) program in partnership with The 50 Percent (from an initial cohort of 28 members).
 
 Alongside the ceremony, our zero single-use plastic Community Market connected local artisans, book publishers, and eco-innovators with hundreds of attendees.
 
@@ -226,7 +226,7 @@ export function GraduationMomentsGallery({ allPhotos = [] }: GraduationMomentsGa
   };
 
   const handleShareX = () => {
-    const text = encodeURIComponent("🎓 Celebrating Greenwave Society's YPG: Young Person's Guide to Systems Change Cohort I Graduation! 26 changemakers certified on 30 Oct 2026 at Ubunifu Hub, Nairobi. View the 296 photo album here:");
+    const text = encodeURIComponent("🎓 Celebrating Greenwave Society's YPG: Young Person's Guide to Systems Change Cohort I Graduation! 12 graduands certified on 30 Oct 2026 at Ubunifu Hub, Nairobi (from 28 cohort members). View the 296 photo album here:");
     const url = encodeURIComponent(PUBLIC_ALBUM_URL);
     window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, "_blank", "noopener,noreferrer");
   };
@@ -592,7 +592,7 @@ export function GraduationMomentsGallery({ allPhotos = [] }: GraduationMomentsGa
               </div>
 
               <p className="text-white/75 text-[11px] leading-relaxed">
-                Congratulate our 26 inaugural youth leaders across your personal or organizational channels:
+                Congratulate our 12 certified youth leaders across your personal or organizational channels:
               </p>
 
               <div className="grid grid-cols-3 gap-2">

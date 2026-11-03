@@ -13,11 +13,11 @@ export interface Activity {
 export const DEFAULT_ACTIVITIES: Activity[] = [
   {
     title: "YPG: Young Person's Guide to Systems Change Graduation Ceremony & Community Market",
-    desc: "Celebrated the official certification of 26 youth changemakers following intensive systems thinking and community leadership training in partnership with The 50 Percent, paired with our zero single-use plastic artisan market.",
+    desc: "Celebrated the official certification of 12 youth changemakers (from an initial cohort of 28 members) following intensive systems thinking and community leadership training in partnership with The 50 Percent, paired with our zero single-use plastic artisan market.",
     date: "2026-10-30",
     type: "Flagship",
     location: "Ubunifu Hub, Nairobi",
-    highlight: "26 Leaders Certified • 296 Photo Archive",
+    highlight: "12 Graduands Certified • 28 Started",
     mediaUrl: "/events/graduation-cohort-1",
     imageUrl: "https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_001.webp",
     imageAlt: "YPG: Young Person's Guide to Systems Change Cohort I official graduation ceremony and certification on stage",

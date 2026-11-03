@@ -31,13 +31,13 @@ import { APP_CONFIG } from "@/config/app.config";
 
 export const metadata: Metadata = {
   title: "YPG: Young Person's Guide to Systems Change Graduation Ceremony | Greenwave Society",
-  description: "Official convocation and milestone retrospective celebrating the 26 certified youth changemakers of YPG: Young Person's Guide to Systems Change Cohort I on Friday, 30th October 2026 at Ubunifu Hub, Nairobi.",
+  description: "Official convocation and milestone retrospective celebrating the 12 certified graduands of YPG: Young Person's Guide to Systems Change Cohort I (from an initial cohort of 28 members) on Friday, 30th October 2026 at Ubunifu Hub, Nairobi.",
   alternates: {
     canonical: `${APP_CONFIG.url}/events/graduation-cohort-1`,
   },
   openGraph: {
     title: "YPG: Young Person's Guide to Systems Change Graduation Ceremony | Greenwave Society",
-    description: "Honoring 26 certified youth leaders in systems thinking, grassroots climate action, and community leadership on Friday, 30th October 2026 at Ubunifu Hub, Nairobi.",
+    description: "Honoring 12 certified youth leaders (from 28 cohort members) in systems thinking, grassroots climate action, and community leadership on Friday, 30th October 2026 at Ubunifu Hub, Nairobi.",
     url: `${APP_CONFIG.url}/events/graduation-cohort-1`,
     siteName: "Greenwave Society",
     images: [
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
         url: "https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_290.webp",
         width: 1600,
         height: 1067,
-        alt: "The 26 Changemakers of YPG: Young Person's Guide to Systems Change Cohort I Assembled at Ubunifu Hub",
+        alt: "The 12 Certified Graduands of YPG: Young Person's Guide to Systems Change Cohort I Assembled at Ubunifu Hub",
       },
     ],
     type: "website",
@@ -71,7 +71,7 @@ export default function GraduationCohortPage() {
       },
     },
     "image": ["https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_290.webp"],
-    "description": "Official graduation ceremony celebrating the 26 inaugural youth leaders of YPG: Young Person's Guide to Systems Change Cohort I.",
+    "description": "Official graduation ceremony celebrating the 12 certified youth graduands of YPG: Young Person's Guide to Systems Change Cohort I (from 28 cohort members).",
     "organizer": {
       "@type": "Organization",
       "name": "Greenwave Society",
@@ -116,7 +116,7 @@ export default function GraduationCohortPage() {
                 Official Convocation &bull; Friday, 30 Oct 2026
               </Badge>
               <Badge variant="outline" className="px-3 py-1 text-xs text-emerald-700 dark:text-emerald-400 border-emerald-500/30 bg-emerald-500/10 rounded-full font-medium">
-                26 Changemakers Certified
+                12 Graduands Certified (28 Started)
               </Badge>
             </div>
 
@@ -126,7 +126,7 @@ export default function GraduationCohortPage() {
             </h1>
 
             <p className="text-sm sm:text-lg text-muted-foreground leading-relaxed max-w-3xl mx-auto">
-              On Friday, 30th October 2026, Greenwave Society officially conferred leadership honors upon 26 inaugural youth changemakers at Ubunifu Hub, Nairobi. Following months of intensive systems thinking, grassroots climate action, and community mentorship through the Young Person&apos;s Guide to Systems Change (YPG) program, these leaders now advance into the active Greenwave alumni network.
+              On Friday, 30th October 2026, Greenwave Society officially conferred leadership honors upon 12 inaugural youth graduands at Ubunifu Hub, Nairobi. Selected from an initial cohort of 28 enrolled members, these leaders completed months of intensive systems thinking, grassroots climate action, and community mentorship through the Young Person&apos;s Guide to Systems Change (YPG) program in partnership with The 50 Percent, and now advance into the active Greenwave alumni network.
             </p>
 
             {/* Quick Action Buttons */}
@@ -158,7 +158,7 @@ export default function GraduationCohortPage() {
             <div className="relative aspect-[16/9] sm:aspect-[21/9] w-full rounded-2xl sm:rounded-3xl overflow-hidden border border-border/80 shadow-2xl bg-slate-950 group">
               <Image
                 src="https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_290.webp"
-                alt="The 26 Changemakers of YPG: Young Person's Guide to Systems Change Cohort I Assembled at Ubunifu Hub, Nairobi"
+                alt="The 12 Certified Graduands of YPG: Young Person's Guide to Systems Change Cohort I Assembled at Ubunifu Hub, Nairobi"
                 fill
                 priority
                 sizes="(max-width: 1280px) 100vw, 1200px"
@@ -175,7 +175,7 @@ export default function GraduationCohortPage() {
                     <span className="text-xs text-white/80 font-mono">Friday, 30 Oct 2026 &bull; Ubunifu Hub</span>
                   </div>
                   <h3 className="font-serif font-black text-lg sm:text-2xl text-white tracking-tight">
-                    The 26 Certified Leaders of YPG: Young Person&apos;s Guide to Systems Change Cohort I
+                    The 12 Certified Leaders of YPG: Young Person&apos;s Guide to Systems Change Cohort I
                   </h3>
                 </div>
 
@@ -241,7 +241,7 @@ export default function GraduationCohortPage() {
             <ShareableLinkBar
               label="Official Graduation Retrospective"
               url="https://greenwavesociety.org/events/graduation-cohort-1"
-              shareMessage="Celebrating Greenwave Society's YPG: Young Person's Guide to Systems Change Cohort I Graduation: 26 youth changemakers certified on 30 Oct 2026 at Ubunifu Hub, Nairobi. View the official ceremony showcase and photo album:"
+              shareMessage="Celebrating Greenwave Society's YPG: Young Person's Guide to Systems Change Cohort I Graduation: 12 youth changemakers certified on 30 Oct 2026 at Ubunifu Hub, Nairobi (from 28 cohort members). View the official ceremony showcase and photo album:"
               badge="Concluded Celebration"
             />
           </div>
@@ -271,7 +271,7 @@ export default function GraduationCohortPage() {
             </div>
             <h3 className="font-serif font-bold text-base text-foreground">Official Certification</h3>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Formal stage conferment honoring 26 graduands for completing comprehensive training in systems thinking and grassroots civic engagement.
+              Formal stage conferment honoring 12 graduands who completed comprehensive training and capstones from an initial cohort of 28 youth leaders.
             </p>
           </div>
 
@@ -309,13 +309,13 @@ export default function GraduationCohortPage() {
         {/* Executive Milestone Metrics */}
         <div className="mt-10 p-6 sm:p-8 rounded-3xl bg-secondary/30 border border-border/70 grid grid-cols-2 lg:grid-cols-4 gap-6 text-center">
           <div className="space-y-1">
-            <span className="text-3xl sm:text-4xl font-serif font-black text-primary">26</span>
-            <span className="text-xs font-semibold text-muted-foreground block uppercase font-mono">Leaders Certified</span>
+            <span className="text-3xl sm:text-4xl font-serif font-black text-primary">12</span>
+            <span className="text-xs font-semibold text-muted-foreground block uppercase font-mono">Graduands Certified</span>
           </div>
 
           <div className="space-y-1">
-            <span className="text-3xl sm:text-4xl font-serif font-black text-gold">100%</span>
-            <span className="text-xs font-semibold text-muted-foreground block uppercase font-mono">Capstone Completion</span>
+            <span className="text-3xl sm:text-4xl font-serif font-black text-gold">28</span>
+            <span className="text-xs font-semibold text-muted-foreground block uppercase font-mono">Enrolled Members Started</span>
           </div>
 
           <div className="space-y-1">
@@ -379,7 +379,7 @@ export default function GraduationCohortPage() {
             </div>
             <h4 className="font-serif font-bold text-sm text-foreground">Certificate Conferment</h4>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Official stage presentation of completion certificates to all 26 graduands.
+              Official stage presentation of completion certificates to all 12 graduands.
             </p>
           </div>
 

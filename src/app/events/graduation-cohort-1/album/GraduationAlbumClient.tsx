@@ -257,7 +257,7 @@ export function GraduationAlbumClient({ photos }: GraduationAlbumClientProps) {
               </span>
               <span>&bull;</span>
               <span className="flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-gold" /> 26 Youth Changemakers Certified
+                <Sparkles className="w-3.5 h-3.5 text-gold" /> 12 Graduands Certified (28 Cohort Members)
               </span>
             </div>
           </div>
