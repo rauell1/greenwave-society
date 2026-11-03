@@ -44,7 +44,7 @@ const PUBLIC_ALBUM_URL = "https://greenwavesociety.org/events/graduation-cohort-
 export const CURATED_MOMENTS: EventPhotoItem[] = [
   {
     id: "AP1GczNOwine1J1HZHRFOx5xIkLVXIq7pY6UzEKrJwbie03PXiVBz-nxEDTpwN8MZSmwAvnWu75x4kqLy52J4VlHRYM3HRDtfstaWAWX1hf3qtKRokeTGiA",
-    title: "Empower 360 Cohort I Official Certification",
+    title: "YPG Cohort I Official Certification",
     description: "Graduand receiving completion honors and certificate recognition on stage.",
     category: "certification",
     url: "https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_001.webp",
@@ -143,8 +143,8 @@ export const CURATED_MOMENTS: EventPhotoItem[] = [
   },
   {
     id: "graduation_cohort_1_290",
-    title: "The Empower 360 Inaugural Cohort",
-    description: "The 26 changemakers of Empower 360 Cohort I standing together at Ubunifu Hub.",
+    title: "The YPG Inaugural Cohort",
+    description: "The 26 changemakers of YPG: Young Person's Guide to Systems Change Cohort I standing together at Ubunifu Hub.",
     category: "fellowship",
     url: "https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_290.webp",
     originalUrl: "https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/original/graduation_cohort_1_290.jpg",
@@ -152,9 +152,9 @@ export const CURATED_MOMENTS: EventPhotoItem[] = [
   },
 ];
 
-const CELEBRATION_POST_TEXT = `🎓 Celebrating Greenwave Society's Empower 360 Cohort I Graduation!
+const CELEBRATION_POST_TEXT = `🎓 Celebrating Greenwave Society's YPG: Young Person's Guide to Systems Change Cohort I Graduation!
 
-On Friday, 30th October 2026 at Ubunifu Hub, Nairobi, 26 youth changemakers officially graduated after rigorous hands-on training in systems thinking, grassroots climate action, and community leadership.
+On Friday, 30th October 2026 at Ubunifu Hub, Nairobi, 26 youth changemakers officially graduated after rigorous hands-on training in systems thinking, grassroots climate action, and community leadership through the Young Person's Guide to Systems Change (YPG) program in partnership with The 50 Percent.
 
 Alongside the ceremony, our zero single-use plastic Community Market connected local artisans, book publishers, and eco-innovators with hundreds of attendees.
 
@@ -164,7 +164,7 @@ ${PUBLIC_ALBUM_URL}
 Recap & event details:
 https://greenwavesociety.org/events/graduation-cohort-1
 
-#GreenwaveSociety #Empower360 #YouthLeadership #ClimateAction #CommunityFirst`;
+#GreenwaveSociety #YPG #YoungPersonsGuide #SystemsChange #YouthLeadership #ClimateAction #CommunityFirst`;
 
 interface GraduationMomentsGalleryProps {
   allPhotos?: GraduationPhoto[];
@@ -226,7 +226,7 @@ export function GraduationMomentsGallery({ allPhotos = [] }: GraduationMomentsGa
   };
 
   const handleShareX = () => {
-    const text = encodeURIComponent("🎓 Celebrating Greenwave Society's Empower 360 Cohort I Graduation! 26 changemakers certified on 30 Oct 2026 at Ubunifu Hub, Nairobi. View the 296 photo album here:");
+    const text = encodeURIComponent("🎓 Celebrating Greenwave Society's YPG: Young Person's Guide to Systems Change Cohort I Graduation! 26 changemakers certified on 30 Oct 2026 at Ubunifu Hub, Nairobi. View the 296 photo album here:");
     const url = encodeURIComponent(PUBLIC_ALBUM_URL);
     window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, "_blank", "noopener,noreferrer");
   };
@@ -240,7 +240,7 @@ export function GraduationMomentsGallery({ allPhotos = [] }: GraduationMomentsGa
   const openLightboxFromArchive = (photo: GraduationPhoto, indexInArchive: number) => {
     const photoItem: EventPhotoItem = {
       id: photo.id,
-      title: `Empower 360 Ceremony • Photograph #${photo.index}`,
+      title: `YPG Ceremony • Photograph #${photo.index}`,
       description: `Authentic photograph captured during the graduation ceremony on Friday, 30th October 2026 at Ubunifu Hub.`,
       category: "fellowship",
       url: photo.webUrl,
@@ -251,7 +251,7 @@ export function GraduationMomentsGallery({ allPhotos = [] }: GraduationMomentsGa
 
     const mappedList: EventPhotoItem[] = filteredArchive.map((p) => ({
       id: p.id,
-      title: `Empower 360 Ceremony • Photograph #${p.index}`,
+      title: `YPG Ceremony • Photograph #${p.index}`,
       description: `Authentic photograph captured during the graduation ceremony on Friday, 30th October 2026 at Ubunifu Hub.`,
       category: "fellowship",
       url: p.webUrl,
@@ -628,7 +628,8 @@ export function GraduationMomentsGallery({ allPhotos = [] }: GraduationMomentsGa
                 <div className="text-[10px] text-white/60 uppercase font-mono mb-1.5">Official Hashtags</div>
                 <div className="flex flex-wrap gap-1.5 text-[11px] text-white/90">
                   <span className="px-2 py-0.5 rounded-md bg-white/10">#GreenwaveSociety</span>
-                  <span className="px-2 py-0.5 rounded-md bg-white/10">#Empower360</span>
+                  <span className="px-2 py-0.5 rounded-md bg-white/10">#YPG</span>
+                  <span className="px-2 py-0.5 rounded-md bg-white/10">#SystemsChange</span>
                   <span className="px-2 py-0.5 rounded-md bg-white/10">#YouthLeadership</span>
                   <span className="px-2 py-0.5 rounded-md bg-white/10">#ClimateAction</span>
                 </div>

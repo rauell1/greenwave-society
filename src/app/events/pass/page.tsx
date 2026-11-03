@@ -184,7 +184,7 @@ export default async function PassPage(props: PageProps) {
     checkedInAt: registration.checkedInAt ? registration.checkedInAt.toISOString() : null,
     qrCodeDataUrl,
     event: {
-      title: registration.event?.title || "Empower 360 Cohort I Graduation & Community Market",
+      title: registration.event?.title || "YPG: Young Person's Guide to Systems Change Cohort I Graduation & Community Market",
       startsAt: registration.event?.startsAt
         ? registration.event.startsAt.toISOString()
         : "2026-10-30T10:30:00+03:00",

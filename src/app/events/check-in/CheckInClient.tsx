@@ -245,7 +245,7 @@ function CheckInContent({ adminEmail }: CheckInClientProps) {
             Door Check-in & Usher Portal
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
-            Empower 360 Cohort I Graduation & Community Market &bull; Ubunifu Hub
+            YPG: Young Person&apos;s Guide to Systems Change Cohort I Graduation &amp; Community Market &bull; Ubunifu Hub
           </p>
         </div>
 

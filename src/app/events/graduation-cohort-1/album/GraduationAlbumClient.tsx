@@ -176,7 +176,7 @@ export function GraduationAlbumClient({ photos }: GraduationAlbumClientProps) {
 
   const handleShareWhatsApp = () => {
     const text = encodeURIComponent(
-      `🎓 Explore the Empower 360 Cohort I Official Photo Album (296 photos) on Greenwave Society: ${window.location.href}`
+      `🎓 Explore the YPG: Young Person's Guide to Systems Change Cohort I Official Photo Album (296 photos) on Greenwave Society: ${window.location.href}`
     );
     window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank", "noopener,noreferrer");
   };
@@ -188,7 +188,7 @@ export function GraduationAlbumClient({ photos }: GraduationAlbumClientProps) {
 
   const handleShareX = () => {
     const text = encodeURIComponent(
-      `🎓 Empower 360 Cohort I Ceremony Photos! Explore all 296 high-resolution photographs hosted on Greenwave Society:`
+      `🎓 YPG: Young Person's Guide to Systems Change Cohort I Ceremony Photos! Explore all 296 high-resolution photographs hosted on Greenwave Society:`
     );
     const url = encodeURIComponent(window.location.href);
     window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, "_blank", "noopener,noreferrer");
@@ -244,7 +244,7 @@ export function GraduationAlbumClient({ photos }: GraduationAlbumClientProps) {
             </div>
 
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black text-foreground tracking-tight">
-              Empower 360 Cohort I Photo Album
+              YPG: Young Person&apos;s Guide to Systems Change Cohort I Photo Album
             </h1>
 
             <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm text-muted-foreground">
@@ -403,7 +403,7 @@ export function GraduationAlbumClient({ photos }: GraduationAlbumClientProps) {
                 <div className="relative aspect-square w-full overflow-hidden bg-muted">
                   <Image
                     src={photo.thumbUrl}
-                    alt={`Empower 360 Ceremony photograph #${photo.index}`}
+                    alt={`YPG Ceremony photograph #${photo.index}`}
                     fill
                     sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
                     className="object-cover transition-transform duration-500 group-hover:scale-108"
@@ -443,7 +443,7 @@ export function GraduationAlbumClient({ photos }: GraduationAlbumClientProps) {
                 <div className="relative w-full overflow-hidden bg-muted">
                   <Image
                     src={photo.thumbUrl}
-                    alt={`Empower 360 Ceremony photograph #${photo.index}`}
+                    alt={`YPG Ceremony photograph #${photo.index}`}
                     width={photo.width}
                     height={photo.height}
                     className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105"
@@ -616,7 +616,7 @@ export function GraduationAlbumClient({ photos }: GraduationAlbumClientProps) {
             <div className="relative w-full h-full max-h-[70vh] flex items-center justify-center">
               <Image
                 src={currentPhoto.webUrl}
-                alt={`Empower 360 Ceremony photograph #${currentPhoto.index}`}
+                alt={`YPG Ceremony photograph #${currentPhoto.index}`}
                 fill
                 sizes="(max-width: 1280px) 100vw, 1600px"
                 className="object-contain"
@@ -670,7 +670,7 @@ export function GraduationAlbumClient({ photos }: GraduationAlbumClientProps) {
             {/* Footer row with details and social sharing */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-1 border-t border-slate-800 text-xs">
               <div className="text-slate-300">
-                <strong>Empower 360 Cohort I Graduation Ceremony</strong> &bull; Ubunifu Hub, Nairobi (30 Oct 2026)
+                <strong>YPG: Young Person&apos;s Guide to Systems Change Cohort I Graduation Ceremony</strong> &bull; Ubunifu Hub, Nairobi (30 Oct 2026)
               </div>
 
               <div className="flex items-center gap-2">

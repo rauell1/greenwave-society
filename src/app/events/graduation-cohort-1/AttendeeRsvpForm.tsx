@@ -62,8 +62,8 @@ interface TicketData {
 }
 
 const EVENT_CALENDAR_DATA = {
-  title: "Empower 360 Ad Hoc Cohort I Graduation & Community Market",
-  description: "Join Greenwave Society in celebrating the Empower 360 Ad Hoc Cohort I changemakers. Ceremony, networking, refreshments, and curated eco-conscious market.",
+  title: "YPG: Young Person's Guide to Systems Change Cohort I Graduation & Community Market",
+  description: "Join Greenwave Society in celebrating the YPG: Young Person's Guide to Systems Change Cohort I changemakers. Ceremony, networking, refreshments, and curated eco-conscious market.",
   location: "Ubunifu Hub, Nairobi, Kenya",
   startsAt: "2026-10-30T07:30:00Z", // 10:30 AM EAT
   endsAt: "2026-10-30T12:00:00Z",   // 3:00 PM EAT
@@ -221,7 +221,7 @@ export function AttendeeRsvpForm({ isClosed = true }: { isClosed?: boolean }) {
             </Badge>
           </div>
           <CardTitle className="text-2xl sm:text-3xl font-serif font-black text-foreground">
-            Empower 360 Cohort I Graduation Has Concluded
+            YPG: Young Person&apos;s Guide to Systems Change Cohort I Graduation Has Concluded
           </CardTitle>
           <CardDescription className="text-sm text-muted-foreground leading-relaxed mt-2">
             Thank you to all our graduands, honorees, families, partners, and community members who joined us at Ubunifu Hub, Nairobi to celebrate this inaugural cohort. Registrations are now closed.
@@ -327,7 +327,7 @@ export function AttendeeRsvpForm({ isClosed = true }: { isClosed?: boolean }) {
             {isGraduandTicket ? "Graduand Official Entry Pass" : "Digital Entry Ticket"}
           </h3>
           <p className="text-white/80 text-xs sm:text-sm mt-1 max-w-sm mx-auto">
-            Empower 360 Ad Hoc Cohort I Graduation & Community Market
+            YPG: Young Person&apos;s Guide to Systems Change Cohort I Graduation &amp; Community Market
           </p>
         </div>
 

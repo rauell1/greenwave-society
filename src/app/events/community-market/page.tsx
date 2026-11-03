@@ -26,14 +26,14 @@ import { APP_CONFIG } from "@/config/app.config";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Green Community Market: Empower 360 Cohort I (Concluded) | Greenwave Society",
-  description: "The curated eco-conscious community market ran on Friday, 30th October 2026 alongside the Empower 360 Cohort I Graduation at Ubunifu Hub, Nairobi. Vendor applications are now closed.",
+  title: "Green Community Market: YPG Cohort I (Concluded) | Greenwave Society",
+  description: "The curated eco-conscious community market ran on Friday, 30th October 2026 alongside the YPG: Young Person's Guide to Systems Change Cohort I Graduation at Ubunifu Hub, Nairobi. Vendor applications are now closed.",
   alternates: {
     canonical: `${APP_CONFIG.url}/events/community-market`,
   },
   openGraph: {
-    title: "Green Community Market: Empower 360 Cohort I (Concluded) | Greenwave Society",
-    description: "The community marketplace ran alongside the Empower 360 Cohort I Graduation on Friday, 30th October 2026 at Ubunifu Hub, Nairobi. Vendor applications are closed.",
+    title: "Green Community Market: YPG Cohort I (Concluded) | Greenwave Society",
+    description: "The community marketplace ran alongside the YPG: Young Person's Guide to Systems Change Cohort I Graduation on Friday, 30th October 2026 at Ubunifu Hub, Nairobi. Vendor applications are closed.",
     url: `${APP_CONFIG.url}/events/community-market`,
     siteName: "Greenwave Society",
     images: [
@@ -100,7 +100,7 @@ export default function CommunityMarketPage() {
                     Market Concluded &bull; Friday, 30 Oct 2026
                   </Badge>
                   <Badge variant="outline" className="px-3 py-1 text-xs text-muted-foreground border-border rounded-full font-medium">
-                    Supporting Empower 360 Cohort I
+                    Supporting YPG Cohort I
                   </Badge>
                 </div>
 
@@ -109,7 +109,7 @@ export default function CommunityMarketPage() {
                 </h1>
 
                 <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                  The Empower 360 Community Market ran on Friday, 30th October 2026 alongside the Cohort I Graduation at Ubunifu Hub, Nairobi. Vendor stall applications are now closed. A heartfelt thank you to all conscious artisans, book vendors, and refreshment partners.
+                  The Community Market ran on Friday, 30th October 2026 alongside the YPG: Young Person&apos;s Guide to Systems Change Cohort I Graduation at Ubunifu Hub, Nairobi. Vendor stall applications are now closed. A heartfelt thank you to all conscious artisans, book vendors, and refreshment partners.
                 </p>
               </div>
 

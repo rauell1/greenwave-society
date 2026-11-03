@@ -202,7 +202,7 @@ export function VendorForm({ isClosed = true }: { isClosed?: boolean }) {
             Community Market Applications Have Concluded
           </CardTitle>
           <CardDescription className="text-sm text-muted-foreground leading-relaxed mt-2">
-            The Empower 360 Community Market ran on Friday, 30th October 2026 alongside the Cohort I Graduation at Ubunifu Hub, Nairobi. Vendor stall applications are now closed. A heartfelt thank you to all our sustainable artisans and vendors.
+            The Community Market ran on Friday, 30th October 2026 alongside the YPG: Young Person&apos;s Guide to Systems Change Cohort I Graduation at Ubunifu Hub, Nairobi. Vendor stall applications are now closed. A heartfelt thank you to all our sustainable artisans and vendors.
           </CardDescription>
         </CardHeader>
 
@@ -299,7 +299,7 @@ export function VendorForm({ isClosed = true }: { isClosed?: boolean }) {
             Market Vendor Stall Pass
           </h3>
           <p className="text-white/80 text-xs sm:text-sm mt-1 max-w-sm mx-auto">
-            Empower 360 Ad Hoc Cohort I Graduation & Community Market
+            YPG: Young Person&apos;s Guide to Systems Change Cohort I Graduation &amp; Community Market
           </p>
         </div>
 

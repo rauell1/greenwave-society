@@ -94,9 +94,13 @@ const defaultProgramItems: Record<
     tags: ["Signature Program", "Policy Dialogue", "Mentorship"],
   },
   programSystemsThinking: {
-    title: "Young Person's Guide to Systems Thinking",
-    desc: "Ad hoc training in partnership with The 50 Percent. We equip youth aged 18-35 to map complex root causes, understand interconnected systemic challenges, and design actionable community-owned solutions.",
-    tags: ["In Partnership with The 50 Percent", "Systems Thinking", "Ad Hoc Training"],
+    title: "Young Person's Guide to Systems Change",
+    desc: "In partnership with The 50 Percent. We equip youth aged 18-35 to map complex root causes, understand interconnected systemic challenges, and design actionable community-owned solutions.",
+    tags: ["In Partnership with The 50 Percent", "Systems Change", "YPG Cohort I"],
+    cta: {
+      text: "Explore YPG Graduation Showcase",
+      href: "/events/graduation-cohort-1",
+    },
   },
   programConservation: {
     title: "Conservation & Restoration",

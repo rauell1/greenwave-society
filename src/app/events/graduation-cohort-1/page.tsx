@@ -30,13 +30,13 @@ import { Button } from "@/components/ui/button";
 import { APP_CONFIG } from "@/config/app.config";
 
 export const metadata: Metadata = {
-  title: "Empower 360 Inaugural Cohort Graduation Ceremony | Greenwave Society",
-  description: "Official convocation and milestone retrospective celebrating the 26 youth changemakers of Empower 360 Cohort I on Friday, 30th October 2026 at Ubunifu Hub, Nairobi.",
+  title: "YPG: Young Person's Guide to Systems Change Graduation Ceremony | Greenwave Society",
+  description: "Official convocation and milestone retrospective celebrating the 26 certified youth changemakers of YPG: Young Person's Guide to Systems Change Cohort I on Friday, 30th October 2026 at Ubunifu Hub, Nairobi.",
   alternates: {
     canonical: `${APP_CONFIG.url}/events/graduation-cohort-1`,
   },
   openGraph: {
-    title: "Empower 360 Inaugural Cohort Graduation Ceremony | Greenwave Society",
+    title: "YPG: Young Person's Guide to Systems Change Graduation Ceremony | Greenwave Society",
     description: "Honoring 26 certified youth leaders in systems thinking, grassroots climate action, and community leadership on Friday, 30th October 2026 at Ubunifu Hub, Nairobi.",
     url: `${APP_CONFIG.url}/events/graduation-cohort-1`,
     siteName: "Greenwave Society",
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
         url: "https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_290.webp",
         width: 1600,
         height: 1067,
-        alt: "The 26 Changemakers of Empower 360 Cohort I Assembled at Ubunifu Hub",
+        alt: "The 26 Changemakers of YPG: Young Person's Guide to Systems Change Cohort I Assembled at Ubunifu Hub",
       },
     ],
     type: "website",
@@ -56,7 +56,7 @@ export default function GraduationCohortPage() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Event",
-    "name": "Greenwave Society Empower 360 Cohort I Graduation Ceremony",
+    "name": "Greenwave Society YPG: Young Person's Guide to Systems Change Cohort I Graduation Ceremony",
     "startDate": "2026-10-30T10:30:00+03:00",
     "endDate": "2026-10-30T15:00:00+03:00",
     "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
@@ -71,7 +71,7 @@ export default function GraduationCohortPage() {
       },
     },
     "image": ["https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_290.webp"],
-    "description": "Official graduation ceremony celebrating the 26 inaugural youth leaders of Empower 360 Cohort I.",
+    "description": "Official graduation ceremony celebrating the 26 inaugural youth leaders of YPG: Young Person's Guide to Systems Change Cohort I.",
     "organizer": {
       "@type": "Organization",
       "name": "Greenwave Society",
@@ -96,7 +96,7 @@ export default function GraduationCohortPage() {
             <ChevronRight className="w-3 h-3 text-muted-foreground/60" />
             <Link href="/programs" className="hover:text-primary transition-colors">Programs</Link>
             <ChevronRight className="w-3 h-3 text-muted-foreground/60" />
-            <span className="text-foreground font-semibold">Empower 360 Cohort I Graduation</span>
+            <span className="text-foreground font-semibold">YPG: Young Person&apos;s Guide to Systems Change Graduation</span>
           </nav>
         </div>
       </div>
@@ -121,12 +121,12 @@ export default function GraduationCohortPage() {
             </div>
 
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-black tracking-tight text-foreground leading-[1.12]">
-              Empower 360 Inaugural Cohort <br />
-              <span className="italic font-normal text-primary">Graduation Ceremony</span>
+              YPG: Young Person&apos;s Guide to Systems Change <br />
+              <span className="italic font-normal text-primary">Inaugural Cohort Graduation Ceremony</span>
             </h1>
 
             <p className="text-sm sm:text-lg text-muted-foreground leading-relaxed max-w-3xl mx-auto">
-              On Friday, 30th October 2026, Greenwave Society officially conferred leadership honors upon 26 inaugural youth leaders at Ubunifu Hub, Nairobi. Following months of intensive systems thinking, grassroots climate action, and community mentorship, these changemakers now advance into the active Greenwave alumni network.
+              On Friday, 30th October 2026, Greenwave Society officially conferred leadership honors upon 26 inaugural youth changemakers at Ubunifu Hub, Nairobi. Following months of intensive systems thinking, grassroots climate action, and community mentorship through the Young Person&apos;s Guide to Systems Change (YPG) program, these leaders now advance into the active Greenwave alumni network.
             </p>
 
             {/* Quick Action Buttons */}
@@ -158,7 +158,7 @@ export default function GraduationCohortPage() {
             <div className="relative aspect-[16/9] sm:aspect-[21/9] w-full rounded-2xl sm:rounded-3xl overflow-hidden border border-border/80 shadow-2xl bg-slate-950 group">
               <Image
                 src="https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_290.webp"
-                alt="The 26 Changemakers of Empower 360 Cohort I Assembled at Ubunifu Hub, Nairobi"
+                alt="The 26 Changemakers of YPG: Young Person's Guide to Systems Change Cohort I Assembled at Ubunifu Hub, Nairobi"
                 fill
                 priority
                 sizes="(max-width: 1280px) 100vw, 1200px"
@@ -175,7 +175,7 @@ export default function GraduationCohortPage() {
                     <span className="text-xs text-white/80 font-mono">Friday, 30 Oct 2026 &bull; Ubunifu Hub</span>
                   </div>
                   <h3 className="font-serif font-black text-lg sm:text-2xl text-white tracking-tight">
-                    The 26 Certified Leaders of Empower 360 Cohort I
+                    The 26 Certified Leaders of YPG: Young Person&apos;s Guide to Systems Change Cohort I
                   </h3>
                 </div>
 
@@ -241,7 +241,7 @@ export default function GraduationCohortPage() {
             <ShareableLinkBar
               label="Official Graduation Retrospective"
               url="https://greenwavesociety.org/events/graduation-cohort-1"
-              shareMessage="Celebrating Greenwave Society's Empower 360 Cohort I Graduation: 26 youth changemakers certified on 30 Oct 2026 at Ubunifu Hub, Nairobi. View the official ceremony showcase and photo album:"
+              shareMessage="Celebrating Greenwave Society's YPG: Young Person's Guide to Systems Change Cohort I Graduation: 26 youth changemakers certified on 30 Oct 2026 at Ubunifu Hub, Nairobi. View the official ceremony showcase and photo album:"
               badge="Concluded Celebration"
             />
           </div>
@@ -259,7 +259,7 @@ export default function GraduationCohortPage() {
             Translating Systems Thinking into Community Action
           </h2>
           <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-            Delivered in partnership with <strong>The 50 Percent</strong>, the Empower 360 program challenged youth leaders to move beyond symptoms to solve root causes of local ecological, economic, and social challenges.
+            Delivered in partnership with <strong>The 50 Percent</strong>, the Young Person&apos;s Guide to Systems Change (YPG) program challenged youth leaders to move beyond symptoms to solve root causes of local ecological, economic, and social challenges.
           </p>
         </div>
 
@@ -487,7 +487,7 @@ export default function GraduationCohortPage() {
             Retrieve Your Admission Pass &amp; Certificate
           </h2>
           <p className="text-xs sm:text-sm text-muted-foreground max-w-md mx-auto">
-            If you were registered as an attendee or graduand for Cohort I, enter your email below to retrieve your pass record.
+            If you were registered as an attendee or graduand for YPG Cohort I, enter your email below to retrieve your pass record.
           </p>
         </div>
 

@@ -7,13 +7,13 @@ import { APP_CONFIG } from "@/config/app.config";
 import { GraduationAlbumClient } from "./GraduationAlbumClient";
 
 export const metadata: Metadata = {
-  title: "Official Photo Album: Empower 360 Cohort I Graduation (296 Photos) | Greenwave Society",
-  description: "Browse and download all 296 high-resolution ceremony photographs from the Empower 360 Cohort I Graduation on Friday, 30th October 2026 at Ubunifu Hub, Nairobi. Self-hosted on Greenwave CDN.",
+  title: "Official Photo Album: YPG: Young Person's Guide to Systems Change Cohort I Graduation (296 Photos) | Greenwave Society",
+  description: "Browse and download all 296 high-resolution ceremony photographs from the YPG: Young Person's Guide to Systems Change Cohort I Graduation on Friday, 30th October 2026 at Ubunifu Hub, Nairobi. Self-hosted on Greenwave CDN.",
   alternates: {
     canonical: `${APP_CONFIG.url}/events/graduation-cohort-1/album`,
   },
   openGraph: {
-    title: "Official Photo Album: Empower 360 Cohort I Graduation | Greenwave Society",
+    title: "Official Photo Album: YPG Cohort I Graduation | Greenwave Society",
     description: "All 296 celebration photographs from Friday, 30th October 2026 at Ubunifu Hub, Nairobi. Self-hosted on Greenwave Society high-speed CDN.",
     url: `${APP_CONFIG.url}/events/graduation-cohort-1/album`,
     siteName: "Greenwave Society",
@@ -22,14 +22,14 @@ export const metadata: Metadata = {
         url: "https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_001.webp",
         width: 1600,
         height: 1067,
-        alt: "Empower 360 Cohort I Graduation Celebration at Ubunifu Hub",
+        alt: "YPG: Young Person's Guide to Systems Change Cohort I Graduation Celebration at Ubunifu Hub",
       },
     ],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Official Photo Album: Empower 360 Cohort I Graduation",
+    title: "Official Photo Album: YPG Cohort I Graduation",
     description: "296 authentic high-resolution celebration photographs. Self-hosted on Greenwave Society CDN.",
     images: ["https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_001.webp"],
   },
@@ -45,7 +45,7 @@ export default async function GraduationAlbumPage() {
         "@type": "CollectionPage",
         "@id": `${APP_CONFIG.url}/events/graduation-cohort-1/album/#webpage`,
         "url": `${APP_CONFIG.url}/events/graduation-cohort-1/album`,
-        "name": "Official Photo Album: Empower 360 Cohort I Graduation",
+        "name": "Official Photo Album: YPG: Young Person's Guide to Systems Change Cohort I Graduation",
         "description": "All 296 high-resolution celebration photographs from Friday, 30th October 2026 at Ubunifu Hub, Nairobi.",
         "isPartOf": { "@id": `${APP_CONFIG.url}/#website` },
       },
@@ -62,7 +62,7 @@ export default async function GraduationAlbumPage() {
       {
         "@type": "ImageGallery",
         "@id": `${APP_CONFIG.url}/events/graduation-cohort-1/album/#gallery`,
-        "name": "Empower 360 Cohort I Ceremony Photos",
+        "name": "YPG: Young Person's Guide to Systems Change Cohort I Ceremony Photos",
         "numberOfItems": photos.length,
         "image": photos.slice(0, 30).map((p) => p.webUrl),
       },

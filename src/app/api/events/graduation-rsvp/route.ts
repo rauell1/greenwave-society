@@ -25,7 +25,7 @@ const guestRsvpSchema = z.object({
 });
 
 const EVENT_SLUG = "graduation-cohort-1-2026";
-const EVENT_TITLE = "Empower 360: Ad Hoc Cohort I Graduation & Community Market";
+const EVENT_TITLE = "YPG: Young Person's Guide to Systems Change Cohort I Graduation & Community Market";
 const EVENT_LOCATION = "Ubunifu Hub, Nairobi, Kenya";
 const EVENT_DATE_STR = "Friday, 30th October 2026, 10:30 AM EAT";
 
@@ -101,7 +101,7 @@ export async function POST(req: Request) {
       return NextResponse.json(
         {
           error:
-            "Registrations for this celebration have closed. The Empower 360 Cohort I Graduation Ceremony has concluded.",
+            "Registrations for this celebration have closed. The YPG Cohort I Graduation Ceremony has concluded.",
           isClosed: true,
         },
         { status: 400 }

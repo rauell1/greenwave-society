@@ -89,9 +89,9 @@ export const DEFAULT_SITE_PAGES: SitePageDefinition[] = [
   {
     type: "story",
     slug: "empower360-cohort-1-graduation",
-    title: "Empower 360 Ad Hoc Cohort I Graduation Ceremony & Community Market",
+    title: "YPG: Young Person's Guide to Systems Change Graduation Ceremony & Community Market",
     excerpt: "Join us on Friday, 30th October 2026 at Ubunifu Hub, Nairobi to celebrate our inaugural cohort of youth changemakers.",
-    body: "Greenwave Society is proud to announce the graduation of Empower 360 Ad Hoc Cohort I changemakers on Friday, 30th October 2026 at Ubunifu Hub, Nairobi.\n\nThe celebration features formal completion certificates recognizing systems thinking and youth leadership execution, capstone project pitches addressing climate literacy, youth employment, and mental health barazas, and an artisanal concurrent community market.\n\nAdmission is free and family, friends, and community partners are warmly welcome to attend and support our graduands.",
+    body: "Greenwave Society is proud to announce the graduation of YPG: Young Person's Guide to Systems Change Cohort I changemakers on Friday, 30th October 2026 at Ubunifu Hub, Nairobi.\n\nThe celebration features formal completion certificates recognizing systems thinking and youth leadership execution in partnership with The 50 Percent, capstone project pitches addressing climate literacy, youth employment, and mental health barazas, and an artisanal concurrent community market.\n\nAdmission is free and family, friends, and community partners are warmly welcome to attend and support our graduands.",
     metadata: {
       eventDate: "2026-10-30",
       venue: "Ubunifu Hub, Nairobi",
@@ -103,7 +103,7 @@ export const DEFAULT_SITE_PAGES: SitePageDefinition[] = [
     slug: "community-market",
     title: "Community Market & Eco-Conscious Vendor Showcase",
     excerpt: "Showcase your sustainable products, healthy snacks, books, and lifestyle creations on Friday, 30th October 2026 at Ubunifu Hub, Nairobi.",
-    body: "Calling all eco-conscious vendors, sustainable artisans, healthy snack creators, authors, and ethical brands! Join the community marketplace running alongside the Empower 360 Cohort I Graduation on Friday, 30th October 2026 at Ubunifu Hub, Nairobi.\n\nTables and chairs are provided and stall reservations are completely free. Space is allocated on a first-come, first-served basis.",
+    body: "Calling all eco-conscious vendors, sustainable artisans, healthy snack creators, authors, and ethical brands! Join the community marketplace running alongside the YPG: Young Person's Guide to Systems Change Cohort I Graduation on Friday, 30th October 2026 at Ubunifu Hub, Nairobi.\n\nTables and chairs are provided and stall reservations are completely free. Space is allocated on a first-come, first-served basis.",
     metadata: {
       eventDate: "2026-10-30",
       venue: "Ubunifu Hub, Nairobi",

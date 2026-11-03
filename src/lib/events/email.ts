@@ -161,14 +161,14 @@ export async function sendGraduationGuestConfirmation(opts: GraduationGuestEmail
     await resend.emails.send({
       from: FROM_EMAIL,
       to: opts.to,
-      subject: `Your Digital Pass: Empower 360 Cohort I Graduation (${opts.ticketNumber})`,
+      subject: `Your Digital Pass: YPG Cohort I Graduation (${opts.ticketNumber})`,
       attachments: attachments.length > 0 ? attachments : undefined,
       html: brandedEmail({
-        eyebrow: "Empower 360 Graduation Entry Pass",
+        eyebrow: "YPG Graduation Entry Pass",
         title: "Your Event Pass is Ready!",
-        preheader: `Digital pass confirmed for ${opts.name} • Empower 360 Cohort I Graduation at Ubunifu Hub.`,
+        preheader: `Digital pass confirmed for ${opts.name} • YPG Cohort I Graduation at Ubunifu Hub.`,
         body: `<p style="margin:0 0 16px; font-size: 16px;">Dear ${escapeHtml(opts.name)},</p>
-               <p style="margin:0 0 16px; font-size: 15px;">Your RSVP for the <strong>Empower 360 Ad Hoc Cohort I Graduation & Community Market</strong> has been confirmed.</p>
+               <p style="margin:0 0 16px; font-size: 15px;">Your RSVP for the <strong>YPG: Young Person's Guide to Systems Change Cohort I Graduation & Community Market</strong> has been confirmed.</p>
                
                <div style="text-align:center;margin:24px 0 16px;">
                  <div style="display:inline-block;padding:12px;background:#ffffff;border:2px solid #5FAF2D;border-radius:16px;box-shadow:0 4px 12px rgba(0,0,0,0.06);">
@@ -303,12 +303,12 @@ export async function sendOneDayEventReminder(opts: OneDayReminderOptions): Prom
   const qrImageSrc = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(opts.checkInUrl)}&color=064e3b&bgcolor=ffffff&margin=1`;
   const locationText = opts.location || "Ubunifu Hub, Nairobi, Kenya";
 
-  let subject = "Tomorrow: Empower 360 Cohort I Graduation & Your Pass";
+  let subject = "Tomorrow: YPG Cohort I Graduation & Your Pass";
   let greetingRole = "attendee";
   let highlightInstructions = "";
 
   if (opts.isVendor) {
-    subject = `Tomorrow: Empower 360 Community Market - Setup & Stall Pass (${opts.ticketNumber})`;
+    subject = `Tomorrow: Community Market - Setup & Stall Pass (${opts.ticketNumber})`;
     greetingRole = "vendor";
     highlightInstructions = `
       <div style="margin:16px 0;padding:16px;background:#F5F3FF;border-radius:10px;border-left:4px solid #7C3AED;color:#2E1065;font-size:13px;">
@@ -320,7 +320,7 @@ export async function sendOneDayEventReminder(opts: OneDayReminderOptions): Prom
       </div>
     `;
   } else if (opts.role === "graduand") {
-    subject = `Tomorrow: Your Empower 360 Graduation Day & Induction Pass (${opts.ticketNumber})`;
+    subject = `Tomorrow: Your YPG Graduation Day & Induction Pass (${opts.ticketNumber})`;
     greetingRole = "graduand";
     highlightInstructions = `
       <div style="margin:16px 0;padding:16px;background:#FEF9C3;border-radius:10px;border-left:4px solid #CA8A04;color:#854D0E;font-size:13px;">
@@ -372,9 +372,9 @@ export async function sendOneDayEventReminder(opts: OneDayReminderOptions): Prom
       html: brandedEmail({
         eyebrow: "24-Hour Final Event Reminder",
         title: "See You Tomorrow at Ubunifu Hub!",
-        preheader: `Final event reminder and digital pass for ${opts.name} • Empower 360 Cohort I Graduation.`,
+        preheader: `Final event reminder and digital pass for ${opts.name} • YPG Cohort I Graduation.`,
         body: `<p style="margin:0 0 16px; font-size: 16px;">Dear ${escapeHtml(opts.name)},</p>
-               <p style="margin:0 0 16px; font-size: 15px;">This is your final reminder that the <strong>Empower 360 Ad Hoc Cohort I Graduation & Community Market</strong> takes place on <strong>Friday, 30th October 2026</strong> at Ubunifu Hub, Garden Estate, Nairobi.</p>
+               <p style="margin:0 0 16px; font-size: 15px;">This is your final reminder that the <strong>YPG: Young Person's Guide to Systems Change Cohort I Graduation & Community Market</strong> takes place on <strong>Friday, 30th October 2026</strong> at Ubunifu Hub, Garden Estate, Nairobi.</p>
                
                ${highlightInstructions}
 

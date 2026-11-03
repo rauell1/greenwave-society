@@ -67,11 +67,11 @@ export function PassClient({ pass }: { pass: PassProps }) {
 
   const calendarData = {
     title: pass.isVendor
-      ? "Empower 360 Community Market - Vendor Stall Setup & Showcase"
+      ? "Community Market - Vendor Stall Setup & Showcase"
       : pass.event.title,
     description: pass.isVendor
-      ? "Vendor stall setup (9:30 AM) and showcase at Ubunifu Hub, Nairobi for Greenwave Society Empower 360 Cohort I Graduation."
-      : "Graduation celebration for Greenwave Society Empower 360 Ad Hoc Cohort I changemakers with community market.",
+      ? "Vendor stall setup (9:30 AM) and showcase at Ubunifu Hub, Nairobi for Greenwave Society YPG: Young Person's Guide to Systems Change Cohort I Graduation."
+      : "Graduation celebration for Greenwave Society YPG: Young Person's Guide to Systems Change Cohort I changemakers with community market.",
     location: pass.event.location,
     startsAt: pass.isVendor ? "2026-10-30T06:30:00Z" : "2026-10-30T07:30:00Z",
     endsAt: "2026-10-30T12:00:00Z",
