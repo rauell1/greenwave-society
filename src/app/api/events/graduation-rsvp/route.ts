@@ -92,16 +92,14 @@ export async function POST(req: Request) {
       },
     });
 
-    const isClosed =
-      event.status === "completed" ||
-      event.status === "cancelled" ||
-      (event.registrationClosesAt && new Date() > event.registrationClosesAt);
+    // The graduation ceremony and community market concluded on Friday, 30 October 2026
+    const isEventConcluded = true;
 
-    if (isClosed && !existing) {
+    if (isEventConcluded && !existing) {
       return NextResponse.json(
         {
           error:
-            "Registrations for this celebration have closed. The YPG Cohort I Graduation Ceremony has concluded.",
+            "Registrations are closed. The YPG Cohort I Graduation Ceremony concluded on Friday, 30th October 2026 at Ubunifu Hub, Nairobi.",
           isClosed: true,
         },
         { status: 400 }
@@ -111,11 +109,17 @@ export async function POST(req: Request) {
     let registrationId: string;
     let checkInToken: string;
     let isExisting = false;
+    let attendeeName = fullName;
+    let attendeeRole = role;
+    let attendeeCount = guestCount;
 
     if (existing) {
       registrationId = existing.id;
+      attendeeName = existing.fullName || fullName;
       const meta = (existing.metadata as Record<string, any>) || {};
       checkInToken = meta.checkInToken || crypto.randomUUID();
+      attendeeRole = meta.role || role;
+      attendeeCount = typeof meta.guestCount === "number" ? meta.guestCount : guestCount;
 
       // If token wasn't in metadata yet, persist it
       if (!meta.checkInToken) {
@@ -167,12 +171,12 @@ export async function POST(req: Request) {
       lightColor: "#ffffff",
     });
 
-    // Send confirmation email
+    // Send confirmation email (renders concluded / expired notice)
     sendGraduationGuestConfirmation({
       to: email,
-      name: fullName,
-      role,
-      guestCount,
+      name: attendeeName,
+      role: attendeeRole,
+      guestCount: attendeeCount,
       ticketNumber: `GW-${registrationId.slice(-6).toUpperCase()}`,
       checkInUrl,
       eventDate: EVENT_DATE_STR,
@@ -186,17 +190,18 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: true,
       isExisting,
+      isConcluded: true,
+      isExpired: true,
       ticketNumber: `GW-${registrationId.slice(-6).toUpperCase()}`,
       registrationId,
       checkInUrl,
       passUrl,
       qrCodeDataUrl,
-      role,
-      guestCount,
-      fullName,
-      message: isExisting
-        ? "We found your existing RSVP! Here is your digital entry ticket."
-        : "RSVP Confirmed! Your digital entry pass and check-in QR code have been generated.",
+      role: attendeeRole,
+      guestCount: attendeeCount,
+      fullName: attendeeName,
+      message:
+        "The ceremony concluded on Friday, 30th October 2026. This pass is permanently expired and invalid for door check-in.",
     });
   } catch (error) {
     console.error("[GRADUATION_RSVP_POST]", error);

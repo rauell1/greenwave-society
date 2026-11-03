@@ -161,46 +161,63 @@ export async function sendGraduationGuestConfirmation(opts: GraduationGuestEmail
     await resend.emails.send({
       from: FROM_EMAIL,
       to: opts.to,
-      subject: `Your Digital Pass: YPG Cohort I Graduation (${opts.ticketNumber})`,
+      subject: `Pass Record (Event Concluded): YPG Cohort I Graduation (${opts.ticketNumber})`,
       attachments: attachments.length > 0 ? attachments : undefined,
       html: brandedEmail({
-        eyebrow: "YPG Graduation Entry Pass",
-        title: "Your Event Pass is Ready!",
-        preheader: `Digital pass confirmed for ${opts.name} • YPG Cohort I Graduation at Ubunifu Hub.`,
-        body: `<p style="margin:0 0 16px; font-size: 16px;">Dear ${escapeHtml(opts.name)},</p>
-               <p style="margin:0 0 16px; font-size: 15px;">Your RSVP for the <strong>YPG: Young Person's Guide to Systems Change Cohort I Graduation & Community Market</strong> has been confirmed.</p>
-               
-               <div style="text-align:center;margin:24px 0 16px;">
-                 <div style="display:inline-block;padding:12px;background:#ffffff;border:2px solid #5FAF2D;border-radius:16px;box-shadow:0 4px 12px rgba(0,0,0,0.06);">
-                   <img src="${qrImageSrc}" alt="Entry QR Code" width="200" height="200" style="display:block;border-radius:8px;" />
-                 </div>
-                 <div style="margin-top:8px;font-family:monospace;font-size:13px;font-weight:bold;color:#1A5C38;">
-                   Ticket: ${escapeHtml(opts.ticketNumber)}
-                 </div>
-                 <p style="margin:6px 0 0;font-size:11px;color:#607068;">Digital pass image also attached to this email for offline saving.</p>
+        eyebrow: "Event Concluded • Pass Expired",
+        title: "YPG Cohort I Ceremony Concluded",
+        preheader: `This ceremony concluded on Friday, 30th October 2026. Passes are expired and invalid for admission.`,
+        body: `<div style="margin:0 0 20px;padding:16px;background:#FFF1F2;border-radius:12px;border:1px solid #FECDD3;color:#9F1239;font-size:13px;line-height:1.6;">
+                 <strong>Notice: Event Concluded &bull; Passes Permanently Expired</strong><br/>
+                 The YPG: Young Person's Guide to Systems Change Cohort I Graduation &amp; Community Market concluded on <strong>Friday, 30th October 2026</strong> at Ubunifu Hub, Nairobi. This digital pass record is preserved for your personal records and certificate verification only. Door scanners at Ubunifu Hub are deactivated.
                </div>
 
-               <div style="margin:20px 0;padding:20px;background:#EFF9E9;border-radius:12px;border:1px solid #DDF0D6;">
-                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;color:#173126;">
+               <p style="margin:0 0 16px; font-size: 16px;">Dear ${escapeHtml(opts.name)},</p>
+               <p style="margin:0 0 16px; font-size: 15px;">Here is your archived attendance record for the <strong>YPG: Young Person's Guide to Systems Change Cohort I Graduation & Community Market</strong>.</p>
+               
+               <div style="text-align:center;margin:24px 0 16px;">
+                 <div style="display:inline-block;padding:12px;background:#f8fafc;border:2px dashed #94a3b8;border-radius:16px;opacity:0.7;">
+                   <img src="${qrImageSrc}" alt="Archived Pass QR Code" width="180" height="180" style="display:block;border-radius:8px;filter:grayscale(100%);" />
+                 </div>
+                 <div style="margin-top:8px;">
+                   <span style="font-family:monospace;font-size:12px;font-weight:bold;color:#E11D48;background:#FFE4E6;display:inline-block;padding:3px 8px;border-radius:6px;">
+                     CONCLUDED &bull; PASS EXPIRED
+                   </span>
+                 </div>
+                 <div style="margin-top:6px;font-family:monospace;font-size:13px;font-weight:bold;color:#475569;">
+                   Pass Number: ${escapeHtml(opts.ticketNumber)}
+                 </div>
+                 <p style="margin:6px 0 0;font-size:11px;color:#64748b;">This pass is permanently expired and cannot be scanned for door admission.</p>
+               </div>
+
+               <div style="margin:20px 0;padding:20px;background:#F8FAFC;border-radius:12px;border:1px solid #E2E8F0;">
+                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;color:#1E293B;">
                    <tr><td style="padding:6px 0;font-weight:bold;width:120px;">Attendee Role:</td><td>${escapeHtml(roleText)}</td></tr>
+                   <tr><td style="padding:6px 0;font-weight:bold;">Status:</td><td><strong style="color:#E11D48;">Expired &bull; Event Concluded</strong></td></tr>
                    <tr><td style="padding:6px 0;font-weight:bold;">Headcount:</td><td>${escapeHtml(guestText)}</td></tr>
-                   <tr><td style="padding:6px 0;font-weight:bold;">Date:</td><td>${escapeHtml(opts.eventDate)}</td></tr>
+                   <tr><td style="padding:6px 0;font-weight:bold;">Ceremony Date:</td><td>Friday, 30th October 2026 (Concluded)</td></tr>
                    <tr><td style="padding:6px 0;font-weight:bold;">Venue:</td><td>${escapeHtml(opts.location)}</td></tr>
                  </table>
                  ${graduandInstructions}
-                 <div style="margin-top:14px;padding-top:12px;border-top:1px dashed #A3D896;font-size:13px;color:#355B46;">
-                   <strong>At the door:</strong> Show this QR code on your phone to the Greenwave Society Executive Team at Ubunifu Hub entrance for fast check-in.
+                 <div style="margin-top:14px;padding-top:12px;border-top:1px dashed #FECDD3;font-size:13px;color:#9F1239;">
+                   <strong>Door Scanners Deactivated:</strong> Admission passes are invalid for check-in. Explore the official 296-photo album or read the celebration retrospective below.
                  </div>
                </div>
 
-               ${emailButton("Open Your Mobile Ticket Pass", passUrl)}
+               ${emailButton("Explore 296 Celebration Photos", `${SITE_URL}/events/graduation-cohort-1/album`)}
 
-               <p style="margin:20px 0 0;color:#607068;font-size:13px;text-align:center;">
-                 Need assistance? Reply directly to this email or reach us on WhatsApp at +254 794 287 400.
+               <div style="text-align:center;margin-top:14px;font-size:13px;">
+                 <a href="${SITE_URL}/events/graduation-cohort-1" style="color:#1A5C38;font-weight:bold;text-decoration:underline;">Read Ceremony Retrospective</a>
+                 &nbsp;&bull;&nbsp;
+                 <a href="${passUrl}" style="color:#64748b;text-decoration:underline;">View Mobile Pass Record</a>
+               </div>
+
+               <p style="margin:24px 0 0;color:#607068;font-size:13px;text-align:center;">
+                 Need assistance or have certificate queries? Reach us at <a href="mailto:${CONTACT_EMAIL}" style="color:#1A5C38">${CONTACT_EMAIL}</a> or on WhatsApp at +254 794 287 400.
                </p>`,
       }),
     });
-    logger.info("Graduation guest confirmation email sent with QR code", { name: opts.name, to: opts.to, ticketNumber: opts.ticketNumber });
+    logger.info("Graduation guest pass record email sent (event concluded)", { name: opts.name, to: opts.to, ticketNumber: opts.ticketNumber });
     return true;
   } catch (error) {
     logger.error("Failed to send graduation guest confirmation email", error as Error, { to: opts.to });
@@ -243,47 +260,62 @@ export async function sendGraduationVendorConfirmation(opts: GraduationVendorEma
     await resend.emails.send({
       from: FROM_EMAIL,
       to: opts.to,
-      subject: `Vendor Stall Pass: YPG Community Market (${opts.ticketNumber})`,
+      subject: `Stall Pass Record (Market Concluded): YPG Community Market (${opts.ticketNumber})`,
       attachments: attachments.length > 0 ? attachments : undefined,
       html: brandedEmail({
-        eyebrow: "Community Market Vendor Stall Pass",
-        title: "Vendor Stall Pass Confirmed!",
-        preheader: `Vendor pass for ${opts.vendorName} • YPG Community Market at Ubunifu Hub.`,
-        body: `<p style="margin:0 0 16px; font-size: 16px;">Dear ${escapeHtml(opts.name)},</p>
-               <p style="margin:0 0 16px; font-size: 15px;">Your vendor registration for <strong>${escapeHtml(opts.vendorName)}</strong> at the <strong>YPG Community Market</strong> on Friday, 30th October 2026 has been received.</p>
+        eyebrow: "Market Concluded • Stall Pass Expired",
+        title: "Community Market Concluded",
+        preheader: `The community market concluded on Friday, 30th October 2026. Stall passes are expired.`,
+        body: `<div style="margin:0 0 20px;padding:16px;background:#FFF1F2;border-radius:12px;border:1px solid #FECDD3;color:#9F1239;font-size:13px;line-height:1.6;">
+                 <strong>Notice: Community Market Concluded &bull; Stall Passes Expired</strong><br/>
+                 The YPG Community Market concluded on <strong>Friday, 30th October 2026</strong> at Ubunifu Hub, Nairobi. This stall pass record is preserved for your vendor accounting and archival reference only.
+               </div>
+
+               <p style="margin:0 0 16px; font-size: 16px;">Dear ${escapeHtml(opts.name)},</p>
+               <p style="margin:0 0 16px; font-size: 15px;">Here is your archived vendor stall record for <strong>${escapeHtml(opts.vendorName)}</strong> at the <strong>YPG Community Market</strong>.</p>
                
                <div style="text-align:center;margin:24px 0 16px;">
-                 <div style="display:inline-block;padding:12px;background:#ffffff;border:2px solid #7C3AED;border-radius:16px;box-shadow:0 4px 12px rgba(0,0,0,0.06);">
-                   <img src="${qrImageSrc}" alt="Vendor Stall QR Code" width="200" height="200" style="display:block;border-radius:8px;" />
+                 <div style="display:inline-block;padding:12px;background:#f8fafc;border:2px dashed #94a3b8;border-radius:16px;opacity:0.7;">
+                   <img src="${qrImageSrc}" alt="Archived Vendor QR Code" width="180" height="180" style="display:block;border-radius:8px;filter:grayscale(100%);" />
                  </div>
-                 <div style="margin-top:8px;font-family:monospace;font-size:13px;font-weight:bold;color:#5B21B6;">
-                   Stall Ticket: ${escapeHtml(opts.ticketNumber)}
+                 <div style="margin-top:8px;">
+                   <span style="font-family:monospace;font-size:12px;font-weight:bold;color:#E11D48;background:#FFE4E6;display:inline-block;padding:3px 8px;border-radius:6px;">
+                     CONCLUDED &bull; PASS EXPIRED
+                   </span>
                  </div>
-                 <p style="margin:6px 0 0;font-size:11px;color:#607068;">Digital pass image also attached to this email for offline saving.</p>
+                 <div style="margin-top:6px;font-family:monospace;font-size:13px;font-weight:bold;color:#475569;">
+                   Stall Pass: ${escapeHtml(opts.ticketNumber)}
+                 </div>
+                 <p style="margin:6px 0 0;font-size:11px;color:#64748b;">This stall pass is permanently expired and cannot be scanned for entry.</p>
                </div>
 
-               <div style="margin:20px 0;padding:20px;background:#F5F3FF;border-radius:12px;border:1px solid #DDD6FE;">
-                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;color:#2E1065;">
+               <div style="margin:20px 0;padding:20px;background:#F8FAFC;border-radius:12px;border:1px solid #E2E8F0;">
+                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;color:#1E293B;">
                    <tr><td style="padding:6px 0;font-weight:bold;width:130px;">Brand Name:</td><td><strong>${escapeHtml(opts.vendorName)}</strong></td></tr>
+                   <tr><td style="padding:6px 0;font-weight:bold;">Status:</td><td><strong style="color:#E11D48;">Expired &bull; Market Concluded</strong></td></tr>
                    <tr><td style="padding:6px 0;font-weight:bold;">Category:</td><td>${escapeHtml(opts.category)}</td></tr>
-                   <tr><td style="padding:6px 0;font-weight:bold;">Setup Window:</td><td>9:30 AM to 10:00 AM EAT</td></tr>
-                   <tr><td style="padding:6px 0;font-weight:bold;">Market Hours:</td><td>10:00 AM to 3:00 PM EAT</td></tr>
+                   <tr><td style="padding:6px 0;font-weight:bold;">Date:</td><td>Friday, 30th October 2026 (Concluded)</td></tr>
                    <tr><td style="padding:6px 0;font-weight:bold;">Venue:</td><td>${escapeHtml(opts.location)}</td></tr>
-                   <tr><td style="padding:6px 0;font-weight:bold;">Stall Logistics:</td><td>Tables and chairs provided on-site</td></tr>
                  </table>
-                 <div style="margin-top:14px;padding-top:12px;border-top:1px dashed #C4B5FD;font-size:13px;color:#5B21B6;">
-                   <strong>Sustainability Policy:</strong> Strictly zero single-use plastic carrier bags or cups. Reusable or paper packaging is encouraged.
+                 <div style="margin-top:14px;padding-top:12px;border-top:1px dashed #FECDD3;font-size:13px;color:#9F1239;">
+                   <strong>Market Concluded:</strong> All stall spaces and allocations are now closed. Thank you for your partnership in zero single-use plastics!
                  </div>
                </div>
 
-               ${emailButton("Open Your Mobile Stall Pass", passUrl)}
+               ${emailButton("Explore 296 Celebration Photos", `${SITE_URL}/events/graduation-cohort-1/album`)}
 
-               <p style="margin:20px 0 0;color:#607068;font-size:13px;text-align:center;">
-                 Need assistance? Reply directly to this email or reach us on WhatsApp at +254 794 287 400.
+               <div style="text-align:center;margin-top:14px;font-size:13px;">
+                 <a href="${SITE_URL}/events/graduation-cohort-1" style="color:#1A5C38;font-weight:bold;text-decoration:underline;">Read Ceremony Retrospective</a>
+                 &nbsp;&bull;&nbsp;
+                 <a href="${passUrl}" style="color:#64748b;text-decoration:underline;">View Mobile Pass Record</a>
+               </div>
+
+               <p style="margin:24px 0 0;color:#607068;font-size:13px;text-align:center;">
+                 Interested in vending at future Greenwave Society markets? Email us at <a href="mailto:${CONTACT_EMAIL}" style="color:#1A5C38">${CONTACT_EMAIL}</a>.
                </p>`,
       }),
     });
-    logger.info("Graduation vendor confirmation email sent with QR code", { vendorName: opts.vendorName, to: opts.to, ticketNumber: opts.ticketNumber });
+    logger.info("Graduation vendor stall record email sent (market concluded)", { vendorName: opts.vendorName, to: opts.to, ticketNumber: opts.ticketNumber });
     return true;
   } catch (error) {
     logger.error("Failed to send graduation vendor confirmation email", error as Error, { to: opts.to });

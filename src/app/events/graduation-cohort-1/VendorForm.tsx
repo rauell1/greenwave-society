@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import Image from "next/image";
+import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -26,8 +27,8 @@ import {
   Printer,
   GraduationCap,
   XCircle,
+  Camera,
 } from "lucide-react";
-import { AddToCalendarButton } from "@/components/events/AddToCalendarButton";
 
 const vendorSchema = z.object({
   vendorName: z.string().trim().min(2, "Brand or Business name is required"),
@@ -62,15 +63,6 @@ interface VendorTicketData {
   passUrl: string;
   message: string;
 }
-
-const VENDOR_CALENDAR_DATA = {
-  title: "YPG Community Market - Vendor Stall Setup & Showcase",
-  description: "Vendor setup (9:30 AM) and showcase for the Greenwave Society YPG Graduation & Community Market. Tables and chairs provided. Zero single-use plastics.",
-  location: "Ubunifu Hub, Nairobi, Kenya",
-  startsAt: "2026-10-30T06:30:00Z", // 9:30 AM EAT (setup starts)
-  endsAt: "2026-10-30T12:00:00Z",   // 3:00 PM EAT
-  url: "https://greenwavesociety.org/events/community-market",
-};
 
 export function VendorForm({ isClosed = true }: { isClosed?: boolean }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -136,7 +128,7 @@ export function VendorForm({ isClosed = true }: { isClosed?: boolean }) {
         message: data.message,
       });
 
-      toast.success("Found your vendor admission pass!");
+      toast.success("Found vendor stall pass record • Market concluded on 30 Oct 2026.");
     } catch {
       toast.error("Something went wrong retrieving your vendor pass.");
     } finally {
@@ -380,14 +372,36 @@ export function VendorForm({ isClosed = true }: { isClosed?: boolean }) {
 
           {/* Action Buttons */}
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2 print:hidden">
-            <AddToCalendarButton event={VENDOR_CALENDAR_DATA} size="sm" />
+            <Button
+              asChild
+              size="sm"
+              variant="outline"
+              className="rounded-xl border-border text-foreground hover:bg-secondary/40 gap-1.5 text-xs"
+            >
+              <Link href="/events/graduation-cohort-1/album">
+                <Camera className="w-4 h-4 text-emerald-600" />
+                <span>View 296 Photos</span>
+              </Link>
+            </Button>
+
+            <Button
+              asChild
+              size="sm"
+              variant="outline"
+              className="rounded-xl border-border text-foreground hover:bg-secondary/40 gap-1.5 text-xs"
+            >
+              <Link href="/events/graduation-cohort-1">
+                <GraduationCap className="w-4 h-4 text-primary" />
+                <span>Ceremony Retrospective</span>
+              </Link>
+            </Button>
             
             {ticket.passUrl && (
               <Button
                 asChild
                 variant="outline"
                 size="sm"
-                className="rounded-xl border-border text-foreground hover:bg-secondary/40 gap-1.5"
+                className="rounded-xl border-border text-foreground hover:bg-secondary/40 gap-1.5 text-xs"
               >
                 <a href={ticket.passUrl} target="_blank" rel="noopener noreferrer">
                   <QrCode className="w-4 h-4 text-emerald-600" />
@@ -400,7 +414,7 @@ export function VendorForm({ isClosed = true }: { isClosed?: boolean }) {
               variant="outline"
               size="sm"
               onClick={() => window.print()}
-              className="rounded-xl border-border text-foreground hover:bg-secondary/40 gap-1.5"
+              className="rounded-xl border-border text-foreground hover:bg-secondary/40 gap-1.5 text-xs"
             >
               <Printer className="w-4 h-4" />
               <span>Print Stall Pass</span>
@@ -415,14 +429,14 @@ export function VendorForm({ isClosed = true }: { isClosed?: boolean }) {
               }}
               className="rounded-xl text-muted-foreground hover:text-foreground text-xs"
             >
-              Register Another Stall
+              Look Up Another Stall Pass
             </Button>
           </div>
 
           <div className="p-4 rounded-2xl bg-primary/5 border border-primary/20 text-xs text-muted-foreground leading-relaxed flex items-start gap-2.5">
             <ShieldCheck className="w-4 h-4 text-primary shrink-0 mt-0.5" />
             <div>
-              <strong>Email dispatched:</strong> Your official stall confirmation with this scannable QR ticket has been sent to your email address. You will also receive a 1-day reminder before the event.
+              <strong>Archival Stall Record:</strong> The community market concluded on Friday, 30th October 2026. This record is preserved for your vendor accounting and archival reference.
             </div>
           </div>
         </CardContent>

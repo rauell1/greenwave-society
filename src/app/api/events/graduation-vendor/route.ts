@@ -97,16 +97,14 @@ export async function POST(req: Request) {
       },
     });
 
-    const isClosed =
-      event.status === "completed" ||
-      event.status === "cancelled" ||
-      (event.registrationClosesAt && new Date() > event.registrationClosesAt);
+    // The community market concluded on Friday, 30 October 2026
+    const isMarketConcluded = true;
 
-    if (isClosed && !existing) {
+    if (isMarketConcluded && !existing) {
       return NextResponse.json(
         {
           error:
-            "Vendor applications have closed. The YPG Cohort I Community Market has concluded.",
+            "Vendor applications are closed. The YPG Cohort I Community Market concluded on Friday, 30th October 2026 at Ubunifu Hub, Nairobi.",
           isClosed: true,
         },
         { status: 400 }
@@ -116,11 +114,17 @@ export async function POST(req: Request) {
     let registrationId: string;
     let checkInToken: string;
     let isExisting = false;
+    let vName = vendorName;
+    let cPerson = contactPerson;
+    let vCategory = category;
 
     if (existing) {
       registrationId = existing.id;
       const meta = (existing.metadata as Record<string, any>) || {};
       checkInToken = meta.checkInToken || crypto.randomUUID();
+      vName = meta.vendorName || existing.organization || vendorName;
+      cPerson = meta.contactPerson || existing.fullName || contactPerson;
+      vCategory = meta.category || category;
 
       if (!meta.checkInToken || !meta.ticketToken) {
         await db.cmsEventRegistration.update({
@@ -175,12 +179,12 @@ export async function POST(req: Request) {
       lightColor: "#ffffff",
     });
 
-    // Send vendor confirmation email with scannable QR ticket
+    // Send vendor confirmation email (renders concluded / expired notice)
     sendGraduationVendorConfirmation({
       to: email,
-      name: contactPerson,
-      vendorName,
-      category,
+      name: cPerson,
+      vendorName: vName,
+      category: vCategory,
       ticketNumber,
       checkInUrl,
       eventDate: EVENT_DATE_STR,
@@ -192,17 +196,18 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: true,
       isExisting,
+      isConcluded: true,
+      isExpired: true,
       ticketNumber,
       registrationId,
       checkInUrl,
       passUrl,
       qrCodeDataUrl,
-      vendorName,
-      contactPerson,
-      category,
-      message: isExisting
-        ? "We found your existing vendor registration! Here is your digital vendor pass."
-        : "Vendor application confirmed! Your vendor stall pass and check-in QR code have been issued.",
+      vendorName: vName,
+      contactPerson: cPerson,
+      category: vCategory,
+      message:
+        "The Community Market concluded on Friday, 30th October 2026. This stall pass is permanently expired.",
     });
   } catch (error) {
     console.error("[GRADUATION_VENDOR_POST]", error);

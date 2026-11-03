@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import Image from "next/image";
+import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -26,9 +27,9 @@ import {
   UploadCloud,
   Camera,
   X,
+  XCircle,
   Store,
 } from "lucide-react";
-import { AddToCalendarButton } from "@/components/events/AddToCalendarButton";
 
 const attendeeSchema = z.object({
   fullName: z.string().trim().min(2, "Your full name is required").max(100),
@@ -60,15 +61,6 @@ interface TicketData {
   passUrl?: string;
   message: string;
 }
-
-const EVENT_CALENDAR_DATA = {
-  title: "YPG: Young Person's Guide to Systems Change Cohort I Graduation & Community Market",
-  description: "Join Greenwave Society in celebrating the YPG: Young Person's Guide to Systems Change Cohort I changemakers. Ceremony, networking, refreshments, and curated eco-conscious market.",
-  location: "Ubunifu Hub, Nairobi, Kenya",
-  startsAt: "2026-10-30T07:30:00Z", // 10:30 AM EAT
-  endsAt: "2026-10-30T12:00:00Z",   // 3:00 PM EAT
-  url: "https://greenwavesociety.org/events/graduation-cohort-1",
-};
 
 export function AttendeeRsvpForm({ isClosed = true }: { isClosed?: boolean }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -159,7 +151,7 @@ export function AttendeeRsvpForm({ isClosed = true }: { isClosed?: boolean }) {
         message: data.message,
       });
 
-      toast.success("Found your digital admission pass!");
+      toast.success("Pass record retrieved • Event concluded on 30 Oct 2026.");
     } catch {
       toast.error("Something went wrong retrieving your pass.");
     } finally {
@@ -193,7 +185,11 @@ export function AttendeeRsvpForm({ isClosed = true }: { isClosed?: boolean }) {
         message: data.message,
       });
 
-      toast.success(data.isExisting ? "Found existing RSVP ticket!" : "RSVP confirmed! Your digital entry pass is ready.");
+      toast.success(
+        data.isExisting
+          ? "Found existing RSVP pass record • Ceremony concluded."
+          : "Ceremony concluded on 30 Oct 2026 • Pass record retrieved."
+      );
     } catch (err: any) {
       toast.error(err.message || "Something went wrong. Please try again.");
     } finally {
@@ -316,15 +312,15 @@ export function AttendeeRsvpForm({ isClosed = true }: { isClosed?: boolean }) {
       <Card className="border-primary/30 shadow-2xl rounded-3xl overflow-hidden bg-card/95 backdrop-blur-sm print:border-none print:shadow-none">
         <div className={`p-6 text-white text-center relative overflow-hidden ${
           isGraduandTicket
-            ? "bg-gradient-to-r from-emerald-900 via-primary to-emerald-950 border-b-4 border-gold"
-            : "bg-gradient-to-r from-emerald-800 via-primary to-emerald-900"
+            ? "bg-gradient-to-r from-emerald-950 via-primary to-emerald-900 border-b-4 border-gold"
+            : "bg-gradient-to-r from-emerald-950 via-primary to-emerald-900"
         }`}>
           <div className="absolute -top-12 -right-12 w-36 h-36 rounded-full bg-white/10 blur-xl pointer-events-none" />
-          <Badge className="mb-2 bg-white/20 hover:bg-white/30 text-white border-none text-[11px] font-mono tracking-wider uppercase">
-            <CheckCircle2 className="w-3.5 h-3.5 mr-1 text-gold" /> RSVP Confirmed
+          <Badge className="mb-2 bg-rose-600 text-white border-none text-[11px] font-mono tracking-wider uppercase">
+            <XCircle className="w-3.5 h-3.5 mr-1 text-white" /> Event Concluded &bull; Pass Expired
           </Badge>
           <h3 className="font-serif font-black text-2xl sm:text-3xl tracking-tight text-white">
-            {isGraduandTicket ? "Graduand Official Entry Pass" : "Digital Entry Ticket"}
+            {isGraduandTicket ? "Graduand Pass Record (Concluded)" : "Admission Pass Record (Concluded)"}
           </h3>
           <p className="text-white/80 text-xs sm:text-sm mt-1 max-w-sm mx-auto">
             YPG: Young Person&apos;s Guide to Systems Change Cohort I Graduation &amp; Community Market
@@ -332,6 +328,16 @@ export function AttendeeRsvpForm({ isClosed = true }: { isClosed?: boolean }) {
         </div>
 
         <CardContent className="p-6 sm:p-8 space-y-6">
+          {/* Concluded / Invalid Alert Banner */}
+          <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/25 text-xs text-foreground space-y-1">
+            <div className="font-bold text-rose-600 dark:text-rose-400 flex items-center gap-1.5 text-sm">
+              <XCircle className="w-4 h-4 text-rose-500" /> Ceremony Concluded &bull; Pass Expired &amp; Invalid
+            </div>
+            <p className="text-muted-foreground leading-relaxed">
+              This ceremony concluded on <strong>Friday, 30th October 2026</strong> at Ubunifu Hub, Nairobi. Admission passes are permanently expired and invalid for door check-in. This pass is retained for personal archival and certificate verification only.
+            </p>
+          </div>
+
           {/* Ticket Body / Pass */}
           <div className="p-6 rounded-3xl bg-secondary/20 border-2 border-dashed border-primary/30 relative">
             
@@ -359,23 +365,23 @@ export function AttendeeRsvpForm({ isClosed = true }: { isClosed?: boolean }) {
               <div className="text-center sm:text-right">
                 <div className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">Pass Number</div>
                 <div className="text-base sm:text-lg font-mono font-bold text-primary">{ticket.ticketNumber}</div>
-                <div className="text-xs text-muted-foreground mt-0.5">Free Admission</div>
+                <div className="text-xs font-semibold text-rose-600 dark:text-rose-400 mt-0.5">Expired &bull; Invalid for Entry</div>
               </div>
             </div>
 
-            {/* Graduand Protocol Notice */}
+            {/* Graduand Record Notice */}
             {isGraduandTicket && (
               <div className="my-4 p-3.5 rounded-2xl bg-gold/10 border border-gold/30 text-xs text-foreground flex items-start gap-2.5">
-                <Sparkles className="w-4 h-4 text-gold shrink-0 mt-0.5" />
+                <Award className="w-4 h-4 text-gold shrink-0 mt-0.5" />
                 <div>
-                  <strong className="text-foreground">Graduand Priority Protocol:</strong> Please present this pass at the entrance table upon arrival at 10:00 AM to collect your graduation certificate induction folder and cohort honor badge before the procession.
+                  <strong className="text-foreground">Certified Graduand Record:</strong> Officially recognized as one of the 12 certified graduands of YPG: Young Person&apos;s Guide to Systems Change Cohort I (from 28 enrolled members).
                 </div>
               </div>
             )}
 
-            {/* QR Code Section */}
+            {/* QR Code Section (Concluded & Invalidated) */}
             <div className="py-6 flex flex-col items-center justify-center text-center">
-              <div className="p-3 bg-white rounded-2xl shadow-md border border-border inline-block mb-3">
+              <div className="relative p-3 bg-white rounded-2xl shadow-md border border-border inline-block mb-3 filter grayscale contrast-125 opacity-40">
                 <Image
                   src={ticket.qrCodeDataUrl}
                   alt={`QR Code Pass for ${ticket.fullName}`}
@@ -384,13 +390,18 @@ export function AttendeeRsvpForm({ isClosed = true }: { isClosed?: boolean }) {
                   className="rounded-lg"
                   unoptimized
                 />
+                <div className="absolute inset-0 bg-slate-950/20 rounded-2xl flex items-center justify-center p-2">
+                  <div className="transform -rotate-12 bg-rose-600 text-white font-mono font-black text-xs uppercase px-2.5 py-1 rounded-md border border-white shadow-xl tracking-widest text-center">
+                    CONCLUDED &bull; INVALID
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-800 dark:text-emerald-400">
-                <QrCode className="w-4 h-4" />
-                <span>Door Check-in Pass</span>
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-rose-500">
+                <XCircle className="w-4 h-4" />
+                <span>Door Scanner Deactivated &bull; Pass Expired</span>
               </div>
               <p className="text-[11px] text-muted-foreground max-w-xs mt-1">
-                Present this QR code on your phone upon arrival at Ubunifu Hub. Our team will scan it for instant attendance badge check-in.
+                The ceremony concluded on Friday, 30th October 2026. This pass is permanently expired and cannot be scanned for door admission at Ubunifu Hub.
               </p>
             </div>
 
@@ -398,7 +409,7 @@ export function AttendeeRsvpForm({ isClosed = true }: { isClosed?: boolean }) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4 border-t border-border/60 text-xs text-muted-foreground">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-primary shrink-0" />
-                <span>Friday, 30 Oct 2026 (10:30 AM - 3:00 PM)</span>
+                <span>Friday, 30 Oct 2026 (Ceremony Concluded)</span>
               </div>
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-primary shrink-0" />
@@ -409,14 +420,36 @@ export function AttendeeRsvpForm({ isClosed = true }: { isClosed?: boolean }) {
 
           {/* Action Buttons */}
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2 print:hidden">
-            <AddToCalendarButton event={EVENT_CALENDAR_DATA} size="sm" />
+            <Button
+              asChild
+              size="sm"
+              variant="outline"
+              className="rounded-xl border-border text-foreground hover:bg-secondary/40 gap-1.5 text-xs"
+            >
+              <Link href="/events/graduation-cohort-1/album">
+                <Camera className="w-4 h-4 text-primary" />
+                <span>View 296 Celebration Photos</span>
+              </Link>
+            </Button>
+
+            <Button
+              asChild
+              size="sm"
+              variant="outline"
+              className="rounded-xl border-border text-foreground hover:bg-secondary/40 gap-1.5 text-xs"
+            >
+              <Link href="/events/graduation-cohort-1">
+                <Sparkles className="w-4 h-4 text-gold" />
+                <span>Ceremony Retrospective</span>
+              </Link>
+            </Button>
             
             {ticket.passUrl && (
               <Button
                 asChild
                 variant="outline"
                 size="sm"
-                className="rounded-xl border-border text-foreground hover:bg-secondary/40 gap-1.5"
+                className="rounded-xl border-border text-foreground hover:bg-secondary/40 gap-1.5 text-xs"
               >
                 <a href={ticket.passUrl} target="_blank" rel="noopener noreferrer">
                   <QrCode className="w-4 h-4 text-emerald-600" />
@@ -429,10 +462,10 @@ export function AttendeeRsvpForm({ isClosed = true }: { isClosed?: boolean }) {
               variant="outline"
               size="sm"
               onClick={() => window.print()}
-              className="rounded-xl border-border text-foreground hover:bg-secondary/40 gap-1.5"
+              className="rounded-xl border-border text-foreground hover:bg-secondary/40 gap-1.5 text-xs"
             >
               <Printer className="w-4 h-4" />
-              <span>Print / Save Ticket</span>
+              <span>Print Pass Record</span>
             </Button>
 
             <Button
@@ -444,14 +477,17 @@ export function AttendeeRsvpForm({ isClosed = true }: { isClosed?: boolean }) {
               }}
               className="rounded-xl text-muted-foreground hover:text-foreground text-xs"
             >
-              RSVP Another Guest
+              Look Up Another Pass
             </Button>
           </div>
 
           <div className="p-4 rounded-2xl bg-primary/5 border border-primary/20 text-xs text-muted-foreground leading-relaxed flex items-start gap-2.5">
             <ShieldCheck className="w-4 h-4 text-primary shrink-0 mt-0.5" />
             <div>
-              <strong>Confirmation sent:</strong> A copy of this entry pass has also been dispatched to your email address. You can also bookmark or take a screenshot of this screen.
+              <strong>Archival Pass Record:</strong> This digital record is permanently retained in the Greenwave Society registry. If you are a graduand and have any questions about your certification honors, contact us at{" "}
+              <a href="mailto:info@greenwavesociety.org" className="text-primary hover:underline font-semibold">
+                info@greenwavesociety.org
+              </a>.
             </div>
           </div>
         </CardContent>
