@@ -1,52 +1,63 @@
 import { serializeJsonLd } from "@/lib/seo";
 import { getPublishedNews } from "@/lib/cms/news";
-import type { CmsContent } from "@prisma/client";
 import { Metadata } from "next";
 import Link from "next/link";
-import { format } from "date-fns";
-import { ArrowRight, Calendar, Newspaper } from "lucide-react";
+import { ChevronRight, Newspaper, Sparkles, Send } from "lucide-react";
 import { APP_CONFIG } from "@/config/app.config";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
+import { ScrollToTop } from "@/components/ui/scroll-to-top";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { NewsListClient } from "./NewsListClient";
 
 export const metadata: Metadata = {
   title: "News & Updates | Greenwave Society Kenya",
-  description: "Read the latest news, updates, and impact stories from Greenwave Society — youth leadership, conservation, and community programmes across Kenya.",
+  description:
+    "Read the latest news, announcements, and impact stories from Greenwave Society: youth leadership, systems change training, conservation, and community action across Kenya.",
   keywords: [
     "Greenwave Society news",
     "Greenwave Society Kenya updates",
+    "YPG graduation Kenya",
     "youth leadership news Kenya",
+    "systems change fellowship Nairobi",
     "conservation news Kenya",
     "community impact stories Nairobi",
   ],
   alternates: {
-    canonical: APP_CONFIG.url + "/news",
+    canonical: `${APP_CONFIG.url}/news`,
   },
   openGraph: {
     title: "News & Updates | Greenwave Society Kenya",
-    description: "Read the latest news, updates, and impact stories from Greenwave Society.",
-    url: APP_CONFIG.url + "/news",
+    description:
+      "Latest news, graduation milestones, and impact reports from Greenwave Society.",
+    url: `${APP_CONFIG.url}/news`,
     siteName: "Greenwave Society",
-    images: [{ url: "/images/IMG_9415.jpg", width: 1200, height: 630, alt: "Greenwave Society news and updates" }],
+    images: [
+      {
+        url: "https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_290.webp",
+        width: 1600,
+        height: 1067,
+        alt: "Greenwave Society news and graduation milestone",
+      },
+    ],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "News & Updates | Greenwave Society Kenya",
-    description: "Read the latest news, updates, and impact stories from Greenwave Society.",
-    images: ["/images/IMG_9415.jpg"],
+    description:
+      "Latest news, graduation milestones, and impact reports from Greenwave Society.",
+    images: [
+      "https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_290.webp",
+    ],
   },
 };
 
 export const revalidate = 60;
 
 export default async function NewsPage() {
-  let articles: CmsContent[] = [];
-  try {
-    articles = await getPublishedNews();
-  } catch (error) {
-    console.error("Failed to fetch news:", error);
-  }
+  const articles = await getPublishedNews();
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -56,7 +67,8 @@ export default async function NewsPage() {
         "@id": `${APP_CONFIG.url}/news/#webpage`,
         "url": `${APP_CONFIG.url}/news`,
         "name": "News & Updates | Greenwave Society Kenya",
-        "description": "Read the latest news, updates, and impact stories from Greenwave Society.",
+        "description":
+          "Read the latest news, updates, and impact stories from Greenwave Society.",
         "isPartOf": { "@id": `${APP_CONFIG.url}/#website` },
       },
       {
@@ -64,66 +76,115 @@ export default async function NewsPage() {
         "@id": `${APP_CONFIG.url}/news/#breadcrumb`,
         "itemListElement": [
           { "@type": "ListItem", "position": 1, "name": "Home", "item": APP_CONFIG.url },
-          { "@type": "ListItem", "position": 2, "name": "News", "item": `${APP_CONFIG.url}/news` },
+          { "@type": "ListItem", "position": 2, "name": "News & Updates", "item": `${APP_CONFIG.url}/news` },
         ],
+      },
+      {
+        "@type": "ItemList",
+        "@id": `${APP_CONFIG.url}/news/#itemlist`,
+        "name": "Greenwave Society News Articles",
+        "itemListElement": articles.slice(0, 10).map((a, index) => ({
+          "@type": "ListItem",
+          "position": index + 1,
+          "url": `${APP_CONFIG.url}/news/${a.slug}`,
+          "name": a.title,
+        })),
       },
     ],
   };
 
   return (
     <>
-    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }} />
-    <div className="min-h-screen flex flex-col bg-background">
-      <Navbar />
-      <main className="flex-1 pt-24 pb-20">
-        <div className="max-w-5xl mx-auto px-6 sm:px-8">
-          <header className="mb-16">
-            <h1 className="text-4xl sm:text-5xl font-serif font-black text-foreground mb-4">
-              News & <span className="text-primary italic font-normal">Updates</span>
-            </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl">
-              Stay informed about our latest programs, community barazas, and environmental impact across Kenya.
-            </p>
-          </header>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
+      />
+      <div className="min-h-screen flex flex-col bg-background text-foreground selection:bg-primary/20 selection:text-primary">
+        <Navbar />
 
-          {articles.length === 0 ? (
-            <div className="text-center py-20 bg-secondary/10 rounded-3xl border border-border/50">
-              <Newspaper className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
-              <h2 className="text-xl font-bold text-foreground mb-2">No updates yet</h2>
-              <p className="text-muted-foreground">Check back soon for the latest news from Greenwave Society.</p>
-            </div>
-          ) : (
-            <div className="grid gap-8 md:grid-cols-2">
-              {articles.map((article: any) => (
-                <article key={article.id} className="bg-background rounded-2xl border border-border/50 p-6 sm:p-8 hover:shadow-md transition-shadow group flex flex-col">
-                  <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground uppercase tracking-wider mb-4">
-                    <Calendar className="w-3.5 h-3.5" />
-                    <time dateTime={article.publishedAt?.toISOString()}>
-                      {article.publishedAt ? format(article.publishedAt, "MMM d, yyyy") : ""}
-                    </time>
-                  </div>
-                  <h2 className="text-2xl font-serif font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
-                    <Link href={"/news/" + article.slug}>
-                      {article.title}
-                    </Link>
-                  </h2>
-                  <p className="text-muted-foreground line-clamp-3 mb-6 flex-1">
-                    {article.excerpt || article.body.substring(0, 150).replace(/<[^>]*>?/gm, '') + '...'}
-                  </p>
-                  <Link 
-                    href={"/news/" + article.slug}
-                    className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-primary hover:text-foreground transition-colors self-start"
-                  >
-                    Read Article <ArrowRight className="w-4 h-4" />
-                  </Link>
-                </article>
-              ))}
-            </div>
-          )}
+        {/* Breadcrumb Navigation */}
+        <div className="pt-24 sm:pt-28 pb-4 border-b border-border/40 bg-secondary/10">
+          <div className="max-w-7xl mx-auto px-6 sm:px-8">
+            <nav
+              aria-label="Breadcrumb"
+              className="flex items-center gap-2 text-xs text-muted-foreground font-mono"
+            >
+              <Link href="/" className="hover:text-primary transition-colors">
+                Home
+              </Link>
+              <ChevronRight className="w-3 h-3 text-muted-foreground/60" />
+              <span className="text-foreground font-semibold">News &amp; Updates</span>
+            </nav>
+          </div>
         </div>
-      </main>
-      <Footer />
-    </div>
+
+        <main className="flex-1 py-12 sm:py-16">
+          <div className="max-w-7xl mx-auto px-6 sm:px-8 space-y-12">
+            {/* Header Hero Section */}
+            <header className="max-w-3xl space-y-4">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge
+                  variant="secondary"
+                  className="px-3 py-1 text-xs uppercase tracking-wider font-bold bg-primary/10 text-primary border border-primary/20 rounded-full"
+                >
+                  <Newspaper className="w-3.5 h-3.5 mr-1.5 text-gold" />
+                  Editorial &amp; Dispatches
+                </Badge>
+                <Badge
+                  variant="outline"
+                  className="px-2.5 py-0.5 text-xs text-muted-foreground border-border rounded-full font-mono"
+                >
+                  {articles.length} Published Updates
+                </Badge>
+              </div>
+
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-black tracking-tight text-foreground leading-[1.12]">
+                News &amp; <span className="text-primary italic font-normal">Dispatches</span>
+              </h1>
+
+              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
+                Stay updated with authentic dispatches from Greenwave Society: convocation retrospectives, fellowship intakes, community barazas, and grassroots climate solutions across Kenya.
+              </p>
+            </header>
+
+            {/* Interactive News List (CSR filtering with SSR content) */}
+            <NewsListClient articles={articles} />
+
+            {/* Stay Connected Banner */}
+            <section className="mt-16 p-8 sm:p-12 rounded-3xl bg-gradient-to-br from-secondary/30 via-secondary/10 to-transparent border border-border/70 flex flex-col md:flex-row items-center justify-between gap-8">
+              <div className="space-y-2 max-w-xl text-center md:text-left">
+                <Badge variant="outline" className="border-gold/40 text-gold bg-gold/10 text-[10px] uppercase font-mono tracking-wider">
+                  <Sparkles className="w-3 h-3 mr-1" />
+                  Direct Circulars
+                </Badge>
+                <h3 className="text-2xl sm:text-3xl font-serif font-bold text-foreground">
+                  Stay Informed on Systems Change
+                </h3>
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                  Join our email circle to receive invitations to upcoming community barazas, call for applications, and published think-tank briefs.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3">
+                <Button asChild size="lg" className="rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs gap-2">
+                  <Link href="/join">
+                    <Send className="w-4 h-4" />
+                    <span>Join Greenwave Society</span>
+                  </Link>
+                </Button>
+                <Button asChild size="lg" variant="outline" className="rounded-xl border-border text-xs font-semibold">
+                  <Link href="/contact?interest=newsletter">
+                    <span>Contact Editorial Team</span>
+                  </Link>
+                </Button>
+              </div>
+            </section>
+          </div>
+        </main>
+
+        <Footer />
+        <ScrollToTop />
+      </div>
     </>
   );
 }

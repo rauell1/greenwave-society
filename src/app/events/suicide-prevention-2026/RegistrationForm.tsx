@@ -91,12 +91,17 @@ export function SuicidePreventionRegistrationForm({ isRegistrationOpen }: { isRe
         {/* Event Details */}
         <div className="lg:col-span-5 space-y-8">
           <div>
-            <h1 className="text-4xl font-bold tracking-tight text-green-900 dark:text-green-100 mb-4">
-              RSVP: GreenWave Society Mental Health Circle
+            <div className="flex items-center gap-2 mb-3">
+              <span className="px-3 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wider bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20 inline-block">
+                Concluded Event • Saturday, 3 Oct 2026
+              </span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-serif font-black tracking-tight text-green-900 dark:text-green-100 mb-4">
+              Greenwave Mental Health Circle: Suicide Prevention Month
             </h1>
-            <div className="space-y-4 text-lg text-green-700 dark:text-green-300">
+            <div className="space-y-4 text-base text-green-700 dark:text-green-300">
               <p>
-                Confirm Your Place at Our Exclusive Mental Health Circle. 
+                A Safe-Space Community Gathering in Solidarity with World Suicide Prevention Month.
               </p>
               <p className="p-4 bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500 rounded-r-lg text-sm">
                 <strong>Why this is important:</strong> Mental health challenges often thrive in silence. 
@@ -144,10 +149,31 @@ export function SuicidePreventionRegistrationForm({ isRegistrationOpen }: { isRe
                   <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 mb-4">
                     <AlertCircle className="w-8 h-8" />
                   </div>
-                  <h3 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">Registrations are Closed</h3>
-                  <p className="text-slate-600 dark:text-slate-400 max-w-sm mx-auto">
-                    We are no longer accepting new registrations for this event at this time. Please check back later or contact support if you believe this is a mistake.
+                  <span className="px-3 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wider bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20 inline-block mb-2">
+                    Session Concluded • Saturday, 3 Oct 2026
+                  </span>
+                  <h3 className="text-2xl font-serif font-bold text-slate-900 dark:text-slate-100">
+                    This Mental Health Circle Has Concluded
+                  </h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 max-w-md mx-auto leading-relaxed">
+                    Thank you to all who joined our safe-space dialogue. While this session has ended, our Youth Pulse program hosts regular community wellness barazas throughout the year.
                   </p>
+                  <div className="text-left p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2 max-w-md mx-auto mt-4">
+                    <div className="text-[11px] font-mono uppercase tracking-wider font-bold text-foreground">
+                      Free Crisis Helplines in Kenya:
+                    </div>
+                    <ul className="text-xs text-muted-foreground space-y-1 font-mono">
+                      <li>• Befrienders Kenya: +254 722 178 177</li>
+                      <li>• Niskize Helpline: 0900 620 800</li>
+                      <li>• Chiromo Crisis Line: +254 729 333 444</li>
+                      <li>• Kenya Red Cross: 1199</li>
+                    </ul>
+                  </div>
+                  <div className="pt-2">
+                    <a href="/programs" className="text-xs font-semibold text-primary underline underline-offset-4">
+                      Explore ongoing Youth Pulse Programs &rarr;
+                    </a>
+                  </div>
                 </div>
               ) : isSuccess ? (
                 <div className="text-center py-12 space-y-4">

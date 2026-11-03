@@ -119,7 +119,7 @@ export const DEFAULT_SITE_PAGES: SitePageDefinition[] = [
     metadata: {
       tags: ["Flagship", "Empower 360", "Leadership", "Cohort I"],
       icon: "HandHeart",
-      ctaText: "Cohort I Graduation & Market (Oct 30)",
+      ctaText: "Explore YPG Graduation Showcase",
       ctaHref: "/events/graduation-cohort-1",
       order: 1,
     },
