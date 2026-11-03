@@ -59,7 +59,7 @@ export function WhatsAppWidget({
                 <span>Karibu Greenwave!</span>
               </div>
               <p className="leading-relaxed">
-                Hello! Welcome to Greenwave Society. How can we support you today regarding our community programmes, memberships, or the Empower 360 Graduation?
+                Hello! Welcome to Greenwave Society. How can we support you today regarding our community programmes, memberships, or the YPG Graduation?
               </p>
               <div className="text-[10px] text-muted-foreground text-right pt-0.5">
                 Online &bull; WhatsApp

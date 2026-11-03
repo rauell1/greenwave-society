@@ -67,7 +67,7 @@ export async function POST(req: Request) {
           data: {
             slug: EVENT_SLUG,
             title: EVENT_TITLE,
-            description: "Graduation celebration for Greenwave Society Empower 360 Ad Hoc Cohort I changemakers and community market.",
+            description: "Graduation celebration for Greenwave Society YPG Cohort I changemakers and community market.",
             location: EVENT_LOCATION,
             startsAt: new Date("2026-10-30T10:30:00+03:00"),
             endsAt: new Date("2026-10-30T15:00:00+03:00"),

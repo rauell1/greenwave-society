@@ -70,7 +70,7 @@ export async function POST(req: Request) {
           data: {
             slug: EVENT_SLUG,
             title: EVENT_TITLE,
-            description: "Graduation celebration for Greenwave Society Empower 360 Ad Hoc Cohort I changemakers and curated community vendor showcase.",
+            description: "Graduation celebration for Greenwave Society YPG Cohort I changemakers and curated community vendor showcase.",
             location: EVENT_LOCATION,
             startsAt: new Date("2026-10-30T10:30:00+03:00"),
             endsAt: new Date("2026-10-30T15:00:00+03:00"),
@@ -106,7 +106,7 @@ export async function POST(req: Request) {
       return NextResponse.json(
         {
           error:
-            "Vendor applications have closed. The Empower 360 Cohort I Community Market has concluded.",
+            "Vendor applications have closed. The YPG Cohort I Community Market has concluded.",
           isClosed: true,
         },
         { status: 400 }

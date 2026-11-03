@@ -145,7 +145,7 @@ export default async function PassPage(props: PageProps) {
 
   let roleTitle = "Guest";
   if (isGraduand) {
-    roleTitle = "Empower 360 Graduand (Cohort I)";
+    roleTitle = "YPG Graduand (Cohort I)";
   } else if (isVendor) {
     roleTitle = `Market Vendor (${meta.category || "Sustainable Goods"})`;
   } else if (meta.role === "family_friend") {

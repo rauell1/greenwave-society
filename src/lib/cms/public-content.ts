@@ -81,10 +81,10 @@ const defaultProgramItems: Record<
 > = {
   programEmpower: {
     title: "Empower 360: Youth Leadership & Mentorship",
-    desc: "Our flagship youth leadership and mentorship initiative. Through Empower 360, we build leadership capacity through mentorship, systems thinking training, and rotating meeting leadership so every member develops facilitation and critical thinking skills. Our inaugural Ad Hoc Cohort I changemakers lead community projects, manage budgets, and drive real-world transformation.",
-    tags: ["Flagship", "Empower 360", "Leadership", "Cohort I"],
+    desc: "Our flagship youth leadership and mentorship initiative. Through Empower 360, we build leadership capacity through mentorship, systems thinking training, and rotating meeting leadership so every member develops facilitation and critical thinking skills. Our inaugural YPG Cohort I changemakers lead community projects, manage budgets, and drive real-world transformation.",
+    tags: ["Flagship", "Leadership", "Mentorship", "YPG Cohort I"],
     cta: {
-      text: "Explore Cohort I Graduation Showcase",
+      text: "Explore YPG Graduation Showcase",
       href: "/events/graduation-cohort-1",
     },
   },

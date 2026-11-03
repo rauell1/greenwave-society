@@ -11,7 +11,7 @@ function buildRegistrationPayload(reg: any, meta: Record<string, any>) {
   let specialInstructions = "Issue Guest Pass. Direct to General Seating and Community Market.";
 
   if (isGraduand) {
-    roleTitle = "Empower 360 Graduand (Cohort I)";
+    roleTitle = "YPG Graduand (Cohort I)";
     specialInstructions = "Issue Graduation Certificate & Honor Badge. Escort to Front Reserved Graduand Seating.";
   } else if (isVendor) {
     roleTitle = `Market Vendor (${meta.category || "Sustainable Goods"})`;

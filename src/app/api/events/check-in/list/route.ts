@@ -59,7 +59,7 @@ export async function GET(req: NextRequest) {
         attendanceStatus: r.attendanceStatus,
         checkedInAt: r.checkedInAt ? r.checkedInAt.toISOString() : null,
         role: isGraduand
-          ? "Empower 360 Graduand"
+          ? "YPG Graduand"
           : isVendor
           ? `Market Vendor (${meta.category || "General"})`
           : meta.role === "family_friend"

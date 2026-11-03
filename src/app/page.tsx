@@ -81,7 +81,7 @@ const faqJsonLd = {
       "name": "How does Greenwave collaborate with The 50 Percent?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "The 50 Percent is a valued partner organisation with whom we collaborate to deliver the Young Person's Guide to Systems Thinking ad hoc training, equipping youth to map root causes and design community-owned solutions.",
+        "text": "The 50 Percent is a valued partner organisation with whom we collaborate to deliver the Young Person's Guide to Systems Change (YPG) curriculum and fellowship, equipping youth to map root causes and design community-owned solutions.",
       },
     },
     {

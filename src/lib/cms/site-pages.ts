@@ -115,9 +115,9 @@ export const DEFAULT_SITE_PAGES: SitePageDefinition[] = [
     slug: "program-empower-360",
     title: "Empower 360: Youth Leadership & Mentorship",
     excerpt: "Our flagship youth leadership and mentorship initiative.",
-    body: "Our flagship youth leadership and mentorship initiative. Through Empower 360, we build leadership capacity through mentorship, systems thinking training, and rotating meeting leadership so every member develops facilitation and critical thinking skills. Our inaugural Ad Hoc Cohort I changemakers lead community projects, manage budgets, and drive real-world transformation.",
+    body: "Our flagship youth leadership and mentorship initiative. Through Empower 360, we build leadership capacity through mentorship, systems thinking training, and rotating meeting leadership so every member develops facilitation and critical thinking skills. Our inaugural YPG Cohort I changemakers lead community projects, manage budgets, and drive real-world transformation.",
     metadata: {
-      tags: ["Flagship", "Empower 360", "Leadership", "Cohort I"],
+      tags: ["Flagship", "Leadership", "Mentorship", "YPG Cohort I"],
       icon: "HandHeart",
       ctaText: "Explore YPG Graduation Showcase",
       ctaHref: "/events/graduation-cohort-1",

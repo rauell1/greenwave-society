@@ -52,11 +52,11 @@ export default function CommunityMarketPage() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "SaleEvent",
-    "name": "Greenwave Society Empower 360 Community Market",
+    "name": "Greenwave Society YPG Community Market",
     "startDate": "2026-10-30T09:30:00+03:00",
     "endDate": "2026-10-30T15:00:00+03:00",
     "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-    "eventStatus": "https://schema.org/EventScheduled",
+    "eventStatus": "https://schema.org/EventCompleted",
     "location": {
       "@type": "Place",
       "name": "Ubunifu Hub",
@@ -67,7 +67,7 @@ export default function CommunityMarketPage() {
       },
     },
     "image": [`${APP_CONFIG.url}/posters/empower360-market-vendor-flyer.png`],
-    "description": "Eco-conscious community market call for vendors, snacks, crafts, and books supporting Empower 360 changemakers.",
+    "description": "Eco-conscious community market connecting conscious vendors, snacks, crafts, and books supporting YPG changemakers.",
     "organizer": {
       "@type": "Organization",
       "name": "Greenwave Society",
@@ -176,7 +176,7 @@ export default function CommunityMarketPage() {
               <ShareableLinkBar
                 label="Community Market"
                 url="https://greenwavesociety.org/events/community-market"
-                shareMessage="The Empower 360 Community Market ran alongside the Graduation on Friday, 30 Oct 2026 at Ubunifu Hub, Nairobi. Stalls and applications are now closed. View market details here:"
+                shareMessage="The Community Market ran alongside the YPG Cohort I Graduation on Friday, 30 Oct 2026 at Ubunifu Hub, Nairobi. Stalls and applications are now closed. View market details here:"
                 badge="Market Concluded"
               />
             </div>
@@ -273,7 +273,7 @@ export default function CommunityMarketPage() {
           <div className="md:col-span-5 p-5 rounded-2xl bg-primary/10 border border-primary/25 flex flex-col justify-between space-y-3">
             <div>
               <div className="flex items-center gap-1.5 text-primary font-bold text-xs uppercase tracking-wider font-mono">
-                <GraduationCap className="w-3.5 h-3.5" /> Empower 360 Ceremony
+                <GraduationCap className="w-3.5 h-3.5" /> YPG Ceremony
               </div>
               <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
                 Celebrated on Friday, 30th October 2026 at Ubunifu Hub. Explore the 26 certified leaders and 296-photo retrospective.

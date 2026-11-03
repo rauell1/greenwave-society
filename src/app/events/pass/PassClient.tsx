@@ -304,7 +304,7 @@ export function PassClient({ pass }: { pass: PassProps }) {
 
       {/* Footer */}
       <footer className="text-center text-[11px] text-slate-500 pt-8">
-        Greenwave Society &bull; Empower 360 Cohort I &bull; Nairobi, Kenya
+        Greenwave Society &bull; YPG Cohort I &bull; Nairobi, Kenya
       </footer>
     </div>
   );

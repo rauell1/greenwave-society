@@ -417,7 +417,7 @@ export default function ContentManager({
                       slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"),
                     })
                   }
-                  placeholder="e.g. empower360-graduation-highlights"
+                  placeholder="e.g. ypg-cohort-1-graduation-highlights"
                   className="rounded-xl text-xs h-10 border-slate-200"
                 />
               </div>

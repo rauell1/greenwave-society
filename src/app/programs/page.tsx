@@ -90,8 +90,8 @@ export default async function ProgramsPage() {
             "position": 3,
             "item": {
               "@type": "Service",
-              "name": "Young Person's Guide to Systems Thinking",
-              "description": "Ad hoc training in partnership with The 50 Percent, equipping youth to map complex root causes, navigate systemic challenges, and design actionable community solutions.",
+              "name": "Young Person's Guide to Systems Change (YPG)",
+              "description": "Training and mentorship fellowship in partnership with The 50 Percent, equipping youth to map complex root causes, navigate systemic challenges, and design actionable community solutions.",
               "provider": { "@id": `${APP_CONFIG.url}/#organization` },
               "serviceType": "Systems Thinking Training",
               "areaServed": { "@type": "Country", "name": "Kenya" },

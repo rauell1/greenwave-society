@@ -60,7 +60,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     const ticketNumber = `GW-${reg.id.slice(-6).toUpperCase()}`;
     const isVendor = Boolean(meta.vendorName);
     const isGraduand = meta.role === "graduand";
-    const regType = isVendor ? "Market Vendor" : isGraduand ? "Empower 360 Graduand" : "Guest / Supporter";
+    const regType = isVendor ? "Market Vendor" : isGraduand ? "YPG Graduand" : "Guest / Supporter";
     const roleOrCategory = meta.category || meta.role || (isVendor ? "Vendor" : "Attendee");
     const headcount = meta.guestCount || 1;
     const notes = meta.dietaryOrNotes || meta.productDescription || meta.dietaryRestrictions || "";

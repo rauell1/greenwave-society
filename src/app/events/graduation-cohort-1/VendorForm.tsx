@@ -64,8 +64,8 @@ interface VendorTicketData {
 }
 
 const VENDOR_CALENDAR_DATA = {
-  title: "Empower 360 Community Market - Vendor Stall Setup & Showcase",
-  description: "Vendor setup (9:30 AM) and showcase for the Greenwave Society Empower 360 Graduation & Community Market. Tables and chairs provided. Zero single-use plastics.",
+  title: "YPG Community Market - Vendor Stall Setup & Showcase",
+  description: "Vendor setup (9:30 AM) and showcase for the Greenwave Society YPG Graduation & Community Market. Tables and chairs provided. Zero single-use plastics.",
   location: "Ubunifu Hub, Nairobi, Kenya",
   startsAt: "2026-10-30T06:30:00Z", // 9:30 AM EAT (setup starts)
   endsAt: "2026-10-30T12:00:00Z",   // 3:00 PM EAT

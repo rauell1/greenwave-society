@@ -25,7 +25,7 @@ export function MediaKitClient() {
     "Greenwave Society is a youth-led social enterprise and think tank in Nairobi, Kenya. We translate systems thinking into community action through enterprise training, the Empower 360 leadership pipeline, and grassroots environmental action.";
 
   const longBoilerplate =
-    "Greenwave Society is a Kenyan youth-led social enterprise and think tank accelerating climate resilience and equipping young people aged 18-35 as changemakers. Through initiatives like the Empower 360 flagship leadership programme (celebrating its inaugural Ad Hoc Cohort I graduands), Systems Mtaani analyses, collaborative training with partners like The 50 Percent, community barazas, and grassroots conservation, the organization bridges the gap between youth potential and systemic community transformation.";
+    "Greenwave Society is a Kenyan youth-led social enterprise and think tank accelerating climate resilience and equipping young people aged 18-35 as changemakers. Through initiatives like the Young Person's Guide to Systems Change (YPG Cohort I graduation), Systems Mtaani analyses, collaborative training with partners like The 50 Percent, community barazas, and grassroots conservation, the organization bridges the gap between youth potential and systemic community transformation.";
 
   const brandColors = [
     { name: "Forest Green", hex: "#1b4332", oklch: "oklch(0.35 0.09 145)", role: "Primary Brand Voice & Anchor" },
@@ -217,17 +217,17 @@ export function MediaKitClient() {
                 </Badge>
               </div>
               <h3 className="text-xl font-serif font-bold text-foreground">
-                Empower 360 (Inaugural Cohort I)
+                YPG: Young Person&apos;s Guide to Systems Change (Cohort I)
               </h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Greenwave Society&apos;s flagship youth empowerment initiative equipping emerging changemakers with leadership facilitation, systems-change tools, and vocational mentorship. On Friday, 30th October 2026, we celebrate the graduation of our inaugural <strong>Ad Hoc Cohort I</strong> alongside an eco-conscious community market at Ubunifu Hub, Nairobi.
+                Greenwave Society&apos;s systems change fellowship equipping emerging changemakers with leadership facilitation, systems-change tools, and vocational mentorship in partnership with The 50 Percent. On Friday, 30th October 2026, we celebrated the graduation of our inaugural <strong>YPG Cohort I</strong> alongside an eco-conscious community market at Ubunifu Hub, Nairobi.
               </p>
             </div>
             <div className="pt-5 border-t border-border/50 flex flex-wrap items-center justify-between gap-3 mt-4">
               <span className="text-xs text-muted-foreground font-mono">Friday, 30 Oct 2026 &bull; Ubunifu Hub</span>
               <Button asChild size="sm" variant="outline" className="rounded-xl border-primary/25 text-primary hover:bg-primary/10">
                 <Link href="/events/graduation-cohort-1">
-                  View Graduation & Market <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+                  View Graduation &amp; Market <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
                 </Link>
               </Button>
             </div>
@@ -243,10 +243,10 @@ export function MediaKitClient() {
                 <span className="text-xs text-muted-foreground font-mono">Ages 18-35</span>
               </div>
               <h3 className="text-xl font-serif font-bold text-foreground">
-                Young Person&apos;s Guide to Systems Thinking
+                Young Person&apos;s Guide to Systems Change (YPG)
               </h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Ad hoc training in partnership with The 50 Percent. We equip youth to diagnose systemic roots, addressing the youth employment crisis, enterprise design, and civic engagement through practical grassroots solutions.
+                Curriculum and mentorship delivered in partnership with The 50 Percent. We equip youth to diagnose systemic root causes, navigate civic challenges, and execute practical grassroots solutions.
               </p>
             </div>
             <div className="pt-5 border-t border-border/50 flex items-center justify-between mt-4">

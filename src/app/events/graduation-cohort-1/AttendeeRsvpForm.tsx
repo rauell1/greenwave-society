@@ -202,7 +202,7 @@ export function AttendeeRsvpForm({ isClosed = true }: { isClosed?: boolean }) {
   }
 
   const roleTitleMap: Record<string, string> = {
-    graduand: "Empower 360 Graduand",
+    graduand: "YPG Graduand",
     family_friend: "Family & Supporter",
     partner_collaborator: "Partner & Collaborator",
     community_guest: "Community Guest",
@@ -558,7 +558,7 @@ export function AttendeeRsvpForm({ isClosed = true }: { isClosed?: boolean }) {
                         {...field}
                         className="w-full h-11 px-3 rounded-xl bg-background/50 border border-border/80 text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                       >
-                        <option value="graduand">Empower 360 Graduand (Cohort I)</option>
+                        <option value="graduand">YPG Graduand (Cohort I)</option>
                         <option value="family_friend">Family Member or Friend</option>
                         <option value="partner_collaborator">Partner, Mentor or Collaborator</option>
                         <option value="community_guest">Community Guest / Supporter</option>
@@ -601,7 +601,7 @@ export function AttendeeRsvpForm({ isClosed = true }: { isClosed?: boolean }) {
               <div className="p-3.5 rounded-2xl bg-gold/10 border border-gold/30 text-xs text-foreground flex items-start gap-2.5">
                 <Award className="w-4 h-4 text-gold shrink-0 mt-0.5" />
                 <div>
-                  <strong className="text-foreground">Graduand Priority Pack:</strong> As an Empower 360 Cohort I graduand, this RSVP reserves your official certificate of completion, ceremony recognition slot, and front-row reserved seating for you and your guests.
+                  <strong className="text-foreground">Graduand Priority Pack:</strong> As a YPG Cohort I graduand, this RSVP reserves your official certificate of completion, ceremony recognition slot, and front-row reserved seating for you and your guests.
                 </div>
               </div>
             )}

@@ -29,7 +29,7 @@ const FLYER_ASSETS: FlyerAsset[] = [
     category: "attendee",
     edition: "v1",
     format: "standard",
-    title: "Empower 360 Cohort I Graduation: Community Campaign Flyer",
+    title: "YPG Cohort I Graduation: Community Campaign Flyer",
     badge: "Edition 1: Community Campaign",
     editionBadge: "Community Campaign Edition",
     description: "Vibrant grassroots targeting poster featuring our arched emerald banners, Greenwave Society circular emblem, welcoming 'Bring a Friend!' invitation, and verified RSVP pass. Ideal for local community groups, youth networks, and WhatsApp circulars.",
@@ -89,7 +89,7 @@ const FLYER_ASSETS: FlyerAsset[] = [
     category: "attendee",
     edition: "v2",
     format: "standard",
-    title: "Empower 360 Cohort I Graduation: Cinematic Celebration Poster",
+    title: "YPG Cohort I Graduation: Cinematic Celebration Poster",
     badge: "Edition 2: Cinematic Stage Poster",
     editionBadge: "Cinematic Celebration Edition",
     description: "Bold, dramatic targeting poster capturing the triumphant commencement atmosphere on stage with emerald and gold lighting, diplomas held high, and verified RSVP pass. Best for Instagram feeds, LinkedIn, and institutional announcements.",
@@ -167,8 +167,8 @@ export function FlyerMediaSection({ categoryFilter = "all" }: FlyerMediaSectionP
 
   const handleShareWhatsApp = () => {
     const text = effectiveCategory === "attendee"
-      ? "🎓 Join us for Greenwave Society's Empower 360 Ad Hoc Cohort I Graduation on Friday, 30th October 2026 (10:30 AM - 3:00 PM) at Ubunifu Hub, Nairobi! +1s welcome! Details & RSVP: https://greenwavesociety.org/events/graduation-cohort-1"
-      : "🛍️ Calling sustainable brands & creatives! Showcase your venture at the Empower 360 Community Market on Friday, 30th October 2026 at Ubunifu Hub, Nairobi. KES 1,000 flat fee, tables & chairs provided, zero single-use plastics rule. Apply online: https://greenwavesociety.org/events/community-market";
+      ? "🎓 Join us for Greenwave Society's YPG Cohort I Graduation on Friday, 30th October 2026 (10:30 AM - 3:00 PM) at Ubunifu Hub, Nairobi! +1s welcome! Details & Retrospective: https://greenwavesociety.org/events/graduation-cohort-1"
+      : "🛍️ Calling sustainable brands & creatives! Showcase your venture at the YPG Community Market on Friday, 30th October 2026 at Ubunifu Hub, Nairobi. KES 1,000 flat fee, tables & chairs provided, zero single-use plastics rule. Details: https://greenwavesociety.org/events/community-market";
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
   };
 

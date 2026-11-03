@@ -117,7 +117,7 @@ export async function sendGraduationGuestConfirmation(opts: GraduationGuestEmail
   }
 
   const roleLabels: Record<string, string> = {
-    graduand: "Empower 360 Graduand (Cohort I)",
+    graduand: "YPG Graduand (Cohort I)",
     family_friend: "Family & Supporter",
     partner_collaborator: "Partner & Collaborator",
     community_guest: "Community Guest",
@@ -243,14 +243,14 @@ export async function sendGraduationVendorConfirmation(opts: GraduationVendorEma
     await resend.emails.send({
       from: FROM_EMAIL,
       to: opts.to,
-      subject: `Vendor Stall Pass: Empower 360 Community Market (${opts.ticketNumber})`,
+      subject: `Vendor Stall Pass: YPG Community Market (${opts.ticketNumber})`,
       attachments: attachments.length > 0 ? attachments : undefined,
       html: brandedEmail({
         eyebrow: "Community Market Vendor Stall Pass",
         title: "Vendor Stall Pass Confirmed!",
-        preheader: `Vendor pass for ${opts.vendorName} • Empower 360 Community Market at Ubunifu Hub.`,
+        preheader: `Vendor pass for ${opts.vendorName} • YPG Community Market at Ubunifu Hub.`,
         body: `<p style="margin:0 0 16px; font-size: 16px;">Dear ${escapeHtml(opts.name)},</p>
-               <p style="margin:0 0 16px; font-size: 15px;">Your vendor registration for <strong>${escapeHtml(opts.vendorName)}</strong> at the <strong>Empower 360 Community Market</strong> on Friday, 30th October 2026 has been received.</p>
+               <p style="margin:0 0 16px; font-size: 15px;">Your vendor registration for <strong>${escapeHtml(opts.vendorName)}</strong> at the <strong>YPG Community Market</strong> on Friday, 30th October 2026 has been received.</p>
                
                <div style="text-align:center;margin:24px 0 16px;">
                  <div style="display:inline-block;padding:12px;background:#ffffff;border:2px solid #7C3AED;border-radius:16px;box-shadow:0 4px 12px rgba(0,0,0,0.06);">
@@ -331,7 +331,7 @@ export async function sendOneDayEventReminder(opts: OneDayReminderOptions): Prom
       </div>
     `;
   } else {
-    subject = `Tomorrow: Celebrating Empower 360 Cohort I at Ubunifu Hub (${opts.ticketNumber})`;
+    subject = `Tomorrow: Celebrating YPG Cohort I at Ubunifu Hub (${opts.ticketNumber})`;
     greetingRole = "guest";
     highlightInstructions = `
       <div style="margin:16px 0;padding:16px;background:#EFF9E9;border-radius:10px;border-left:4px solid #5FAF2D;color:#173126;font-size:13px;">

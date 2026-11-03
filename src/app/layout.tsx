@@ -153,8 +153,8 @@ export default function RootLayout({
               "@type": "Offer",
               "itemOffered": {
                 "@type": "Service",
-                "name": "Young Person's Guide to Systems Thinking",
-                "description": "Ad hoc training in partnership with The 50 Percent, equipping youth aged 18-35 to map complex systemic challenges and build community solutions.",
+                "name": "Young Person's Guide to Systems Change (YPG)",
+                "description": "Training and mentorship fellowship in partnership with The 50 Percent, equipping youth aged 18-35 to map complex systemic challenges and build community solutions.",
               },
             },
             {
