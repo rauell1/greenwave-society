@@ -28,6 +28,8 @@ import { consumeRateLimit } from "@/lib/rate-limit";
 import { POST as registerForEvent } from "@/app/api/events/[slug]/register/route";
 import { sendScheduledEventEmails } from "@/lib/events/reminders";
 import { importCampaignEvents } from "@/lib/events/import-campaign";
+import { getEventPoster } from "@/lib/events/posters";
+import { POST as changePoster } from "@/app/api/admin/events/[id]/poster/route";
 import { isTimeToBeConfirmed } from "@/lib/events/nairobi-time";
 
 let paymentClient: MpesaStk;
@@ -226,6 +228,23 @@ describe("public event registration against PostgreSQL", () => {
     expect(events.slice(1).every(event => event.location === null)).toBe(true);
     expect(isTimeToBeConfirmed(events[1].startsAt, events[1].endsAt)).toBe(true);
     expect(events[2].startsAt.toISOString()).toBe("2026-11-29T06:00:00.000Z");
+  });
+  it("lets admins replace, remove and restore an event poster", async () => {
+    admin.permissions.push(PERMISSIONS.EVENTS_UPDATE);
+    vi.stubEnv("FEATURE_CMS_EVENTS", "true");
+    await importCampaignEvents(admin);
+    const walk = (await db.cmsEvent.findUnique({ where: { slug: "charity-walk" } }))!;
+    const params = { params: Promise.resolve({ id: walk.id }) };
+    expect((await getEventPoster(walk))?.src).toBe("/posters/campaign-2026/charity-walk.jpg");
+    const blob = "https://abc123.public.blob.vercel-storage.com/media/new-walk-poster.webp";
+    expect((await changePoster(request("/poster", { action: "set", src: blob, alt: "New walk poster", width: 1080, height: 1350 }), params)).status).toBe(200);
+    expect(await getEventPoster(walk)).toMatchObject({ src: blob, alt: "New walk poster", height: 1350 });
+    expect((await changePoster(request("/poster", { action: "set", src: "https://example.com/x.jpg" }), params)).status).toBe(400);
+    expect((await changePoster(request("/poster", { action: "remove" }), params)).status).toBe(200);
+    expect(await getEventPoster(walk)).toBeNull();
+    expect((await changePoster(request("/poster", { action: "reset" }), params)).status).toBe(200);
+    expect((await getEventPoster(walk))?.src).toBe("/posters/campaign-2026/charity-walk.jpg");
+    vi.unstubAllEnvs();
   });
   it("records vendors with their business name", async () => {
     mocks.eventEmail.mockResolvedValue(true);

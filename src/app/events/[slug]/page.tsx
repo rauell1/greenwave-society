@@ -9,7 +9,7 @@ import { APP_CONFIG } from "@/config/app.config";
 import { serializeJsonLd } from "@/lib/seo";
 import { eventHref, getPublicEvent, hasCustomEventPage } from "@/lib/events/public-events";
 import { formatNairobi, isTimeToBeConfirmed } from "@/lib/events/nairobi-time";
-import { POSTER_HEIGHT, POSTER_WIDTH, posterFor } from "@/lib/events/campaign-2026";
+import { getEventPoster } from "@/lib/events/posters";
 import Image from "next/image";
 import { EventRegistrationForm } from "./EventRegistrationForm";
 import { ShareEventLink } from "@/components/events/ShareEventLink";
@@ -22,10 +22,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const found = await getPublicEvent(slug).catch(() => null);
   if (!found) return { title: "Event not found | Greenwave Society" };
+  const poster = await getEventPoster(found.event).catch(() => null);
   return {
     title: `${found.event.title} | Greenwave Society Events`,
     description: found.event.description.slice(0, 160),
-    ...(posterFor(found.event) ? { openGraph: { images: [{ url: posterFor(found.event)!.src, width: POSTER_WIDTH, height: POSTER_HEIGHT, alt: posterFor(found.event)!.alt }] } } : {}),
+    ...(poster ? { openGraph: { images: [{ url: poster.src, width: poster.width, height: poster.height, alt: poster.alt }] } } : {}),
     alternates: { canonical: `${APP_CONFIG.url}/events/${slug}` },
   };
 }
@@ -43,7 +44,7 @@ export default async function EventPage({ params }: Props) {
   if (!found) notFound();
   const { event, window, placesLeft } = found;
   const timeTbc = isTimeToBeConfirmed(event.startsAt, event.endsAt);
-  const poster = posterFor(event);
+  const poster = await getEventPoster(event);
   const sameDay = formatNairobi(event.startsAt, { dateStyle: "short" }) === formatNairobi(event.endsAt, { dateStyle: "short" });
   const closedMessage =
     event.status === "cancelled" ? "This event has been cancelled." :
@@ -83,7 +84,7 @@ export default async function EventPage({ params }: Props) {
               </dl>
               <div className="mt-8 whitespace-pre-line text-base leading-relaxed text-foreground/85">{event.description}</div>
               {poster && (
-                <div className="relative mt-8 aspect-[24/25] w-full max-w-md overflow-hidden rounded-2xl border border-primary/10">
+                <div className="relative mt-8 w-full max-w-md overflow-hidden rounded-2xl border border-primary/10" style={{ aspectRatio: `${poster.width} / ${poster.height}` }}>
                   <Image src={poster.src} alt={poster.alt} fill sizes="(max-width: 768px) 100vw, 448px" className="object-cover" />
                 </div>
               )}

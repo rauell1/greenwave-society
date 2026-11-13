@@ -7,7 +7,8 @@ import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { APP_CONFIG } from "@/config/app.config";
 import { eventHref, getPublicEvents } from "@/lib/events/public-events";
 import { formatNairobi, isTimeToBeConfirmed } from "@/lib/events/nairobi-time";
-import { posterFor, VOLUNTEER_POSTER, CAMPAIGN_CONTACT } from "@/lib/events/campaign-2026";
+import { VOLUNTEER_POSTER, CAMPAIGN_CONTACT } from "@/lib/events/campaign-2026";
+import { getEventPosters, type EventPoster } from "@/lib/events/posters";
 import Image from "next/image";
 
 export const metadata: Metadata = {
@@ -21,8 +22,7 @@ export const dynamic = "force-dynamic";
 
 type ListedEvent = Awaited<ReturnType<typeof getPublicEvents>>["upcoming"][number];
 
-function EventCard({ event, past }: { event: ListedEvent; past?: boolean }) {
-  const poster = posterFor(event);
+function EventCard({ event, past, poster }: { event: ListedEvent; past?: boolean; poster?: EventPoster }) {
   return (
     <Link href={eventHref(event.slug)} className="group flex flex-col overflow-hidden rounded-2xl border border-primary/10 bg-background transition-all hover:border-primary/30 hover:shadow-lg">
       {poster && (
@@ -52,6 +52,7 @@ function EventCard({ event, past }: { event: ListedEvent; past?: boolean }) {
 
 export default async function EventsPage() {
   const { upcoming, past } = await getPublicEvents();
+  const posters = await getEventPosters([...upcoming, ...past]);
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <Navbar />
@@ -66,7 +67,7 @@ export default async function EventsPage() {
           <section className="mt-12" aria-labelledby="upcoming-heading">
             <h2 id="upcoming-heading" className="font-serif text-2xl font-bold">Upcoming</h2>
             {upcoming.length ? (
-              <div className="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3">{upcoming.map(event => <EventCard key={event.id} event={event} />)}</div>
+              <div className="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3">{upcoming.map(event => <EventCard key={event.id} event={event} poster={posters.get(event.id)} />)}</div>
             ) : (
               <p className="mt-4 rounded-2xl border border-dashed border-primary/20 p-8 text-center text-sm text-muted-foreground">No upcoming events right now. Check back soon, or <Link href="/contact" className="font-semibold text-primary underline">get in touch</Link> to hear about the next one.</p>
             )}
@@ -90,7 +91,7 @@ export default async function EventsPage() {
           {past.length > 0 && (
             <section className="mt-16" aria-labelledby="past-heading">
               <h2 id="past-heading" className="font-serif text-2xl font-bold">Past events</h2>
-              <div className="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3">{past.map(event => <EventCard key={event.id} event={event} past />)}</div>
+              <div className="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3">{past.map(event => <EventCard key={event.id} event={event} past poster={posters.get(event.id)} />)}</div>
             </section>
           )}
         </div>

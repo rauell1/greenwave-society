@@ -7,6 +7,8 @@ import { getDb } from "@/lib/db";
 import EventActions, { CleanTestRecordsButton } from "./EventActions";
 import EventBroadcastPanel from "./EventBroadcastPanel";
 import EventEditor from "./EventEditor";
+import EventPosterManager from "./EventPosterManager";
+import { getEventPosterState } from "@/lib/events/posters";
 import { eventHref, isGraduationEvent } from "@/lib/events/public-events";
 import { isTimeToBeConfirmed } from "@/lib/events/nairobi-time";
 import { ShareEventLink } from "@/components/events/ShareEventLink";
@@ -46,6 +48,7 @@ export default async function EventPage({
   const isGraduation = isGraduationEvent(event.slug);
   const membersCount = event.registrations.filter((r) => r.memberRegistrationId).length;
   const canPublish = hasPermission(admin, PERMISSIONS.EVENTS_PUBLISH);
+  const posterState = isGraduation ? null : await getEventPosterState(event);
 
   const sentCount = (key: string) => event.registrations.filter((r) => Boolean(((r.metadata as Record<string, any>) || {})[key])).length;
   const remindedCount = event.registrations.filter((r) => {
@@ -175,6 +178,10 @@ export default async function EventPage({
             registrationClosesAt: event.registrationClosesAt?.toISOString() ?? null,
           }}
         />
+      )}
+
+      {posterState && hasPermission(admin, PERMISSIONS.EVENTS_UPDATE) && (
+        <EventPosterManager eventId={event.id} eventTitle={event.title} {...posterState} />
       )}
 
       <EventActions
