@@ -2,12 +2,8 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { readApiError } from "@/lib/admin/api-error";
-
-const NAIROBI_OFFSET = "+03:00";
-
-function slugify(value: string) {
-  return value.toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 120);
-}
+import { fromNairobiParts } from "@/lib/events/nairobi-time";
+import { slugify } from "@/lib/events/validation";
 
 // Date and time are separate inputs: a datetime-local field lets people pick a date without a
 // time, which leaves the value empty and used to disable "Save draft" with no explanation.
@@ -33,9 +29,9 @@ export default function EventCreator() {
 
   async function create() {
     if (missing.length) return setMessage({ ok: false, text: `Please add the ${missing.join(", ")}.` });
-    const startsAt = new Date(`${form.startDate}T${form.startTime}:00${NAIROBI_OFFSET}`);
-    const endsAt = new Date(`${endDate}T${form.endTime}:00${NAIROBI_OFFSET}`);
-    if (Number.isNaN(startsAt.getTime()) || Number.isNaN(endsAt.getTime())) return setMessage({ ok: false, text: "Please enter a valid start and end date and time." });
+    const startsAt = fromNairobiParts(form.startDate, form.startTime);
+    const endsAt = fromNairobiParts(endDate, form.endTime);
+    if (!startsAt || !endsAt) return setMessage({ ok: false, text: "Please enter a valid start and end date and time." });
     if (endsAt <= startsAt) return setMessage({ ok: false, text: "The event must end after it starts." });
     setBusy(true);
     setMessage(null);

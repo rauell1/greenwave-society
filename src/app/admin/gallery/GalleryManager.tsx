@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Image from "next/image";
+import { readApiError } from "@/lib/admin/api-error";
 import Link from "next/link";
 import { 
   Images, 
@@ -168,7 +169,7 @@ export default function GalleryManager({
         body: JSON.stringify({ images: payload }),
       });
       if (!res.ok) {
-        throw new Error("Failed to save gallery selection");
+        throw new Error(await readApiError(res, "Failed to save gallery selection"));
       }
       setNotification({
         type: "success",
@@ -176,7 +177,7 @@ export default function GalleryManager({
       });
       setTimeout(() => setNotification(null), 5000);
     } catch (err) {
-      setNotification({ type: "error", message: String(err) });
+      setNotification({ type: "error", message: err instanceof Error ? err.message : String(err) });
     } finally {
       setIsSaving(false);
     }

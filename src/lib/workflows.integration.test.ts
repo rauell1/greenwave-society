@@ -4,11 +4,12 @@ import { MpesaStk } from "mpesa-stk";
 import { PERMISSIONS } from "@/lib/auth/permissions";
 import type { AdminUserDto } from "@/lib/auth/types";
 
-const mocks = vi.hoisted(() => ({ currentAdmin: vi.fn(), email: vi.fn(), revalidate: vi.fn() }));
+const mocks = vi.hoisted(() => ({ currentAdmin: vi.fn(), email: vi.fn(), eventEmail: vi.fn(), revalidate: vi.fn() }));
 vi.mock("server-only", () => ({}));
 vi.mock("@/lib/auth/guards", () => ({ getCurrentAdmin: mocks.currentAdmin }));
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidate }));
 vi.mock("@/lib/members/email", () => ({ sendMembershipDecisionEmail: mocks.email }));
+vi.mock("@/lib/events/email", () => ({ sendEventRegistrationConfirmation: mocks.eventEmail }));
 vi.mock("@/lib/payments/feature-flag", () => ({ isMpesaMembershipEnabled: async () => true }));
 vi.mock("@/lib/payments/client", () => ({ getMpesaClient: () => paymentClient }));
 
@@ -24,6 +25,7 @@ import { IMPACT_STATS } from "@/config/app.config";
 import { PrismaMembershipPaymentAdapter } from "@/lib/payments/adapter";
 import { applyMembershipPaymentSettlement } from "@/lib/payments/settlement";
 import { consumeRateLimit } from "@/lib/rate-limit";
+import { POST as registerForEvent } from "@/app/api/events/[slug]/register/route";
 
 let paymentClient: MpesaStk;
 let admin: AdminUserDto;
@@ -43,6 +45,7 @@ beforeEach(async () => {
   await db.cmsContent.deleteMany();
   await db.auditLog.deleteMany();
   await db.memberRegistration.deleteMany();
+  await db.cmsEvent.deleteMany();
   await db.adminUser.deleteMany();
   await db.rateLimitBucket.deleteMany();
   const user = await db.adminUser.create({ data: { email: "editor@example.com", passwordHash: "unused-test-hash" } });
@@ -158,6 +161,31 @@ describe("CMS publishing and permissions against PostgreSQL", () => {
     const content = await getPublicHomepageContent();
     expect(content.impact.youthReached).toBe(950);
     expect(content.activities).toMatchObject([{ title: "Community day", date: "2026-10-06" }]);
+  });
+});
+
+describe("public event registration against PostgreSQL", () => {
+  async function createEvent(data: { slug: string; status: string; capacity?: number | null }) {
+    const startsAt = new Date(Date.now() + 7 * 86_400_000);
+    return db.cmsEvent.create({ data: { title: "Trivia & Games Hang Out", description: "Games night", startsAt, endsAt: new Date(startsAt.getTime() + 3 * 3_600_000), createdById: admin.id, updatedById: admin.id, ...data } });
+  }
+  const signUp = (slug: string, email: string) => registerForEvent(request(`/api/events/${slug}/register`, { fullName: "Guest Person", email }), { params: Promise.resolve({ slug }) });
+
+  it("registers until capacity, then waitlists, and rejects duplicates", async () => {
+    mocks.eventEmail.mockResolvedValue(true);
+    await createEvent({ slug: "trivia-night", status: "published", capacity: 1 });
+    const first = await signUp("trivia-night", "one@example.com");
+    expect(first.status).toBe(201);
+    expect(await first.json()).toEqual({ status: "registered" });
+    expect(await (await signUp("trivia-night", "two@example.com")).json()).toEqual({ status: "waitlisted" });
+    expect((await signUp("trivia-night", "ONE@example.com")).status).toBe(409);
+    expect(mocks.eventEmail).toHaveBeenCalledTimes(1);
+  });
+  it("refuses registration for drafts and unknown events", async () => {
+    await createEvent({ slug: "draft-night", status: "draft" });
+    expect((await signUp("draft-night", "one@example.com")).status).toBe(409);
+    expect((await signUp("missing-night", "one@example.com")).status).toBe(404);
+    expect(await db.cmsEventRegistration.count()).toBe(0);
   });
 });
 

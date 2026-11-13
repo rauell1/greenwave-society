@@ -172,6 +172,10 @@ export default function ContentManager({
         return setMessage(await readApiError(response, "Unable to save content."));
       }
       const data = await response.json();
+      // Reload first so the confirmation only appears once the editor shows the saved version;
+      // otherwise typing straight after the message could be overwritten by the reload.
+      await load();
+      await choose(data.item);
       setMessage(
         !selected
           ? "Draft created successfully."
@@ -179,8 +183,6 @@ export default function ContentManager({
             ? "Changes saved and live on the site."
             : "New revision saved."
       );
-      await load();
-      await choose(data.item);
     } catch {
       setMessage("Unable to save content. Please try again.");
     } finally {
@@ -199,9 +201,10 @@ export default function ContentManager({
         body: JSON.stringify({ status }),
       });
       if (!response.ok) return setMessage(await readApiError(response, "Unable to change status."));
-      setMessage(`Content moved to ${status}.`);
+      const { item } = await response.json();
       await load();
-      await choose((await response.json()).item);
+      await choose(item);
+      setMessage(`Content moved to ${status}.`);
     } catch {
       setMessage("Unable to change status. Please try again.");
     } finally {

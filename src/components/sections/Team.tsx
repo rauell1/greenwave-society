@@ -2,11 +2,13 @@ import { Users, Sparkles, Compass, Palette } from "lucide-react";
 import { LinkedinIcon } from "@/components/ui/social-icons";
 import { Badge } from "@/components/ui/badge";
 import { FadeIn } from "@/components/ui/fade-in";
+import Image from "next/image";
 
 const founder = {
   name: "Martin Kyalo",
   role: "Founder & Chief Executive Officer (CEO)",
   initials: "MK",
+  photoKey: "teamMartinKyalo",
   tag: "Founder",
   bio: "Dedicated to designing and implementing impactful environmental programs, steering organizational growth, and uniting volunteers, youth changemakers, and strategic partners to achieve shared climate resilience goals across Kenya.",
   linkedin: "https://www.linkedin.com/in/martin-kyalo-9373982b7/",
@@ -17,6 +19,7 @@ const executives = [
     name: "Njeri Njoroge",
     role: "Chief Operating Officer (COO)",
     initials: "NN",
+    photoKey: "teamNjeriNjoroge",
     tag: "Executive",
     bio: "Oversees daily operations, organizational workflows, and institutional governance to ensure seamless execution of environmental initiatives.",
     icon: Compass,
@@ -25,6 +28,7 @@ const executives = [
     name: "Eugene Shadrack",
     role: "Chief Innovation Officer (CIO)",
     initials: "ES",
+    photoKey: "teamEugeneShadrack",
     tag: "Executive",
     bio: "Spearheads technological integration and digital transformation, fostering creative solutions to scale climate action and youth engagement.",
     icon: Sparkles,
@@ -36,6 +40,7 @@ const designTeam = [
     name: "Roy Okola Otieno",
     role: "Head of Design",
     initials: "RO",
+    photoKey: "teamRoyOkola",
     tag: "Design Lead",
     bio: "Directs brand identity, UI/UX design systems, and digital media architecture to amplify Greenwave Society's visual impact and mission awareness.",
     icon: Palette,
@@ -47,7 +52,15 @@ export interface TeamContentProps {
   body?: string;
 }
 
-export function Team({ content }: { content?: TeamContentProps } = {}) {
+// Team photos are image placements edited in Admin → Placements; an empty slot shows initials.
+export type TeamPhotos = Record<string, { src: string; alt: string } | undefined>;
+
+export function Team({ content, photos = {} }: { content?: TeamContentProps; photos?: TeamPhotos } = {}) {
+  const photoFor = (key: string, name: string) => {
+    const photo = photos[key];
+    return photo?.src ? { src: photo.src, alt: photo.alt || name } : null;
+  };
+  const founderPhoto = photoFor(founder.photoKey, founder.name);
   const title = content?.title || "Meet the People Behind the Mission";
   const body =
     content?.body ||
@@ -98,7 +111,11 @@ export function Team({ content }: { content?: TeamContentProps } = {}) {
                     {founder.tag}
                   </div>
                   <div className="relative w-full h-full rounded-[1.5rem] overflow-hidden bg-primary/5 flex items-center justify-center">
-                    <span className="text-7xl sm:text-8xl font-serif font-black text-primary/40">{founder.initials}</span>
+                    {founderPhoto ? (
+                      <Image src={founderPhoto.src} alt={founderPhoto.alt} fill sizes="(max-width: 1024px) 90vw, 384px" className="object-cover" />
+                    ) : (
+                      <span className="text-7xl sm:text-8xl font-serif font-black text-primary/40">{founder.initials}</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -144,14 +161,21 @@ export function Team({ content }: { content?: TeamContentProps } = {}) {
           <div className="grid md:grid-cols-2 gap-6 sm:gap-8 max-w-3xl mx-auto">
             {executives.map((exec, i) => {
               const IconComp = exec.icon;
+              const photo = photoFor(exec.photoKey, exec.name);
               return (
                 <FadeIn key={exec.name} delay={0.2 + i * 0.1}>
                   <div className="bg-background rounded-2xl border border-primary/20 p-6 flex flex-col justify-between hover:border-primary/40 hover:shadow-md transition-all duration-300 group h-full">
                     <div>
                       <div className="flex items-center justify-between mb-4">
-                        <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center font-serif font-black text-primary text-base group-hover:bg-primary group-hover:text-white transition-colors duration-300">
-                          {exec.initials}
-                        </div>
+                        {photo ? (
+                          <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-primary/20">
+                            <Image src={photo.src} alt={photo.alt} fill sizes="64px" className="object-cover" />
+                          </div>
+                        ) : (
+                          <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center font-serif font-black text-primary text-base group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                            {exec.initials}
+                          </div>
+                        )}
                         <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider bg-secondary/30 text-muted-foreground px-2.5 py-1 rounded-md border border-primary/10">
                           <IconComp className="w-3 h-3 text-gold" />
                           {exec.tag}
@@ -190,14 +214,21 @@ export function Team({ content }: { content?: TeamContentProps } = {}) {
           <div className="flex justify-center">
             {designTeam.map((member, i) => {
               const IconComp = member.icon;
+              const photo = photoFor(member.photoKey, member.name);
               return (
                 <FadeIn key={member.name} delay={0.35 + i * 0.1} className="w-full max-w-sm">
                   <div className="bg-background rounded-2xl border border-primary/20 p-6 flex flex-col justify-between hover:border-primary/40 hover:shadow-md transition-all duration-300 group h-full">
                     <div>
                       <div className="flex items-center justify-between mb-4">
-                        <div className="w-12 h-12 rounded-xl bg-gold/15 border border-gold/30 flex items-center justify-center font-serif font-black text-gold text-base group-hover:bg-gold group-hover:text-white transition-colors duration-300">
-                          {member.initials}
-                        </div>
+                        {photo ? (
+                          <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-primary/20">
+                            <Image src={photo.src} alt={photo.alt} fill sizes="64px" className="object-cover" />
+                          </div>
+                        ) : (
+                          <div className="w-12 h-12 rounded-xl bg-gold/15 border border-gold/30 flex items-center justify-center font-serif font-black text-gold text-base group-hover:bg-gold group-hover:text-white transition-colors duration-300">
+                            {member.initials}
+                          </div>
+                        )}
                         <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider bg-secondary/30 text-muted-foreground px-2.5 py-1 rounded-md border border-primary/10">
                           <IconComp className="w-3 h-3 text-gold" />
                           {member.tag}
