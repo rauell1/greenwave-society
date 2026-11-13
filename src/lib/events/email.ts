@@ -96,7 +96,7 @@ export async function sendEventRegistrationConfirmation(opts: EventRegistrationE
                <div style="margin:24px 0;padding:16px;background:#EFF9E9;border-radius:8px;border-left:4px solid #5FAF2D;">
                  <p style="margin:0 0 8px"><strong>Date & Time:</strong> ${escapeHtml(opts.eventDate)}</p>
                  ${locationText}
-                 <p style="margin:0">We will email you a reminder 24 hours before the event.</p>
+                 <p style="margin:0">We will email you a reminder 3 days before and again the day before the event.</p>
                </div>
                ${emailButton(opts.eventUrl ? "View event details" : "Visit Greenwave Society", eventUrl)}
                <p style="margin:24px 0 0;color:#607068;font-size:13px">If you have any questions or accessibility needs you forgot to mention, just reply to this email or contact us at <a href="mailto:${CONTACT_EMAIL}" style="color:#1A5C38">${CONTACT_EMAIL}</a>.</p>`,
@@ -525,30 +525,68 @@ export async function sendGraduationCertificateEmail(opts: GraduationCertificate
   }
 }
 
-export async function sendEventReminderEmail(opts: EventRegistrationEmailOptions): Promise<boolean> {
-  const resend = getResend();
+export type ScheduledEventEmailKind = "reminder3d" | "reminder1d" | "thankYou";
 
-  if (!resend) {
-    logger.info("RESEND_API_KEY not set - event reminder simulated", { name: opts.name, to: opts.to });
-    return true;
-  }
+export interface ScheduledEventEmailOptions {
+  to: string;
+  name: string;
+  eventTitle: string;
+  eventDate: string;
+  location?: string;
+  eventUrl: string;
+}
 
-  try {
-    await resend.emails.send({
-      from: FROM_EMAIL,
-      to: opts.to,
-      subject: `Reminder: ${opts.eventTitle} is coming up!`,
+const muted = "margin:24px 0 0;color:#607068;font-size:13px";
+const contactLine = `<p style="${muted}">Questions? Reply to this email or contact us at <a href="mailto:${CONTACT_EMAIL}" style="color:#1A5C38">${CONTACT_EMAIL}</a>.</p>`;
+
+/** Subject and HTML for the 3-day reminder, the day-before reminder and the post-event thank-you. */
+export function buildScheduledEventEmail(kind: ScheduledEventEmailKind, opts: ScheduledEventEmailOptions): { subject: string; html: string } {
+  const greeting = `<p style="margin:0 0 16px">Dear ${escapeHtml(opts.name)},</p>`;
+  const details = `<div style="margin:24px 0;padding:16px;background:#EFF9E9;border-radius:8px;border-left:4px solid #5FAF2D;"><p style="margin:0"><strong>When:</strong> ${escapeHtml(opts.eventDate)}</p>${opts.location ? `<p style="margin:8px 0 0"><strong>Where:</strong> ${escapeHtml(opts.location)}</p>` : ""}</div>`;
+  if (kind === "thankYou") {
+    return {
+      subject: `Thank you for joining ${opts.eventTitle}`,
       html: brandedEmail({
         eyebrow: "Greenwave Events",
-        title: "See you tomorrow",
-        preheader: `${opts.eventTitle} is happening soon.`,
-        body: `<p style="margin:0 0 16px">Dear ${escapeHtml(opts.name)},</p><p style="margin:0 0 16px">This is a quick reminder that <strong>${escapeHtml(opts.eventTitle)}</strong> is coming up on <strong>${escapeHtml(opts.eventDate)}</strong>.</p>${opts.location ? `<p style="margin:0 0 16px"><strong>Location:</strong> ${escapeHtml(opts.location)}</p>` : ""}<p style="margin:0 0 16px">We look forward to seeing you there!</p>${opts.eventUrl ? emailButton("View event details", opts.eventUrl) : ""}<p style="margin:0;color:#607068;font-size:13px">Questions? Contact us at <a href="mailto:${CONTACT_EMAIL}" style="color:#1A5C38">${CONTACT_EMAIL}</a>.</p>`,
+        title: "Thank you for coming",
+        preheader: `Thank you for being part of ${opts.eventTitle}.`,
+        body: `${greeting}<p style="margin:0 0 16px">Thank you for being part of <strong>${escapeHtml(opts.eventTitle)}</strong>. Every person who shows up helps Greenwave grow its community programmes.</p><p style="margin:0 0 16px">We would love to hear how it went: just reply to this email with your feedback or photos.</p>${emailButton("See upcoming events", `${SITE_URL}/events`)}<p style="margin:16px 0 0">Want to help at the next one? <a href="${SITE_URL}/contact?interest=volunteer" style="color:#1A5C38">Volunteer with us</a>.</p>${contactLine}`,
       }),
-    });
-    logger.info("Event reminder email sent", { name: opts.name, to: opts.to });
-    return true;
-  } catch (error) {
-    logger.error("Failed to send event reminder email", error as Error, { to: opts.to });
-    return false;
+    };
   }
+  const inThreeDays = kind === "reminder3d";
+  return {
+    subject: inThreeDays ? `3 days to go: ${opts.eventTitle}` : `Tomorrow: ${opts.eventTitle}`,
+    html: brandedEmail({
+      eyebrow: "Greenwave Events",
+      title: inThreeDays ? "3 days to go" : "See you tomorrow",
+      preheader: inThreeDays ? `${opts.eventTitle} is in 3 days.` : `${opts.eventTitle} is tomorrow.`,
+      body: `${greeting}<p style="margin:0 0 16px">${inThreeDays ? "Just a heads-up that" : "A quick reminder that"} <strong>${escapeHtml(opts.eventTitle)}</strong> is ${inThreeDays ? "in three days" : "tomorrow"}.</p>${details}<p style="margin:0 0 16px">${inThreeDays ? "Invite a friend: they can sign up on the event page." : "We look forward to seeing you there!"}</p>${emailButton("View event details", opts.eventUrl)}${contactLine}`,
+    }),
+  };
+}
+
+/**
+ * Sends many emails through Resend's batch API (up to 100 per request). Returns one success flag
+ * per email; when a request fails, every email in that chunk is marked failed so it can be retried.
+ */
+export async function sendBatchEmails(emails: { to: string; subject: string; html: string }[]): Promise<boolean[]> {
+  const resend = getResend();
+  if (!resend) {
+    logger.info("RESEND_API_KEY not set - scheduled event emails simulated", { count: emails.length });
+    return emails.map(() => true);
+  }
+  const results: boolean[] = [];
+  for (let i = 0; i < emails.length; i += 100) {
+    const chunk = emails.slice(i, i + 100);
+    try {
+      const { error } = await resend.batch.send(chunk.map(email => ({ from: FROM_EMAIL, ...email })));
+      if (error) throw new Error(error.message);
+      results.push(...chunk.map(() => true));
+    } catch (error) {
+      logger.error("Failed to send scheduled event email batch", error as Error, { count: chunk.length });
+      results.push(...chunk.map(() => false));
+    }
+  }
+  return results;
 }
