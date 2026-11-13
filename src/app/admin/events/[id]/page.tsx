@@ -29,7 +29,6 @@ export default async function EventPage({
     where: { id },
     include: {
       registrations: { orderBy: { createdAt: "desc" } },
-      legacyBaraza: { orderBy: { createdAt: "desc" } },
     },
   });
   if (!event) notFound();
@@ -375,17 +374,6 @@ export default async function EventPage({
           </table>
         </div>
       </div>
-
-      {event.legacyBaraza.length > 0 && (
-        <div className="rounded-xl border bg-white p-5">
-          <h2 className="font-semibold">
-            Linked legacy Baraza records ({event.legacyBaraza.length})
-          </h2>
-          <p className="mt-2 text-sm text-slate-500">
-            Preserved separately from CMS attendee records.
-          </p>
-        </div>
-      )}
     </section>
   );
 }
