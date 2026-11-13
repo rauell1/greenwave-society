@@ -672,6 +672,7 @@ export default function PlacementsManager({
         open={isUploadOpen}
         onOpenChange={setIsUploadOpen}
         onSuccess={handleUploadSuccess}
+        preset={activePickerSlot?.startsWith("team") ? "portrait" : "banner"}
         title={activePickerSlot ? `Upload Image for ${defaultPlacements[activePickerSlot]?.name}` : "Upload Media to Storage"}
         description="Upload a new photograph to Cloud Storage. It will be immediately selected for this placement slot."
       />
