@@ -234,48 +234,17 @@ export interface AvailableCmsImage {
 export async function getAvailableCmsImages(): Promise<AvailableCmsImage[]> {
   const map = new Map<string, AvailableCmsImage>();
 
-  // 1. Load from docs/repo-image-catalog.json (contains all 829 repo images, checked into git)
-  try {
-    const catalogPath = path.join(process.cwd(), "docs/repo-image-catalog.json");
-    const catalogRaw = await readFile(catalogPath, "utf-8");
-    const catalogFiles = JSON.parse(catalogRaw) as string[];
-    for (const file of catalogFiles) {
-      const url = `/images/${file}`;
-      map.set(url, { url, filename: file, source: "repo" });
-    }
-  } catch (err) {
-    logger.warn("Could not read repo-image-catalog.json", { err: String(err) });
-  }
-
-  // 2. Read public/images directory if present on local disk
-  try {
-    const imagesDir = path.join(process.cwd(), "public/images");
-    const files = await readdir(imagesDir);
-    for (const file of files) {
-      if (/\.(jpe?g|png|webp|svg)$/i.test(file)) {
-        const url = `/images/${file}`;
-        if (!map.has(url)) {
-          map.set(url, { url, filename: file, source: "repo" });
-        }
-      }
-    }
-  } catch {
-    // Expected in deployments where public/images is gitignored
-  }
-
-  // 3. docs/image-manifest.json
+  // 1. Load from docs/image-manifest.json (authoritative CDN inventory)
   try {
     const manifestPath = path.join(process.cwd(), "docs/image-manifest.json");
     const manifestRaw = await readFile(manifestPath, "utf-8");
     const manifestFiles = JSON.parse(manifestRaw) as string[];
     for (const file of manifestFiles) {
       const url = `/images/${file}`;
-      if (!map.has(url)) {
-        map.set(url, { url, filename: file, source: "repo" });
-      }
+      map.set(url, { url, filename: file, source: "repo" });
     }
-  } catch {
-    // fallback
+  } catch (err) {
+    logger.warn("Could not read image-manifest.json", { err: String(err) });
   }
 
   // 4. Read posters in public/posters

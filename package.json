@@ -17,6 +17,7 @@
     "images:check": "node scripts/check-images.mjs",
     "download:graduation-photos": "node scripts/download-graduation-photos.mjs",
     "sync:graduation-photos": "node scripts/sync-graduation-photos-to-r2.mjs",
+    "sync:public-images": "node scripts/sync-public-images-to-r2.mjs",
     "test:integration": "node scripts/run-integration-tests.mjs",
     "typecheck": "next typegen && tsc --noEmit",
     "db:deploy": "prisma migrate deploy"

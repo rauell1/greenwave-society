@@ -107,17 +107,17 @@ export async function getAdminGalleryConfig(): Promise<{
 }> {
   const map = new Map<string, AvailableGalleryImage>();
 
-  // 1. Catalog (all 829 repo images)
+  // 1. Load from docs/image-manifest.json (authoritative CDN inventory)
   try {
-    const catalogPath = path.join(process.cwd(), "docs/repo-image-catalog.json");
-    const catalogRaw = await readFile(catalogPath, "utf-8");
-    const catalogFiles = JSON.parse(catalogRaw) as string[];
-    for (const file of catalogFiles) {
+    const manifestPath = path.join(process.cwd(), "docs/image-manifest.json");
+    const manifestRaw = await readFile(manifestPath, "utf-8");
+    const manifestFiles = JSON.parse(manifestRaw) as string[];
+    for (const file of manifestFiles) {
       const src = `/images/${file}`;
       map.set(src, { src, filename: file, source: "repo" });
     }
   } catch (err) {
-    logger.warn("Could not read repo-image-catalog.json for gallery", { err: String(err) });
+    logger.warn("Could not read image-manifest.json for gallery", { err: String(err) });
   }
 
   // 1b. Graduation Ceremony Photos
@@ -132,37 +132,6 @@ export async function getAdminGalleryConfig(): Promise<{
     }
   } catch {
     // Optional manifest
-  }
-
-  // 2. Read public/images if present
-  try {
-    const imagesDir = path.join(process.cwd(), "public/images");
-    const files = await readdir(imagesDir);
-    for (const file of files) {
-      if (/\.(jpe?g|png|webp|svg)$/i.test(file)) {
-        const src = `/images/${file}`;
-        if (!map.has(src)) {
-          map.set(src, { src, filename: file, source: "repo" });
-        }
-      }
-    }
-  } catch {
-    // Expected in deployments where public/images is gitignored
-  }
-
-  // 3. docs/image-manifest.json
-  try {
-    const manifestPath = path.join(process.cwd(), "docs/image-manifest.json");
-    const manifestRaw = await readFile(manifestPath, "utf-8");
-    const manifestFiles = JSON.parse(manifestRaw) as string[];
-    for (const file of manifestFiles) {
-      const src = `/images/${file}`;
-      if (!map.has(src)) {
-        map.set(src, { src, filename: file, source: "repo" });
-      }
-    }
-  } catch {
-    // fallback
   }
 
   // 4. Read posters from public/posters
