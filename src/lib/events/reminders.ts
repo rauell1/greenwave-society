@@ -5,7 +5,7 @@ import { getDb } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { APP_CONFIG } from "@/config/app.config";
 import { sendEventReminderEmail } from "./email";
-import { formatNairobi } from "./nairobi-time";
+import { formatEventWhen } from "./nairobi-time";
 import { hasCustomEventPage } from "./public-events";
 
 const REMINDER_WINDOW_MS = 24 * 60 * 60 * 1000;
@@ -48,7 +48,7 @@ export async function sendDueEventReminders(now = new Date()) {
         to: registration.email,
         name: registration.fullName,
         eventTitle: event.title,
-        eventDate: formatNairobi(event.startsAt),
+        eventDate: formatEventWhen(event.startsAt, event.endsAt),
         location: event.location || event.virtualUrl || undefined,
         eventUrl: `${APP_CONFIG.url}/events/${event.slug}`,
       });

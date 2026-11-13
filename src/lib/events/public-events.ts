@@ -14,6 +14,14 @@ export function eventHref(slug: string) {
   return CUSTOM_EVENT_PAGES[slug] ?? `/events/${slug}`;
 }
 
+// Graduation-only admin tools (graduand counts, QR passes, door check-in station, pass reminder
+// broadcast) apply to this event alone; every other event uses the plain attendee view.
+const GRADUATION_EVENT_SLUGS = ["graduation-cohort-1-2026"];
+
+export function isGraduationEvent(slug: string) {
+  return GRADUATION_EVENT_SLUGS.includes(slug);
+}
+
 export function hasCustomEventPage(slug: string) {
   return slug in CUSTOM_EVENT_PAGES;
 }

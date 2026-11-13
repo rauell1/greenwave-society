@@ -8,7 +8,9 @@ import { ScrollToTop } from "@/components/ui/scroll-to-top";
 import { APP_CONFIG } from "@/config/app.config";
 import { serializeJsonLd } from "@/lib/seo";
 import { eventHref, getPublicEvent, hasCustomEventPage } from "@/lib/events/public-events";
-import { formatNairobi } from "@/lib/events/nairobi-time";
+import { formatNairobi, isTimeToBeConfirmed } from "@/lib/events/nairobi-time";
+import { POSTER_HEIGHT, POSTER_WIDTH, posterFor } from "@/lib/events/campaign-2026";
+import Image from "next/image";
 import { EventRegistrationForm } from "./EventRegistrationForm";
 import { ShareEventLink } from "@/components/events/ShareEventLink";
 
@@ -23,6 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${found.event.title} | Greenwave Society Events`,
     description: found.event.description.slice(0, 160),
+    ...(posterFor(found.event) ? { openGraph: { images: [{ url: posterFor(found.event)!.src, width: POSTER_WIDTH, height: POSTER_HEIGHT, alt: posterFor(found.event)!.alt }] } } : {}),
     alternates: { canonical: `${APP_CONFIG.url}/events/${slug}` },
   };
 }
@@ -39,6 +42,8 @@ export default async function EventPage({ params }: Props) {
   const found = await getPublicEvent(slug);
   if (!found) notFound();
   const { event, window, placesLeft } = found;
+  const timeTbc = isTimeToBeConfirmed(event.startsAt, event.endsAt);
+  const poster = posterFor(event);
   const sameDay = formatNairobi(event.startsAt, { dateStyle: "short" }) === formatNairobi(event.endsAt, { dateStyle: "short" });
   const closedMessage =
     event.status === "cancelled" ? "This event has been cancelled." :
@@ -71,12 +76,17 @@ export default async function EventPage({ params }: Props) {
               <h1 className="mt-4 font-serif text-4xl font-black leading-tight sm:text-5xl">{event.title}</h1>
               <dl className="mt-6 grid gap-3 text-sm sm:grid-cols-2">
                 <div className="flex items-start gap-2"><CalendarDays className="mt-0.5 h-4 w-4 text-primary" /><div><dt className="sr-only">Date</dt><dd>{formatNairobi(event.startsAt, { dateStyle: "full" })}</dd></div></div>
-                <div className="flex items-start gap-2"><Clock className="mt-0.5 h-4 w-4 text-primary" /><div><dt className="sr-only">Time</dt><dd>{formatNairobi(event.startsAt, { timeStyle: "short" })} – {sameDay ? formatNairobi(event.endsAt, { timeStyle: "short" }) : formatNairobi(event.endsAt, { dateStyle: "medium", timeStyle: "short" })} (Nairobi time)</dd></div></div>
+                <div className="flex items-start gap-2"><Clock className="mt-0.5 h-4 w-4 text-primary" /><div><dt className="sr-only">Time</dt><dd>{timeTbc ? "Time to be confirmed" : <>{formatNairobi(event.startsAt, { timeStyle: "short" })} – {sameDay ? formatNairobi(event.endsAt, { timeStyle: "short" }) : formatNairobi(event.endsAt, { dateStyle: "medium", timeStyle: "short" })} (Nairobi time)</>}</dd></div></div>
                 {event.location && <div className="flex items-start gap-2"><MapPin className="mt-0.5 h-4 w-4 text-primary" /><div><dt className="sr-only">Location</dt><dd>{event.location}</dd></div></div>}
                 {event.virtualUrl && <div className="flex items-start gap-2"><Video className="mt-0.5 h-4 w-4 text-primary" /><div><dt className="sr-only">Online</dt><dd>Online link shared after registration</dd></div></div>}
                 {placesLeft !== null && event.status === "published" && <div className="flex items-start gap-2"><Users className="mt-0.5 h-4 w-4 text-primary" /><div><dt className="sr-only">Places</dt><dd>{placesLeft > 0 ? `${placesLeft} place${placesLeft === 1 ? "" : "s"} left` : "Fully booked: join the waiting list"}</dd></div></div>}
               </dl>
               <div className="mt-8 whitespace-pre-line text-base leading-relaxed text-foreground/85">{event.description}</div>
+              {poster && (
+                <div className="relative mt-8 aspect-[24/25] w-full max-w-md overflow-hidden rounded-2xl border border-primary/10">
+                  <Image src={poster.src} alt={poster.alt} fill sizes="(max-width: 768px) 100vw, 448px" className="object-cover" />
+                </div>
+              )}
             </article>
             <aside className="lg:sticky lg:top-28 lg:self-start">
               <EventRegistrationForm slug={event.slug} closedMessage={closedMessage} fullyBooked={placesLeft === 0} />
