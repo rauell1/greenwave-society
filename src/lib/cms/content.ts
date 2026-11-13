@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { IMAGE_SRC_HINT, isAllowedImageSrc } from "@/lib/media/image-src";
 
 export const NEWS_CONTENT_TYPES = ["news", "article", "story", "announcement"] as const;
 export const CONTENT_TYPES = ["page", "program", ...NEWS_CONTENT_TYPES, "activity", "impact"] as const;
@@ -35,6 +36,10 @@ export const contentInputSchema = z.object({
   metadata: z.record(z.string(), z.unknown()).optional().nullable(),
   status: z.enum(["draft", "review"]).default("draft"),
 }).superRefine((input, context) => {
+  const imageUrl = input.metadata?.imageUrl;
+  if (typeof imageUrl === "string" && imageUrl.trim() && !isAllowedImageSrc(imageUrl.trim())) {
+    context.addIssue({ code: "custom", path: ["metadata", "imageUrl"], message: IMAGE_SRC_HINT });
+  }
   if (input.type !== "activity" && input.type !== "impact") return;
   const schema = input.type === "activity" ? activityMetadataSchema : impactStatsSchema;
   const result = schema.safeParse(input.metadata);

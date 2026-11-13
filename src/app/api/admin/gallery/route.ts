@@ -3,6 +3,7 @@ import { authorizeRoute } from "@/lib/auth/route-authorization";
 import { PERMISSIONS } from "@/lib/auth/permissions";
 import { getAdminGalleryConfig, saveAdminGalleryConfig, type CuratedGalleryItem } from "@/lib/cms/gallery";
 import { AUDIT_ACTIONS, logAuditEvent } from "@/lib/audit/audit-service";
+import { IMAGE_SRC_HINT, isAllowedImageSrc } from "@/lib/media/image-src";
 
 export async function GET() {
   const auth = await authorizeRoute(PERMISSIONS.CONTENT_READ);
@@ -22,6 +23,11 @@ export async function PUT(request: NextRequest) {
 
     if (!Array.isArray(images)) {
       return NextResponse.json({ error: "Invalid images array" }, { status: 400 });
+    }
+
+    const invalid = images.filter(image => typeof image?.src !== "string" || !isAllowedImageSrc(image.src.trim()));
+    if (invalid.length) {
+      return NextResponse.json({ error: `${invalid.length} photo(s) use a link the site cannot display. ${IMAGE_SRC_HINT}` }, { status: 400 });
     }
 
     const saved = await saveAdminGalleryConfig(images, auth.admin.id);

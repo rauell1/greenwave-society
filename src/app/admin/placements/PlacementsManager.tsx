@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Image from "next/image";
+import { readApiError } from "@/lib/admin/api-error";
 import Link from "next/link";
 import { 
   ImageIcon, 
@@ -175,12 +176,12 @@ export default function PlacementsManager({
         body: JSON.stringify({ placements }),
       });
       if (!res.ok) {
-        throw new Error("Failed to save image placements");
+        throw new Error(await readApiError(res, "Failed to save image placements"));
       }
       setNotification({ type: "success", message: "Frontend image placements saved and revalidated successfully across all pages!" });
       setTimeout(() => setNotification(null), 5000);
     } catch (err) {
-      setNotification({ type: "error", message: String(err) });
+      setNotification({ type: "error", message: err instanceof Error ? err.message : String(err) });
     } finally {
       setIsSaving(false);
     }
@@ -316,14 +317,20 @@ export default function PlacementsManager({
             <div key={key} className="flex flex-col rounded-2xl bg-white border border-slate-200 shadow-xs overflow-hidden transition-all hover:shadow-md">
               {/* Image Preview Box */}
               <div className="relative aspect-video w-full bg-slate-100 overflow-hidden border-b border-slate-100 group">
-                <Image
-                  src={current.src}
-                  alt={current.alt || meta.name}
-                  fill
-                  sizes="400px"
-                  loading="lazy"
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+                {current.src ? (
+                  <Image
+                    src={current.src}
+                    alt={current.alt || meta.name}
+                    fill
+                    sizes="400px"
+                    loading="lazy"
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center text-xs font-medium text-slate-500">
+                    No photo yet: initials are shown
+                  </div>
+                )}
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                   <Button
                     size="sm"

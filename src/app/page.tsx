@@ -168,7 +168,7 @@ export default async function HomePage() {
           }}
         />
         <Impact impact={impact} />
-        <Team content={team} />
+        <Team content={team} photos={placements} />
         <Activities activities={activities} />
         <VolunteerCTA imagePlacement={placements?.volunteer} content={volunteerCta} />
         <Contact content={contact} />

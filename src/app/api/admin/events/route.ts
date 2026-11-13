@@ -9,6 +9,7 @@ export async function GET() { const auth = await authorizeRoute(PERMISSIONS.EVEN
 export async function POST(request: NextRequest) {
   const auth = await authorizeRoute(PERMISSIONS.EVENTS_CREATE); if (!auth.ok) return auth.response;
   const parsed = eventInputSchema.safeParse(await request.json()); if (!parsed.success) return NextResponse.json({ error: "Invalid event", issues: parsed.error.flatten() }, { status: 400 });
+  if (await getDb().cmsEvent.findUnique({ where: { slug: parsed.data.slug }, select: { id: true } })) return NextResponse.json({ error: `An event with the slug "${parsed.data.slug}" already exists. Choose a different slug.` }, { status: 409 });
   const event = await getDb().$transaction(async tx => { const created = await tx.cmsEvent.create({ data: { ...parsed.data, virtualUrl: parsed.data.virtualUrl || null, createdById: auth.admin.id, updatedById: auth.admin.id } }); await tx.auditLog.create({ data: { action: AUDIT_ACTIONS.EVENT_CREATED, actor: auth.admin.email, actorUserId: auth.admin.id, resourceType: "cms_event", resourceId: created.id, outcome: "SUCCESS", afterState: JSON.stringify({ slug: created.slug, title: created.title, status: created.status }) } }); return created; });
   return NextResponse.json({ event: { id: event.id, slug: event.slug, title: event.title, status: event.status } }, { status: 201 });
 }

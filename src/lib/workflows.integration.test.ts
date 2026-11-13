@@ -4,11 +4,12 @@ import { MpesaStk } from "mpesa-stk";
 import { PERMISSIONS } from "@/lib/auth/permissions";
 import type { AdminUserDto } from "@/lib/auth/types";
 
-const mocks = vi.hoisted(() => ({ currentAdmin: vi.fn(), email: vi.fn(), revalidate: vi.fn() }));
+const mocks = vi.hoisted(() => ({ currentAdmin: vi.fn(), email: vi.fn(), eventEmail: vi.fn(), revalidate: vi.fn() }));
 vi.mock("server-only", () => ({}));
 vi.mock("@/lib/auth/guards", () => ({ getCurrentAdmin: mocks.currentAdmin }));
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidate }));
 vi.mock("@/lib/members/email", () => ({ sendMembershipDecisionEmail: mocks.email }));
+vi.mock("@/lib/events/email", () => ({ sendEventRegistrationConfirmation: mocks.eventEmail }));
 vi.mock("@/lib/payments/feature-flag", () => ({ isMpesaMembershipEnabled: async () => true }));
 vi.mock("@/lib/payments/client", () => ({ getMpesaClient: () => paymentClient }));
 
@@ -24,6 +25,7 @@ import { IMPACT_STATS } from "@/config/app.config";
 import { PrismaMembershipPaymentAdapter } from "@/lib/payments/adapter";
 import { applyMembershipPaymentSettlement } from "@/lib/payments/settlement";
 import { consumeRateLimit } from "@/lib/rate-limit";
+import { POST as registerForEvent } from "@/app/api/events/[slug]/register/route";
 
 let paymentClient: MpesaStk;
 let admin: AdminUserDto;
@@ -43,6 +45,7 @@ beforeEach(async () => {
   await db.cmsContent.deleteMany();
   await db.auditLog.deleteMany();
   await db.memberRegistration.deleteMany();
+  await db.cmsEvent.deleteMany();
   await db.adminUser.deleteMany();
   await db.rateLimitBucket.deleteMany();
   const user = await db.adminUser.create({ data: { email: "editor@example.com", passwordHash: "unused-test-hash" } });
@@ -103,7 +106,7 @@ describe("CMS publishing and permissions against PostgreSQL", () => {
     const params = { params: Promise.resolve({ id: item.id }) };
     expect((await setStatus(request("/api/admin/content/status", { status: "published" }), params)).status).toBe(200);
     expect(await getPublishedArticle(item.slug)).toMatchObject({ id: item.id });
-    expect(await getPublishedNews()).toHaveLength(1);
+    expect((await getPublishedNews()).filter(article => article.id === item.id)).toHaveLength(1);
     expect(mocks.revalidate).toHaveBeenCalledWith("/news");
     expect(await db.auditLog.count({ where: { resourceId: item.id } })).toBe(2);
     await setStatus(request("/api/admin/content/status", { status: "archived" }), params);
@@ -115,6 +118,19 @@ describe("CMS publishing and permissions against PostgreSQL", () => {
     mocks.currentAdmin.mockResolvedValue({ ...admin, permissions: [PERMISSIONS.CONTENT_CREATE] });
     expect((await setStatus(request("/api/admin/content/status", { status: "published" }), { params: Promise.resolve({ id: "missing" }) })).status).toBe(403);
     expect(await db.cmsContent.count()).toBe(0);
+  });
+  it("keeps published content live when it is edited in place", async () => {
+    const response = await createContent(request("/api/admin/content", { type: "story", slug: "live-story", title: "Our story", body: "First version" }));
+    const { item } = await response.json();
+    const params = { params: Promise.resolve({ id: item.id }) };
+    await setStatus(request("/api/admin/content/status", { status: "published" }), params);
+    const revision = await reviseContent(request("/api/admin/content", { type: "story", slug: "live-story", title: "Our story", body: "Corrected version" }), params);
+    expect(revision.status).toBe(200);
+    expect(await getPublishedArticle("live-story")).toMatchObject({ body: "Corrected version" });
+    expect(await db.cmsContent.findUnique({ where: { id: item.id } })).toMatchObject({ status: "published", version: 2 });
+    mocks.currentAdmin.mockResolvedValue({ ...admin, permissions: [PERMISSIONS.CONTENT_UPDATE] });
+    expect((await reviseContent(request("/api/admin/content", { type: "story", slug: "live-story", title: "Our story", body: "Unreviewed" }), params)).status).toBe(403);
+    expect(await getPublishedArticle("live-story")).toMatchObject({ body: "Corrected version" });
   });
   it("stores revisions and withdraws renamed drafts until they are republished", async () => {
     const response = await createContent(request("/api/admin/content", { type: "story", slug: "old-story", title: "Our story", body: "First version" }));
@@ -128,7 +144,8 @@ describe("CMS publishing and permissions against PostgreSQL", () => {
     expect(await db.cmsContentRevision.count({ where: { contentId: item.id } })).toBe(2);
     expect(mocks.revalidate).toHaveBeenCalledWith("/news/old-story");
     await setStatus(request("/api/admin/content/status", { status: "published" }), params);
-    expect(await getPublishedArticle("updated-story")).toMatchObject({ body: "Second version", version: 2 });
+    expect(await getPublishedArticle("updated-story")).toMatchObject({ body: "Second version" });
+    expect(await db.cmsContent.findUnique({ where: { id: item.id } })).toMatchObject({ version: 2 });
   });
   it("publishes admin-maintained impact figures and activities onto public sections", async () => {
     const entries = [
@@ -144,6 +161,31 @@ describe("CMS publishing and permissions against PostgreSQL", () => {
     const content = await getPublicHomepageContent();
     expect(content.impact.youthReached).toBe(950);
     expect(content.activities).toMatchObject([{ title: "Community day", date: "2026-10-06" }]);
+  });
+});
+
+describe("public event registration against PostgreSQL", () => {
+  async function createEvent(data: { slug: string; status: string; capacity?: number | null }) {
+    const startsAt = new Date(Date.now() + 7 * 86_400_000);
+    return db.cmsEvent.create({ data: { title: "Trivia & Games Hang Out", description: "Games night", startsAt, endsAt: new Date(startsAt.getTime() + 3 * 3_600_000), createdById: admin.id, updatedById: admin.id, ...data } });
+  }
+  const signUp = (slug: string, email: string) => registerForEvent(request(`/api/events/${slug}/register`, { fullName: "Guest Person", email }), { params: Promise.resolve({ slug }) });
+
+  it("registers until capacity, then waitlists, and rejects duplicates", async () => {
+    mocks.eventEmail.mockResolvedValue(true);
+    await createEvent({ slug: "trivia-night", status: "published", capacity: 1 });
+    const first = await signUp("trivia-night", "one@example.com");
+    expect(first.status).toBe(201);
+    expect(await first.json()).toEqual({ status: "registered" });
+    expect(await (await signUp("trivia-night", "two@example.com")).json()).toEqual({ status: "waitlisted" });
+    expect((await signUp("trivia-night", "ONE@example.com")).status).toBe(409);
+    expect(mocks.eventEmail).toHaveBeenCalledTimes(1);
+  });
+  it("refuses registration for drafts and unknown events", async () => {
+    await createEvent({ slug: "draft-night", status: "draft" });
+    expect((await signUp("draft-night", "one@example.com")).status).toBe(409);
+    expect((await signUp("missing-night", "one@example.com")).status).toBe(404);
+    expect(await db.cmsEventRegistration.count()).toBe(0);
   });
 });
 

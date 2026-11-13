@@ -147,6 +147,42 @@ export const DEFAULT_PLACEMENTS: Record<string, { src: string; alt: string; name
     route: "/events/graduation-cohort-1",
     aspectRatio: "aspect-[723/1024]",
   },
+  teamMartinKyalo: {
+    name: "Team Photo - Martin Kyalo",
+    section: "Team Photos",
+    description: "Portrait of Martin Kyalo (Founder & CEO) on the Team page and homepage. Leave empty to show initials.",
+    src: "",
+    alt: "Martin Kyalo, Greenwave Society",
+    route: "/team",
+    aspectRatio: "aspect-[4/5]",
+  },
+  teamNjeriNjoroge: {
+    name: "Team Photo - Njeri Njoroge",
+    section: "Team Photos",
+    description: "Portrait of Njeri Njoroge (COO) on the Team page and homepage. Leave empty to show initials.",
+    src: "",
+    alt: "Njeri Njoroge, Greenwave Society",
+    route: "/team",
+    aspectRatio: "aspect-[4/5]",
+  },
+  teamEugeneShadrack: {
+    name: "Team Photo - Eugene Shadrack",
+    section: "Team Photos",
+    description: "Portrait of Eugene Shadrack (CIO) on the Team page and homepage. Leave empty to show initials.",
+    src: "",
+    alt: "Eugene Shadrack, Greenwave Society",
+    route: "/team",
+    aspectRatio: "aspect-[4/5]",
+  },
+  teamRoyOkola: {
+    name: "Team Photo - Roy Okola Otieno",
+    section: "Team Photos",
+    description: "Portrait of Roy Okola Otieno (Head of Design) on the Team page and homepage. Leave empty to show initials.",
+    src: "",
+    alt: "Roy Okola Otieno, Greenwave Society",
+    route: "/team",
+    aspectRatio: "aspect-[4/5]",
+  },
   mediaKit: {
     name: "Media Kit - Press Visual",
     section: "Press & Media Kit",
@@ -333,6 +369,7 @@ export async function saveImagePlacements(
   });
 
   revalidatePath("/");
+  revalidatePath("/team");
   revalidatePath("/about");
   revalidatePath("/programs");
   revalidatePath("/events/graduation-cohort-1");

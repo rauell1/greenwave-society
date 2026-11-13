@@ -6,6 +6,9 @@ import { isCmsFeatureEnabled } from "@/lib/cms/feature-flags";
 import { getDb } from "@/lib/db";
 import EventActions, { CleanTestRecordsButton } from "./EventActions";
 import EventBroadcastPanel from "./EventBroadcastPanel";
+import EventEditor from "./EventEditor";
+import { eventHref } from "@/lib/events/public-events";
+import { hasPermission } from "@/lib/auth/policy";
 import AdminQuickScanner from "./AdminQuickScanner";
 import { QrCode, Download, Award, Store, Users } from "lucide-react";
 
@@ -14,7 +17,7 @@ export default async function EventPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  await requirePermission(PERMISSIONS.EVENTS_READ);
+  const admin = await requirePermission(PERMISSIONS.EVENTS_READ);
   if (!(await isCmsFeatureEnabled("events"))) notFound();
   const { id } = await params;
   const event = await getDb().cmsEvent.findUnique({
@@ -73,9 +76,16 @@ export default async function EventPage({
           </span>
         </div>
         <p className="text-sm text-slate-500">
-          {event.startsAt.toLocaleString("en-KE")} -{" "}
-          {event.endsAt.toLocaleString("en-KE")} · {event.location || "Online"}
+          {event.startsAt.toLocaleString("en-KE", { timeZone: "Africa/Nairobi" })} -{" "}
+          {event.endsAt.toLocaleString("en-KE", { timeZone: "Africa/Nairobi" })} · {event.location || "Online"}
         </p>
+        {event.status !== "draft" ? (
+          <Link href={eventHref(event.slug)} target="_blank" className="mt-1 inline-block text-sm font-medium text-emerald-700 hover:underline">
+            View public page ↗
+          </Link>
+        ) : (
+          <p className="mt-1 text-xs text-slate-500">Draft: publish it under Lifecycle to show it on the public Events page.</p>
+        )}
       </div>
 
       {/* Segmented Counts Strip */}
@@ -106,6 +116,25 @@ export default async function EventPage({
           <div className="text-2xl font-bold text-slate-900 mt-1">{guestsCount}</div>
         </div>
       </div>
+
+      {hasPermission(admin, PERMISSIONS.EVENTS_UPDATE) && (
+        <EventEditor
+          event={{
+            id: event.id,
+            slug: event.slug,
+            title: event.title,
+            description: event.description,
+            location: event.location,
+            virtualUrl: event.virtualUrl,
+            capacity: event.capacity,
+            status: event.status,
+            startsAt: event.startsAt.toISOString(),
+            endsAt: event.endsAt.toISOString(),
+            registrationOpensAt: event.registrationOpensAt?.toISOString() ?? null,
+            registrationClosesAt: event.registrationClosesAt?.toISOString() ?? null,
+          }}
+        />
+      )}
 
       <EventActions
         event={{ id: event.id, status: event.status, capacity: event.capacity }}

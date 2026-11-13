@@ -5,6 +5,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Trash2, Send, QrCode } from "lucide-react";
 import Link from "next/link";
+import { readApiError } from "@/lib/admin/api-error";
 
 interface EventActionsProps {
   event: { id: string; status: string; capacity: number | null };
@@ -39,14 +40,16 @@ export default function EventActions({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      const data = await response.json();
-      setMessage(response.ok ? "Updated." : data.error || "Failed");
-      if (response.ok) {
-        toast.success(data.message || "Updated status.");
-        router.refresh();
-      } else {
-        toast.error(data.error || "Failed to update.");
+      if (!response.ok) {
+        const error = await readApiError(response, "Failed to update.");
+        setMessage(error);
+        toast.error(error);
+        return;
       }
+      const data = await response.json();
+      setMessage("Updated.");
+      toast.success(data.message || "Updated status.");
+      router.refresh();
     } catch {
       toast.error("Network error.");
     }

@@ -95,11 +95,16 @@ export function QrCameraScanner({
     setTorchAvailable(false);
   }, []);
 
+  // The animation loop calls the latest scanFrame through a ref. Scheduling scanFrame directly
+  // kept the first render's closure running, so the 2.5 s duplicate-scan guard never applied.
+  const scanFrameRef = useRef<() => void>(() => {});
+  const nextFrame = useCallback(() => scanFrameRef.current(), []);
+
   const scanFrame = useCallback(() => {
     const video = videoRef.current;
     const canvas = canvasRef.current;
     if (!video || !canvas || video.readyState !== video.HAVE_ENOUGH_DATA) {
-      animationFrameId.current = requestAnimationFrame(scanFrame);
+      animationFrameId.current = requestAnimationFrame(nextFrame);
       return;
     }
 
@@ -107,7 +112,7 @@ export function QrCameraScanner({
     canvas.height = video.videoHeight;
     const ctx = canvas.getContext("2d", { willReadFrequently: true });
     if (!ctx) {
-      animationFrameId.current = requestAnimationFrame(scanFrame);
+      animationFrameId.current = requestAnimationFrame(nextFrame);
       return;
     }
 
@@ -129,8 +134,12 @@ export function QrCameraScanner({
       }, 2500);
     }
 
-    animationFrameId.current = requestAnimationFrame(scanFrame);
+    animationFrameId.current = requestAnimationFrame(nextFrame);
   }, [lastScanned, onScan, playSuccessBeep]);
+
+  useEffect(() => {
+    scanFrameRef.current = scanFrame;
+  }, [scanFrame]);
 
   // Enumerate video devices
   const refreshDevices = useCallback(async () => {
@@ -264,7 +273,7 @@ export function QrCameraScanner({
         videoRef.current.srcObject = activeStream;
         videoRef.current.setAttribute("playsinline", "true");
         await videoRef.current.play();
-        animationFrameId.current = requestAnimationFrame(scanFrame);
+        animationFrameId.current = requestAnimationFrame(nextFrame);
       }
 
       await refreshDevices();
@@ -274,7 +283,7 @@ export function QrCameraScanner({
     } finally {
       setIsStarting(false);
     }
-  }, [refreshDevices, scanFrame, selectedDeviceId, stopCamera]);
+  }, [refreshDevices, nextFrame, selectedDeviceId, stopCamera]);
 
   // Toggle torch / flash
   const toggleTorch = async () => {
