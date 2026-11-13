@@ -8,6 +8,8 @@ import EventActions, { CleanTestRecordsButton } from "./EventActions";
 import EventBroadcastPanel from "./EventBroadcastPanel";
 import EventEditor from "./EventEditor";
 import { eventHref } from "@/lib/events/public-events";
+import { ShareEventLink } from "@/components/events/ShareEventLink";
+import { APP_CONFIG } from "@/config/app.config";
 import { hasPermission } from "@/lib/auth/policy";
 import AdminQuickScanner from "./AdminQuickScanner";
 import { QrCode, Download, Award, Store, Users } from "lucide-react";
@@ -80,9 +82,14 @@ export default async function EventPage({
           {event.endsAt.toLocaleString("en-KE", { timeZone: "Africa/Nairobi" })} · {event.location || "Online"}
         </p>
         {event.status !== "draft" ? (
-          <Link href={eventHref(event.slug)} target="_blank" className="mt-1 inline-block text-sm font-medium text-emerald-700 hover:underline">
-            View public page ↗
-          </Link>
+          <div className="mt-3 space-y-2">
+            <Link href={eventHref(event.slug)} target="_blank" className="inline-block text-sm font-medium text-emerald-700 hover:underline">
+              View public page ↗
+            </Link>
+            {event.status === "published" && (
+              <ShareEventLink compact url={`${APP_CONFIG.url}${eventHref(event.slug)}`} title={event.title} />
+            )}
+          </div>
         ) : (
           <p className="mt-1 text-xs text-slate-500">Draft: publish it under Lifecycle to show it on the public Events page.</p>
         )}

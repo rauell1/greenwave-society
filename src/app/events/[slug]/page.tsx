@@ -10,6 +10,7 @@ import { serializeJsonLd } from "@/lib/seo";
 import { eventHref, getPublicEvent, hasCustomEventPage } from "@/lib/events/public-events";
 import { formatNairobi } from "@/lib/events/nairobi-time";
 import { EventRegistrationForm } from "./EventRegistrationForm";
+import { ShareEventLink } from "@/components/events/ShareEventLink";
 
 export const dynamic = "force-dynamic";
 
@@ -79,6 +80,11 @@ export default async function EventPage({ params }: Props) {
             </article>
             <aside className="lg:sticky lg:top-28 lg:self-start">
               <EventRegistrationForm slug={event.slug} closedMessage={closedMessage} fullyBooked={placesLeft === 0} />
+              {event.status === "published" && (
+                <div className="mt-4">
+                  <ShareEventLink url={`${APP_CONFIG.url}/events/${event.slug}`} title={event.title} />
+                </div>
+              )}
             </aside>
           </div>
         </main>

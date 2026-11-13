@@ -15,8 +15,11 @@ export const eventInputSchema = z.object({
   .refine(value => !value.registrationOpensAt || value.registrationOpensAt <= value.startsAt, { message: "Registration must open by the event start", path: ["registrationOpensAt"] })
   .refine(value => !value.registrationClosesAt || value.registrationClosesAt <= value.endsAt, { message: "Registration cannot close after the event ends", path: ["registrationClosesAt"] });
 export const attendeeSchema = z.object({ fullName: z.string().trim().min(2).max(180), email: z.string().trim().toLowerCase().email().max(254), phone: z.string().trim().max(40).optional().nullable(), organization: z.string().trim().max(180).optional().nullable(), memberRegistrationId: z.string().optional().nullable() });
-export const publicAttendeeSchema = attendeeSchema.omit({ memberRegistrationId: true }).extend({
-  accessibilityNeeds: z.string().trim().max(1000).optional().nullable(),
+// Public sign-up asks only for name, email and phone; "website" is a hidden honeypot field.
+export const publicAttendeeSchema = z.object({
+  fullName: z.string().trim().min(2, "Enter your name").max(180),
+  email: z.string().trim().toLowerCase().email("Enter a valid email").max(254),
+  phone: z.string().trim().regex(/^\+?[0-9 ()-]{7,20}$/, "Enter a valid phone number"),
   website: z.string().max(200).optional(),
 });
 export const attendanceSchema = z.object({ attendanceStatus: z.enum(["not_checked_in", "checked_in", "no_show"]) });
