@@ -3,7 +3,7 @@
 const ALLOWED_IMAGE_HOSTS = ["cdn.greenwavesociety.org", "images.unsplash.com", "lh3.googleusercontent.com", "ui-avatars.com"];
 const ALLOWED_IMAGE_HOST_SUFFIXES = [".public.blob.vercel-storage.com"];
 
-export const IMAGE_SRC_HINT = "Use an image from the Media library (copy its link), a site path such as /images/photo.jpg, or a cdn.greenwavesociety.org link.";
+export const IMAGE_SRC_HINT = "Use an image from the Media library (copy its link), a site path such as /images/g-59.jpg, or a cdn.greenwavesociety.org link.";
 
 export function isAllowedImageSrc(value: string): boolean {
   if (/^\/(?!\/)[^\\\s]*$/.test(value)) return true;

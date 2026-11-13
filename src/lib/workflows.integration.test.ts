@@ -103,7 +103,7 @@ describe("CMS publishing and permissions against PostgreSQL", () => {
     const params = { params: Promise.resolve({ id: item.id }) };
     expect((await setStatus(request("/api/admin/content/status", { status: "published" }), params)).status).toBe(200);
     expect(await getPublishedArticle(item.slug)).toMatchObject({ id: item.id });
-    expect(await getPublishedNews()).toHaveLength(1);
+    expect((await getPublishedNews()).filter(article => article.id === item.id)).toHaveLength(1);
     expect(mocks.revalidate).toHaveBeenCalledWith("/news");
     expect(await db.auditLog.count({ where: { resourceId: item.id } })).toBe(2);
     await setStatus(request("/api/admin/content/status", { status: "archived" }), params);
@@ -115,6 +115,19 @@ describe("CMS publishing and permissions against PostgreSQL", () => {
     mocks.currentAdmin.mockResolvedValue({ ...admin, permissions: [PERMISSIONS.CONTENT_CREATE] });
     expect((await setStatus(request("/api/admin/content/status", { status: "published" }), { params: Promise.resolve({ id: "missing" }) })).status).toBe(403);
     expect(await db.cmsContent.count()).toBe(0);
+  });
+  it("keeps published content live when it is edited in place", async () => {
+    const response = await createContent(request("/api/admin/content", { type: "story", slug: "live-story", title: "Our story", body: "First version" }));
+    const { item } = await response.json();
+    const params = { params: Promise.resolve({ id: item.id }) };
+    await setStatus(request("/api/admin/content/status", { status: "published" }), params);
+    const revision = await reviseContent(request("/api/admin/content", { type: "story", slug: "live-story", title: "Our story", body: "Corrected version" }), params);
+    expect(revision.status).toBe(200);
+    expect(await getPublishedArticle("live-story")).toMatchObject({ body: "Corrected version" });
+    expect(await db.cmsContent.findUnique({ where: { id: item.id } })).toMatchObject({ status: "published", version: 2 });
+    mocks.currentAdmin.mockResolvedValue({ ...admin, permissions: [PERMISSIONS.CONTENT_UPDATE] });
+    expect((await reviseContent(request("/api/admin/content", { type: "story", slug: "live-story", title: "Our story", body: "Unreviewed" }), params)).status).toBe(403);
+    expect(await getPublishedArticle("live-story")).toMatchObject({ body: "Corrected version" });
   });
   it("stores revisions and withdraws renamed drafts until they are republished", async () => {
     const response = await createContent(request("/api/admin/content", { type: "story", slug: "old-story", title: "Our story", body: "First version" }));
@@ -128,7 +141,8 @@ describe("CMS publishing and permissions against PostgreSQL", () => {
     expect(await db.cmsContentRevision.count({ where: { contentId: item.id } })).toBe(2);
     expect(mocks.revalidate).toHaveBeenCalledWith("/news/old-story");
     await setStatus(request("/api/admin/content/status", { status: "published" }), params);
-    expect(await getPublishedArticle("updated-story")).toMatchObject({ body: "Second version", version: 2 });
+    expect(await getPublishedArticle("updated-story")).toMatchObject({ body: "Second version" });
+    expect(await db.cmsContent.findUnique({ where: { id: item.id } })).toMatchObject({ version: 2 });
   });
   it("publishes admin-maintained impact figures and activities onto public sections", async () => {
     const entries = [

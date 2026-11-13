@@ -22,7 +22,7 @@ describe("CMS content validation", () => {
 
   it("only accepts cover images the public pages can load", () => {
     const story = { type: "news", slug: "community-update", title: "Community update", body: "Our latest work" };
-    for (const imageUrl of ["/images/g-59.jpg", "https://cdn.greenwavesociety.org/images/a.webp", "https://abc123.public.blob.vercel-storage.com/media/a.webp"]) {
+    for (const imageUrl of ["/images/g-59.jpg", "https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_001.webp", "https://abc123.public.blob.vercel-storage.com/media/a.webp"]) {
       expect(contentInputSchema.safeParse({ ...story, metadata: { imageUrl } }).success).toBe(true);
     }
     for (const imageUrl of ["https://example.com/a.jpg", "http://cdn.greenwavesociety.org/a.jpg", "//evil.test/a.jpg"]) {

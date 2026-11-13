@@ -182,23 +182,23 @@ export default function GalleryManager({
     }
   };
 
-  const filteredKeys = useMemo(() => {
-    return allKeys.filter((k) => {
-      const item = items[k];
-      const matchesSearch =
-        k.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.filename.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.alt.toLowerCase().includes(searchTerm.toLowerCase());
-      if (!matchesSearch) return false;
+  // Left to the React Compiler to memoize: a manual useMemo over the derived allKeys array
+  // could not be preserved and failed lint.
+  const filteredKeys = allKeys.filter((k) => {
+    const item = items[k];
+    const matchesSearch =
+      k.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.filename.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.alt.toLowerCase().includes(searchTerm.toLowerCase());
+    if (!matchesSearch) return false;
 
-      if (filterMode === "active") return item.active;
-      if (filterMode === "inactive") return !item.active;
-      if (filterMode === "repo") return item.source === "repo";
-      if (filterMode === "blob") return item.source === "blob";
-      if (filterMode === "poster") return item.source === "poster";
-      return true;
-    });
-  }, [allKeys, items, searchTerm, filterMode]);
+    if (filterMode === "active") return item.active;
+    if (filterMode === "inactive") return !item.active;
+    if (filterMode === "repo") return item.source === "repo";
+    if (filterMode === "blob") return item.source === "blob";
+    if (filterMode === "poster") return item.source === "poster";
+    return true;
+  });
 
   const totalPages = Math.max(1, Math.ceil(filteredKeys.length / pageSize));
   const safeCurrentPage = Math.min(currentPage, totalPages);

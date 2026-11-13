@@ -26,9 +26,10 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   const before = await db.cmsContent.findUnique({ where: { id } });
   if (!before) return NextResponse.json({ error: "Not found" }, { status: 404 });
   const input = parsed.data;
-  // Editing live content keeps it live. Saving used to apply the form's draft/review status, which
-  // silently unpublished the page so edits never appeared and the site fell back to defaults.
-  const isLive = before.status === "published";
+  // Editing live content in place keeps it live. Saving used to apply the form's draft/review
+  // status, which silently unpublished the page so edits never appeared. Renaming the slug still
+  // withdraws it, because the public address changes and needs republishing deliberately.
+  const isLive = before.status === "published" && before.slug === input.slug;
   if (isLive && !hasPermission(admin, PERMISSIONS.CONTENT_PUBLISH)) {
     return NextResponse.json({ error: "This content is live on the site. Only someone with publish rights can save changes to it." }, { status: 403 });
   }
