@@ -67,6 +67,7 @@ export default function EventPosterManager({ eventId, eventTitle, poster, hidden
         open={uploadOpen}
         onOpenChange={setUploadOpen}
         onSuccess={uploaded}
+        preset="poster"
         title={`Upload poster for ${eventTitle}`}
         description="JPEG, PNG or WebP. Large images are resized automatically. It replaces the current poster as soon as the upload finishes."
         defaultAlt={`${eventTitle} poster`}

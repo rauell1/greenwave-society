@@ -4,6 +4,7 @@ import { useState, useRef, ChangeEvent, FormEvent, DragEvent } from "react";
 import Image from "next/image";
 import { readApiError } from "@/lib/admin/api-error";
 import { MAX_SOURCE_IMAGE_BYTES, UPLOAD_BODY_LIMIT_BYTES, prepareUpload } from "@/lib/media/prepare-upload";
+import { UPLOAD_PRESETS, type UploadPreset } from "@/lib/media/upload-presets";
 import { 
   CloudUpload, 
   X, 
@@ -35,6 +36,8 @@ interface MediaUploadDialogProps {
   title?: string;
   description?: string;
   defaultAlt?: string;
+  /** Where the image will be used; decides the size it is resized to (see upload-presets.ts). */
+  preset?: UploadPreset;
 }
 
 export function MediaUploadDialog({
@@ -44,6 +47,7 @@ export function MediaUploadDialog({
   title = "Upload Media to Storage",
   description = "Upload images or documents to Cloud Storage. Large photos are resized automatically; PDFs up to 4 MB.",
   defaultAlt = "",
+  preset = "general",
 }: MediaUploadDialogProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -141,7 +145,8 @@ export function MediaUploadDialog({
 
     try {
       const formData = new FormData();
-      formData.append("file", await prepareUpload(selectedFile));
+      formData.append("file", await prepareUpload(selectedFile, preset));
+      formData.append("preset", preset);
       formData.append("altText", altText.trim());
       if (caption.trim()) {
         formData.append("caption", caption.trim());
@@ -222,7 +227,7 @@ export function MediaUploadDialog({
                   Click to choose file or drag and drop here
                 </p>
                 <p className="text-[11px] text-slate-500">
-                  JPEG, PNG or WebP photos (resized automatically), GIF or PDF up to 4 MB
+                  JPEG, PNG or WebP photos are resized to fit {UPLOAD_PRESETS[preset].maxWidth}×{UPLOAD_PRESETS[preset].maxHeight}px ({UPLOAD_PRESETS[preset].label.toLowerCase()}) and saved as WebP. GIF or PDF up to 4 MB.
                 </p>
               </div>
               <input

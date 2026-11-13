@@ -4,10 +4,11 @@ import { MpesaStk } from "mpesa-stk";
 import { PERMISSIONS } from "@/lib/auth/permissions";
 import type { AdminUserDto } from "@/lib/auth/types";
 
-const mocks = vi.hoisted(() => ({ currentAdmin: vi.fn(), email: vi.fn(), eventEmail: vi.fn(), eventReminder: vi.fn(), revalidate: vi.fn() }));
+const mocks = vi.hoisted(() => ({ currentAdmin: vi.fn(), email: vi.fn(), eventEmail: vi.fn(), eventReminder: vi.fn(), revalidate: vi.fn(), blobPut: vi.fn() }));
 vi.mock("server-only", () => ({}));
 vi.mock("@/lib/auth/guards", () => ({ getCurrentAdmin: mocks.currentAdmin }));
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidate }));
+vi.mock("@vercel/blob", () => ({ put: mocks.blobPut, del: vi.fn() }));
 vi.mock("@/lib/members/email", () => ({ sendMembershipDecisionEmail: mocks.email }));
 vi.mock("@/lib/events/email", async importOriginal => ({ ...(await importOriginal<typeof import("@/lib/events/email")>()), sendEventRegistrationConfirmation: mocks.eventEmail, sendBatchEmails: mocks.eventReminder }));
 vi.mock("@/lib/payments/feature-flag", () => ({ isMpesaMembershipEnabled: async () => true }));
@@ -30,6 +31,8 @@ import { sendScheduledEventEmails } from "@/lib/events/reminders";
 import { importCampaignEvents } from "@/lib/events/import-campaign";
 import { getEventPoster } from "@/lib/events/posters";
 import { POST as changePoster } from "@/app/api/admin/events/[id]/poster/route";
+import { POST as uploadMedia } from "@/app/api/admin/media/route";
+import sharp from "sharp";
 import { isTimeToBeConfirmed } from "@/lib/events/nairobi-time";
 
 let paymentClient: MpesaStk;
@@ -51,6 +54,7 @@ beforeEach(async () => {
   await db.auditLog.deleteMany();
   await db.memberRegistration.deleteMany();
   await db.cmsEvent.deleteMany();
+  await db.cmsMediaAsset.deleteMany();
   await db.adminUser.deleteMany();
   await db.rateLimitBucket.deleteMany();
   const user = await db.adminUser.create({ data: { email: "editor@example.com", passwordHash: "unused-test-hash" } });
@@ -260,6 +264,36 @@ describe("public event registration against PostgreSQL", () => {
     expect((await signUp("draft-night", "one@example.com")).status).toBe(409);
     expect((await signUp("missing-night", "one@example.com")).status).toBe(404);
     expect(await db.cmsEventRegistration.count()).toBe(0);
+  });
+});
+
+describe("media uploads against PostgreSQL", () => {
+  it("stores uploaded photos as WebP resized for where they are used", async () => {
+    vi.stubEnv("FEATURE_CMS_MEDIA", "true");
+    vi.stubEnv("BLOB_READ_WRITE_TOKEN", "test-token");
+    admin.permissions.push(PERMISSIONS.MEDIA_UPLOAD);
+    const stored: { pathname: string; bytes: Buffer; contentType: string }[] = [];
+    mocks.blobPut.mockImplementation(async (pathname: string, bytes: Buffer, options: { contentType: string }) => {
+      stored.push({ pathname, bytes, contentType: options.contentType });
+      return { pathname, url: `https://abc123.public.blob.vercel-storage.com/${pathname}` };
+    });
+    const jpeg = await sharp({ create: { width: 3000, height: 4000, channels: 3, background: "#2a7" } }).jpeg().toBuffer();
+    const upload = (preset: string) => {
+      const form = new FormData();
+      form.append("file", new File([new Uint8Array(jpeg)], "Team Photo.JPG", { type: "image/jpeg" }));
+      form.append("altText", "Njeri at the walk");
+      form.append("preset", preset);
+      return uploadMedia(new NextRequest("http://localhost:3000/api/admin/media", { method: "POST", body: form }));
+    };
+    const response = await upload("portrait");
+    expect(response.status).toBe(201);
+    const { asset } = await response.json();
+    expect(asset).toMatchObject({ contentType: "image/webp", width: 750, height: 1000, filename: "Team-Photo.webp" });
+    expect(stored[0]).toMatchObject({ contentType: "image/webp" });
+    expect(stored[0].pathname).toMatch(/\.webp$/);
+    expect(asset.size).toBe(stored[0].bytes.length);
+    expect((await (await upload("not-a-preset")).json()).asset).toMatchObject({ width: 1500, height: 2000 });
+    vi.unstubAllEnvs();
   });
 });
 

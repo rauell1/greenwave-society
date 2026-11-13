@@ -616,6 +616,7 @@ export default function GalleryManager({
         open={isUploadOpen}
         onOpenChange={setIsUploadOpen}
         onSuccess={handleUploadSuccess}
+        preset="photo"
         title="Upload Photo to Gallery Storage"
         description="Upload a high-resolution photograph directly to storage and feature it in the gallery."
       />

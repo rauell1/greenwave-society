@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { put, del } from "@vercel/blob";
-import sharp from "sharp";
 import { createHash, randomUUID } from "crypto";
 import { authorizeRoute } from "@/lib/auth/route-authorization";
 import { PERMISSIONS } from "@/lib/auth/permissions";
 import { getDb } from "@/lib/db";
 import { ALLOWED_MEDIA_TYPES, hasValidSignature, MAX_MEDIA_BYTES, mediaMetadataSchema, safeMediaFilename } from "@/lib/media/validation";
 import { AUDIT_ACTIONS } from "@/lib/audit/audit-service";
+import { optimiseUpload, type StoredMedia } from "@/lib/media/optimize";
+import { isUploadPreset, type UploadPreset } from "@/lib/media/upload-presets";
 
 export const runtime = "nodejs";
 
@@ -35,13 +36,14 @@ export async function POST(request: NextRequest) {
   const metadataInput = mediaMetadataSchema.safeParse({ altText: String(form.get("altText") ?? "").trim() || null, caption: String(form.get("caption") ?? "").trim() || null });
   if (!metadataInput.success) return NextResponse.json({ error: "Invalid media metadata" }, { status: 400 });
   if (file.type.startsWith("image/") && !metadataInput.data.altText) return NextResponse.json({ error: "Alternative text is required for images" }, { status: 400 });
-  let dimensions: { width?: number; height?: number } = {};
-  if (file.type.startsWith("image/")) { try { const metadata = await sharp(bytes, { animated: false, limitInputPixels: 40_000_000 }).metadata(); dimensions = { width: metadata.width, height: metadata.height }; } catch { return NextResponse.json({ error: "The image is corrupt or unsafe to process" }, { status: 415 }); } }
+  const preset = isUploadPreset(form.get("preset")) ? (form.get("preset") as UploadPreset) : "general";
+  let stored: StoredMedia;
+  try { stored = await optimiseUpload(bytes, file.type, preset); } catch { return NextResponse.json({ error: "The image is corrupt or unsafe to process" }, { status: 415 }); }
   const extensionByType: Record<string,string> = { "image/jpeg":".jpg", "image/png":".png", "image/webp":".webp", "image/gif":".gif", "application/pdf":".pdf" };
-  const filename = safeMediaFilename(file.name).replace(/\.[a-z0-9]{1,8}$/i, "") + extensionByType[file.type]; const pathname = `media/${randomUUID()}-${filename}`;
-  const blob = await put(pathname, Buffer.from(bytes), { access: "public", addRandomSuffix: false, contentType: file.type, token: process.env.BLOB_READ_WRITE_TOKEN });
+  const filename = safeMediaFilename(file.name).replace(/\.[a-z0-9]{1,8}$/i, "") + extensionByType[stored.contentType]; const pathname = `media/${randomUUID()}-${filename}`;
+  const blob = await put(pathname, stored.bytes, { access: "public", addRandomSuffix: false, contentType: stored.contentType, token: process.env.BLOB_READ_WRITE_TOKEN });
   try {
-    const asset = await getDb().$transaction(async tx => { const created = await tx.cmsMediaAsset.create({ data: { filename, pathname: blob.pathname, url: blob.url, contentType: file.type, size: file.size, checksum: createHash("sha256").update(bytes).digest("hex"), width: dimensions.width, height: dimensions.height, altText: metadataInput.data.altText || null, caption: metadataInput.data.caption || null, uploadedById: auth.admin.id, updatedById: auth.admin.id } }); await tx.auditLog.create({ data: { action: AUDIT_ACTIONS.MEDIA_UPLOADED, actor: auth.admin.email, actorUserId: auth.admin.id, resourceType: "cms_media_asset", resourceId: created.id, outcome: "SUCCESS", afterState: JSON.stringify({ filename, contentType: file.type, size: file.size, checksum: created.checksum }) } }); return created; });
+    const asset = await getDb().$transaction(async tx => { const created = await tx.cmsMediaAsset.create({ data: { filename, pathname: blob.pathname, url: blob.url, contentType: stored.contentType, size: stored.bytes.length, checksum: createHash("sha256").update(stored.bytes).digest("hex"), width: stored.width, height: stored.height, altText: metadataInput.data.altText || null, caption: metadataInput.data.caption || null, uploadedById: auth.admin.id, updatedById: auth.admin.id } }); await tx.auditLog.create({ data: { action: AUDIT_ACTIONS.MEDIA_UPLOADED, actor: auth.admin.email, actorUserId: auth.admin.id, resourceType: "cms_media_asset", resourceId: created.id, outcome: "SUCCESS", afterState: JSON.stringify({ filename, contentType: stored.contentType, size: stored.bytes.length, originalSize: file.size, preset, checksum: created.checksum }) } }); return created; });
     return NextResponse.json({ asset }, { status: 201 });
   } catch (error) { await del(blob.url, { token: process.env.BLOB_READ_WRITE_TOKEN }).catch(() => undefined); throw error; }
 }
