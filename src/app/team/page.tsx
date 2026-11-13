@@ -9,14 +9,14 @@ import { DEFAULT_SITE_PAGES } from "@/lib/cms/site-pages";
 import { getPublicImagePlacements } from "@/lib/cms/placements";
 
 export const metadata: Metadata = {
-  title: "Our Team | Martin Kyalo, Njeri Njoroge, Eugene Shadrack & Roy Okola",
-  description: "Meet the Greenwave Society leadership team: Founder Martin Kyalo (CEO), Njeri Njoroge (COO), Eugene Shadrack (CIO), and Roy Okola Otieno (Head of Design), building the next generation of Kenyan leaders and changemakers.",
+  title: "Our Team | Martin Kyalo, Njeri Njoroge & Eugene Shadrack",
+  description: "Meet the Greenwave Society leadership team: Founder Martin Kyalo (CEO), Njeri Njoroge (COO), and Eugene Shadrack (CIO), building the next generation of Kenyan leaders and changemakers.",
   alternates: {
     canonical: `${APP_CONFIG.url}/team`,
   },
   openGraph: {
     title: "Our Team | Greenwave Society Kenya",
-    description: "Meet Martin Kyalo, Njeri Njoroge, Eugene Shadrack, and Roy Okola, the team behind Greenwave Society's mission to equip young Kenyans to lead, build, and connect.",
+    description: "Meet Martin Kyalo, Njeri Njoroge and Eugene Shadrack, the team behind Greenwave Society's mission to equip young Kenyans to lead, build, and connect.",
     url: `${APP_CONFIG.url}/team`,
     siteName: "Greenwave Society",
     images: [{ url: "/images/IMG_9415.jpg", width: 1200, height: 630, alt: "Greenwave Society leadership team Kenya" }],
@@ -96,18 +96,6 @@ export default async function TeamPage() {
         "description": "Spearheads technological integration and digital transformation, fostering creative solutions to scale climate action and youth engagement at Greenwave Society.",
         "worksFor": { "@id": `${APP_CONFIG.url}/#organization` },
         "nationality": { "@type": "Country", "name": "Kenya" },
-      },
-      {
-        "@type": "Person",
-        "@id": `${APP_CONFIG.url}/#roy-okola`,
-        "name": "Roy Okola Otieno",
-        "givenName": "Roy",
-        "familyName": "Okola",
-        "jobTitle": "Head of Design",
-        "description": "Directs brand identity, UI/UX design systems, and digital media architecture to amplify Greenwave Society's visual impact and mission awareness.",
-        "worksFor": { "@id": `${APP_CONFIG.url}/#organization` },
-        "nationality": { "@type": "Country", "name": "Kenya" },
-        "knowsAbout": ["UI/UX Design", "Brand Identity", "Digital Media", "Visual Communication"],
       },
     ],
   };

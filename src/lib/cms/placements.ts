@@ -174,15 +174,7 @@ export const DEFAULT_PLACEMENTS: Record<string, { src: string; alt: string; name
     route: "/team",
     aspectRatio: "aspect-[4/5]",
   },
-  teamRoyOkola: {
-    name: "Team Photo - Roy Okola Otieno",
-    section: "Team Photos",
-    description: "Portrait of Roy Okola Otieno (Head of Design) on the Team page and homepage. Leave empty to show initials.",
-    src: "",
-    alt: "Roy Okola Otieno, Greenwave Society",
-    route: "/team",
-    aspectRatio: "aspect-[4/5]",
-  },
+
   mediaKit: {
     name: "Media Kit - Press Visual",
     section: "Press & Media Kit",

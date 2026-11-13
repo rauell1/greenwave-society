@@ -6,3 +6,6 @@
 *.jpeg filter=lfs diff=lfs merge=lfs -text
 *.gif filter=lfs diff=lfs merge=lfs -text
 *.webp filter=lfs diff=lfs merge=lfs -text
+
+# Campaign posters are small and must deploy even if the host does not fetch LFS objects.
+public/posters/campaign-2026/*.jpg !filter !diff !merge binary

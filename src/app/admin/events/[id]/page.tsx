@@ -7,7 +7,10 @@ import { getDb } from "@/lib/db";
 import EventActions, { CleanTestRecordsButton } from "./EventActions";
 import EventBroadcastPanel from "./EventBroadcastPanel";
 import EventEditor from "./EventEditor";
-import { eventHref } from "@/lib/events/public-events";
+import { eventHref, isGraduationEvent } from "@/lib/events/public-events";
+import { isTimeToBeConfirmed } from "@/lib/events/nairobi-time";
+import { ShareEventLink } from "@/components/events/ShareEventLink";
+import { APP_CONFIG } from "@/config/app.config";
 import { hasPermission } from "@/lib/auth/policy";
 import AdminQuickScanner from "./AdminQuickScanner";
 import { QrCode, Download, Award, Store, Users } from "lucide-react";
@@ -40,6 +43,9 @@ export default async function EventPage({
   }).length;
 
   const guestsCount = event.registrations.length - graduandsCount - vendorsCount;
+  const isGraduation = isGraduationEvent(event.slug);
+  const membersCount = event.registrations.filter((r) => r.memberRegistrationId).length;
+  const canPublish = hasPermission(admin, PERMISSIONS.EVENTS_PUBLISH);
 
   const remindedCount = event.registrations.filter((r) => {
     const meta = (r.metadata as Record<string, any>) || {};
@@ -76,19 +82,27 @@ export default async function EventPage({
           </span>
         </div>
         <p className="text-sm text-slate-500">
-          {event.startsAt.toLocaleString("en-KE", { timeZone: "Africa/Nairobi" })} -{" "}
-          {event.endsAt.toLocaleString("en-KE", { timeZone: "Africa/Nairobi" })} · {event.location || "Online"}
+          {isTimeToBeConfirmed(event.startsAt, event.endsAt)
+            ? `${event.startsAt.toLocaleDateString("en-KE", { timeZone: "Africa/Nairobi" })} · time to be confirmed`
+            : `${event.startsAt.toLocaleString("en-KE", { timeZone: "Africa/Nairobi" })} - ${event.endsAt.toLocaleString("en-KE", { timeZone: "Africa/Nairobi" })}`}{" "}
+          · {event.location || (event.virtualUrl ? "Online" : "Venue not set yet")}
         </p>
         {event.status !== "draft" ? (
-          <Link href={eventHref(event.slug)} target="_blank" className="mt-1 inline-block text-sm font-medium text-emerald-700 hover:underline">
-            View public page ↗
-          </Link>
+          <div className="mt-3 space-y-2">
+            <Link href={eventHref(event.slug)} target="_blank" className="inline-block text-sm font-medium text-emerald-700 hover:underline">
+              View public page ↗
+            </Link>
+            {event.status === "published" && (
+              <ShareEventLink compact url={`${APP_CONFIG.url}${eventHref(event.slug)}`} title={event.title} />
+            )}
+          </div>
         ) : (
           <p className="mt-1 text-xs text-slate-500">Draft: publish it under Lifecycle to show it on the public Events page.</p>
         )}
       </div>
 
       {/* Segmented Counts Strip */}
+      {isGraduation ? (
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="p-4 rounded-xl border bg-white shadow-sm">
           <div className="text-xs text-slate-500 font-medium uppercase tracking-wider">Total Registrations</div>
@@ -116,6 +130,29 @@ export default async function EventPage({
           <div className="text-2xl font-bold text-slate-900 mt-1">{guestsCount}</div>
         </div>
       </div>
+      ) : (
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="p-4 rounded-xl border bg-white shadow-sm">
+          <div className="text-xs text-slate-500 font-medium uppercase tracking-wider">Total Registrations</div>
+          <div className="text-2xl font-bold text-slate-900 mt-1">{event.registrations.length}</div>
+          {event.capacity && <div className="text-xs text-slate-500">of {event.capacity} places</div>}
+        </div>
+        <div className="p-4 rounded-xl border border-emerald-200 bg-emerald-50/50 shadow-sm">
+          <div className="text-xs text-emerald-800 font-medium uppercase tracking-wider flex items-center gap-1.5"><Users className="w-3.5 h-3.5" /> Greenwave Members</div>
+          <div className="text-2xl font-bold text-emerald-900 mt-1">{membersCount}</div>
+          <div className="text-xs text-emerald-800/70">matched by email</div>
+        </div>
+        <div className="p-4 rounded-xl border border-amber-200 bg-amber-50/50 shadow-sm">
+          <div className="text-xs text-amber-800 font-medium uppercase tracking-wider flex items-center gap-1.5"><Store className="w-3.5 h-3.5" /> Vendors</div>
+          <div className="text-2xl font-bold text-amber-900 mt-1">{vendorsCount}</div>
+        </div>
+        <div className="p-4 rounded-xl border bg-white shadow-sm">
+          <div className="text-xs text-slate-500 font-medium uppercase tracking-wider">Reminders sent</div>
+          <div className="text-2xl font-bold text-slate-900 mt-1">{remindedCount}</div>
+          <div className="text-xs text-slate-500">emailed automatically 24 hours before</div>
+        </div>
+      </div>
+      )}
 
       {hasPermission(admin, PERMISSIONS.EVENTS_UPDATE) && (
         <EventEditor
@@ -138,40 +175,41 @@ export default async function EventPage({
 
       <EventActions
         event={{ id: event.id, status: event.status, capacity: event.capacity }}
+        canPublish={canPublish}
       />
 
-      {/* 1-Day Reminder Broadcast Panel */}
-      <EventBroadcastPanel
+      {/* 1-Day Reminder Broadcast Panel (graduation passes; other events get automatic reminders) */}
+      {isGraduation && <EventBroadcastPanel
         eventId={event.id}
         totalCount={event.registrations.length}
         graduandsCount={graduandsCount}
         vendorsCount={vendorsCount}
         guestsCount={guestsCount}
         remindedCount={remindedCount}
-      />
+      />}
 
       <div className="rounded-xl border bg-white p-5">
         <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b">
           <div>
             <h2 className="font-semibold text-lg text-slate-900">
-              Roster & Check-In Management
+              {isGraduation ? "Roster & Check-In Management" : "Registrations"}
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">
-              Properly segmented attendee records for ceremony honors and stall allocation.
+              {isGraduation ? "Properly segmented attendee records for ceremony honors and stall allocation." : "Everyone who signed up on the website or was added here. Mark attendance on the day with Check in."}
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
             <CleanTestRecordsButton eventId={event.id} testCount={testCount} />
 
-            <Link
+            {isGraduation && <Link
               href="/events/check-in"
               target="_blank"
               className="rounded-lg bg-emerald-700 text-white px-3 py-1.5 text-xs font-semibold hover:bg-emerald-800 transition-colors flex items-center gap-1.5 shadow-sm"
             >
               <QrCode className="w-3.5 h-3.5" />
               <span>Door Check-in Station</span>
-            </Link>
+            </Link>}
 
             <div className="inline-flex rounded-lg border border-slate-200 p-0.5 bg-slate-50 text-xs">
               <a
@@ -182,14 +220,14 @@ export default async function EventPage({
                 <Download className="w-3.5 h-3.5 text-slate-500" />
                 All CSV
               </a>
-              <a
+              {isGraduation && <a
                 href={`/api/admin/events/${event.id}/export?segment=graduands`}
                 download
                 className="px-2.5 py-1 rounded-md text-amber-900 hover:bg-white hover:shadow-xs transition-all flex items-center gap-1 font-medium"
               >
                 <Award className="w-3.5 h-3.5 text-amber-700" />
                 Graduands CSV
-              </a>
+              </a>}
               <a
                 href={`/api/admin/events/${event.id}/export?segment=vendors`}
                 download
@@ -202,9 +240,9 @@ export default async function EventPage({
           </div>
         </div>
 
-        <div className="mt-4">
+        {isGraduation && <div className="mt-4">
           <AdminQuickScanner eventId={event.id} />
-        </div>
+        </div>}
 
         <div className="mt-4 overflow-x-auto">
           <table className="w-full text-left text-sm">
@@ -218,6 +256,9 @@ export default async function EventPage({
               </tr>
             </thead>
             <tbody>
+              {event.registrations.length === 0 && (
+                <tr><td colSpan={5} className="p-6 text-center text-sm text-slate-500">No registrations yet. Share the sign-up link above to get people registered.</td></tr>
+              )}
               {event.registrations.map((item) => {
                 const meta = (item.metadata as Record<string, any>) || {};
                 const isVendor = Boolean(meta.vendorName);
@@ -266,11 +307,15 @@ export default async function EventPage({
                         </span>
                       ) : isVendor ? (
                         <span className="inline-block px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900 font-semibold text-xs border border-emerald-200">
-                          🏪 Vendor: {meta.category || "General"}
+                          🏪 Vendor: {isGraduation ? meta.category || "General" : meta.vendorName}
+                        </span>
+                      ) : isGraduation ? (
+                        <span className="inline-block px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-xs">
+                          👥 Guest ({meta.guestCount || 1} pax)
                         </span>
                       ) : (
                         <span className="inline-block px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-xs">
-                          👥 Guest ({meta.guestCount || 1} pax)
+                          {item.memberRegistrationId ? "Member" : "Attendee"}
                         </span>
                       )}
                     </td>
@@ -309,6 +354,7 @@ export default async function EventPage({
                         attendeeName={item.fullName}
                         attendeeEmail={item.email}
                         checkInToken={meta.checkInToken || meta.ticketToken}
+                        showPassTools={isGraduation}
                       />
                     </td>
                   </tr>

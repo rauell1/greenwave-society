@@ -9,11 +9,20 @@ import { readApiError } from "@/lib/admin/api-error";
 
 interface EventActionsProps {
   event: { id: string; status: string; capacity: number | null };
+  canPublish?: boolean;
+  /** Graduation QR passes; hidden for ordinary events, which do not issue passes. */
+  showPassTools?: boolean;
   registrationId?: string;
   attendeeName?: string;
   attendeeEmail?: string;
   checkInToken?: string;
 }
+
+const LIFECYCLE_ACTIONS = [
+  { status: "published", label: "Publish event", from: ["draft"], primary: true },
+  { status: "completed", label: "Mark as completed", from: ["published"] },
+  { status: "cancelled", label: "Cancel event", from: ["draft", "published"], confirm: "Cancel this event? It will show as cancelled on the website and sign-up closes." },
+] as { status: string; label: string; from: string[]; primary?: boolean; confirm?: string }[];
 
 export default function EventActions({
   event,
@@ -21,6 +30,8 @@ export default function EventActions({
   attendeeName = "Attendee",
   attendeeEmail = "",
   checkInToken,
+  canPublish = false,
+  showPassTools = false,
 }: EventActionsProps) {
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
@@ -155,6 +166,7 @@ export default function EventActions({
           No-show
         </button>
 
+        {showPassTools && <>
         <span className="text-slate-200">|</span>
 
         {/* Send digital pass email button */}
@@ -178,6 +190,7 @@ export default function EventActions({
         >
           <QrCode className="w-3 h-3" />
         </Link>
+        </>}
 
         {/* Delete button for removing test records */}
         <button
@@ -197,20 +210,28 @@ export default function EventActions({
   return (
     <div className="grid gap-4 lg:grid-cols-2">
       <div className="rounded-xl border bg-white p-5">
-        <h2 className="font-semibold">Lifecycle</h2>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {["published", "cancelled", "completed"].map((status) => (
-            <button
-              key={status}
-              onClick={() =>
-                void send(`/api/admin/events/${event.id}/status`, { status })
-              }
-              className="rounded-lg border px-3 py-2 text-sm capitalize hover:bg-slate-50"
-            >
-              {status}
-            </button>
-          ))}
-        </div>
+        <h2 className="font-semibold">Status: <span className="capitalize">{event.status}</span></h2>
+        {event.status === "draft" && <p className="mt-1 text-xs text-slate-500">Drafts are hidden from the public Events page. Publish to open sign-up.</p>}
+        {!canPublish && (event.status === "draft" || event.status === "published") ? (
+          <p className="mt-3 text-sm text-amber-700">Your account cannot publish, cancel or complete events. Ask an Owner, Administrator or Events Manager.</p>
+        ) : (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {LIFECYCLE_ACTIONS.filter(action => action.from.includes(event.status)).map(action => (
+              <button
+                key={action.status}
+                onClick={() => {
+                  if (action.confirm && !window.confirm(action.confirm)) return;
+                  void send(`/api/admin/events/${event.id}/status`, { status: action.status });
+                }}
+                className={action.primary ? "rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800" : "rounded-lg border px-3 py-2 text-sm hover:bg-slate-50"}
+              >
+                {action.label}
+              </button>
+            ))}
+            {event.status === "cancelled" || event.status === "completed" ? <p className="text-sm text-slate-500">This event is closed.</p> : null}
+          </div>
+        )}
+        {message && <p className="mt-2 text-xs text-slate-600" role="status">{message}</p>}
       </div>
       <div className="rounded-xl border bg-white p-5">
         <h2 className="font-semibold">Add attendee</h2>

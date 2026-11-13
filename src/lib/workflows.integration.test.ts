@@ -4,12 +4,12 @@ import { MpesaStk } from "mpesa-stk";
 import { PERMISSIONS } from "@/lib/auth/permissions";
 import type { AdminUserDto } from "@/lib/auth/types";
 
-const mocks = vi.hoisted(() => ({ currentAdmin: vi.fn(), email: vi.fn(), eventEmail: vi.fn(), revalidate: vi.fn() }));
+const mocks = vi.hoisted(() => ({ currentAdmin: vi.fn(), email: vi.fn(), eventEmail: vi.fn(), eventReminder: vi.fn(), revalidate: vi.fn() }));
 vi.mock("server-only", () => ({}));
 vi.mock("@/lib/auth/guards", () => ({ getCurrentAdmin: mocks.currentAdmin }));
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidate }));
 vi.mock("@/lib/members/email", () => ({ sendMembershipDecisionEmail: mocks.email }));
-vi.mock("@/lib/events/email", () => ({ sendEventRegistrationConfirmation: mocks.eventEmail }));
+vi.mock("@/lib/events/email", () => ({ sendEventRegistrationConfirmation: mocks.eventEmail, sendEventReminderEmail: mocks.eventReminder }));
 vi.mock("@/lib/payments/feature-flag", () => ({ isMpesaMembershipEnabled: async () => true }));
 vi.mock("@/lib/payments/client", () => ({ getMpesaClient: () => paymentClient }));
 
@@ -26,6 +26,9 @@ import { PrismaMembershipPaymentAdapter } from "@/lib/payments/adapter";
 import { applyMembershipPaymentSettlement } from "@/lib/payments/settlement";
 import { consumeRateLimit } from "@/lib/rate-limit";
 import { POST as registerForEvent } from "@/app/api/events/[slug]/register/route";
+import { sendDueEventReminders } from "@/lib/events/reminders";
+import { importCampaignEvents } from "@/lib/events/import-campaign";
+import { isTimeToBeConfirmed } from "@/lib/events/nairobi-time";
 
 let paymentClient: MpesaStk;
 let admin: AdminUserDto;
@@ -169,7 +172,7 @@ describe("public event registration against PostgreSQL", () => {
     const startsAt = new Date(Date.now() + 7 * 86_400_000);
     return db.cmsEvent.create({ data: { title: "Trivia & Games Hang Out", description: "Games night", startsAt, endsAt: new Date(startsAt.getTime() + 3 * 3_600_000), createdById: admin.id, updatedById: admin.id, ...data } });
   }
-  const signUp = (slug: string, email: string) => registerForEvent(request(`/api/events/${slug}/register`, { fullName: "Guest Person", email }), { params: Promise.resolve({ slug }) });
+  const signUp = (slug: string, email: string) => registerForEvent(request(`/api/events/${slug}/register`, { fullName: "Guest Person", email, phone: "0712 345 678" }), { params: Promise.resolve({ slug }) });
 
   it("registers until capacity, then waitlists, and rejects duplicates", async () => {
     mocks.eventEmail.mockResolvedValue(true);
@@ -180,6 +183,43 @@ describe("public event registration against PostgreSQL", () => {
     expect(await (await signUp("trivia-night", "two@example.com")).json()).toEqual({ status: "waitlisted" });
     expect((await signUp("trivia-night", "ONE@example.com")).status).toBe(409);
     expect(mocks.eventEmail).toHaveBeenCalledTimes(1);
+  });
+  it("sends one 24-hour reminder per registration for events starting within a day", async () => {
+    mocks.eventReminder.mockResolvedValue(true);
+    const soon = await db.cmsEvent.create({ data: { slug: "soon-night", title: "Soon night", description: "Games", status: "published", startsAt: new Date(Date.now() + 12 * 3_600_000), endsAt: new Date(Date.now() + 15 * 3_600_000), createdById: admin.id, updatedById: admin.id } });
+    const later = await createEvent({ slug: "later-night", status: "published" });
+    const earlier = new Date(Date.now() - 5 * 3_600_000);
+    await db.cmsEventRegistration.createMany({ data: [
+      { eventId: soon.id, fullName: "Due Guest", email: "due@example.com", phone: "0712345678", createdAt: earlier },
+      { eventId: soon.id, fullName: "Fresh Guest", email: "fresh@example.com", phone: "0712345678" },
+      { eventId: soon.id, fullName: "Waiting Guest", email: "wait@example.com", status: "waitlisted", createdAt: earlier },
+      { eventId: later.id, fullName: "Next Week Guest", email: "later@example.com", createdAt: earlier },
+    ] });
+    expect(await sendDueEventReminders()).toMatchObject({ sent: 1, failed: 0 });
+    expect(mocks.eventReminder).toHaveBeenCalledWith(expect.objectContaining({ to: "due@example.com", eventTitle: "Soon night" }));
+    expect((await db.cmsEventRegistration.findFirst({ where: { email: "due@example.com" } }))?.metadata).toMatchObject({ reminderSentAt: expect.any(String) });
+    expect(await sendDueEventReminders()).toMatchObject({ sent: 0 });
+    expect(mocks.eventReminder).toHaveBeenCalledTimes(1);
+  });
+  it("adds the five campaign poster events once and publishes the Trivia night draft", async () => {
+    await db.cmsEvent.create({ data: { slug: "trivia-and-games-hang-out", title: "Trivia & Games Hang Out", description: "Games", status: "draft", startsAt: new Date("2026-11-18T07:00:00Z"), endsAt: new Date("2026-11-18T10:00:00Z"), createdById: admin.id, updatedById: admin.id } });
+    expect(await importCampaignEvents(admin)).toHaveLength(6);
+    expect(await importCampaignEvents(admin)).toHaveLength(0);
+    const events = await db.cmsEvent.findMany({ orderBy: { startsAt: "asc" } });
+    expect(events.map(event => event.slug)).toEqual(["trivia-and-games-hang-out", "charity-walk", "young-entrepreneurs-networking-brunch", "skills-for-change-workshop", "sports-tournament", "community-picnic"]);
+    expect(events.every(event => event.status === "published")).toBe(true);
+    expect(events.slice(1).every(event => event.location === null)).toBe(true);
+    expect(isTimeToBeConfirmed(events[1].startsAt, events[1].endsAt)).toBe(true);
+    expect(events[2].startsAt.toISOString()).toBe("2026-11-29T06:00:00.000Z");
+  });
+  it("records vendors with their business name", async () => {
+    mocks.eventEmail.mockResolvedValue(true);
+    await createEvent({ slug: "picnic-night", status: "published" });
+    const vendor = await registerForEvent(request("/api/events/picnic-night/register", { fullName: "Stall Owner", email: "stall@example.com", phone: "0712345678", registerAs: "vendor" }), { params: Promise.resolve({ slug: "picnic-night" }) });
+    expect(vendor.status).toBe(400);
+    const ok = await registerForEvent(request("/api/events/picnic-night/register", { fullName: "Stall Owner", email: "stall@example.com", phone: "0712345678", registerAs: "vendor", businessName: "Mama Mboga Greens" }), { params: Promise.resolve({ slug: "picnic-night" }) });
+    expect(ok.status).toBe(201);
+    expect(await db.cmsEventRegistration.findFirst({ where: { email: "stall@example.com" } })).toMatchObject({ organization: "Mama Mboga Greens", metadata: { vendorName: "Mama Mboga Greens" } });
   });
   it("refuses registration for drafts and unknown events", async () => {
     await createEvent({ slug: "draft-night", status: "draft" });

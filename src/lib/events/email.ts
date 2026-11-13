@@ -19,6 +19,8 @@ export interface EventRegistrationEmailOptions {
   eventDate: string;
   location?: string;
   isMentalHealthEvent?: boolean;
+  /** Public event page; the email button links here instead of the homepage. */
+  eventUrl?: string;
 }
 
 export interface GraduationGuestEmailOptions {
@@ -63,7 +65,7 @@ export interface OneDayReminderOptions {
 
 export async function sendEventRegistrationConfirmation(opts: EventRegistrationEmailOptions): Promise<boolean> {
   const resend = getResend();
-  const eventUrl = `${SITE_URL}`;
+  const eventUrl = opts.eventUrl || SITE_URL;
 
   if (!resend) {
     logger.info("RESEND_API_KEY not set - event registration confirmation simulated", { name: opts.name, to: opts.to });
@@ -94,9 +96,9 @@ export async function sendEventRegistrationConfirmation(opts: EventRegistrationE
                <div style="margin:24px 0;padding:16px;background:#EFF9E9;border-radius:8px;border-left:4px solid #5FAF2D;">
                  <p style="margin:0 0 8px"><strong>Date & Time:</strong> ${escapeHtml(opts.eventDate)}</p>
                  ${locationText}
-                 <p style="margin:0">We will send you a reminder with any final details 3-4 days before the event.</p>
+                 <p style="margin:0">We will email you a reminder 24 hours before the event.</p>
                </div>
-               ${emailButton("Visit Greenwave Society", eventUrl)}
+               ${emailButton(opts.eventUrl ? "View event details" : "Visit Greenwave Society", eventUrl)}
                <p style="margin:24px 0 0;color:#607068;font-size:13px">If you have any questions or accessibility needs you forgot to mention, just reply to this email or contact us at <a href="mailto:${CONTACT_EMAIL}" style="color:#1A5C38">${CONTACT_EMAIL}</a>.</p>`,
       }),
     });
@@ -538,9 +540,9 @@ export async function sendEventReminderEmail(opts: EventRegistrationEmailOptions
       subject: `Reminder: ${opts.eventTitle} is coming up!`,
       html: brandedEmail({
         eyebrow: "Greenwave Events",
-        title: "Event Reminder",
+        title: "See you tomorrow",
         preheader: `${opts.eventTitle} is happening soon.`,
-        body: `<p style="margin:0 0 16px">Dear ${escapeHtml(opts.name)},</p><p style="margin:0 0 16px">This is a quick reminder that <strong>${escapeHtml(opts.eventTitle)}</strong> is coming up on <strong>${escapeHtml(opts.eventDate)}</strong>.</p><p style="margin:0 0 16px">We look forward to seeing you there!</p><p style="margin:0;color:#607068;font-size:13px">Questions? Contact us at <a href="mailto:${CONTACT_EMAIL}" style="color:#1A5C38">${CONTACT_EMAIL}</a>.</p>`,
+        body: `<p style="margin:0 0 16px">Dear ${escapeHtml(opts.name)},</p><p style="margin:0 0 16px">This is a quick reminder that <strong>${escapeHtml(opts.eventTitle)}</strong> is coming up on <strong>${escapeHtml(opts.eventDate)}</strong>.</p>${opts.location ? `<p style="margin:0 0 16px"><strong>Location:</strong> ${escapeHtml(opts.location)}</p>` : ""}<p style="margin:0 0 16px">We look forward to seeing you there!</p>${opts.eventUrl ? emailButton("View event details", opts.eventUrl) : ""}<p style="margin:0;color:#607068;font-size:13px">Questions? Contact us at <a href="mailto:${CONTACT_EMAIL}" style="color:#1A5C38">${CONTACT_EMAIL}</a>.</p>`,
       }),
     });
     logger.info("Event reminder email sent", { name: opts.name, to: opts.to });

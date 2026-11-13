@@ -91,13 +91,13 @@ export async function proxy(request: NextRequest) {
       request.method !== "GET" &&
       (pathname.startsWith("/api/contact") ||
         pathname.startsWith("/api/registrations") ||
-        (pathname.startsWith("/api/events/") && pathname.endsWith("/register")) ||
         pathname.startsWith("/api/privacy") ||
         pathname.startsWith("/api/apply") ||
         strictAdminAuthRoutes.has(pathname) ||
         pathname.startsWith("/api/newsletter"));
 
-    const rateLimitResult = await rateLimit(request, isStrictRoute ? "strict" : "standard");
+    const isEventSignup = request.method === "POST" && pathname.startsWith("/api/events/") && pathname.endsWith("/register");
+    const rateLimitResult = await rateLimit(request, isEventSignup ? "event-signup" : isStrictRoute ? "strict" : "standard");
     if (rateLimitResult) {
       // Add CORS headers to 429 rate limit response
       const corsHeaders = getCorsHeaders(request.headers.get("origin"));

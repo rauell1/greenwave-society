@@ -1,4 +1,4 @@
-import { Users, Sparkles, Compass, Palette } from "lucide-react";
+import { Users, Sparkles, Compass } from "lucide-react";
 import { LinkedinIcon } from "@/components/ui/social-icons";
 import { Badge } from "@/components/ui/badge";
 import { FadeIn } from "@/components/ui/fade-in";
@@ -35,17 +35,7 @@ const executives = [
   },
 ];
 
-const designTeam = [
-  {
-    name: "Roy Okola Otieno",
-    role: "Head of Design",
-    initials: "RO",
-    photoKey: "teamRoyOkola",
-    tag: "Design Lead",
-    bio: "Directs brand identity, UI/UX design systems, and digital media architecture to amplify Greenwave Society's visual impact and mission awareness.",
-    icon: Palette,
-  },
-];
+
 
 export interface TeamContentProps {
   title?: string;
@@ -199,58 +189,6 @@ export function Team({ content, photos = {} }: { content?: TeamContentProps; pho
           </div>
         </div>
 
-        {/* 3. Design & Creative Team */}
-        <div>
-          <FadeIn delay={0.3}>
-            <div className="flex items-center gap-3 mb-8">
-              <span className="h-px bg-primary/25 flex-1" />
-              <h3 className="font-mono text-xs uppercase tracking-widest text-primary font-bold px-3 py-1 bg-primary/5 rounded-full border border-primary/15">
-                Design & Creative Operations
-              </h3>
-              <span className="h-px bg-primary/25 flex-1" />
-            </div>
-          </FadeIn>
-
-          <div className="flex justify-center">
-            {designTeam.map((member, i) => {
-              const IconComp = member.icon;
-              const photo = photoFor(member.photoKey, member.name);
-              return (
-                <FadeIn key={member.name} delay={0.35 + i * 0.1} className="w-full max-w-sm">
-                  <div className="bg-background rounded-2xl border border-primary/20 p-6 flex flex-col justify-between hover:border-primary/40 hover:shadow-md transition-all duration-300 group h-full">
-                    <div>
-                      <div className="flex items-center justify-between mb-4">
-                        {photo ? (
-                          <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-primary/20">
-                            <Image src={photo.src} alt={photo.alt} fill sizes="64px" className="object-cover" />
-                          </div>
-                        ) : (
-                          <div className="w-12 h-12 rounded-xl bg-gold/15 border border-gold/30 flex items-center justify-center font-serif font-black text-gold text-base group-hover:bg-gold group-hover:text-white transition-colors duration-300">
-                            {member.initials}
-                          </div>
-                        )}
-                        <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider bg-secondary/30 text-muted-foreground px-2.5 py-1 rounded-md border border-primary/10">
-                          <IconComp className="w-3 h-3 text-gold" />
-                          {member.tag}
-                        </span>
-                      </div>
-                      
-                      <h4 className="text-lg font-serif font-bold text-foreground mb-1 group-hover:text-primary transition-colors">
-                        {member.name}
-                      </h4>
-                      <p className="text-xs font-semibold text-primary mb-3">
-                        {member.role}
-                      </p>
-                      <p className="text-xs text-muted-foreground leading-relaxed font-sans">
-                        {member.bio}
-                      </p>
-                    </div>
-                  </div>
-                </FadeIn>
-              );
-            })}
-          </div>
-        </div>
       </div>
     </section>
   );

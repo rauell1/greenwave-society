@@ -80,10 +80,17 @@ export function rateLimitUnavailable(): NextResponse {
   return NextResponse.json({ error: "Service temporarily unavailable. Please try again shortly." }, { status: 503, headers: { "Retry-After": "30" } });
 }
 
-export async function rateLimit(request: NextRequest, tier: "standard" | "strict" = "standard"): Promise<NextResponse | null> {
+// Event sign-ups get their own, larger budget: a room of people registering on the venue Wi-Fi
+// shares one IP address and would otherwise hit the 15-request strict limit.
+const TIER_LIMITS = {
+  strict: { limit: 15, windowMs: 15 * 60 * 1000 },
+  "event-signup": { limit: 60, windowMs: 15 * 60 * 1000 },
+} as const;
+
+export async function rateLimit(request: NextRequest, tier: "standard" | "strict" | "event-signup" = "standard"): Promise<NextResponse | null> {
   if (process.env.NODE_ENV === "development" && process.env.ENABLE_RATE_LIMITING !== "true") return null;
-  const limit = tier === "strict" ? 15 : APP_CONFIG.rateLimit.maxRequests;
-  const windowMs = tier === "strict" ? 15 * 60 * 1000 : APP_CONFIG.rateLimit.windowMs;
+  const limit = tier === "standard" ? APP_CONFIG.rateLimit.maxRequests : TIER_LIMITS[tier].limit;
+  const windowMs = tier === "standard" ? APP_CONFIG.rateLimit.windowMs : TIER_LIMITS[tier].windowMs;
   try {
     const result = await consumeRateLimit(`${tier}:${getClientIdentifier(request)}`, limit, windowMs);
     requestResults.set(request, { result, limit });
