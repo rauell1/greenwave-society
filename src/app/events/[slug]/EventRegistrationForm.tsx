@@ -41,7 +41,7 @@ export function EventRegistrationForm({ slug, closedMessage, fullyBooked }: { sl
       <div className={card} role="status">
         <CheckCircle2 className="h-8 w-8 text-primary" />
         <h2 className="mt-3 font-serif text-xl font-bold">{result === "registered" ? "You're registered!" : "You're on the waiting list"}</h2>
-        <p className="mt-2 text-sm text-muted-foreground">{result === "registered" ? "Check your email for your confirmation. We'll also send a reminder the day before." : "The event is full right now. We'll email you if a place opens up."}</p>
+        <p className="mt-2 text-sm text-muted-foreground">{result === "registered" ? "Check your email for your confirmation. We'll remind you 3 days before and the day before." : "The event is full right now. We'll email you if a place opens up."}</p>
       </div>
     );
   }

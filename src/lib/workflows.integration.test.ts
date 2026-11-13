@@ -9,7 +9,7 @@ vi.mock("server-only", () => ({}));
 vi.mock("@/lib/auth/guards", () => ({ getCurrentAdmin: mocks.currentAdmin }));
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidate }));
 vi.mock("@/lib/members/email", () => ({ sendMembershipDecisionEmail: mocks.email }));
-vi.mock("@/lib/events/email", () => ({ sendEventRegistrationConfirmation: mocks.eventEmail, sendEventReminderEmail: mocks.eventReminder }));
+vi.mock("@/lib/events/email", async importOriginal => ({ ...(await importOriginal<typeof import("@/lib/events/email")>()), sendEventRegistrationConfirmation: mocks.eventEmail, sendBatchEmails: mocks.eventReminder }));
 vi.mock("@/lib/payments/feature-flag", () => ({ isMpesaMembershipEnabled: async () => true }));
 vi.mock("@/lib/payments/client", () => ({ getMpesaClient: () => paymentClient }));
 
@@ -26,7 +26,7 @@ import { PrismaMembershipPaymentAdapter } from "@/lib/payments/adapter";
 import { applyMembershipPaymentSettlement } from "@/lib/payments/settlement";
 import { consumeRateLimit } from "@/lib/rate-limit";
 import { POST as registerForEvent } from "@/app/api/events/[slug]/register/route";
-import { sendDueEventReminders } from "@/lib/events/reminders";
+import { sendScheduledEventEmails } from "@/lib/events/reminders";
 import { importCampaignEvents } from "@/lib/events/import-campaign";
 import { isTimeToBeConfirmed } from "@/lib/events/nairobi-time";
 
@@ -184,22 +184,37 @@ describe("public event registration against PostgreSQL", () => {
     expect((await signUp("trivia-night", "ONE@example.com")).status).toBe(409);
     expect(mocks.eventEmail).toHaveBeenCalledTimes(1);
   });
-  it("sends one 24-hour reminder per registration for events starting within a day", async () => {
-    mocks.eventReminder.mockResolvedValue(true);
-    const soon = await db.cmsEvent.create({ data: { slug: "soon-night", title: "Soon night", description: "Games", status: "published", startsAt: new Date(Date.now() + 12 * 3_600_000), endsAt: new Date(Date.now() + 15 * 3_600_000), createdById: admin.id, updatedById: admin.id } });
-    const later = await createEvent({ slug: "later-night", status: "published" });
-    const earlier = new Date(Date.now() - 5 * 3_600_000);
+  it("sends 3-day and day-before reminders and a thank-you once each, by Nairobi date", async () => {
+    mocks.eventReminder.mockImplementation(async (emails: unknown[]) => emails.map(() => true));
+    // 08:00 Nairobi on Wednesday 18 November 2026, when the daily cron job runs.
+    const now = new Date("2026-11-18T05:00:00Z");
+    const event = async (slug: string, startsAt: string, endsAt: string) => db.cmsEvent.create({ data: { slug, title: slug, description: "Games", status: "published", startsAt: new Date(startsAt), endsAt: new Date(endsAt), createdById: admin.id, updatedById: admin.id } });
+    const sat = await event("saturday-walk", "2026-11-21T07:00:00Z", "2026-11-21T10:00:00Z");
+    const thu = await event("thursday-games", "2026-11-19T15:00:00Z", "2026-11-19T18:00:00Z");
+    const mon = await event("monday-brunch", "2026-11-16T06:00:00Z", "2026-11-16T09:00:00Z");
+    const later = await event("next-month", "2026-12-12T07:00:00Z", "2026-12-12T10:00:00Z");
+    const signedUp = new Date("2026-11-10T09:00:00Z");
     await db.cmsEventRegistration.createMany({ data: [
-      { eventId: soon.id, fullName: "Due Guest", email: "due@example.com", phone: "0712345678", createdAt: earlier },
-      { eventId: soon.id, fullName: "Fresh Guest", email: "fresh@example.com", phone: "0712345678" },
-      { eventId: soon.id, fullName: "Waiting Guest", email: "wait@example.com", status: "waitlisted", createdAt: earlier },
-      { eventId: later.id, fullName: "Next Week Guest", email: "later@example.com", createdAt: earlier },
+      { eventId: sat.id, fullName: "Walker", email: "walker@example.com", createdAt: signedUp },
+      { eventId: thu.id, fullName: "Player", email: "player@example.com", createdAt: signedUp },
+      { eventId: thu.id, fullName: "Waiting", email: "wait@example.com", status: "waitlisted", createdAt: signedUp },
+      { eventId: mon.id, fullName: "Attendee", email: "came@example.com", attendanceStatus: "checked_in", createdAt: signedUp },
+      { eventId: mon.id, fullName: "No Show", email: "noshow@example.com", attendanceStatus: "no_show", createdAt: signedUp },
+      { eventId: later.id, fullName: "Early Bird", email: "later@example.com", createdAt: signedUp },
     ] });
-    expect(await sendDueEventReminders()).toMatchObject({ sent: 1, failed: 0 });
-    expect(mocks.eventReminder).toHaveBeenCalledWith(expect.objectContaining({ to: "due@example.com", eventTitle: "Soon night" }));
-    expect((await db.cmsEventRegistration.findFirst({ where: { email: "due@example.com" } }))?.metadata).toMatchObject({ reminderSentAt: expect.any(String) });
-    expect(await sendDueEventReminders()).toMatchObject({ sent: 0 });
-    expect(mocks.eventReminder).toHaveBeenCalledTimes(1);
+    expect(await sendScheduledEventEmails(now)).toMatchObject({ sent: { reminder3d: 1, reminder1d: 1, thankYou: 1 }, failed: 0 });
+    const sent = mocks.eventReminder.mock.calls.flatMap(([emails]) => emails as { to: string; subject: string }[]);
+    expect(sent.map(email => `${email.to}: ${email.subject}`).sort()).toEqual([
+      "came@example.com: Thank you for joining monday-brunch",
+      "player@example.com: Tomorrow: thursday-games",
+      "walker@example.com: 3 days to go: saturday-walk",
+    ]);
+    expect(await sendScheduledEventEmails(now)).toMatchObject({ sent: { reminder3d: 0, reminder1d: 0, thankYou: 0 } });
+    // A failed send is released and retried on the next run.
+    mocks.eventReminder.mockClear();
+    mocks.eventReminder.mockImplementationOnce(async (emails: unknown[]) => emails.map(() => false));
+    expect(await sendScheduledEventEmails(new Date("2026-11-20T05:00:00Z"))).toMatchObject({ sent: { reminder1d: 0 }, failed: 1 });
+    expect(await sendScheduledEventEmails(new Date("2026-11-20T06:00:00Z"))).toMatchObject({ sent: { reminder1d: 1 }, failed: 0 });
   });
   it("adds the five campaign poster events once and publishes the Trivia night draft", async () => {
     await db.cmsEvent.create({ data: { slug: "trivia-and-games-hang-out", title: "Trivia & Games Hang Out", description: "Games", status: "draft", startsAt: new Date("2026-11-18T07:00:00Z"), endsAt: new Date("2026-11-18T10:00:00Z"), createdById: admin.id, updatedById: admin.id } });

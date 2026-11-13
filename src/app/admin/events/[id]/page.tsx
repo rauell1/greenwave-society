@@ -47,6 +47,7 @@ export default async function EventPage({
   const membersCount = event.registrations.filter((r) => r.memberRegistrationId).length;
   const canPublish = hasPermission(admin, PERMISSIONS.EVENTS_PUBLISH);
 
+  const sentCount = (key: string) => event.registrations.filter((r) => Boolean(((r.metadata as Record<string, any>) || {})[key])).length;
   const remindedCount = event.registrations.filter((r) => {
     const meta = (r.metadata as Record<string, any>) || {};
     return Boolean(meta.reminderSentAt);
@@ -147,9 +148,12 @@ export default async function EventPage({
           <div className="text-2xl font-bold text-amber-900 mt-1">{vendorsCount}</div>
         </div>
         <div className="p-4 rounded-xl border bg-white shadow-sm">
-          <div className="text-xs text-slate-500 font-medium uppercase tracking-wider">Reminders sent</div>
-          <div className="text-2xl font-bold text-slate-900 mt-1">{remindedCount}</div>
-          <div className="text-xs text-slate-500">emailed automatically 24 hours before</div>
+          <div className="text-xs text-slate-500 font-medium uppercase tracking-wider">Automatic emails</div>
+          <dl className="mt-1 space-y-0.5 text-xs text-slate-700">
+            <div className="flex justify-between"><dt>3-day reminder</dt><dd className="font-semibold">{sentCount("reminder3dSentAt")}</dd></div>
+            <div className="flex justify-between"><dt>Day-before reminder</dt><dd className="font-semibold">{remindedCount}</dd></div>
+            <div className="flex justify-between"><dt>Thank-you</dt><dd className="font-semibold">{sentCount("thankYouSentAt")}</dd></div>
+          </dl>
         </div>
       </div>
       )}
