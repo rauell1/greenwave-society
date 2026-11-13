@@ -5,6 +5,7 @@ import { PERMISSIONS } from "@/lib/auth/permissions";
 import { getDb } from "@/lib/db";
 import { contentInputSchema, serializeMetadata } from "@/lib/cms/content";
 import { AUDIT_ACTIONS, logAuditEvent } from "@/lib/audit/audit-service";
+import { hasPermission } from "@/lib/auth/policy";
 
 export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const auth = await authorizeRoute(PERMISSIONS.CONTENT_READ);
@@ -25,10 +26,17 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   const before = await db.cmsContent.findUnique({ where: { id } });
   if (!before) return NextResponse.json({ error: "Not found" }, { status: 404 });
   const input = parsed.data;
+  // Editing live content keeps it live. Saving used to apply the form's draft/review status, which
+  // silently unpublished the page so edits never appeared and the site fell back to defaults.
+  const isLive = before.status === "published";
+  if (isLive && !hasPermission(admin, PERMISSIONS.CONTENT_PUBLISH)) {
+    return NextResponse.json({ error: "This content is live on the site. Only someone with publish rights can save changes to it." }, { status: 403 });
+  }
+  const status = isLive ? "published" : input.status;
   const nextVersion = before.version + 1;
   const metadata = serializeMetadata(input.metadata);
   const item = await db.$transaction(async (tx) => {
-    const updated = await tx.cmsContent.update({ where: { id }, data: { ...input, excerpt: input.excerpt || null, metadata, version: nextVersion, updatedById: admin.id } });
+    const updated = await tx.cmsContent.update({ where: { id }, data: { ...input, status, excerpt: input.excerpt || null, metadata, version: nextVersion, updatedById: admin.id } });
     await tx.cmsContentRevision.create({ data: { contentId: id, version: nextVersion, title: updated.title, excerpt: updated.excerpt, body: updated.body, metadata: updated.metadata, status: updated.status, createdById: admin.id } });
     return updated;
   });

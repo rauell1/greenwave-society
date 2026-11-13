@@ -20,6 +20,16 @@ describe("CMS content validation", () => {
     expect(serializeMetadata({ seoTitle: "About" })).toBe('{"seoTitle":"About"}');
   });
 
+  it("only accepts cover images the public pages can load", () => {
+    const story = { type: "news", slug: "community-update", title: "Community update", body: "Our latest work" };
+    for (const imageUrl of ["/images/g-59.jpg", "https://cdn.greenwavesociety.org/images/a.webp", "https://abc123.public.blob.vercel-storage.com/media/a.webp"]) {
+      expect(contentInputSchema.safeParse({ ...story, metadata: { imageUrl } }).success).toBe(true);
+    }
+    for (const imageUrl of ["https://example.com/a.jpg", "http://cdn.greenwavesociety.org/a.jpg", "//evil.test/a.jpg"]) {
+      expect(contentInputSchema.safeParse({ ...story, metadata: { imageUrl } }).success).toBe(false);
+    }
+  });
+
   it("rejects unsafe slugs and empty bodies", () => {
     expect(contentInputSchema.safeParse({ type: "page", slug: "../about", title: "About", body: "" }).success).toBe(false);
   });

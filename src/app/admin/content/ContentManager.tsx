@@ -1,6 +1,6 @@
 "use client";
 
-import { CONTENT_TYPES, contentInputSchema } from "@/lib/cms/content";
+import { CONTENT_TYPES, NEWS_CONTENT_TYPES, contentInputSchema } from "@/lib/cms/content";
 import { IMPACT_STATS } from "@/config/app.config";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
@@ -26,6 +26,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { readApiError } from "@/lib/admin/api-error";
+import { IMAGE_SRC_HINT, isAllowedImageSrc } from "@/lib/media/image-src";
 
 type Item = {
   id: string;
@@ -74,6 +76,7 @@ export default function ContentManager({
   const [activity, setActivity] = useState({ date: "", category: "Community", mediaUrl: "/gallery" });
   const [impact, setImpact] = useState<Record<keyof typeof IMPACT_STATS, number>>({ ...IMPACT_STATS });
   const [metadata, setMetadata] = useState<Record<string, unknown> | null>(null);
+  const [cover, setCover] = useState({ imageUrl: "", imageAlt: "" });
 
   // Interactive View Modes: "edit" vs "preview"
   const [activeTab, setActiveTab] = useState<"edit" | "preview">("edit");
@@ -112,6 +115,10 @@ export default function ContentManager({
       category: String(stored?.category ?? "Community"),
       mediaUrl: String(stored?.mediaUrl ?? "/gallery"),
     });
+    setCover({
+      imageUrl: String(stored?.imageUrl ?? stored?.image ?? ""),
+      imageAlt: String(stored?.imageAlt ?? ""),
+    });
     setImpact(
       Object.fromEntries(
         Object.entries(IMPACT_STATS).map(([key, value]) => [key, Number(stored?.[key] ?? value)])
@@ -132,9 +139,25 @@ export default function ContentManager({
     setBusy(true);
     setMessage("");
     try {
+      // Merge onto the stored metadata so fields the form does not show (an activity's location
+      // or highlight, a story's author) survive the save instead of being wiped.
+      const coverFields = {
+        imageUrl: cover.imageUrl.trim() || undefined,
+        imageAlt: cover.imageAlt.trim() || undefined,
+      };
+      const merged = { ...metadata, ...coverFields };
+      if (!coverFields.imageUrl) delete merged.imageUrl;
+      if (!coverFields.imageAlt) delete merged.imageAlt;
       const payload = {
         ...form,
-        metadata: form.type === "activity" ? activity : form.type === "impact" ? impact : metadata,
+        metadata:
+          form.type === "activity"
+            ? { ...merged, ...activity }
+            : form.type === "impact"
+              ? impact
+              : Object.keys(merged).length
+                ? merged
+                : null,
       };
       const validation = contentInputSchema.safeParse(payload);
       if (!validation.success) {
@@ -145,11 +168,17 @@ export default function ContentManager({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const data = await response.json();
       if (!response.ok) {
-        return setMessage(data.error || "Unable to save content.");
+        return setMessage(await readApiError(response, "Unable to save content."));
       }
-      setMessage(selected ? "New revision saved." : "Draft created successfully.");
+      const data = await response.json();
+      setMessage(
+        !selected
+          ? "Draft created successfully."
+          : data.item.status === "published"
+            ? "Changes saved and live on the site."
+            : "New revision saved."
+      );
       await load();
       await choose(data.item);
     } catch {
@@ -169,7 +198,7 @@ export default function ContentManager({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
       });
-      if (!response.ok) return setMessage("Unable to change status.");
+      if (!response.ok) return setMessage(await readApiError(response, "Unable to change status."));
       setMessage(`Content moved to ${status}.`);
       await load();
       await choose((await response.json()).item);
@@ -237,6 +266,7 @@ export default function ContentManager({
                   setSelected(null);
                   setForm({ ...empty, type: typeFilter ?? empty.type });
                   setMetadata(null);
+                  setCover({ imageUrl: "", imageAlt: "" });
                   setActivity({ date: "", category: "Community", mediaUrl: "/gallery" });
                   setImpact({ ...IMPACT_STATS });
                   setMessage("");
@@ -481,6 +511,38 @@ export default function ContentManager({
                     onChange={(e) => setActivity({ ...activity, mediaUrl: e.target.value })}
                   />
                 </div>
+              </fieldset>
+            )}
+
+            {/* Cover image for stories and activities */}
+            {(form.type === "activity" || (NEWS_CONTENT_TYPES as readonly string[]).includes(form.type)) && (
+              <fieldset className="grid gap-3 sm:grid-cols-[1fr_1fr_auto] p-4 rounded-xl bg-slate-50 border border-slate-200">
+                <legend className="text-xs font-bold uppercase tracking-wider text-slate-700 px-1">
+                  Cover Image
+                </legend>
+                <div>
+                  <label className="text-xs text-slate-600 block mb-1">Image link</label>
+                  <input
+                    className="w-full rounded-lg border border-slate-200 p-2 text-xs bg-white"
+                    value={cover.imageUrl}
+                    placeholder="Paste a link copied from the Media library"
+                    onChange={(e) => setCover({ ...cover, imageUrl: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-slate-600 block mb-1">Describe the image (alt text)</label>
+                  <input
+                    className="w-full rounded-lg border border-slate-200 p-2 text-xs bg-white"
+                    value={cover.imageAlt}
+                    onChange={(e) => setCover({ ...cover, imageAlt: e.target.value })}
+                  />
+                </div>
+                {cover.imageUrl.trim() && isAllowedImageSrc(cover.imageUrl.trim()) && (
+                  <img src={cover.imageUrl.trim()} alt="" className="h-16 w-24 rounded-lg object-cover border border-slate-200" />
+                )}
+                <p className={`text-[11px] sm:col-span-3 ${cover.imageUrl.trim() && !isAllowedImageSrc(cover.imageUrl.trim()) ? "text-red-700" : "text-slate-500"}`}>
+                  {IMAGE_SRC_HINT}
+                </p>
               </fieldset>
             )}
 

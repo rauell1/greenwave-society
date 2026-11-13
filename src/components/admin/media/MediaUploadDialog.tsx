@@ -2,6 +2,8 @@
 
 import { useState, useRef, ChangeEvent, FormEvent, DragEvent } from "react";
 import Image from "next/image";
+import { readApiError } from "@/lib/admin/api-error";
+import { MAX_SOURCE_IMAGE_BYTES, UPLOAD_BODY_LIMIT_BYTES, prepareUpload } from "@/lib/media/prepare-upload";
 import { 
   CloudUpload, 
   X, 
@@ -40,7 +42,7 @@ export function MediaUploadDialog({
   onOpenChange,
   onSuccess,
   title = "Upload Media to Storage",
-  description = "Upload images or documents to Cloud Storage. Maximum size: 10 MB.",
+  description = "Upload images or documents to Cloud Storage. Large photos are resized automatically; PDFs up to 4 MB.",
   defaultAlt = "",
 }: MediaUploadDialogProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -61,8 +63,8 @@ export function MediaUploadDialog({
       setErrorMessage("Only JPEG, PNG, WebP, GIF, and PDF files are allowed.");
       return;
     }
-    if (file.size > 10 * 1024 * 1024) {
-      setErrorMessage("File exceeds the 10 MB maximum upload limit.");
+    if (file.size > (file.type.startsWith("image/") ? MAX_SOURCE_IMAGE_BYTES : UPLOAD_BODY_LIMIT_BYTES)) {
+      setErrorMessage(file.type.startsWith("image/") ? "Photos must be under 30 MB." : "PDFs must be under 4 MB.");
       return;
     }
 
@@ -139,7 +141,7 @@ export function MediaUploadDialog({
 
     try {
       const formData = new FormData();
-      formData.append("file", selectedFile);
+      formData.append("file", await prepareUpload(selectedFile));
       formData.append("altText", altText.trim());
       if (caption.trim()) {
         formData.append("caption", caption.trim());
@@ -150,11 +152,10 @@ export function MediaUploadDialog({
         body: formData,
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.error || "Failed to upload asset to storage");
+        throw new Error(await readApiError(response, "Failed to upload asset to storage"));
       }
+      const data = await response.json();
 
       const asset: UploadedMediaAsset = data.asset;
       handleReset();
@@ -221,7 +222,7 @@ export function MediaUploadDialog({
                   Click to choose file or drag and drop here
                 </p>
                 <p className="text-[11px] text-slate-500">
-                  JPEG, PNG, WebP, GIF, or PDF (up to 10 MB)
+                  JPEG, PNG or WebP photos (resized automatically), GIF or PDF up to 4 MB
                 </p>
               </div>
               <input

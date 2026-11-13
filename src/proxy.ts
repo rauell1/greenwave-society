@@ -35,7 +35,8 @@ function getSecurityHeaders(): Record<string, string> {
       "frame-ancestors 'none'",
     ].join("; "),
     // Permissions policy
-    "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+    // camera=(self) lets the event check-in QR scanner open the camera on our own pages only.
+    "Permissions-Policy": "camera=(self), microphone=(), geolocation=()",
     // HSTS — tells browsers and Cloudflare to always use HTTPS
     "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
   };

@@ -73,8 +73,8 @@ export default async function EventPage({
           </span>
         </div>
         <p className="text-sm text-slate-500">
-          {event.startsAt.toLocaleString("en-KE")} -{" "}
-          {event.endsAt.toLocaleString("en-KE")} · {event.location || "Online"}
+          {event.startsAt.toLocaleString("en-KE", { timeZone: "Africa/Nairobi" })} -{" "}
+          {event.endsAt.toLocaleString("en-KE", { timeZone: "Africa/Nairobi" })} · {event.location || "Online"}
         </p>
       </div>
 
