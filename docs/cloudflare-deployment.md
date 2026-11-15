@@ -29,3 +29,4 @@ Every runtime variable in `.env.example`, set with `npx wrangler secret put NAME
 ## Local check
 
 `npm run cf:preview` with the variables in a `.dev.vars` file. Add `--test-scheduled` to `wrangler dev` and open `/__scheduled?cron=0+5+*+*+*` to fire the cron handler.
+- Media library files uploaded before the move are still on Vercel Blob (5 event posters as of November 2026). To copy them, sign in as an admin with media upload permission and send `POST /api/admin/media/copy-from-blob` (`GET` lists what is left). Each file is checked against its recorded SHA-256 checksum, stored under the same pathname, and only then switched to `/media-files/...` in the asset and in the CMS content that used the old link.
