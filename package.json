@@ -72,6 +72,7 @@
     "@vercel/analytics": "^2.0.1",
     "@vercel/blob": "^2.8.2",
     "@vercel/speed-insights": "^2.0.0",
+    "aws4fetch": "1.0.20",
     "class-variance-authority": "^0.7.1",
     "cloudflare": "^7.3.0",
     "clsx": "^2.1.1",

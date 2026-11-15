@@ -23,7 +23,8 @@ Every runtime variable in `.env.example`, set with `npx wrangler secret put NAME
 - `src/proxy.ts` loads the rate limiter on demand, and on Workers the limiter runs its query through the hook in `cloudflare-worker.ts` (see the comments in `src/lib/rate-limit.ts`).
 - The `/index` and `/home` redirects moved from `vercel.json` to `next.config.ts`. Security headers were already set in `src/proxy.ts` and `next.config.ts`.
 - The Worker bundle is about 8.2 MB compressed. The Workers Paid plan allows 10 MB, so watch this when adding dependencies.
-- Known gap: `src/lib/media/optimize.ts` uses `sharp`, which does not run on Workers. Uploading new media through the CMS fails there until that step moves to the Cloudflare Images binding. Media storage itself still uses Vercel Blob and needs `BLOB_READ_WRITE_TOKEN` (Vercel OIDC is not available off Vercel).
+- CMS media storage: new uploads go to Neon object storage when `AWS_ENDPOINT_URL_S3`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION` and `OBJECT_STORAGE_BUCKET` are set (Neon project `fancy-math-09311878` "rauell-file-storage", private bucket `greenwave-media`; these are already stored as Worker secrets). The site serves them from `/media-files/media/...` (`src/app/media-files/[...path]/route.ts`), so stored URLs are same-origin paths. Assets uploaded earlier keep their Vercel Blob URLs until they are copied.
+- Known gap: `src/lib/media/optimize.ts` uses `sharp`, which does not run on Workers, so CMS uploads fail there until that step is replaced.
 
 ## Local check
 
