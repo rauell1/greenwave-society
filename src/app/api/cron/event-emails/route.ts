@@ -5,8 +5,8 @@ import { sendScheduledEventEmails } from "@/lib/events/reminders";
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-// Run once a day by the Vercel cron job in vercel.json. Vercel sends
-// "Authorization: Bearer <CRON_SECRET>" automatically when CRON_SECRET is set on the project.
+// Run once a day by the Cloudflare cron trigger in wrangler.jsonc. The scheduled handler in
+// cloudflare-worker.ts calls this route with "Authorization: Bearer <CRON_SECRET>".
 function authorized(request: NextRequest) {
   const secret = process.env.CRON_SECRET;
   const header = request.headers.get("authorization") ?? "";

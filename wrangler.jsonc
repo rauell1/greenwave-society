@@ -1,0 +1,20 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "greenwave-society",
+  // Wraps .open-next/worker.js and adds the scheduled (cron) handler.
+  "main": "cloudflare-worker.ts",
+  "compatibility_date": "2026-11-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
+  // Daily at 05:00 UTC (08:00 EAT): scheduled event emails.
+  "triggers": { "crons": ["0 5 * * *"] },
+  // Runtime secrets are set with `npx wrangler secret put NAME` or in the Cloudflare dashboard.
+  // See .env.example for the full list.
+  "keep_vars": true,
+  "workers_dev": true,
+  "routes": [
+    { "pattern": "greenwavesociety.org", "custom_domain": true },
+    { "pattern": "www.greenwavesociety.org", "custom_domain": true }
+  ],
+  "observability": { "enabled": true }
+}

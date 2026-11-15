@@ -1,0 +1,30 @@
+# Cloudflare deployment
+
+Hosting runs on Cloudflare Workers through the OpenNext Cloudflare adapter. `.github/workflows/deploy-cloudflare.yml` builds and deploys on every push to `main`.
+
+## Files
+
+- `open-next.config.ts`, `wrangler.jsonc`: adapter and Worker configuration, including the custom domains and the daily cron trigger.
+- `cloudflare-worker.ts`: Worker entry point. It wraps the generated OpenNext worker, runs `/api/cron/event-emails` from the cron trigger with `CRON_SECRET`, and registers the SQL hook the rate limiter uses.
+
+## GitHub repository settings
+
+Secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `DATABASE_URL`, `DIRECT_DATABASE_URL`, `SENTRY_AUTH_TOKEN` (optional, for source maps).
+
+Variables: `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_ENABLE_ANALYTICS`, `NEXT_PUBLIC_GA_MEASUREMENT_ID`, `IMAGE_CDN_ORIGIN`.
+
+## Worker secrets
+
+Every runtime variable in `.env.example`, set with `npx wrangler secret put NAME` or in the Cloudflare dashboard. Also set `TRUST_CLOUDFLARE_IP=true` so the rate limiter keys on the real client address, and `NODE_ENV=production`.
+
+## Differences from Vercel
+
+- The Prisma client is created per request on Workers (`src/lib/db.ts`), because Workers cannot share a socket between requests.
+- `src/proxy.ts` loads the rate limiter on demand, and on Workers the limiter runs its query through the hook in `cloudflare-worker.ts` (see the comments in `src/lib/rate-limit.ts`).
+- The `/index` and `/home` redirects moved from `vercel.json` to `next.config.ts`. Security headers were already set in `src/proxy.ts` and `next.config.ts`.
+- The Worker bundle is about 8.2 MB compressed. The Workers Paid plan allows 10 MB, so watch this when adding dependencies.
+- Known gap: `src/lib/media/optimize.ts` uses `sharp`, which does not run on Workers. Uploading new media through the CMS fails there until that step moves to the Cloudflare Images binding. Media storage itself still uses Vercel Blob and needs `BLOB_READ_WRITE_TOKEN` (Vercel OIDC is not available off Vercel).
+
+## Local check
+
+`npm run cf:preview` with the variables in a `.dev.vars` file. Add `--test-scheduled` to `wrangler dev` and open `/__scheduled?cron=0+5+*+*+*` to fire the cron handler.

@@ -50,9 +50,10 @@ export async function consumeRateLimit(identifier: string, limit: number, window
     if (!limiter) { limiter = new RateLimiter(limit, windowMs); localLimiters.set(policy, limiter); }
     return limiter.check(key);
   }
-  const db = getDb();
   const now = new Date();
   const resetAt = new Date(now.getTime() + windowMs);
+  if (isCloudflareWorkers()) return consumeOnWorkers(key, limit, now, resetAt);
+  const db = getDb();
   // One atomic UPSERT: concurrent instances share the same fixed window.
   const [entry] = await db.$queryRaw<Array<{ count: number; resetAt: Date }>>`
     INSERT INTO "rate_limit_buckets" ("key", "count", "reset_at") VALUES (${key}, 1, ${resetAt})
@@ -68,6 +69,40 @@ export async function consumeRateLimit(identifier: string, limit: number, window
       .catch(error => logger.error("Rate limit cleanup failed", error as Error));
   }
   return { allowed: entry.count <= limit, remaining: Math.max(0, limit - entry.count), resetAt: entry.resetAt.getTime() };
+}
+
+function isCloudflareWorkers(): boolean {
+  return typeof navigator !== "undefined" && navigator.userAgent === "Cloudflare-Workers";
+}
+
+type WorkerSqlQuery = (text: string, values: unknown[]) => Promise<Array<Record<string, unknown>>>;
+
+/**
+ * Same atomic UPSERT as above, for Cloudflare Workers. There the proxy (src/proxy.ts) cannot
+ * load a database driver: its bundle is built for Node, so Prisma arrives as inline WebAssembly
+ * (which Workers refuses to compile) and `pg` without its Workers socket. The Worker entry point
+ * (cloudflare-worker.ts) is bundled for Workers and registers a small query function under this
+ * symbol, which both the proxy and the route handlers can reach in the same isolate.
+ */
+async function consumeOnWorkers(key: string, limit: number, now: Date, resetAt: Date): Promise<RateLimitResult> {
+  const query = (globalThis as Record<symbol, unknown>)[Symbol.for("greenwave.sqlQuery")] as WorkerSqlQuery | undefined;
+  if (!query) throw new Error("Worker SQL query hook is not registered");
+  const rows = await query(
+    `INSERT INTO "rate_limit_buckets" ("key", "count", "reset_at") VALUES ($1, 1, $2)
+     ON CONFLICT ("key") DO UPDATE SET
+       "count" = CASE WHEN "rate_limit_buckets"."reset_at" <= $3 THEN 1 ELSE LEAST("rate_limit_buckets"."count" + 1, $4) END,
+       "reset_at" = CASE WHEN "rate_limit_buckets"."reset_at" <= $3 THEN $2 ELSE "rate_limit_buckets"."reset_at" END
+     RETURNING "count", "reset_at" AS "resetAt"`,
+    [key, resetAt, now, limit + 1],
+  );
+  const entry = rows[0] as { count: number; resetAt: Date | string } | undefined;
+  if (!entry) throw new Error("Rate limit store returned no counter");
+  if (Date.now() >= nextCleanupAt) {
+    nextCleanupAt = Date.now() + 5 * 60 * 1000;
+    await query(`DELETE FROM "rate_limit_buckets" WHERE "key" IN (SELECT "key" FROM "rate_limit_buckets" WHERE "reset_at" <= $1 LIMIT 1000)`, [now])
+      .catch(error => logger.error("Rate limit cleanup failed", error as Error));
+  }
+  return { allowed: entry.count <= limit, remaining: Math.max(0, limit - entry.count), resetAt: new Date(entry.resetAt).getTime() };
 }
 
 export function getClientIdentifier(request: NextRequest): string {

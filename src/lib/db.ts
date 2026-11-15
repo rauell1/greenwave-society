@@ -35,6 +35,7 @@ function createPrismaClient(): PrismaClient {
 }
 
 let prisma: PrismaClient | undefined;
+const perRequestPrisma = new WeakMap<object, PrismaClient>();
 
 function attachLogging(client: PrismaClient): void {
   if (process.env.NODE_ENV === "production") {
@@ -77,6 +78,23 @@ function initPrisma(): PrismaClient {
  * when DATABASE_URL is not provided.
  */
 export function getDb(): PrismaClient {
+  // Cloudflare Workers forbids using a socket opened in one request from another request, so
+  // there the client is scoped to the current request (OpenNext publishes its execution
+  // context under this well-known symbol). On Node one client is shared.
+  const scope = (
+    (globalThis as Record<symbol, unknown>)[Symbol.for("__cloudflare-context__")] as { ctx?: object } | undefined
+  )?.ctx;
+  if (scope) {
+    let client = perRequestPrisma.get(scope);
+    if (!client) {
+      validateEnv();
+      client = createPrismaClient();
+      attachLogging(client);
+      perRequestPrisma.set(scope, client);
+    }
+    return client;
+  }
+
   if (!prisma) {
     validateEnv();
     prisma = initPrisma();
