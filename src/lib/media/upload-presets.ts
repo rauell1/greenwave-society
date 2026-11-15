@@ -1,6 +1,6 @@
 // Target sizes for uploaded images, by where they appear on the site. Images are scaled down to fit
-// inside the box (never up, aspect ratio kept): in the browser before upload, to stay under the
-// hosting request limit, and again on the server, which also converts them to WebP.
+// inside the box (never up, aspect ratio kept) and converted to WebP in the browser before upload;
+// the server refuses images larger than the box.
 // Sizes cover the largest place each image is shown, at 2x for high-density phone screens.
 export const UPLOAD_PRESETS = {
   /** Media library and article cover images: shown up to full content width. */

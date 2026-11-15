@@ -24,7 +24,7 @@ Every runtime variable in `.env.example`, set with `npx wrangler secret put NAME
 - The `/index` and `/home` redirects moved from `vercel.json` to `next.config.ts`. Security headers were already set in `src/proxy.ts` and `next.config.ts`.
 - The Worker bundle is about 8.2 MB compressed. The Workers Paid plan allows 10 MB, so watch this when adding dependencies.
 - CMS media storage: new uploads go to Neon object storage when `AWS_ENDPOINT_URL_S3`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION` and `OBJECT_STORAGE_BUCKET` are set (Neon project `fancy-math-09311878` "rauell-file-storage", private bucket `greenwave-media`; these are already stored as Worker secrets). The site serves them from `/media-files/media/...` (`src/app/media-files/[...path]/route.ts`), so stored URLs are same-origin paths. Assets uploaded earlier keep their Vercel Blob URLs until they are copied.
-- Known gap: `src/lib/media/optimize.ts` uses `sharp`, which does not run on Workers, so CMS uploads fail there until that step is replaced.
+- CMS uploads no longer use `sharp` (a native library that cannot run on Workers). The media library scales JPEG, PNG and WebP photos to their preset's box and converts them to WebP in the browser (`src/lib/media/prepare-upload.ts`). The server rebuilds each file from its image data alone (`src/lib/media/image-sanitize.ts`): EXIF including GPS location, XMP, comments and appended bytes are dropped, only the camera orientation is kept, and images larger than the preset are refused. It does not decode the image, because a decode and re-encode of a photo needs several hundred MB and a Worker has 128 MB.
 
 ## Local check
 

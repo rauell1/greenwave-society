@@ -7,7 +7,7 @@ import { PERMISSIONS } from "@/lib/auth/permissions";
 import { getDb } from "@/lib/db";
 import { ALLOWED_MEDIA_TYPES, hasValidSignature, MAX_MEDIA_BYTES, mediaMetadataSchema, safeMediaFilename } from "@/lib/media/validation";
 import { AUDIT_ACTIONS } from "@/lib/audit/audit-service";
-import { optimiseUpload, type StoredMedia } from "@/lib/media/optimize";
+import { optimiseUpload, UploadRejectedError, type StoredMedia } from "@/lib/media/optimize";
 import { isUploadPreset, type UploadPreset } from "@/lib/media/upload-presets";
 
 export const runtime = "nodejs";
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
   if (file.type.startsWith("image/") && !metadataInput.data.altText) return NextResponse.json({ error: "Alternative text is required for images" }, { status: 400 });
   const preset = isUploadPreset(form.get("preset")) ? (form.get("preset") as UploadPreset) : "general";
   let stored: StoredMedia;
-  try { stored = await optimiseUpload(bytes, file.type, preset); } catch { return NextResponse.json({ error: "The image is corrupt or unsafe to process" }, { status: 415 }); }
+  try { stored = await optimiseUpload(bytes, file.type, preset); } catch (error) { return NextResponse.json({ error: error instanceof UploadRejectedError ? error.message : "The image is corrupt or unsafe to process" }, { status: 415 }); }
   const extensionByType: Record<string,string> = { "image/jpeg":".jpg", "image/png":".png", "image/webp":".webp", "image/gif":".gif", "application/pdf":".pdf" };
   const filename = safeMediaFilename(file.name).replace(/\.[a-z0-9]{1,8}$/i, "") + extensionByType[stored.contentType]; const pathname = `media/${randomUUID()}-${filename}`;
   // S3-compatible object storage (Neon, later R2) when configured; Vercel Blob otherwise.
