@@ -268,7 +268,7 @@ describe("public event registration against PostgreSQL", () => {
 });
 
 describe("media uploads against PostgreSQL", () => {
-  it("stores uploaded photos as WebP resized for where they are used", async () => {
+  it("stores browser-resized WebP photos without metadata and refuses oversized ones", async () => {
     vi.stubEnv("FEATURE_CMS_MEDIA", "true");
     vi.stubEnv("BLOB_READ_WRITE_TOKEN", "test-token");
     admin.permissions.push(PERMISSIONS.MEDIA_UPLOAD);
@@ -277,22 +277,29 @@ describe("media uploads against PostgreSQL", () => {
       stored.push({ pathname, bytes, contentType: options.contentType });
       return { pathname, url: `https://abc123.public.blob.vercel-storage.com/${pathname}` };
     });
-    const jpeg = await sharp({ create: { width: 3000, height: 4000, channels: 3, background: "#2a7" } }).jpeg().toBuffer();
-    const upload = (preset: string) => {
+    // The media library resizes and converts photos in the browser before upload.
+    const resized = await sharp({ create: { width: 750, height: 1000, channels: 3, background: "#2a7" } })
+      .withExif({ IFD0: { Make: "SecretCam" } }).webp().toBuffer();
+    const oversized = await sharp({ create: { width: 3000, height: 4000, channels: 3, background: "#2a7" } }).jpeg().toBuffer();
+    const upload = (bytes: Buffer, name: string, type: string, preset: string) => {
       const form = new FormData();
-      form.append("file", new File([new Uint8Array(jpeg)], "Team Photo.JPG", { type: "image/jpeg" }));
+      form.append("file", new File([new Uint8Array(bytes)], name, { type }));
       form.append("altText", "Njeri at the walk");
       form.append("preset", preset);
       return uploadMedia(new NextRequest("http://localhost:3000/api/admin/media", { method: "POST", body: form }));
     };
-    const response = await upload("portrait");
+    const response = await upload(resized, "Team Photo.webp", "image/webp", "portrait");
     expect(response.status).toBe(201);
     const { asset } = await response.json();
     expect(asset).toMatchObject({ contentType: "image/webp", width: 750, height: 1000, filename: "Team-Photo.webp" });
     expect(stored[0]).toMatchObject({ contentType: "image/webp" });
     expect(stored[0].pathname).toMatch(/\.webp$/);
     expect(asset.size).toBe(stored[0].bytes.length);
-    expect((await (await upload("not-a-preset")).json()).asset).toMatchObject({ width: 1500, height: 2000 });
+    expect(stored[0].bytes.includes("SecretCam")).toBe(false);
+    const refused = await upload(oversized, "Team Photo.JPG", "image/jpeg", "portrait");
+    expect(refused.status).toBe(415);
+    expect((await refused.json()).error).toMatch(/800×1000px/);
+    expect(stored).toHaveLength(1);
     vi.unstubAllEnvs();
   });
 });
