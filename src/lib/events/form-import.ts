@@ -20,7 +20,7 @@ export interface SkippedRow {
   reason: string;
 }
 
-const COLUMNS = {
+export const COLUMNS = {
   fullName: "Full name",
   email: "Email address",
   phone: "Phone number (WhatsApp preferred)",
@@ -32,7 +32,7 @@ const COLUMNS = {
 
 // Short, readable detail names for the form's longer questions. Anything not listed here is
 // still kept, under a camelCase version of the question.
-const DETAIL_KEYS: Record<string, string> = {
+export const DETAIL_KEYS: Record<string, string> = {
   "Gender": "gender",
   "Age group": "ageGroup",
   "How did you hear about this event?": "heardAboutUsFrom",

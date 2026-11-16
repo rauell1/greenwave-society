@@ -2,7 +2,8 @@
  * Imports registrations collected with the Google Form (google-form/create-registration-form.gs)
  * into the website database, so they appear on the event's admin page just like sign-ups made on
  * the website. Attendees, volunteers and vendors are all imported; vendors carry their business
- * name and volunteers are tagged "Volunteer" in their details.
+ * name and volunteers are tagged "Volunteer" in their details. Volunteers do not take any of the
+ * event's places, so they are never waitlisted and never push attendees onto the waitlist.
  *
  * Usage (from the project folder, with DATABASE_URL set in .env.local or the environment):
  *   npx tsx scripts/import-form-registrations.ts --csv responses.csv            preview only
@@ -27,6 +28,7 @@ import { Prisma, PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { mapFormResponses, type FormRegistration } from "../src/lib/events/form-import";
 import { registrationStatus } from "../src/lib/events/validation";
+import { placesTaken } from "../src/lib/events/capacity";
 import { fromNairobiParts, formatEventWhen } from "../src/lib/events/nairobi-time";
 
 const DEFAULT_EVENT_DATE = "2026-11-18";
@@ -68,8 +70,8 @@ async function save(db: PrismaClient, eventId: string, person: FormRegistration)
     try {
       return await db.$transaction(async tx => {
         const event = await tx.cmsEvent.findUniqueOrThrow({ where: { id: eventId } });
-        const confirmed = await tx.cmsEventRegistration.count({ where: { eventId, status: "registered" } });
-        const status = registrationStatus(event.capacity, confirmed);
+        // Volunteers never take a place, so they are always confirmed.
+        const status = person.registeredAs === "volunteer" ? "registered" : registrationStatus(event.capacity, await placesTaken(tx, eventId));
         const member = await tx.memberRegistration.findFirst({ where: { email: person.email }, select: { id: true } });
         const registration = await tx.cmsEventRegistration.create({
           data: { eventId, fullName: person.fullName, email: person.email, phone: person.phone, organization: person.organization, memberRegistrationId: member?.id ?? null, metadata: person.metadata, status },

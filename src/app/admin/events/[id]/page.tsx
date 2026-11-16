@@ -11,6 +11,7 @@ import EventPosterManager from "./EventPosterManager";
 import { getEventPosterState } from "@/lib/events/posters";
 import { eventHref, isGraduationEvent } from "@/lib/events/public-events";
 import { isTimeToBeConfirmed } from "@/lib/events/nairobi-time";
+import { isVolunteer } from "@/lib/events/capacity";
 import { ShareEventLink } from "@/components/events/ShareEventLink";
 import { APP_CONFIG } from "@/config/app.config";
 import { hasPermission } from "@/lib/auth/policy";
@@ -43,7 +44,9 @@ export default async function EventPage({
     return Boolean(meta.vendorName);
   }).length;
 
-  const guestsCount = event.registrations.length - graduandsCount - vendorsCount;
+  const volunteersCount = event.registrations.filter((r) => isVolunteer(r.metadata)).length;
+  const placesUsed = event.registrations.filter((r) => r.status === "registered" && !isVolunteer(r.metadata)).length;
+  const guestsCount = event.registrations.length - graduandsCount - vendorsCount - volunteersCount;
   const isGraduation = isGraduationEvent(event.slug);
   const membersCount = event.registrations.filter((r) => r.memberRegistrationId).length;
   const canPublish = hasPermission(admin, PERMISSIONS.EVENTS_PUBLISH);
@@ -138,7 +141,8 @@ export default async function EventPage({
         <div className="p-4 rounded-xl border bg-white shadow-sm">
           <div className="text-xs text-slate-500 font-medium uppercase tracking-wider">Total Registrations</div>
           <div className="text-2xl font-bold text-slate-900 mt-1">{event.registrations.length}</div>
-          {event.capacity && <div className="text-xs text-slate-500">of {event.capacity} places</div>}
+          {event.capacity && <div className="text-xs text-slate-500">{placesUsed} of {event.capacity} places taken</div>}
+          {volunteersCount > 0 && <div className="text-xs text-sky-700">{volunteersCount} volunteer{volunteersCount === 1 ? "" : "s"}, not counted in places</div>}
         </div>
         <div className="p-4 rounded-xl border border-emerald-200 bg-emerald-50/50 shadow-sm">
           <div className="text-xs text-emerald-800 font-medium uppercase tracking-wider flex items-center gap-1.5"><Users className="w-3.5 h-3.5" /> Greenwave Members</div>
@@ -319,7 +323,7 @@ export default async function EventPage({
                         <span className="inline-block px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900 font-semibold text-xs border border-emerald-200">
                           🏪 Vendor: {isGraduation ? meta.category || "General" : meta.vendorName}
                         </span>
-                      ) : meta.registeredAs === "Volunteer" ? (
+                      ) : isVolunteer(meta) ? (
                         <span className="inline-block px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-900 font-semibold text-xs border border-sky-200">
                           🙋 Volunteer
                         </span>

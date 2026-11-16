@@ -4,6 +4,7 @@ import { Prisma, type CmsEvent, type CmsEventRegistration } from "@prisma/client
 import { getDb } from "@/lib/db";
 import { AUDIT_ACTIONS } from "@/lib/audit/audit-service";
 import { registrationStatus } from "./validation";
+import { placesTaken } from "./capacity";
 
 export interface AttendeeInput {
   fullName: string;
@@ -50,8 +51,7 @@ export async function registerAttendee(
         if (!event) throw new Error("EVENT_NOT_FOUND");
         const window = registrationWindow(event);
         if (window !== "OPEN") throw new Error(window);
-        const confirmed = await tx.cmsEventRegistration.count({ where: { eventId: event.id, status: "registered" } });
-        const status = registrationStatus(event.capacity, confirmed);
+        const status = registrationStatus(event.capacity, await placesTaken(tx, event.id));
         const registration = await tx.cmsEventRegistration.create({ data: { ...attendee, eventId: event.id, status } });
         await tx.auditLog.create({
           data: {
