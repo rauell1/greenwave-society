@@ -2,12 +2,13 @@ import { readFile, readdir } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
+// Test files hold made-up image paths, so only application source is checked.
 const root = fileURLToPath(new URL("../", import.meta.url));
 async function sources(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
   const results = await Promise.all(entries.map(entry => entry.isDirectory()
     ? sources(path.join(directory, entry.name))
-    : /\.(tsx?|jsx?)$/.test(entry.name) ? readFile(path.join(directory, entry.name), "utf8") : ""));
+    : /\.(tsx?|jsx?)$/.test(entry.name) && !/\.test\.[jt]sx?$/.test(entry.name) ? readFile(path.join(directory, entry.name), "utf8") : ""));
   return results.flat();
 }
 const references = new Set((await sources(path.join(root, "src"))).flatMap(source =>

@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     siteName: "Greenwave Society",
     images: [
       {
-        url: "https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_290.webp",
+        url: "https://greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_290.webp",
         width: 1600,
         height: 1067,
         alt: "The 12 Certified Graduands of YPG: Young Person's Guide to Systems Change Cohort I Assembled at Ubunifu Hub",
@@ -71,7 +71,7 @@ export default function GraduationCohortPage() {
         "addressCountry": "KE",
       },
     },
-    "image": ["https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_290.webp"],
+    "image": ["https://greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_290.webp"],
     "description": "Official graduation ceremony celebrating the 12 certified youth graduands of YPG: Young Person's Guide to Systems Change Cohort I (from 28 cohort members).",
     "organizer": {
       "@type": "Organization",
@@ -165,7 +165,7 @@ export default function GraduationCohortPage() {
           <div className="max-w-5xl mx-auto">
             <div className="relative aspect-[16/9] sm:aspect-[21/9] w-full rounded-2xl sm:rounded-3xl overflow-hidden border border-border/80 shadow-2xl bg-slate-950 group">
               <Image
-                src="https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_290.webp"
+                src="https://greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_290.webp"
                 alt="The 12 Certified Graduands of YPG: Young Person's Guide to Systems Change Cohort I Assembled at Ubunifu Hub, Nairobi"
                 fill
                 priority

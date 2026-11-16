@@ -14,6 +14,15 @@ describe("siteImageRoute", () => {
       .toBe("/media-files/images/20240706_IMG%202139.JPG");
   });
 
+  it("maps next/image requests for absolute site and cdn photo URLs", () => {
+    expect(route("/_next/image?url=https%3A%2F%2Fcdn.greenwavesociety.org%2Fimages%2Fevents%2Fgraduation-cohort-1%2Fweb%2Fg_001.webp&w=640&q=75"))
+      .toBe("/media-files/images/events/graduation-cohort-1/web/g_001.webp");
+    expect(route("/_next/image?url=https%3A%2F%2Fgreenwavesociety.org%2Fimages%2Fa%2520b.jpg&w=640&q=75"))
+      .toBe("/media-files/images/a%20b.jpg");
+    expect(route("/_next/image?url=http%3A%2F%2Fcdn.greenwavesociety.org%2Fimages%2Fa.jpg&w=640&q=75")).toBeNull();
+    expect(route("/_next/image?url=https%3A%2F%2Fevil.example%2Fimages%2Fa.jpg&w=640&q=75")).toBeNull();
+  });
+
   it("leaves other requests alone", () => {
     expect(route("/")).toBeNull();
     expect(route("/media-files/media/x.png")).toBeNull();

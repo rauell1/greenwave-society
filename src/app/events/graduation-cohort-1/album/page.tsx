@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     siteName: "Greenwave Society",
     images: [
       {
-        url: "https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_001.webp",
+        url: "https://greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_001.webp",
         width: 1600,
         height: 1067,
         alt: "YPG: Young Person's Guide to Systems Change Cohort I Graduation Celebration at Ubunifu Hub",
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Official Photo Album: YPG Cohort I Graduation",
     description: "296 authentic high-resolution celebration photographs. Self-hosted on Greenwave Society CDN.",
-    images: ["https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_001.webp"],
+    images: ["https://greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_001.webp"],
   },
 };
 

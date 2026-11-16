@@ -8,6 +8,16 @@ bucket `greenwave-media` (project `fancy-math-09311878`), under the same
 after the first visit. Local `public/images/` files are working copies and are
 deliberately excluded from Git.
 
+`cdn.greenwavesociety.org` still points at the R2 bucket, which is not enabled,
+and its DNS record can only be changed from the R2 settings. Absolute photo
+links therefore use `https://greenwavesociety.org/images/...`; next/image
+requests for old `cdn.greenwavesociety.org` links stored in CMS content are
+mapped to object storage too.
+
+Graduation album photos are built from the originals in `graduation-photos/`
+(not in Git) with `npm run images:graduation`, then uploaded with
+`npm run images:upload`.
+
 Upload new or changed photos from a folder that has them in `public/images/`:
 
 ```bash

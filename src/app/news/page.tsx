@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     siteName: "Greenwave Society",
     images: [
       {
-        url: "https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_290.webp",
+        url: "https://greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_290.webp",
         width: 1600,
         height: 1067,
         alt: "Greenwave Society news and graduation milestone",
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     description:
       "Latest news, graduation milestones, and impact reports from Greenwave Society.",
     images: [
-      "https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_290.webp",
+      "https://greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_290.webp",
     ],
   },
 };

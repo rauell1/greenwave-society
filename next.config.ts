@@ -37,6 +37,12 @@ const nextConfig: NextConfig = {
         hostname: imageCdn.hostname,
         port: imageCdn.port,
       },
+      {
+        // Absolute links to the site's own photos (src/lib/site-images.ts).
+        protocol: "https",
+        hostname: "greenwavesociety.org",
+        pathname: "/images/**",
+      },
     ],
   },
 

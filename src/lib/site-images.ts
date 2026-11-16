@@ -12,6 +12,10 @@
  *                                     (and does not resize without an Images
  *                                     binding, so the stored file is returned)
  *
+ * Absolute photo URLs (page metadata, the graduation album manifest) use
+ * https://greenwavesociety.org/images/...; next/image requests for those are
+ * mapped the same way, so the Worker never fetches itself.
+ *
  * Setting IMAGE_DELIVERY=cdn on the Worker turns this off again, so the
  * next.config.ts rewrite to IMAGE_CDN_ORIGIN is used instead.
  */
@@ -34,11 +38,29 @@ function safeDecode(value: string): string | null {
   }
 }
 
+/**
+ * Hosts whose /images/* are the site photos: the site itself, and the former
+ * image CDN for any link that still names it.
+ */
+export const SITE_IMAGE_HOSTS = new Set(["greenwavesociety.org", "www.greenwavesociety.org", "cdn.greenwavesociety.org"]);
+
+/** "/images/x" or "https://cdn.greenwavesociety.org/images/x" -> "/images/x"; null otherwise. */
+function imagePathOfSource(source: string): string | null {
+  if (source.startsWith("/")) return source.split("?")[0];
+  try {
+    const url = new URL(source);
+    return url.protocol === "https:" && SITE_IMAGE_HOSTS.has(url.hostname) ? decodeURIComponent(url.pathname) : null;
+  } catch {
+    return null;
+  }
+}
+
 /** The media-files path that serves this request's site photo, or null to leave the request alone. */
 export function siteImageRoute(url: URL): string | null {
   if (url.pathname === "/_next/image") {
     const source = url.searchParams.get("url");
-    return source ? routeForImagePath(source.split("?")[0]) : null;
+    const imagePath = source ? imagePathOfSource(source) : null;
+    return imagePath ? routeForImagePath(imagePath) : null;
   }
   if (url.pathname.startsWith("/images/")) {
     const decoded = url.pathname.split("/").map(safeDecode);
