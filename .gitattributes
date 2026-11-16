@@ -9,3 +9,6 @@
 
 # Campaign posters are small and must deploy even if the host does not fetch LFS objects.
 public/posters/campaign-2026/*.jpg !filter !diff !merge binary
+
+# The site logo is small and must deploy even if the host does not fetch LFS objects.
+public/logo.png !filter !diff !merge binary
