@@ -53,10 +53,14 @@ async function serveSiteImage(request: Request, route: string, env: Env, ctx: Co
 
 const worker = {
   async fetch(request: Request, env: Env, ctx: Context) {
+    const url = new URL(request.url);
+    // The former image CDN host serves site photos only, never the site.
+    const cdnHost = url.hostname === "cdn.greenwavesociety.org";
     if ((request.method === "GET" || request.method === "HEAD") && env.IMAGE_DELIVERY !== "cdn") {
-      const route = siteImageRoute(new URL(request.url));
+      const route = url.pathname.startsWith("/images/") || !cdnHost ? siteImageRoute(url) : null;
       if (route) return serveSiteImage(request, route, env, ctx);
     }
+    if (cdnHost) return new Response("Not found", { status: 404 });
     return openNextWorker.fetch(request, env, ctx);
   },
 

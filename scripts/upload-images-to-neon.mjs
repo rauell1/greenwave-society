@@ -9,7 +9,7 @@
  *
  * Uses the Neon command-line tool with your own Neon sign-in (a browser window
  * opens the first time), so no storage keys are needed. Photos larger than
- * 1920 px are scaled down and recompressed first when sharp is installed
+ * 1920 px (except those in an original/ folder) are scaled down and recompressed first when sharp is installed
  * (npm install), as the Vercel image service used to do; other files are
  * uploaded as they are. Finished files are listed in
  * public/images/.neon-uploaded.txt, so the script can be stopped and run again.
@@ -69,7 +69,8 @@ const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "greenwave-images-"));
 async function prepare(rel) {
   const source = path.join(imagesDir, ...rel.split("/"));
   const ext = path.extname(rel).toLowerCase();
-  if (!sharp || ![".jpg", ".jpeg", ".png", ".webp"].includes(ext)) return source;
+  // Files under an original/ folder are full-resolution downloads: keep them as they are.
+  if (!sharp || rel.split("/").includes("original") || ![".jpg", ".jpeg", ".png", ".webp"].includes(ext)) return source;
   const image = sharp(source, { failOn: "none" }).rotate();
   const { width = 0, height = 0 } = await image.metadata();
   if (Math.max(width, height) <= MAX_DIMENSION) return source;

@@ -12,8 +12,13 @@
  *                                     (and does not resize without an Images
  *                                     binding, so the stored file is returned)
  *
+ * cdn.greenwavesociety.org is routed to this Worker as well, so the absolute
+ * cdn URLs in the graduation album and page metadata keep working; on that
+ * host only site photos are served.
+ *
  * Setting IMAGE_DELIVERY=cdn on the Worker turns this off again, so the
- * next.config.ts rewrite to IMAGE_CDN_ORIGIN is used instead.
+ * next.config.ts rewrite to IMAGE_CDN_ORIGIN is used instead (and the cdn
+ * route must then be removed from wrangler.jsonc).
  */
 
 export const SITE_IMAGE_PREFIX = "images/";
@@ -34,11 +39,29 @@ function safeDecode(value: string): string | null {
   }
 }
 
+/**
+ * Hosts whose /images/* are the site photos: the site itself and the former
+ * image CDN, which now points at this Worker (cloudflare-worker.ts).
+ */
+export const SITE_IMAGE_HOSTS = new Set(["greenwavesociety.org", "www.greenwavesociety.org", "cdn.greenwavesociety.org"]);
+
+/** "/images/x" or "https://cdn.greenwavesociety.org/images/x" -> "/images/x"; null otherwise. */
+function imagePathOfSource(source: string): string | null {
+  if (source.startsWith("/")) return source.split("?")[0];
+  try {
+    const url = new URL(source);
+    return url.protocol === "https:" && SITE_IMAGE_HOSTS.has(url.hostname) ? decodeURIComponent(url.pathname) : null;
+  } catch {
+    return null;
+  }
+}
+
 /** The media-files path that serves this request's site photo, or null to leave the request alone. */
 export function siteImageRoute(url: URL): string | null {
   if (url.pathname === "/_next/image") {
     const source = url.searchParams.get("url");
-    return source ? routeForImagePath(source.split("?")[0]) : null;
+    const imagePath = source ? imagePathOfSource(source) : null;
+    return imagePath ? routeForImagePath(imagePath) : null;
   }
   if (url.pathname.startsWith("/images/")) {
     const decoded = url.pathname.split("/").map(safeDecode);
