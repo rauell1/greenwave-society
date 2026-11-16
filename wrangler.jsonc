@@ -1,6 +1,10 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "greenwave-society",
+  // OpenNext refreshes stale cached pages (revalidate) by calling this Worker
+  // through this binding; without it the refresh is skipped and every
+  // request renders the page again.
+  "services": [{ "binding": "WORKER_SELF_REFERENCE", "service": "greenwave-society" }],
   // Wraps .open-next/worker.js and adds the scheduled (cron) handler.
   "main": "cloudflare-worker.ts",
   "compatibility_date": "2026-11-01",
