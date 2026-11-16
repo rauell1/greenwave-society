@@ -332,7 +332,7 @@ export function MediaKitClient() {
             </div>
             <div className="pt-2">
               <Button asChild variant="outline" className="rounded-xl border-primary/25 text-primary hover:bg-primary/10">
-                <Link href="/logo.png" target="_blank" download>
+                <Link href="/logo-full.png" target="_blank" download>
                   <Download className="w-4 h-4 mr-2" /> Download High-Res Logo
                 </Link>
               </Button>
