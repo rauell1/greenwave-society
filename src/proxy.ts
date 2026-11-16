@@ -26,11 +26,11 @@ function getSecurityHeaders(): Record<string, string> {
     // Content Security Policy
     "Content-Security-Policy": [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://*.google-analytics.com",
+      "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://*.google-analytics.com https://static.cloudflareinsights.com",
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: https: https://www.googletagmanager.com https://*.google-analytics.com",
       "font-src 'self' data:",
-      "connect-src 'self' https://greenwavesociety.org https://*.vercel.app https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com",
+      "connect-src 'self' https://greenwavesociety.org https://*.vercel.app https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://cloudflareinsights.com",
       "worker-src 'self' blob:",
       "frame-ancestors 'none'",
     ].join("; "),
