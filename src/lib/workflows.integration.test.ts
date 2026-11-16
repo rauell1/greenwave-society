@@ -190,6 +190,13 @@ describe("public event registration against PostgreSQL", () => {
     expect((await signUp("trivia-night", "ONE@example.com")).status).toBe(409);
     expect(mocks.eventEmail).toHaveBeenCalledTimes(1);
   });
+  it("does not count volunteers imported from the Google Form towards capacity", async () => {
+    mocks.eventEmail.mockResolvedValue(true);
+    const event = await createEvent({ slug: "trivia-volunteers", status: "published", capacity: 1 });
+    await db.cmsEventRegistration.create({ data: { eventId: event.id, fullName: "Val Helper", email: "val@example.com", status: "registered", metadata: { source: "Google Form", registeredAs: "Volunteer" } } });
+    expect(await (await signUp("trivia-volunteers", "guest@example.com")).json()).toEqual({ status: "registered" });
+    expect(await (await signUp("trivia-volunteers", "late@example.com")).json()).toEqual({ status: "waitlisted" });
+  });
   it("sends 3-day and day-before reminders and a thank-you once each, by Nairobi date", async () => {
     mocks.eventReminder.mockImplementation(async (emails: unknown[]) => emails.map(() => true));
     // 08:00 Nairobi on Wednesday 18 November 2026, when the daily cron job runs.
