@@ -61,9 +61,11 @@ function getCorsHeaders(origin: string | null): Record<string, string> {
   };
 }
 
-import { rateLimit, getRateLimitHeaders } from "@/lib/rate-limit";
-
 export async function proxy(request: NextRequest) {
+  // Loaded on demand: the rate limiter pulls in the database client, whose WebAssembly engine
+  // makes any module that imports it statically an async module. The Cloudflare (OpenNext)
+  // runtime cannot load the proxy as an async module.
+  const { rateLimit, getRateLimitHeaders } = await import("@/lib/rate-limit");
   const startTime = Date.now();
   const { pathname } = request.nextUrl;
 

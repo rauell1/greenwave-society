@@ -15,3 +15,8 @@ graphify-out/cache/
 .task-*.mjs
 scratch/
 graduation-photos/
+
+# Cloudflare (OpenNext build output, Wrangler state, local secrets)
+/.open-next/
+/.wrangler/
+.dev.vars

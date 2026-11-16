@@ -67,6 +67,9 @@ const nextConfig: NextConfig = {
 
     async redirects() {
     return [
+      // Previously in vercel.json.
+      { source: "/index", destination: "/", permanent: true },
+      { source: "/home", destination: "/", permanent: true },
       {
         source: "/events/graduation-cohort-2",
         destination: "/events/graduation-cohort-1",

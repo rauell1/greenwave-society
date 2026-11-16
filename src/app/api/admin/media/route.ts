@@ -1,18 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { put, del } from "@vercel/blob";
+import { deleteObject, mediaFileUrl, objectStorageConfigured, putObject } from "@/lib/object-storage";
 import { createHash, randomUUID } from "crypto";
 import { authorizeRoute } from "@/lib/auth/route-authorization";
 import { PERMISSIONS } from "@/lib/auth/permissions";
 import { getDb } from "@/lib/db";
 import { ALLOWED_MEDIA_TYPES, hasValidSignature, MAX_MEDIA_BYTES, mediaMetadataSchema, safeMediaFilename } from "@/lib/media/validation";
 import { AUDIT_ACTIONS } from "@/lib/audit/audit-service";
-import { optimiseUpload, type StoredMedia } from "@/lib/media/optimize";
+import { optimiseUpload, UploadRejectedError, type StoredMedia } from "@/lib/media/optimize";
 import { isUploadPreset, type UploadPreset } from "@/lib/media/upload-presets";
 
 export const runtime = "nodejs";
 
 function hasBlobCredentials(): boolean {
-  return Boolean(process.env.BLOB_READ_WRITE_TOKEN || (process.env.VERCEL_OIDC_TOKEN && process.env.BLOB_STORE_ID));
+  return objectStorageConfigured() || Boolean(process.env.BLOB_READ_WRITE_TOKEN || (process.env.VERCEL_OIDC_TOKEN && process.env.BLOB_STORE_ID));
 }
 
 export async function GET(request: NextRequest) {
@@ -38,12 +39,23 @@ export async function POST(request: NextRequest) {
   if (file.type.startsWith("image/") && !metadataInput.data.altText) return NextResponse.json({ error: "Alternative text is required for images" }, { status: 400 });
   const preset = isUploadPreset(form.get("preset")) ? (form.get("preset") as UploadPreset) : "general";
   let stored: StoredMedia;
-  try { stored = await optimiseUpload(bytes, file.type, preset); } catch { return NextResponse.json({ error: "The image is corrupt or unsafe to process" }, { status: 415 }); }
+  try { stored = await optimiseUpload(bytes, file.type, preset); } catch (error) { return NextResponse.json({ error: error instanceof UploadRejectedError ? error.message : "The image is corrupt or unsafe to process" }, { status: 415 }); }
   const extensionByType: Record<string,string> = { "image/jpeg":".jpg", "image/png":".png", "image/webp":".webp", "image/gif":".gif", "application/pdf":".pdf" };
   const filename = safeMediaFilename(file.name).replace(/\.[a-z0-9]{1,8}$/i, "") + extensionByType[stored.contentType]; const pathname = `media/${randomUUID()}-${filename}`;
-  const blob = await put(pathname, stored.bytes, { access: "public", addRandomSuffix: false, contentType: stored.contentType, token: process.env.BLOB_READ_WRITE_TOKEN });
+  // S3-compatible object storage (Neon, later R2) when configured; Vercel Blob otherwise.
+  const useObjectStorage = objectStorageConfigured();
+  let blob: { pathname: string; url: string };
+  if (useObjectStorage) {
+    await putObject(pathname, stored.bytes, stored.contentType);
+    blob = { pathname, url: mediaFileUrl(pathname) };
+  } else {
+    blob = await put(pathname, stored.bytes, { access: "public", addRandomSuffix: false, contentType: stored.contentType, token: process.env.BLOB_READ_WRITE_TOKEN });
+  }
   try {
     const asset = await getDb().$transaction(async tx => { const created = await tx.cmsMediaAsset.create({ data: { filename, pathname: blob.pathname, url: blob.url, contentType: stored.contentType, size: stored.bytes.length, checksum: createHash("sha256").update(stored.bytes).digest("hex"), width: stored.width, height: stored.height, altText: metadataInput.data.altText || null, caption: metadataInput.data.caption || null, uploadedById: auth.admin.id, updatedById: auth.admin.id } }); await tx.auditLog.create({ data: { action: AUDIT_ACTIONS.MEDIA_UPLOADED, actor: auth.admin.email, actorUserId: auth.admin.id, resourceType: "cms_media_asset", resourceId: created.id, outcome: "SUCCESS", afterState: JSON.stringify({ filename, contentType: stored.contentType, size: stored.bytes.length, originalSize: file.size, preset, checksum: created.checksum }) } }); return created; });
     return NextResponse.json({ asset }, { status: 201 });
-  } catch (error) { await del(blob.url, { token: process.env.BLOB_READ_WRITE_TOKEN }).catch(() => undefined); throw error; }
+  } catch (error) {
+    await (useObjectStorage ? deleteObject(pathname) : del(blob.url, { token: process.env.BLOB_READ_WRITE_TOKEN })).catch(() => undefined);
+    throw error;
+  }
 }
