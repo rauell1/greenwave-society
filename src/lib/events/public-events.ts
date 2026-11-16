@@ -3,6 +3,7 @@ import "server-only";
 import { getDb } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { registrationWindow } from "./registration";
+import { placesTaken } from "./capacity";
 
 // Events that have their own hand-built page link there instead of the generic /events/[slug].
 const CUSTOM_EVENT_PAGES: Record<string, string> = {
@@ -48,12 +49,10 @@ export async function getPublicEvents() {
 }
 
 export async function getPublicEvent(slug: string) {
-  const event = await getDb().cmsEvent.findUnique({
-    where: { slug },
-    include: { _count: { select: { registrations: { where: { status: "registered" } } } } },
-  });
+  const event = await getDb().cmsEvent.findUnique({ where: { slug } });
   if (!event || !PUBLIC_STATUSES.includes(event.status)) return null;
   const window = registrationWindow(event);
-  const placesLeft = event.capacity === null ? null : Math.max(0, event.capacity - event._count.registrations);
+  // Volunteers do not take a place (see capacity.ts), matching how sign-ups are waitlisted.
+  const placesLeft = event.capacity === null ? null : Math.max(0, event.capacity - (await placesTaken(getDb(), event.id)));
   return { event, window, placesLeft };
 }
