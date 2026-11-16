@@ -29,7 +29,7 @@ export const DEFAULT_NEWS_ARTICLES: PublicArticle[] = [
     category: "Convocation",
     readTime: "4 min read",
     author: "Greenwave Society Communications",
-    imageUrl: "https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_290.webp",
+    imageUrl: "https://greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_290.webp",
     publishedAt: new Date("2026-11-01T09:00:00Z"),
     updatedAt: new Date("2026-11-01T09:00:00Z"),
     type: "article",
@@ -39,7 +39,7 @@ export const DEFAULT_NEWS_ARTICLES: PublicArticle[] = [
       category: "Convocation",
       readTime: "4 min read",
       author: "Greenwave Society Communications",
-      imageUrl: "https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_290.webp",
+      imageUrl: "https://greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_290.webp",
     }),
     body: `### A Defining Milestone for Youth-Led Systems Thinking in Kenya
 
@@ -76,7 +76,7 @@ All 12 graduates now enter Greenwave's active changemaker alumni directory, unlo
     category: "Announcements",
     readTime: "3 min read",
     author: "Leadership Development Secretariat",
-    imageUrl: "https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_002.webp",
+    imageUrl: "https://greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_002.webp",
     publishedAt: new Date("2026-11-02T10:00:00Z"),
     updatedAt: new Date("2026-11-02T10:00:00Z"),
     type: "announcement",
@@ -86,7 +86,7 @@ All 12 graduates now enter Greenwave's active changemaker alumni directory, unlo
       category: "Announcements",
       readTime: "3 min read",
       author: "Leadership Development Secretariat",
-      imageUrl: "https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_002.webp",
+      imageUrl: "https://greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_002.webp",
     }),
     body: `### Equipping the Next Generation of Systemic Changemakers
 
@@ -231,7 +231,7 @@ Read more about our signature policy dialogues in the **[Programs Section](/prog
     category: "Milestones",
     readTime: "3 min read",
     author: "Greenwave Editorial",
-    imageUrl: "https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_001.webp",
+    imageUrl: "https://greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_001.webp",
     publishedAt: new Date("2026-10-30T10:30:00Z"),
     updatedAt: new Date("2026-10-30T10:30:00Z"),
     type: "story",
@@ -240,7 +240,7 @@ Read more about our signature policy dialogues in the **[Programs Section](/prog
       category: "Milestones",
       readTime: "3 min read",
       author: "Greenwave Editorial",
-      imageUrl: "https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_001.webp",
+      imageUrl: "https://greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_001.webp",
     }),
     body: `Greenwave Society celebrated the graduation of the inaugural **Young Person's Guide to Systems Change (YPG)** cohort on Friday, 30th October 2026 at Ubunifu Hub, Nairobi.
 

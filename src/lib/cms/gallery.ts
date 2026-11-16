@@ -23,12 +23,12 @@ export interface AvailableGalleryImage {
 }
 
 export const DEFAULT_GALLERY_IMAGES: GalleryImage[] = [
-  { src: "https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_001.webp", alt: "YPG: Young Person's Guide to Systems Change Cohort I graduation ceremony certification at Ubunifu Hub" },
-  { src: "https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_290.webp", alt: "YPG: Young Person's Guide to Systems Change Cohort I inaugural graduands commemorative portrait" },
-  { src: "https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_002.webp", alt: "Youth leadership and environmental systems address" },
-  { src: "https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_006.webp", alt: "Zero-plastic Community Market sustainable artisan showcase" },
-  { src: "https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_003.webp", alt: "Honors presentation for grassroots community execution" },
-  { src: "https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_004.webp", alt: "Youth changemakers capstone pitch and presentation" },
+  { src: "https://greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_001.webp", alt: "YPG: Young Person's Guide to Systems Change Cohort I graduation ceremony certification at Ubunifu Hub" },
+  { src: "https://greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_290.webp", alt: "YPG: Young Person's Guide to Systems Change Cohort I inaugural graduands commemorative portrait" },
+  { src: "https://greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_002.webp", alt: "Youth leadership and environmental systems address" },
+  { src: "https://greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_006.webp", alt: "Zero-plastic Community Market sustainable artisan showcase" },
+  { src: "https://greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_003.webp", alt: "Honors presentation for grassroots community execution" },
+  { src: "https://greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_004.webp", alt: "Youth changemakers capstone pitch and presentation" },
   { src: "/images/20241214_135952.jpg", alt: "Community engagement event in 2024" },
   { src: "/images/g-59.jpg", alt: "Youth leadership workshop" },
   { src: "/images/20250404_134843.jpg", alt: "Tree planting and conservation" },

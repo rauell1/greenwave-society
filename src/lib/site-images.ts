@@ -12,13 +12,12 @@
  *                                     (and does not resize without an Images
  *                                     binding, so the stored file is returned)
  *
- * cdn.greenwavesociety.org is routed to this Worker as well, so the absolute
- * cdn URLs in the graduation album and page metadata keep working; on that
- * host only site photos are served.
+ * Absolute photo URLs (page metadata, the graduation album manifest) use
+ * https://greenwavesociety.org/images/...; next/image requests for those are
+ * mapped the same way, so the Worker never fetches itself.
  *
  * Setting IMAGE_DELIVERY=cdn on the Worker turns this off again, so the
- * next.config.ts rewrite to IMAGE_CDN_ORIGIN is used instead (and the cdn
- * route must then be removed from wrangler.jsonc).
+ * next.config.ts rewrite to IMAGE_CDN_ORIGIN is used instead.
  */
 
 export const SITE_IMAGE_PREFIX = "images/";
@@ -40,8 +39,8 @@ function safeDecode(value: string): string | null {
 }
 
 /**
- * Hosts whose /images/* are the site photos: the site itself and the former
- * image CDN, which now points at this Worker (cloudflare-worker.ts).
+ * Hosts whose /images/* are the site photos: the site itself, and the former
+ * image CDN for any link that still names it.
  */
 export const SITE_IMAGE_HOSTS = new Set(["greenwavesociety.org", "www.greenwavesociety.org", "cdn.greenwavesociety.org"]);
 

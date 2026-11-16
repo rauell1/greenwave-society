@@ -19,7 +19,7 @@ export const DEFAULT_ACTIVITIES: Activity[] = [
     location: "Ubunifu Hub, Nairobi",
     highlight: "12 Graduands Certified • 28 Started",
     mediaUrl: "/events/graduation-cohort-1",
-    imageUrl: "https://cdn.greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_001.webp",
+    imageUrl: "https://greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_001.webp",
     imageAlt: "YPG: Young Person's Guide to Systems Change Cohort I official graduation ceremony and certification on stage",
   },
   {

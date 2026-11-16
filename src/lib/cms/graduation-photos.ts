@@ -16,7 +16,8 @@ export interface GraduationPhoto {
   relativeThumbPath: string;
 }
 
-const CDN_ORIGIN = process.env.IMAGE_CDN_ORIGIN || "https://cdn.greenwavesociety.org";
+// Photos are served by the site itself (src/lib/site-images.ts).
+const CDN_ORIGIN = "https://greenwavesociety.org";
 const PREFIX = "images/events/graduation-cohort-1";
 const TOTAL_PHOTOS = 296;
 

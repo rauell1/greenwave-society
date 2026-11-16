@@ -18,10 +18,7 @@
   "workers_dev": true,
   "routes": [
     { "pattern": "greenwavesociety.org", "custom_domain": true },
-    { "pattern": "www.greenwavesociety.org", "custom_domain": true },
-    // Former R2 image CDN: serves site photos from object storage
-    // (src/lib/site-images.ts), so absolute cdn URLs keep working.
-    { "pattern": "cdn.greenwavesociety.org", "custom_domain": true }
+    { "pattern": "www.greenwavesociety.org", "custom_domain": true }
   ],
   "observability": { "enabled": true }
 }
