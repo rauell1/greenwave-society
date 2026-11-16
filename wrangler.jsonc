@@ -20,5 +20,10 @@
     { "pattern": "greenwavesociety.org", "custom_domain": true },
     { "pattern": "www.greenwavesociety.org", "custom_domain": true }
   ],
-  "observability": { "enabled": true }
+  "observability": { "enabled": true },
+  // Page cache for open-next.config.ts.
+  "kv_namespaces": [
+    { "binding": "NEXT_INC_CACHE_KV", "id": "fe2e5cdc49ca4f90afce68e0eed1dbb9" },
+    { "binding": "NEXT_TAG_CACHE_KV", "id": "7a8ab3166e384b5ea909637fbe033c9e" }
+  ]
 }
