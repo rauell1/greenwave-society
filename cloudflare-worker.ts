@@ -41,7 +41,10 @@ type Context = { waitUntil(promise: Promise<unknown>): void };
  * query, because Workers cannot share a socket between requests.
  */
 (globalThis as Record<symbol, unknown>)[Symbol.for("greenwave.sqlQuery")] = async (text: string, values: unknown[]) => {
-  const connectionString = process.env.DATABASE_URL || process.env.DIRECT_DATABASE_URL;
+  const hyperdrive = ((globalThis as Record<symbol, unknown>)[Symbol.for("__cloudflare-context__")] as
+    | { env?: { HYPERDRIVE?: { connectionString?: string } } }
+    | undefined)?.env?.HYPERDRIVE?.connectionString;
+  const connectionString = hyperdrive || process.env.DATABASE_URL || process.env.DIRECT_DATABASE_URL;
   if (!connectionString) throw new Error("DATABASE_URL is not configured");
   const client = new Client({ connectionString });
   await client.connect();

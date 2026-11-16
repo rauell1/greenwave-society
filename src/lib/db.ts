@@ -15,10 +15,24 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 /**
+ * On Cloudflare the database is reached through Hyperdrive (the HYPERDRIVE
+ * binding in wrangler.jsonc), which keeps connections to Neon open near the
+ * database instead of opening a new TLS connection on every request.
+ * DATABASE_URL is used everywhere else (Node, scripts, tests).
+ */
+function hyperdriveConnectionString(): string | undefined {
+  const context = (globalThis as Record<symbol, unknown>)[Symbol.for("__cloudflare-context__")] as
+    | { env?: { HYPERDRIVE?: { connectionString?: string } } }
+    | undefined;
+  return context?.env?.HYPERDRIVE?.connectionString;
+}
+
+/**
  * Create Prisma client with optimized configuration
  */
 function createPrismaClient(): PrismaClient {
   const connectionString =
+    hyperdriveConnectionString() ||
     process.env.DATABASE_URL ||
     process.env.DIRECT_DATABASE_URL ||
     "postgresql://postgres:postgres@localhost:5432/greenwave";
