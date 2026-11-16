@@ -30,6 +30,7 @@ import { POST as registerForEvent } from "@/app/api/events/[slug]/register/route
 import { sendScheduledEventEmails } from "@/lib/events/reminders";
 import { importCampaignEvents } from "@/lib/events/import-campaign";
 import { getEventPoster } from "@/lib/events/posters";
+import { getPublicEvent } from "@/lib/events/public-events";
 import { POST as changePoster } from "@/app/api/admin/events/[id]/poster/route";
 import { POST as uploadMedia } from "@/app/api/admin/media/route";
 import sharp from "sharp";
@@ -194,7 +195,9 @@ describe("public event registration against PostgreSQL", () => {
     mocks.eventEmail.mockResolvedValue(true);
     const event = await createEvent({ slug: "trivia-volunteers", status: "published", capacity: 1 });
     await db.cmsEventRegistration.create({ data: { eventId: event.id, fullName: "Val Helper", email: "val@example.com", status: "registered", metadata: { source: "Google Form", registeredAs: "Volunteer" } } });
+    expect((await getPublicEvent("trivia-volunteers"))?.placesLeft).toBe(1);
     expect(await (await signUp("trivia-volunteers", "guest@example.com")).json()).toEqual({ status: "registered" });
+    expect((await getPublicEvent("trivia-volunteers"))?.placesLeft).toBe(0);
     expect(await (await signUp("trivia-volunteers", "late@example.com")).json()).toEqual({ status: "waitlisted" });
   });
   it("sends 3-day and day-before reminders and a thank-you once each, by Nairobi date", async () => {
