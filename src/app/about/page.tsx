@@ -30,7 +30,9 @@ export const metadata: Metadata = {
   },
 };
 
-export const revalidate = 60;
+// Admin edits refresh these pages at once (src/lib/cms/revalidate.ts and the
+// placement and gallery actions); the hourly refresh is only a backstop.
+export const revalidate = 3600;
 
 const defaultAbout = DEFAULT_SITE_PAGES.find((p) => p.slug === "about-us")!;
 

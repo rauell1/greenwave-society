@@ -5,6 +5,8 @@ export function revalidatePublicContent(slug: string) {
   for (const path of [
     "/",
     "/about",
+    "/team",
+    "/contact",
     "/programs",
     "/impact",
     "/news",
