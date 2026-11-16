@@ -69,3 +69,31 @@ export function siteImageRoute(url: URL): string | null {
   }
   return null;
 }
+
+/** A site photo to read from object storage, with the size next/image asked for. */
+export interface StoredImageRequest {
+  /** Object key, e.g. "images/events/a b.jpg". */
+  key: string;
+  /** Width in pixels for /_next/image requests; null for the original file. */
+  width: number | null;
+  quality: number;
+}
+
+/**
+ * What cloudflare-worker.ts serves straight from object storage for this
+ * request, or null to pass it on to Next.js. next/image's w and q are kept so
+ * the Worker can return a resized copy instead of the full photo.
+ */
+export function storedImageRequest(url: URL): StoredImageRequest | null {
+  const route = siteImageRoute(url);
+  if (!route) return null;
+  const key = route.slice("/media-files/".length).split("/").map(decodeURIComponent).join("/");
+  if (url.pathname !== "/_next/image") return { key, width: null, quality: 75 };
+  const width = Number(url.searchParams.get("w"));
+  const quality = Number(url.searchParams.get("q"));
+  return {
+    key,
+    width: Number.isInteger(width) && width > 0 && width <= 3840 ? width : null,
+    quality: Number.isInteger(quality) && quality > 0 && quality <= 100 ? quality : 75,
+  };
+}

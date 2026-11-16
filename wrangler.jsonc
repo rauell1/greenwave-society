@@ -21,6 +21,8 @@
     { "pattern": "www.greenwavesociety.org", "custom_domain": true }
   ],
   "observability": { "enabled": true },
+  // Resizes site photos for next/image (cloudflare-worker.ts).
+  "images": { "binding": "IMAGES" },
   // Page cache for open-next.config.ts.
   "kv_namespaces": [
     { "binding": "NEXT_INC_CACHE_KV", "id": "fe2e5cdc49ca4f90afce68e0eed1dbb9" },

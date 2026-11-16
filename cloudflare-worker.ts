@@ -7,14 +7,32 @@
  * is excluded from tsconfig.json because the generated worker has no stable types.
  */
 import { Client } from "pg";
-import { siteImageRoute } from "./src/lib/site-images";
+import { AwsClient } from "aws4fetch";
+import { siteImageRoute, storedImageRequest, type StoredImageRequest } from "./src/lib/site-images";
 // @ts-expect-error Generated at build time.
 import openNextWorker from "./.open-next/worker.js";
 
 // @ts-expect-error Generated at build time.
 export { DOQueueHandler, DOShardedTagCache, BucketCachePurge } from "./.open-next/worker.js";
 
-type Env = { CRON_SECRET?: string; NEXT_PUBLIC_APP_URL?: string; IMAGE_DELIVERY?: string };
+type ImagesBinding = {
+  input(stream: ReadableStream): {
+    transform(options: { width?: number; fit?: string }): {
+      output(options: { format: string; quality?: number }): Promise<{ response(): Response }>;
+    };
+  };
+};
+type Env = {
+  CRON_SECRET?: string;
+  NEXT_PUBLIC_APP_URL?: string;
+  IMAGE_DELIVERY?: string;
+  AWS_ENDPOINT_URL_S3?: string;
+  AWS_ACCESS_KEY_ID?: string;
+  AWS_SECRET_ACCESS_KEY?: string;
+  AWS_REGION?: string;
+  OBJECT_STORAGE_BUCKET?: string;
+  IMAGES?: ImagesBinding;
+};
 type Context = { waitUntil(promise: Promise<unknown>): void };
 
 /**
@@ -37,25 +55,87 @@ type Context = { waitUntil(promise: Promise<unknown>): void };
 const CRON_ROUTES = ["/api/cron/event-emails"];
 
 /**
- * Site photos come from object storage (src/lib/site-images.ts). They never
- * change under the same name, so each one is kept in the Cloudflare edge cache
- * after the first visit instead of being read from storage every time.
+ * Site photos come from object storage (src/lib/site-images.ts) and are served
+ * here, before Next.js: the stored object's body is passed straight through,
+ * which costs the Worker almost no CPU, where streaming it through a Next.js
+ * route used up the Free plan's CPU budget and cut large photos off part-way.
+ *
+ * For next/image requests the IMAGES binding returns a copy at the width the
+ * page asked for (WebP when the browser accepts it), so a gallery tile is tens
+ * of kilobytes instead of the full photo. If resizing is unavailable (for
+ * example the monthly transformation allowance is used up) the original is
+ * served. Every result is kept in the Cloudflare edge cache: photos never
+ * change under the same name (docs/image-delivery.md).
  */
-async function serveSiteImage(request: Request, route: string, env: Env, ctx: Context): Promise<Response> {
+const IMMUTABLE = "public, max-age=31536000, immutable";
+
+function storageClient(env: Env): { client: AwsClient; endpoint: string; bucket: string } | null {
+  const endpoint = env.AWS_ENDPOINT_URL_S3?.replace(/\/+$/, "");
+  if (!endpoint || !env.AWS_ACCESS_KEY_ID || !env.AWS_SECRET_ACCESS_KEY || !env.OBJECT_STORAGE_BUCKET) return null;
+  const client = new AwsClient({
+    accessKeyId: env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
+    service: "s3",
+    region: env.AWS_REGION || "auto",
+  });
+  return { client, endpoint, bucket: env.OBJECT_STORAGE_BUCKET };
+}
+
+function withHeaders(body: BodyInit | null, type: string, length: string | null, resized: boolean): Response {
+  const headers = new Headers({ "Content-Type": type, "Cache-Control": IMMUTABLE, "X-Content-Type-Options": "nosniff" });
+  if (length) headers.set("Content-Length", length);
+  if (resized) headers.set("Vary", "Accept");
+  return new Response(body, { headers });
+}
+
+async function serveSiteImage(request: Request, image: StoredImageRequest, env: Env, ctx: Context): Promise<Response> {
+  const head = (response: Response) => (request.method === "HEAD" ? new Response(null, response) : response);
+  const webp = /image\/webp/.test(request.headers.get("accept") || "");
   const cache = (caches as unknown as { default: Cache }).default;
-  const cacheKey = new Request(new URL(route, request.url).toString(), { method: "GET" });
+  const cacheKey = new Request(
+    new URL(`/__site-image/${encodeURIComponent(image.key)}?w=${image.width ?? 0}&q=${image.quality}&webp=${webp ? 1 : 0}`, request.url).toString(),
+  );
   const cached = await cache.match(cacheKey);
-  if (cached) return request.method === "HEAD" ? new Response(null, cached) : cached;
-  const response: Response = await openNextWorker.fetch(cacheKey, env, ctx);
-  if (response.status === 200) ctx.waitUntil(cache.put(cacheKey, response.clone()));
-  return request.method === "HEAD" ? new Response(null, response) : response;
+  if (cached) return head(cached);
+
+  const storage = storageClient(env);
+  if (!storage) {
+    // Not configured here: fall back to the Next.js route.
+    const route = siteImageRoute(new URL(request.url));
+    return head(await openNextWorker.fetch(new Request(new URL(route!, request.url)), env, ctx));
+  }
+  const objectUrl = `${storage.endpoint}/${encodeURIComponent(storage.bucket)}/${image.key.split("/").map(encodeURIComponent).join("/")}`;
+  const original = await storage.client.fetch(objectUrl, { method: "GET" });
+  if (original.status === 404) return new Response("Not found", { status: 404 });
+  if (!original.ok || !original.body) return new Response("Image unavailable", { status: 502 });
+  const type = original.headers.get("content-type") || "application/octet-stream";
+
+  let response: Response | null = null;
+  if (image.width && env.IMAGES && /^image\/(jpeg|png|webp)$/.test(type)) {
+    const [forResize, spare] = original.body.tee();
+    try {
+      const output = await env.IMAGES.input(forResize)
+        .transform({ width: image.width, fit: "scale-down" })
+        .output({ format: webp ? "image/webp" : type, quality: image.quality });
+      const resized = output.response();
+      response = withHeaders(resized.body, resized.headers.get("content-type") || type, resized.headers.get("content-length"), true);
+      ctx.waitUntil(spare.cancel());
+    } catch (error) {
+      console.warn(`[site-images] resize failed for ${image.key}, serving the original: ${(error as Error).message}`);
+      response = withHeaders(spare, type, original.headers.get("content-length"), false);
+    }
+  } else {
+    response = withHeaders(original.body, type, original.headers.get("content-length"), false);
+  }
+  ctx.waitUntil(cache.put(cacheKey, response.clone()));
+  return head(response);
 }
 
 const worker = {
   async fetch(request: Request, env: Env, ctx: Context) {
     if ((request.method === "GET" || request.method === "HEAD") && env.IMAGE_DELIVERY !== "cdn") {
-      const route = siteImageRoute(new URL(request.url));
-      if (route) return serveSiteImage(request, route, env, ctx);
+      const image = storedImageRequest(new URL(request.url));
+      if (image) return serveSiteImage(request, image, env, ctx);
     }
     return openNextWorker.fetch(request, env, ctx);
   },
