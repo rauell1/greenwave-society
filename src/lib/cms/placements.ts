@@ -6,6 +6,7 @@ import { logger } from "@/lib/logger";
 import { revalidatePath } from "next/cache";
 import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
+import { fallbackDuringBuild } from "@/lib/cms/fallback";
 
 export interface PlacementSlotConfig {
   id: string;
@@ -220,8 +221,8 @@ export const getPublicImagePlacements = cache(async (): Promise<Record<string, {
 
     return result;
   } catch (error) {
-    logger.warn("Unable to load CMS image placements from database, using defaults", { error: String(error) });
-    return fallback;
+    logger.warn("Unable to load CMS image placements from database", { error: String(error) });
+    return fallbackDuringBuild(error, fallback);
   }
 });
 

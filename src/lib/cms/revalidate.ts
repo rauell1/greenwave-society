@@ -17,4 +17,6 @@ export function revalidatePublicContent(slug: string) {
   ]) {
     revalidatePath(path);
   }
+  // Every article page lists related articles, so refresh them all.
+  revalidatePath("/news/[slug]", "page");
 }

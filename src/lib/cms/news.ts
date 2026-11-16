@@ -2,6 +2,7 @@ import "server-only";
 import { getDb } from "@/lib/db";
 import { NEWS_CONTENT_TYPES } from "./content";
 import { logger } from "@/lib/logger";
+import { fallbackDuringBuild } from "@/lib/cms/fallback";
 
 export interface PublicArticle {
   id: string;
@@ -301,8 +302,8 @@ export async function getPublishedNews(): Promise<PublicArticle[]> {
       return timeB - timeA;
     });
   } catch (error) {
-    logger.warn("Database unavailable when fetching news, using curated defaults", { error });
-    return DEFAULT_NEWS_ARTICLES;
+    logger.warn("Database unavailable when fetching news", { error });
+    return fallbackDuringBuild(error, DEFAULT_NEWS_ARTICLES);
   }
 }
 
@@ -322,7 +323,8 @@ export async function getPublishedArticle(slug: string): Promise<PublicArticle |
       return normalizeArticle(dbArticle);
     }
   } catch (error) {
-    logger.warn("Database unavailable when fetching article by slug, using curated defaults", { slug, error });
+    logger.warn("Database unavailable when fetching article by slug", { slug, error });
+    fallbackDuringBuild(error, null);
   }
 
   const defaultMatch = DEFAULT_NEWS_ARTICLES.find((a) => a.slug === slug);
