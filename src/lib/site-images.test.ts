@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { siteImageRoute } from "./site-images";
+import { siteImageRoute, storedImageRequest } from "./site-images";
 
 const route = (path: string) => siteImageRoute(new URL(path, "https://greenwavesociety.org"));
 
@@ -37,5 +37,25 @@ describe("siteImageRoute", () => {
     expect(route("/_next/image?url=%2Fimages%2F..%2Fmedia%2Fx.png&w=64&q=75")).toBeNull();
     expect(route("/images//a.jpg")).toBeNull();
     expect(route("/images/%E0%A4%A.jpg")).toBeNull();
+  });
+});
+
+describe("storedImageRequest", () => {
+  const request = (path: string) => storedImageRequest(new URL(path, "https://greenwavesociety.org"));
+
+  it("returns the object key and the requested size", () => {
+    expect(request("/_next/image?url=%2Fimages%2Fevents%2Fa%20b.jpg&w=640&q=80"))
+      .toEqual({ key: "images/events/a b.jpg", width: 640, quality: 80 });
+    expect(request("/images/g-12.jpg")).toEqual({ key: "images/g-12.jpg", width: null, quality: 75 });
+  });
+
+  it("ignores sizes next/image would never ask for", () => {
+    expect(request("/_next/image?url=%2Fimages%2Fa.jpg&w=99999&q=500"))
+      .toEqual({ key: "images/a.jpg", width: null, quality: 75 });
+  });
+
+  it("leaves everything else to Next.js", () => {
+    expect(request("/about")).toBeNull();
+    expect(request("/images/../media/x.png")).toBeNull();
   });
 });
