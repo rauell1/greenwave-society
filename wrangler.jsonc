@@ -20,6 +20,14 @@
     { "pattern": "greenwavesociety.org", "custom_domain": true },
     { "pattern": "www.greenwavesociety.org", "custom_domain": true }
   ],
+  // Pooled connections to the Neon production database. Query caching is off,
+  // so reads always see the latest writes. localConnectionString is only for
+  // local tooling (wrangler dev, the OpenNext deploy step).
+  "hyperdrive": [{
+    "binding": "HYPERDRIVE",
+    "id": "da4ff0c958bd411aab40870b2d839693",
+    "localConnectionString": "postgresql://postgres:postgres@localhost:5432/dev"
+  }],
   "observability": { "enabled": true },
   // Resizes site photos for next/image (cloudflare-worker.ts).
   "images": { "binding": "IMAGES" },
