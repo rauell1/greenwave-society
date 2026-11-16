@@ -20,6 +20,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+          # The logos, favicons, certificates and downloads in public/ are Git
+          # LFS files; without this the site ships their 130-byte pointers.
+          lfs: true
       - uses: actions/setup-node@v4
         with:
           node-version: 22
