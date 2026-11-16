@@ -1,8 +1,32 @@
 # Image delivery
 
-The website serves `/images/*` from `https://cdn.greenwavesociety.org/images/*`
-through a Next.js rewrite. Local `public/images/` files are working copies and
-are deliberately excluded from Git. A clean checkout uses the CDN.
+On Cloudflare the website serves `/images/*` from the Neon object-storage
+bucket `greenwave-media` (project `fancy-math-09311878`), under the same
+`images/` keys. `cloudflare-worker.ts` sends `/images/*` and
+`/_next/image?url=/images/*` to `src/app/media-files/[...path]/route.ts`
+(`src/lib/site-images.ts`), and keeps each photo in the Cloudflare edge cache
+after the first visit. Local `public/images/` files are working copies and are
+deliberately excluded from Git.
+
+Upload new or changed photos from a folder that has them in `public/images/`:
+
+```bash
+npm run images:upload -- --dry-run   # list what would be uploaded
+npm run images:upload                # upload what is not uploaded yet
+```
+
+The script signs in with the Neon command-line tool, scales photos larger than
+1920 px down first, and records finished files in
+`public/images/.neon-uploaded.txt`, so it can be stopped and run again.
+
+To go back to the CDN below (for example once Cloudflare R2 is enabled and
+`scripts/sync-public-images-to-r2.mjs` has run), set the Worker variable
+`IMAGE_DELIVERY=cdn`. The `next.config.ts` rewrite then applies again.
+
+## CDN
+
+The CDN setup serves `/images/*` from `https://cdn.greenwavesociety.org/images/*`
+through a Next.js rewrite.
 
 Set `IMAGE_CDN_ORIGIN` to an HTTPS origin to use a different image host. Upload
 images under its `/images/` prefix before publishing references to them.

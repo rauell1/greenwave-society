@@ -24,3 +24,6 @@ graduation-photos/
 # Google Form registration exports (personal data, never commit)
 responses*.csv
 *Form Responses*.csv
+
+# Upload progress of scripts/upload-images-to-neon.mjs
+public/images/.neon-uploaded.txt
