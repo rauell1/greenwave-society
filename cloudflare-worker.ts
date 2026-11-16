@@ -7,13 +7,14 @@
  * is excluded from tsconfig.json because the generated worker has no stable types.
  */
 import { Client } from "pg";
+import { siteImageRoute } from "./src/lib/site-images";
 // @ts-expect-error Generated at build time.
 import openNextWorker from "./.open-next/worker.js";
 
 // @ts-expect-error Generated at build time.
 export { DOQueueHandler, DOShardedTagCache, BucketCachePurge } from "./.open-next/worker.js";
 
-type Env = { CRON_SECRET?: string; NEXT_PUBLIC_APP_URL?: string };
+type Env = { CRON_SECRET?: string; NEXT_PUBLIC_APP_URL?: string; IMAGE_DELIVERY?: string };
 type Context = { waitUntil(promise: Promise<unknown>): void };
 
 /**
@@ -35,8 +36,29 @@ type Context = { waitUntil(promise: Promise<unknown>): void };
 
 const CRON_ROUTES = ["/api/cron/event-emails"];
 
+/**
+ * Site photos come from object storage (src/lib/site-images.ts). They never
+ * change under the same name, so each one is kept in the Cloudflare edge cache
+ * after the first visit instead of being read from storage every time.
+ */
+async function serveSiteImage(request: Request, route: string, env: Env, ctx: Context): Promise<Response> {
+  const cache = (caches as unknown as { default: Cache }).default;
+  const cacheKey = new Request(new URL(route, request.url).toString(), { method: "GET" });
+  const cached = await cache.match(cacheKey);
+  if (cached) return request.method === "HEAD" ? new Response(null, cached) : cached;
+  const response: Response = await openNextWorker.fetch(cacheKey, env, ctx);
+  if (response.status === 200) ctx.waitUntil(cache.put(cacheKey, response.clone()));
+  return request.method === "HEAD" ? new Response(null, response) : response;
+}
+
 const worker = {
-  fetch: openNextWorker.fetch,
+  async fetch(request: Request, env: Env, ctx: Context) {
+    if ((request.method === "GET" || request.method === "HEAD") && env.IMAGE_DELIVERY !== "cdn") {
+      const route = siteImageRoute(new URL(request.url));
+      if (route) return serveSiteImage(request, route, env, ctx);
+    }
+    return openNextWorker.fetch(request, env, ctx);
+  },
 
   async scheduled(_controller: unknown, env: Env, ctx: Context) {
     const origin = env.NEXT_PUBLIC_APP_URL || "https://greenwavesociety.org";
