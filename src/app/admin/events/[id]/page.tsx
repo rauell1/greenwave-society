@@ -319,6 +319,10 @@ export default async function EventPage({
                         <span className="inline-block px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900 font-semibold text-xs border border-emerald-200">
                           🏪 Vendor: {isGraduation ? meta.category || "General" : meta.vendorName}
                         </span>
+                      ) : meta.registeredAs === "Volunteer" ? (
+                        <span className="inline-block px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-900 font-semibold text-xs border border-sky-200">
+                          🙋 Volunteer
+                        </span>
                       ) : isGraduation ? (
                         <span className="inline-block px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-xs">
                           👥 Guest ({meta.guestCount || 1} pax)
