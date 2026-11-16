@@ -20,3 +20,7 @@ graduation-photos/
 /.open-next/
 /.wrangler/
 .dev.vars
+
+# Google Form registration exports (personal data, never commit)
+responses*.csv
+*Form Responses*.csv
