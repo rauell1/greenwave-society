@@ -31,9 +31,9 @@ describe("getPlacementSlots", () => {
   it("leaves out slots no page reads and adds one per Activities photo", async () => {
     const slots = await getPlacementSlots();
     for (const unused of ["programs", "graduation", "mediaKit", "programEnterprise", "programClimate"]) expect(slots[unused]).toBeUndefined();
-    const key = activityPlacementKey("Tree Planting at Karura");
+    const key = activityPlacementKey({ title: "Tree Planting at Karura" });
     expect(key).toBe("activity:tree-planting-at-karura");
     expect(slots[key]).toMatchObject({ name: 'Activities timeline: "Tree Planting at Karura"', src: "/images/a.jpg", section: "Recent Activities" });
-    expect(slots[activityPlacementKey("Talk without a photo")]).toBeUndefined();
+    expect(slots[activityPlacementKey({ title: "Talk without a photo" })]).toBeUndefined();
   });
 });

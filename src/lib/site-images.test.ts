@@ -31,6 +31,21 @@ describe("siteImageRoute", () => {
     expect(route("/imagesX/a.jpg")).toBeNull();
   });
 
+  it("maps next/image requests for media library uploads", () => {
+    expect(route("/_next/image?url=%2Fmedia-files%2Fmedia%2Fabc-photo.webp&w=640&q=75")).toBe("/media-files/media/abc-photo.webp");
+    expect(route("/_next/image?url=%2Fmedia-files%2Fmedia%2Fa%2520b.webp&w=640&q=75")).toBe("/media-files/media/a%20b.webp");
+    expect(route("/_next/image?url=https%3A%2F%2Fgreenwavesociety.org%2Fmedia-files%2Fmedia%2Fx.webp&w=640&q=75")).toBe("/media-files/media/x.webp");
+    expect(route("/_next/image?url=%2Fmedia-files%2Fimages%2Fg-12.jpg&w=640&q=75")).toBe("/media-files/images/g-12.jpg");
+  });
+
+  it("refuses media-files paths outside the media and images folders", () => {
+    expect(route("/_next/image?url=%2Fmedia-files%2Fsecrets%2Fx.webp&w=640&q=75")).toBeNull();
+    expect(route("/_next/image?url=%2Fmedia-files%2Fmedia%2F..%2Fsecrets%2Fx.webp&w=640&q=75")).toBeNull();
+    expect(route("/_next/image?url=%2Fmedia-files%2Fmedia%2F%252e%252e%2Fx.webp&w=640&q=75")).toBeNull();
+    expect(route("/_next/image?url=%2Fmedia-files%2Fmedia%2Fa%252Fb.webp&w=640&q=75")).toBeNull();
+    expect(route("/_next/image?url=%2Fmedia-files%2Fmedia&w=640&q=75")).toBeNull();
+  });
+
   it("refuses traversal and malformed paths", () => {
     expect(route("/images/../media/secret.png")).toBeNull();
     expect(route("/images/%2e%2e/media/secret.png")).toBeNull();
@@ -52,6 +67,10 @@ describe("storedImageRequest", () => {
   it("ignores sizes next/image would never ask for", () => {
     expect(request("/_next/image?url=%2Fimages%2Fa.jpg&w=99999&q=500"))
       .toEqual({ key: "images/a.jpg", width: null, quality: 75 });
+  });
+
+  it("returns the object key for a media library upload", () => {
+    expect(request("/_next/image?url=%2Fmedia-files%2Fmedia%2Fa%2520b.webp&w=828&q=75")).toEqual({ key: "media/a b.webp", width: 828, quality: 75 });
   });
 
   it("leaves everything else to Next.js", () => {

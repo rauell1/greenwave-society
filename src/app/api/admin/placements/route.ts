@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { authorizeRoute } from "@/lib/auth/route-authorization";
 import { PERMISSIONS } from "@/lib/auth/permissions";
-import { getPublicImagePlacements, getAvailableCmsImages, getPlacementSlots, saveImagePlacements, DEFAULT_PLACEMENTS } from "@/lib/cms/placements";
+import { getAdminPlacements, getAvailableCmsImages, saveImagePlacements, DEFAULT_PLACEMENTS } from "@/lib/cms/placements";
 import { AUDIT_ACTIONS, logAuditEvent } from "@/lib/audit/audit-service";
 import { IMAGE_SRC_HINT, isAllowedImageSrc } from "@/lib/media/image-src";
 
@@ -9,10 +9,9 @@ export async function GET() {
   const auth = await authorizeRoute(PERMISSIONS.CONTENT_READ);
   if (!auth.ok) return auth.response;
 
-  const [currentPlacements, availableImages, slots] = await Promise.all([
-    getPublicImagePlacements(),
+  const [{ placements: currentPlacements, slots }, availableImages] = await Promise.all([
+    getAdminPlacements(),
     getAvailableCmsImages(),
-    getPlacementSlots(),
   ]);
 
   return NextResponse.json({

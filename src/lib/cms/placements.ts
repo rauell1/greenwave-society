@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache";
 import { readdir } from "node:fs/promises";
 import path from "node:path";
 import { listAllPhotos } from "./repo-images";
-import { activityPlacementKey, UNUSED_PLACEMENT_SLOTS } from "./placement-keys";
+import { activityPlacement, activityPlacementKey, UNUSED_PLACEMENT_SLOTS } from "./placement-keys";
 import { getPublicHomepageContent } from "./public-content";
 
 export interface PlacementSlotConfig {
@@ -279,7 +279,7 @@ export async function getPlacementSlots(): Promise<Record<string, PlacementSlot>
 
   for (const activity of content.activities) {
     if (!activity.imageUrl) continue;
-    slots[activityPlacementKey(activity.title)] = {
+    slots[activityPlacementKey(activity)] = {
       name: `Activities timeline: ${quoted(activity.title)}`,
       section: "Recent Activities",
       description: `The photo on the ${activity.date} entry in "What We Have Been Up To" on the homepage.`,
@@ -290,6 +290,26 @@ export async function getPlacementSlots(): Promise<Record<string, PlacementSlot>
     };
   }
   return slots;
+}
+
+/**
+ * The slots and their current values for the admin Placements page. A photo
+ * saved under an activity's old title-based key is shown on its slot, so the
+ * page always shows what the site shows.
+ */
+export async function getAdminPlacements(): Promise<{
+  placements: Record<string, { src: string; alt: string }>;
+  slots: Record<string, PlacementSlot>;
+}> {
+  const [saved, slots, content] = await Promise.all([getPublicImagePlacements(), getPlacementSlots(), getPublicHomepageContent()]);
+  const placements = { ...saved };
+  for (const activity of content.activities) {
+    const key = activityPlacementKey(activity);
+    if (!slots[key] || placements[key]?.src) continue;
+    const picked = activityPlacement(saved, activity);
+    if (picked) placements[key] = picked;
+  }
+  return { placements, slots };
 }
 
 export interface AvailableCmsImage {

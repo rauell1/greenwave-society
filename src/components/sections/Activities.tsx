@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { FadeIn } from "@/components/ui/fade-in";
 
 import { DEFAULT_ACTIVITIES, type Activity } from "@/lib/cms/activity-defaults";
-import { activityPlacementKey } from "@/lib/cms/placement-keys";
+import { activityPlacement } from "@/lib/cms/placement-keys";
 
 export function Activities({
   activities = DEFAULT_ACTIVITIES,
@@ -16,7 +16,7 @@ export function Activities({
   placements?: Record<string, { src: string; alt: string }>;
 }) {
   activities = activities.map((activity) => {
-    const placement = activity.imageUrl ? placements?.[activityPlacementKey(activity.title)] : undefined;
+    const placement = activity.imageUrl ? activityPlacement(placements, activity) : undefined;
     return placement?.src ? { ...activity, imageUrl: placement.src, imageAlt: placement.alt || activity.imageAlt } : activity;
   });
   return (
