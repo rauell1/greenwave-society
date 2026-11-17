@@ -6,7 +6,7 @@ import { logger } from "@/lib/logger";
 import { revalidatePath } from "next/cache";
 import { readdir } from "node:fs/promises";
 import path from "node:path";
-import { GRADUATION_WEB_IMAGES, REPO_IMAGES } from "./repo-images";
+import { GRADUATION_WEB_IMAGES, listAllPhotos } from "./repo-images";
 import type { GalleryImage } from "@/components/gallery/GalleryGrid";
 
 export interface CuratedGalleryItem {
@@ -108,9 +108,9 @@ export async function getAdminGalleryConfig(): Promise<{
 }> {
   const map = new Map<string, AvailableGalleryImage>();
 
-  // 1. Site photos and graduation photos (bundled at build time)
-  for (const { src, filename } of REPO_IMAGES) {
-    map.set(src, { src, filename, source: "repo" });
+  // 1. Every stored photo: site photos and uploads (src/lib/cms/repo-images.ts)
+  for (const photo of await listAllPhotos()) {
+    map.set(photo.src, { src: photo.src, filename: photo.filename, source: photo.source });
   }
   for (const { src, filename } of GRADUATION_WEB_IMAGES) {
     if (!map.has(src)) map.set(src, { src, filename, source: "repo" });
@@ -137,27 +137,6 @@ export async function getAdminGalleryConfig(): Promise<{
       const src = `/posters/${file}`;
       map.set(src, { src, filename: file, source: "poster" });
     }
-  }
-
-  // 5. Blob / external uploads from database
-  try {
-    const mediaAssets = await getDb().cmsMediaAsset.findMany({
-      where: { status: "active" },
-      select: { url: true, filename: true },
-      take: 1000,
-      orderBy: { createdAt: "desc" },
-    });
-    for (const asset of mediaAssets) {
-      if (!map.has(asset.url)) {
-        map.set(asset.url, {
-          src: asset.url,
-          filename: asset.filename,
-          source: "blob",
-        });
-      }
-    }
-  } catch (err) {
-    logger.warn("Could not query cmsMediaAsset for gallery", { err: String(err) });
   }
 
   const available = Array.from(map.values());

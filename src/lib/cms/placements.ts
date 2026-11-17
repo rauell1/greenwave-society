@@ -6,7 +6,7 @@ import { logger } from "@/lib/logger";
 import { revalidatePath } from "next/cache";
 import { readdir } from "node:fs/promises";
 import path from "node:path";
-import { REPO_IMAGES } from "./repo-images";
+import { listAllPhotos } from "./repo-images";
 
 export interface PlacementSlotConfig {
   id: string;
@@ -235,9 +235,9 @@ export interface AvailableCmsImage {
 export async function getAvailableCmsImages(): Promise<AvailableCmsImage[]> {
   const map = new Map<string, AvailableCmsImage>();
 
-  // 1. Site photos (docs/image-manifest.json, bundled at build time)
-  for (const { src, filename } of REPO_IMAGES) {
-    map.set(src, { url: src, filename, source: "repo" });
+  // 1. Every stored photo: site photos and uploads (src/lib/cms/repo-images.ts)
+  for (const photo of await listAllPhotos()) {
+    map.set(photo.src, { url: photo.src, filename: photo.filename, source: photo.source });
   }
 
   // 4. Read posters in public/posters
@@ -261,27 +261,6 @@ export async function getAvailableCmsImages(): Promise<AvailableCmsImage[]> {
       const url = `/posters/${file}`;
       map.set(url, { url, filename: file, source: "poster" });
     }
-  }
-
-  // 5. Query cmsMediaAsset from database for all blob/external storage uploads
-  try {
-    const mediaAssets = await getDb().cmsMediaAsset.findMany({
-      where: { status: "active" },
-      select: { url: true, filename: true },
-      take: 1000,
-      orderBy: { createdAt: "desc" },
-    });
-    for (const asset of mediaAssets) {
-      if (!map.has(asset.url)) {
-        map.set(asset.url, {
-          url: asset.url,
-          filename: asset.filename,
-          source: "blob",
-        });
-      }
-    }
-  } catch (err) {
-    logger.warn("Could not query cmsMediaAsset for placements", { err: String(err) });
   }
 
   return Array.from(map.values());
