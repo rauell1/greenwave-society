@@ -1,6 +1,5 @@
 import "server-only";
-import fs from "node:fs";
-import path from "node:path";
+import manifest from "../../../docs/graduation-photos-manifest.json";
 
 export interface GraduationPhoto {
   id: string;
@@ -26,18 +25,9 @@ const TOTAL_PHOTOS = 296;
  * the canonical metadata list for all 296 photos if manifest is pending.
  */
 export async function getGraduationPhotos(): Promise<GraduationPhoto[]> {
-  try {
-    const manifestPath = path.join(process.cwd(), "docs/graduation-photos-manifest.json");
-    if (fs.existsSync(manifestPath)) {
-      const raw = fs.readFileSync(manifestPath, "utf-8");
-      const data = JSON.parse(raw) as GraduationPhoto[];
-      if (Array.isArray(data) && data.length > 0) {
-        return data;
-      }
-    }
-  } catch {
-    // fallback to predictable canonical format
-  }
+  // Bundled at build time: Cloudflare Workers cannot read project files at runtime.
+  const data = manifest as GraduationPhoto[];
+  if (Array.isArray(data) && data.length > 0) return data;
 
   // Canonical fallback for all 296 ceremony photos
   const photos: GraduationPhoto[] = [];

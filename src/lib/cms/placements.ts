@@ -4,8 +4,9 @@ import { cache } from "react";
 import { getDb } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { revalidatePath } from "next/cache";
-import { readFile, readdir } from "node:fs/promises";
+import { readdir } from "node:fs/promises";
 import path from "node:path";
+import { REPO_IMAGES } from "./repo-images";
 
 export interface PlacementSlotConfig {
   id: string;
@@ -234,17 +235,9 @@ export interface AvailableCmsImage {
 export async function getAvailableCmsImages(): Promise<AvailableCmsImage[]> {
   const map = new Map<string, AvailableCmsImage>();
 
-  // 1. Load from docs/image-manifest.json (authoritative CDN inventory)
-  try {
-    const manifestPath = path.join(process.cwd(), "docs/image-manifest.json");
-    const manifestRaw = await readFile(manifestPath, "utf-8");
-    const manifestFiles = JSON.parse(manifestRaw) as string[];
-    for (const file of manifestFiles) {
-      const url = `/images/${file}`;
-      map.set(url, { url, filename: file, source: "repo" });
-    }
-  } catch (err) {
-    logger.warn("Could not read image-manifest.json", { err: String(err) });
+  // 1. Site photos (docs/image-manifest.json, bundled at build time)
+  for (const { src, filename } of REPO_IMAGES) {
+    map.set(src, { url: src, filename, source: "repo" });
   }
 
   // 4. Read posters in public/posters
