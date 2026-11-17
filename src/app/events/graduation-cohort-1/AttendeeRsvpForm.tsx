@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import Image from "next/image";
@@ -84,7 +84,8 @@ export function AttendeeRsvpForm({ isClosed = true }: { isClosed?: boolean }) {
     },
   });
 
-  const selectedRole = form.watch("role");
+  const selectedRole = useWatch({ control: form.control, name: "role" });
+  const celebrationPhoto = useWatch({ control: form.control, name: "celebrationPhoto" });
 
   const handlePhotoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -750,7 +751,7 @@ export function AttendeeRsvpForm({ isClosed = true }: { isClosed?: boolean }) {
                     <div className="flex items-center gap-2">
                       <Input
                         placeholder="Or paste a Google Drive / cloud photo link here..."
-                        value={form.watch("celebrationPhoto") || ""}
+                        value={celebrationPhoto || ""}
                         onChange={(e) => {
                           form.setValue("celebrationPhoto", e.target.value);
                           if (e.target.value.startsWith("http")) {

@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { put, del } from "@vercel/blob";
 import { deleteObject, mediaFileUrl, objectStorageConfigured, putObject } from "@/lib/object-storage";
 import { createHash, randomUUID } from "crypto";
 import { authorizeRoute } from "@/lib/auth/route-authorization";
@@ -12,10 +11,6 @@ import { isUploadPreset, type UploadPreset } from "@/lib/media/upload-presets";
 
 export const runtime = "nodejs";
 
-function hasBlobCredentials(): boolean {
-  return objectStorageConfigured() || Boolean(process.env.BLOB_READ_WRITE_TOKEN || (process.env.VERCEL_OIDC_TOKEN && process.env.BLOB_STORE_ID));
-}
-
 export async function GET(request: NextRequest) {
   const auth = await authorizeRoute(PERMISSIONS.MEDIA_READ); if (!auth.ok) return auth.response;
   const search = request.nextUrl.searchParams.get("search")?.trim() ?? "";
@@ -25,7 +20,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   const auth = await authorizeRoute(PERMISSIONS.MEDIA_UPLOAD); if (!auth.ok) return auth.response;
-  if (!hasBlobCredentials()) return NextResponse.json({ error: "Media storage is not configured" }, { status: 503 });
+  if (!objectStorageConfigured()) return NextResponse.json({ error: "Media storage is not configured" }, { status: 503 });
   const contentLength = Number(request.headers.get("content-length") ?? "0");
   if (contentLength > MAX_MEDIA_BYTES + 64 * 1024) return NextResponse.json({ error: "Upload request is too large" }, { status: 413 });
   const form = await request.formData(); const file = form.get("file");
@@ -42,20 +37,13 @@ export async function POST(request: NextRequest) {
   try { stored = await optimiseUpload(bytes, file.type, preset); } catch (error) { return NextResponse.json({ error: error instanceof UploadRejectedError ? error.message : "The image is corrupt or unsafe to process" }, { status: 415 }); }
   const extensionByType: Record<string,string> = { "image/jpeg":".jpg", "image/png":".png", "image/webp":".webp", "image/gif":".gif", "application/pdf":".pdf" };
   const filename = safeMediaFilename(file.name).replace(/\.[a-z0-9]{1,8}$/i, "") + extensionByType[stored.contentType]; const pathname = `media/${randomUUID()}-${filename}`;
-  // S3-compatible object storage (Neon, later R2) when configured; Vercel Blob otherwise.
-  const useObjectStorage = objectStorageConfigured();
-  let blob: { pathname: string; url: string };
-  if (useObjectStorage) {
-    await putObject(pathname, stored.bytes, stored.contentType);
-    blob = { pathname, url: mediaFileUrl(pathname) };
-  } else {
-    blob = await put(pathname, stored.bytes, { access: "public", addRandomSuffix: false, contentType: stored.contentType, token: process.env.BLOB_READ_WRITE_TOKEN });
-  }
+  await putObject(pathname, stored.bytes, stored.contentType);
+  const url = mediaFileUrl(pathname);
   try {
-    const asset = await getDb().$transaction(async tx => { const created = await tx.cmsMediaAsset.create({ data: { filename, pathname: blob.pathname, url: blob.url, contentType: stored.contentType, size: stored.bytes.length, checksum: createHash("sha256").update(stored.bytes).digest("hex"), width: stored.width, height: stored.height, altText: metadataInput.data.altText || null, caption: metadataInput.data.caption || null, uploadedById: auth.admin.id, updatedById: auth.admin.id } }); await tx.auditLog.create({ data: { action: AUDIT_ACTIONS.MEDIA_UPLOADED, actor: auth.admin.email, actorUserId: auth.admin.id, resourceType: "cms_media_asset", resourceId: created.id, outcome: "SUCCESS", afterState: JSON.stringify({ filename, contentType: stored.contentType, size: stored.bytes.length, originalSize: file.size, preset, checksum: created.checksum }) } }); return created; });
+    const asset = await getDb().$transaction(async tx => { const created = await tx.cmsMediaAsset.create({ data: { filename, pathname, url, contentType: stored.contentType, size: stored.bytes.length, checksum: createHash("sha256").update(stored.bytes).digest("hex"), width: stored.width, height: stored.height, altText: metadataInput.data.altText || null, caption: metadataInput.data.caption || null, uploadedById: auth.admin.id, updatedById: auth.admin.id } }); await tx.auditLog.create({ data: { action: AUDIT_ACTIONS.MEDIA_UPLOADED, actor: auth.admin.email, actorUserId: auth.admin.id, resourceType: "cms_media_asset", resourceId: created.id, outcome: "SUCCESS", afterState: JSON.stringify({ filename, contentType: stored.contentType, size: stored.bytes.length, originalSize: file.size, preset, checksum: created.checksum }) } }); return created; });
     return NextResponse.json({ asset }, { status: 201 });
   } catch (error) {
-    await (useObjectStorage ? deleteObject(pathname) : del(blob.url, { token: process.env.BLOB_READ_WRITE_TOKEN })).catch(() => undefined);
+    await deleteObject(pathname).catch(() => undefined);
     throw error;
   }
 }
