@@ -7,7 +7,6 @@ if (imageCdn.protocol !== "https:" || imageCdn.username || imageCdn.password || 
 }
 
 const nextConfig: NextConfig = {
-  // Removed "standalone" — Vercel handles output format natively
   poweredByHeader: false,
   compress: true,
   reactStrictMode: true,
@@ -23,10 +22,6 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "ui-avatars.com",
-      },
-      {
-        protocol: "https",
-        hostname: "*.public.blob.vercel-storage.com",
       },
       {
         protocol: "https",

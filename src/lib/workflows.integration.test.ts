@@ -4,11 +4,11 @@ import { MpesaStk } from "mpesa-stk";
 import { PERMISSIONS } from "@/lib/auth/permissions";
 import type { AdminUserDto } from "@/lib/auth/types";
 
-const mocks = vi.hoisted(() => ({ currentAdmin: vi.fn(), email: vi.fn(), eventEmail: vi.fn(), eventReminder: vi.fn(), revalidate: vi.fn(), blobPut: vi.fn() }));
+const mocks = vi.hoisted(() => ({ currentAdmin: vi.fn(), email: vi.fn(), eventEmail: vi.fn(), eventReminder: vi.fn(), revalidate: vi.fn(), objectPut: vi.fn() }));
 vi.mock("server-only", () => ({}));
 vi.mock("@/lib/auth/guards", () => ({ getCurrentAdmin: mocks.currentAdmin }));
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidate }));
-vi.mock("@vercel/blob", () => ({ put: mocks.blobPut, del: vi.fn() }));
+vi.mock("@/lib/object-storage", async importOriginal => ({ ...(await importOriginal<typeof import("@/lib/object-storage")>()), objectStorageConfigured: () => true, putObject: mocks.objectPut, deleteObject: vi.fn() }));
 vi.mock("@/lib/members/email", () => ({ sendMembershipDecisionEmail: mocks.email }));
 vi.mock("@/lib/events/email", async importOriginal => ({ ...(await importOriginal<typeof import("@/lib/events/email")>()), sendEventRegistrationConfirmation: mocks.eventEmail, sendBatchEmails: mocks.eventReminder }));
 vi.mock("@/lib/payments/feature-flag", () => ({ isMpesaMembershipEnabled: async () => true }));
@@ -280,12 +280,10 @@ describe("public event registration against PostgreSQL", () => {
 describe("media uploads against PostgreSQL", () => {
   it("stores browser-resized WebP photos without metadata and refuses oversized ones", async () => {
     vi.stubEnv("FEATURE_CMS_MEDIA", "true");
-    vi.stubEnv("BLOB_READ_WRITE_TOKEN", "test-token");
     admin.permissions.push(PERMISSIONS.MEDIA_UPLOAD);
     const stored: { pathname: string; bytes: Buffer; contentType: string }[] = [];
-    mocks.blobPut.mockImplementation(async (pathname: string, bytes: Buffer, options: { contentType: string }) => {
-      stored.push({ pathname, bytes, contentType: options.contentType });
-      return { pathname, url: `https://abc123.public.blob.vercel-storage.com/${pathname}` };
+    mocks.objectPut.mockImplementation(async (pathname: string, bytes: Uint8Array, contentType: string) => {
+      stored.push({ pathname, bytes: Buffer.from(bytes), contentType });
     });
     // The media library resizes and converts photos in the browser before upload.
     const resized = await sharp({ create: { width: 750, height: 1000, channels: 3, background: "#2a7" } })
