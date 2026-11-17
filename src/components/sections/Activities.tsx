@@ -55,7 +55,7 @@ export function Activities({ activities = DEFAULT_ACTIVITIES }: { activities?: A
                   {/* Right Column: Content Card */}
                   <div className="flex-1 bg-background rounded-[1.5rem] border border-primary/10 overflow-hidden hover:shadow-[0_20px_50px_oklch(var(--primary)/5%)] transition-all duration-300 group-hover:border-primary/20 flex flex-col">
                     {a.imageUrl && (
-                      <div className="relative aspect-[16/9] sm:aspect-[21/9] w-full bg-muted overflow-hidden">
+                      <div className="relative aspect-[21/9] w-full bg-muted overflow-hidden">
                         <Image
                           src={a.imageUrl}
                           alt={a.imageAlt || a.title}

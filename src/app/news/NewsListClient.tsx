@@ -116,7 +116,7 @@ export function NewsListClient({ articles }: NewsListClientProps) {
         <article className="group relative rounded-3xl overflow-hidden bg-card border border-border/80 hover:border-primary/40 transition-all duration-300 shadow-sm hover:shadow-xl">
           <div className="grid lg:grid-cols-12 gap-0">
             {/* Visual Column */}
-            <div className="lg:col-span-7 relative min-h-[280px] sm:min-h-[380px] overflow-hidden bg-muted">
+            <div className="lg:col-span-7 relative aspect-[16/10] lg:aspect-auto lg:min-h-[380px] overflow-hidden bg-muted">
               <Image
                 src={featuredArticle.imageUrl || "/images/IMG_9415.jpg"}
                 alt={featuredArticle.title}

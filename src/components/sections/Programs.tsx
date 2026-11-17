@@ -162,7 +162,7 @@ export function Programs({
                   <div className={`grid h-full ${p.span.includes("col-span-2") ? "lg:grid-cols-12" : "grid-cols-1"}`}>
                     
                     {/* Image wrapper */}
-                    <div className={`relative overflow-hidden min-h-[220px] ${p.span.includes("col-span-2") ? "lg:col-span-5 h-full" : "h-64"}`}>
+                    <div className={`relative overflow-hidden ${p.span.includes("col-span-2") ? "aspect-[5/9] md:aspect-[3/2] lg:aspect-auto lg:min-h-[220px] lg:col-span-5 lg:h-full" : "aspect-[3/2] lg:aspect-auto lg:h-64"}`}>
                       <Image quality={95}
                         src={placement?.src || p.image}
                         alt={placement?.alt || cardTitle}
