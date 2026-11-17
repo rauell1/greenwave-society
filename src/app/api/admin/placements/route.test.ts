@@ -6,9 +6,8 @@ vi.mock("@/lib/auth/route-authorization", () => ({ authorizeRoute: vi.fn(async (
 vi.mock("@/lib/audit/audit-service", () => ({ AUDIT_ACTIONS: { CONTENT_UPDATED: "content.updated" }, logAuditEvent: vi.fn() }));
 vi.mock("@/lib/cms/placements", () => ({
   DEFAULT_PLACEMENTS: { about: { src: "/images/a.jpg", alt: "About" }, teamMartinKyalo: { src: "", alt: "Martin" } },
-  getPublicImagePlacements: vi.fn(),
+  getAdminPlacements: vi.fn(),
   getAvailableCmsImages: vi.fn(),
-  getPlacementSlots: vi.fn(),
   saveImagePlacements: mocks.save,
 }));
 import { PUT } from "./route";

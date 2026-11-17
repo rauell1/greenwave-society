@@ -29,6 +29,9 @@ export const metadata: Metadata = {
   },
 };
 
+// Refresh at least every minute, so photos changed in admin show even if an on-demand refresh is missed.
+export const revalidate = 60;
+
 export default async function ProgramsPage() {
   const [placements, content] = await Promise.all([
     getPublicImagePlacements(),
