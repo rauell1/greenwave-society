@@ -7,6 +7,8 @@ import { revalidatePath } from "next/cache";
 import { readdir } from "node:fs/promises";
 import path from "node:path";
 import { listAllPhotos } from "./repo-images";
+import { activityPlacementKey, UNUSED_PLACEMENT_SLOTS } from "./placement-keys";
+import { getPublicHomepageContent } from "./public-content";
 
 export interface PlacementSlotConfig {
   id: string;
@@ -148,6 +150,15 @@ export const DEFAULT_PLACEMENTS: Record<string, { src: string; alt: string; name
     route: "/events/graduation-cohort-1",
     aspectRatio: "aspect-[723/1024]",
   },
+  graduationFeature: {
+    name: "Graduation page: featured group photo",
+    section: "Events & Graduation",
+    description: "The large photo under the page heading on the Cohort I graduation page.",
+    src: "https://greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_290.webp",
+    alt: "The 12 Certified Graduands of YPG: Young Person's Guide to Systems Change Cohort I Assembled at Ubunifu Hub, Nairobi",
+    route: "/events/graduation-cohort-1",
+    aspectRatio: "aspect-[21/9]",
+  },
   teamMartinKyalo: {
     name: "Team Photo - Martin Kyalo",
     section: "Team Photos",
@@ -225,6 +236,61 @@ export const getPublicImagePlacements = cache(async (): Promise<Record<string, {
     return fallback;
   }
 });
+
+export type PlacementSlot = (typeof DEFAULT_PLACEMENTS)[string];
+
+const quoted = (text: string) => `"${text.trim()}"`;
+
+/**
+ * The slots offered on the admin Placements page, named with the wording the
+ * live pages show (section headings, card titles, activity titles) so an
+ * admin can tell which photo they are replacing. Slots no page reads are left
+ * out, and every Activities timeline photo gets its own slot.
+ */
+export async function getPlacementSlots(): Promise<Record<string, PlacementSlot>> {
+  const content = await getPublicHomepageContent();
+  const slots: Record<string, PlacementSlot> = {};
+  for (const [key, slot] of Object.entries(DEFAULT_PLACEMENTS)) {
+    if (!UNUSED_PLACEMENT_SLOTS.has(key)) slots[key] = { ...slot };
+  }
+
+  const heroTitle = quoted(content.hero.title);
+  slots.heroSecondary.name = "Homepage top section: large photo (back)";
+  slots.heroSecondary.description = `The larger photo beside ${heroTitle} at the top of the homepage.`;
+  slots.heroPrimary.name = "Homepage top section: small photo (front)";
+  slots.heroPrimary.description = `The smaller photo in front, beside ${heroTitle} at the top of the homepage.`;
+  slots.about.name = `About section: ${quoted(content.about.title)}`;
+  slots.about.description = "The photo beside the mission text on the homepage and the About page.";
+  slots.volunteer.name = `Volunteer section: ${quoted(content.volunteerCta.title)}`;
+  slots.volunteer.description = "The photo beside the volunteer sign-up text near the bottom of the homepage.";
+
+  for (const key of Object.keys(slots)) {
+    const program = content.programs[key];
+    if (key.startsWith("program") && program?.title) {
+      slots[key].name = `Program card: ${quoted(program.title)}`;
+      slots[key].description = `The photo on the ${quoted(program.title)} card on the homepage and the Programs page.`;
+      slots[key].route = "/programs";
+    }
+  }
+
+  for (const [key, name] of [["teamMartinKyalo", "Martin Kyalo"], ["teamNjeriNjoroge", "Njeri Njoroge"], ["teamEugeneShadrack", "Eugene Shadrack"]] as const) {
+    if (slots[key]) slots[key].name = `Team photo: ${name}`;
+  }
+
+  for (const activity of content.activities) {
+    if (!activity.imageUrl) continue;
+    slots[activityPlacementKey(activity.title)] = {
+      name: `Activities timeline: ${quoted(activity.title)}`,
+      section: "Recent Activities",
+      description: `The photo on the ${activity.date} entry in "What We Have Been Up To" on the homepage.`,
+      src: activity.imageUrl,
+      alt: activity.imageAlt || activity.title,
+      route: "/#activities",
+      aspectRatio: "aspect-[21/9]",
+    };
+  }
+  return slots;
+}
 
 export interface AvailableCmsImage {
   url: string;

@@ -5,8 +5,20 @@ import { Badge } from "@/components/ui/badge";
 import { FadeIn } from "@/components/ui/fade-in";
 
 import { DEFAULT_ACTIVITIES, type Activity } from "@/lib/cms/activity-defaults";
+import { activityPlacementKey } from "@/lib/cms/placement-keys";
 
-export function Activities({ activities = DEFAULT_ACTIVITIES }: { activities?: Activity[] }) {
+export function Activities({
+  activities = DEFAULT_ACTIVITIES,
+  placements,
+}: {
+  activities?: Activity[];
+  /** Photos picked on the admin Placements page replace the activity's own image. */
+  placements?: Record<string, { src: string; alt: string }>;
+}) {
+  activities = activities.map((activity) => {
+    const placement = activity.imageUrl ? placements?.[activityPlacementKey(activity.title)] : undefined;
+    return placement?.src ? { ...activity, imageUrl: placement.src, imageAlt: placement.alt || activity.imageAlt } : activity;
+  });
   return (
     <section id="activities" className="py-24 sm:py-32 bg-secondary/20 relative overflow-hidden">
       {/* Decorative background shape */}
