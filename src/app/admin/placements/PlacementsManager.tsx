@@ -90,11 +90,16 @@ export default function PlacementsManager({
     });
   }, [slotKeys, defaultPlacements, sectionFilter, slotSearch]);
 
+  // A slot that has never been saved has no entry yet: start from what it shows now, so the
+  // saved value always has both a photo and a description.
+  const currentValue = (prev: Record<string, { src: string; alt: string }>, slotKey: string) =>
+    prev[slotKey] ?? { src: defaultPlacements[slotKey]?.src ?? "", alt: defaultPlacements[slotKey]?.alt ?? "" };
+
   const handleSelectImage = (slotKey: string, url: string) => {
     setPlacements((prev) => ({
       ...prev,
       [slotKey]: {
-        ...prev[slotKey],
+        ...currentValue(prev, slotKey),
         src: url,
       },
     }));
@@ -105,7 +110,7 @@ export default function PlacementsManager({
     setPlacements((prev) => ({
       ...prev,
       [slotKey]: {
-        ...prev[slotKey],
+        ...currentValue(prev, slotKey),
         alt,
       },
     }));
@@ -147,7 +152,7 @@ export default function PlacementsManager({
         ...prev,
         [activePickerSlot]: {
           src: asset.url,
-          alt: asset.altText || prev[activePickerSlot]?.alt || "",
+          alt: asset.altText || currentValue(prev, activePickerSlot).alt,
         },
       }));
 
