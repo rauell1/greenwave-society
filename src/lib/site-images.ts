@@ -57,7 +57,7 @@ function imagePathOfSource(source: string): string | null {
 
 /**
  * "/media-files/media/a%20b.webp" (an upload from the media library) or
- * "/media-files/images/x.jpg" -> the same path, normalised; null otherwise.
+ * "/media-files/images/g-12.jpg" -> the same path, normalised; null otherwise.
  * next/image on Workers cannot fetch these from the static assets, so they are
  * served from object storage like the site photos.
  */
