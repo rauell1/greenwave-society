@@ -4,8 +4,9 @@ import { cache } from "react";
 import { getDb } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { revalidatePath } from "next/cache";
-import { readFile, readdir } from "node:fs/promises";
+import { readdir } from "node:fs/promises";
 import path from "node:path";
+import { listAllPhotos } from "./repo-images";
 
 export interface PlacementSlotConfig {
   id: string;
@@ -234,17 +235,9 @@ export interface AvailableCmsImage {
 export async function getAvailableCmsImages(): Promise<AvailableCmsImage[]> {
   const map = new Map<string, AvailableCmsImage>();
 
-  // 1. Load from docs/image-manifest.json (authoritative CDN inventory)
-  try {
-    const manifestPath = path.join(process.cwd(), "docs/image-manifest.json");
-    const manifestRaw = await readFile(manifestPath, "utf-8");
-    const manifestFiles = JSON.parse(manifestRaw) as string[];
-    for (const file of manifestFiles) {
-      const url = `/images/${file}`;
-      map.set(url, { url, filename: file, source: "repo" });
-    }
-  } catch (err) {
-    logger.warn("Could not read image-manifest.json", { err: String(err) });
+  // 1. Every stored photo: site photos and uploads (src/lib/cms/repo-images.ts)
+  for (const photo of await listAllPhotos()) {
+    map.set(photo.src, { url: photo.src, filename: photo.filename, source: photo.source });
   }
 
   // 4. Read posters in public/posters
@@ -268,27 +261,6 @@ export async function getAvailableCmsImages(): Promise<AvailableCmsImage[]> {
       const url = `/posters/${file}`;
       map.set(url, { url, filename: file, source: "poster" });
     }
-  }
-
-  // 5. Query cmsMediaAsset from database for all blob/external storage uploads
-  try {
-    const mediaAssets = await getDb().cmsMediaAsset.findMany({
-      where: { status: "active" },
-      select: { url: true, filename: true },
-      take: 1000,
-      orderBy: { createdAt: "desc" },
-    });
-    for (const asset of mediaAssets) {
-      if (!map.has(asset.url)) {
-        map.set(asset.url, {
-          url: asset.url,
-          filename: asset.filename,
-          source: "blob",
-        });
-      }
-    }
-  } catch (err) {
-    logger.warn("Could not query cmsMediaAsset for placements", { err: String(err) });
   }
 
   return Array.from(map.values());
