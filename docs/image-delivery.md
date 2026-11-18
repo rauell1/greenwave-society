@@ -50,3 +50,13 @@ The inventory check runs in CI; the remote check should run before a release.
 
 Filenames are case sensitive on the CDN. Use a new filename when replacing an
 image because image responses and optimized variants have long cache lifetimes.
+
+## R2 copies (web size)
+
+Web-sized copies of the site photos (WebP, at most 1600px wide) are kept in the
+R2 bucket `greenwave-site-images`, bound to the Worker as `SITE_IMAGES`.
+`cloudflare-worker.ts` reads a photo from R2 first and falls back to Neon object
+storage, which keeps the HD originals and anything uploaded since the copy. The
+graduation album's `web/` and `thumb/` files are copied as they are; its
+`original/` files stay in Neon only. The copy holds about 105 MB, to keep the
+account's R2 storage well under 3 GB.
