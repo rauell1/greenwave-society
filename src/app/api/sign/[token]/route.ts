@@ -55,7 +55,7 @@ export async function POST(
     if (!sig)                     return NextResponse.json({ error: "Invalid link" },      { status: 404 });
     if (sig.status !== "pending") return NextResponse.json({ error: "Already responded" }, { status: 409 });
 
-    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
+    const ip = request.headers.get("cf-connecting-ip")?.trim() ?? request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
             ?? request.headers.get("x-real-ip")
             ?? "unknown";
     const signedAt = new Date();

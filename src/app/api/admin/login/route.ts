@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Incorrect password." }, { status: 401 });
     }
 
-    const forwardedIp = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+    const forwardedIp = request.headers.get("cf-connecting-ip")?.trim() || request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
     const ipHash = forwardedIp ? createHash("sha256").update(forwardedIp).digest("hex") : undefined;
     const token = await createAdminSession(user.id, { userAgent: request.headers.get("user-agent") ?? undefined, ipHash });
 

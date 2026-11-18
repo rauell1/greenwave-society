@@ -15,7 +15,7 @@ Variables: `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_ENABLE_ANA
 
 ## Worker secrets
 
-Every runtime variable in `.env.example`, set with `npx wrangler secret put NAME` or in the Cloudflare dashboard. Also set `TRUST_CLOUDFLARE_IP=true` so the rate limiter keys on the real client address.
+Every runtime variable in `.env.example`, set with `npx wrangler secret put NAME` or in the Cloudflare dashboard.
 
 ## Differences from Vercel
 
