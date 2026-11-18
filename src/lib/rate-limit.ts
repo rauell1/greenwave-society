@@ -105,10 +105,15 @@ async function consumeOnWorkers(key: string, limit: number, now: Date, resetAt: 
   return { allowed: entry.count <= limit, remaining: Math.max(0, limit - entry.count), resetAt: new Date(entry.resetAt).getTime() };
 }
 
+/**
+ * The visitor's IP for rate limiting. Cloudflare sets cf-connecting-ip and a
+ * client cannot change it. X-Forwarded-For is only a fallback for local runs:
+ * on Cloudflare a client can send its own value, which Cloudflare keeps in
+ * front of the real address, so trusting its first entry let anyone pick a
+ * fresh "IP" for every attempt.
+ */
 export function getClientIdentifier(request: NextRequest): string {
-  if (process.env.VERCEL) return request.headers.get("x-vercel-forwarded-for")?.split(",")[0]?.trim() || request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-  if (process.env.TRUST_CLOUDFLARE_IP === "true") return request.headers.get("cf-connecting-ip") || "unknown";
-  return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || request.headers.get("x-real-ip") || "unknown";
+  return request.headers.get("cf-connecting-ip")?.trim() || request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || request.headers.get("x-real-ip") || "unknown";
 }
 
 export function rateLimitUnavailable(): NextResponse {

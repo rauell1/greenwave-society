@@ -34,12 +34,10 @@ again in the contact route. Responses include remaining-limit and reset headers.
 
 ## Trusted proxy headers
 
-On Vercel the client identifier uses `x-vercel-forwarded-for`, with the platform
-forwarded header as fallback. `cf-connecting-ip` is used only when
-`TRUST_CLOUDFLARE_IP=true`; enable that only when direct access to the origin is
-blocked. On other hosts, configure the reverse proxy to replace client-supplied
-`x-forwarded-for` and `x-real-ip` headers. Unknown clients share an `unknown`
-bucket, so correct proxy configuration matters.
+The client identifier is `cf-connecting-ip`, which Cloudflare sets and a client
+cannot change. `x-forwarded-for` and `x-real-ip` are only fallbacks for local
+runs: behind Cloudflare a client can send its own `x-forwarded-for`, which is
+kept in front of the real address. Unknown clients share an `unknown` bucket.
 
 At high traffic volumes, monitor database latency and consider a dedicated
 shared cache. The database implementation is appropriate for the current site

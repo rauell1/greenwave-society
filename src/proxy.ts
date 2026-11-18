@@ -30,7 +30,7 @@ function getSecurityHeaders(): Record<string, string> {
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: https: https://www.googletagmanager.com https://*.google-analytics.com",
       "font-src 'self' data:",
-      "connect-src 'self' https://greenwavesociety.org https://*.vercel.app https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://cloudflareinsights.com",
+      "connect-src 'self' https://greenwavesociety.org https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://cloudflareinsights.com",
       "worker-src 'self' blob:",
       "frame-ancestors 'none'",
     ].join("; "),
