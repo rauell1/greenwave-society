@@ -38,8 +38,10 @@ export const metadata: Metadata = {
 
 
 
-// Refresh at least every minute, so photos changed in admin show even if an on-demand refresh is missed.
-export const revalidate = 60;
+// Photo changes in admin refresh this page at once (revalidatePath); the
+// 10 minute refresh is a backstop in case that is missed. Every minute made a
+// visitor wait for a rebuild roughly once a minute.
+export const revalidate = 600;
 
 export default async function GalleryPage() {
   const galleryImages = await getPublicGalleryImages();
