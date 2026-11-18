@@ -31,7 +31,9 @@ jobs:
     - name: Security Scan (npm audit)
       # Gate on what ships. Dev-only tooling (eslint-config-next pulls in braces,
       # which has no patched release) is reviewed separately with plain `npm audit`.
-      run: npm audit --omit=dev --audit-level=high
+      # Same as `npm audit --omit=dev --audit-level=high`, minus the advisories
+      # listed with a reason in scripts/audit-check.mjs.
+      run: node scripts/audit-check.mjs
 
     - name: Check Prisma Schema
       run: npx prisma validate
