@@ -8,6 +8,7 @@ import { AttendeeRsvpForm } from "./AttendeeRsvpForm";
 import { GraduationMomentsGallery } from "./GraduationMomentsGallery";
 import { GraduationVendorRedirectHelper } from "./GraduationVendorRedirectHelper";
 import { ShareableLinkBar } from "@/components/events/ShareableLinkBar";
+import { getPublicImagePlacements } from "@/lib/cms/placements";
 import {
   Calendar,
   Clock,
@@ -53,7 +54,10 @@ export const metadata: Metadata = {
   },
 };
 
-export default function GraduationCohortPage() {
+export const revalidate = 60;
+
+export default async function GraduationCohortPage() {
+  const feature = (await getPublicImagePlacements()).graduationFeature;
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Event",
@@ -165,8 +169,8 @@ export default function GraduationCohortPage() {
           <div className="max-w-5xl mx-auto">
             <div className="relative aspect-[16/9] sm:aspect-[21/9] w-full rounded-2xl sm:rounded-3xl overflow-hidden border border-border/80 shadow-2xl bg-slate-950 group">
               <Image
-                src="https://greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_290.webp"
-                alt="The 12 Certified Graduands of YPG: Young Person's Guide to Systems Change Cohort I Assembled at Ubunifu Hub, Nairobi"
+                src={feature?.src || "https://greenwavesociety.org/images/events/graduation-cohort-1/web/graduation_cohort_1_290.webp"}
+                alt={feature?.alt || "The 12 Certified Graduands of YPG: Young Person's Guide to Systems Change Cohort I Assembled at Ubunifu Hub, Nairobi"}
                 fill
                 priority
                 sizes="(max-width: 1280px) 100vw, 1200px"

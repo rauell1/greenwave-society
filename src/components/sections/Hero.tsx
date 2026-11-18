@@ -121,7 +121,7 @@ export function Hero({
           </div>
 
           {/* Right Image Collage Column */}
-          <div className="lg:col-span-5 relative w-full h-[400px] sm:h-[500px] lg:h-[600px] flex items-center justify-center">
+          <div className="lg:col-span-5 relative w-full max-w-md mx-auto aspect-[3/4] lg:max-w-none lg:aspect-auto lg:h-[600px] flex items-center justify-center">
             <FadeIn direction="left" delay={0.2} className="w-full h-full relative">
               {/* Backing structural shape */}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[85%] h-[85%] rounded-[3rem] border-2 border-dashed border-primary/20 rotate-6" />

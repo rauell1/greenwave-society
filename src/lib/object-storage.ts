@@ -84,6 +84,33 @@ export async function deleteObject(key: string): Promise<void> {
   if (!response.ok && response.status !== 404) throw new Error(`Object storage delete failed (${response.status})`);
 }
 
+function xmlDecode(value: string): string {
+  return value.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&amp;/g, "&");
+}
+
+/**
+ * Every object key under a prefix (S3 ListObjectsV2, followed page by page).
+ * Parsed with regular expressions because Workers have no XML parser.
+ */
+export async function listObjectKeys(prefix: string, maxKeys = 10000): Promise<string[]> {
+  const storage = requireConfig();
+  const keys: string[] = [];
+  let token: string | undefined;
+  do {
+    const url = new URL(`${storage.endpoint}/${encodeURIComponent(storage.bucket)}`);
+    url.searchParams.set("list-type", "2");
+    url.searchParams.set("prefix", prefix);
+    if (token) url.searchParams.set("continuation-token", token);
+    const response = await storage.client.fetch(url.toString(), { method: "GET" });
+    if (!response.ok) throw new Error(`Object storage listing failed (${response.status})`);
+    const xml = await response.text();
+    for (const match of xml.matchAll(/<Key>([^<]*)<\/Key>/g)) keys.push(xmlDecode(match[1]));
+    const truncated = /<IsTruncated>true<\/IsTruncated>/.test(xml);
+    token = truncated ? xmlDecode(xml.match(/<NextContinuationToken>([^<]*)<\/NextContinuationToken>/)?.[1] ?? "") || undefined : undefined;
+  } while (token && keys.length < maxKeys);
+  return keys;
+}
+
 /** Same-origin URL that serves a stored media object (see app/media-files/[...path]/route.ts). */
 export const MEDIA_FILES_PREFIX = "/media-files/";
 export function mediaFileUrl(pathname: string): string {

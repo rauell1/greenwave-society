@@ -4,8 +4,9 @@ import { cache } from "react";
 import { getDb } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { revalidatePath } from "next/cache";
-import { readFile, readdir } from "node:fs/promises";
+import { readdir } from "node:fs/promises";
 import path from "node:path";
+import { GRADUATION_WEB_IMAGES, listAllPhotos } from "./repo-images";
 import type { GalleryImage } from "@/components/gallery/GalleryGrid";
 
 export interface CuratedGalleryItem {
@@ -107,31 +108,12 @@ export async function getAdminGalleryConfig(): Promise<{
 }> {
   const map = new Map<string, AvailableGalleryImage>();
 
-  // 1. Load from docs/image-manifest.json (authoritative CDN inventory)
-  try {
-    const manifestPath = path.join(process.cwd(), "docs/image-manifest.json");
-    const manifestRaw = await readFile(manifestPath, "utf-8");
-    const manifestFiles = JSON.parse(manifestRaw) as string[];
-    for (const file of manifestFiles) {
-      const src = `/images/${file}`;
-      map.set(src, { src, filename: file, source: "repo" });
-    }
-  } catch (err) {
-    logger.warn("Could not read image-manifest.json for gallery", { err: String(err) });
+  // 1. Every stored photo: site photos and uploads (src/lib/cms/repo-images.ts)
+  for (const photo of await listAllPhotos()) {
+    map.set(photo.src, { src: photo.src, filename: photo.filename, source: photo.source });
   }
-
-  // 1b. Graduation Ceremony Photos
-  try {
-    const gradPath = path.join(process.cwd(), "docs/graduation-photos-manifest.json");
-    const gradRaw = await readFile(gradPath, "utf-8");
-    const gradItems = JSON.parse(gradRaw);
-    for (const item of gradItems) {
-      if (!map.has(item.webUrl)) {
-        map.set(item.webUrl, { src: item.webUrl, filename: item.filename, source: "repo" });
-      }
-    }
-  } catch {
-    // Optional manifest
+  for (const { src, filename } of GRADUATION_WEB_IMAGES) {
+    if (!map.has(src)) map.set(src, { src, filename, source: "repo" });
   }
 
   // 4. Read posters from public/posters
@@ -155,27 +137,6 @@ export async function getAdminGalleryConfig(): Promise<{
       const src = `/posters/${file}`;
       map.set(src, { src, filename: file, source: "poster" });
     }
-  }
-
-  // 5. Blob / external uploads from database
-  try {
-    const mediaAssets = await getDb().cmsMediaAsset.findMany({
-      where: { status: "active" },
-      select: { url: true, filename: true },
-      take: 1000,
-      orderBy: { createdAt: "desc" },
-    });
-    for (const asset of mediaAssets) {
-      if (!map.has(asset.url)) {
-        map.set(asset.url, {
-          src: asset.url,
-          filename: asset.filename,
-          source: "blob",
-        });
-      }
-    }
-  } catch (err) {
-    logger.warn("Could not query cmsMediaAsset for gallery", { err: String(err) });
   }
 
   const available = Array.from(map.values());

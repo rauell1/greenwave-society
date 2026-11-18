@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getCurrentAdmin } from "@/lib/auth/guards";
 import { hasPermission } from "@/lib/auth/policy";
 import { PERMISSIONS } from "@/lib/auth/permissions";
-import { getPublicImagePlacements, getAvailableCmsImages, DEFAULT_PLACEMENTS } from "@/lib/cms/placements";
+import { getAdminPlacements, getAvailableCmsImages } from "@/lib/cms/placements";
 import PlacementsManager from "./PlacementsManager";
 
 export const metadata: Metadata = {
@@ -18,8 +18,8 @@ export default async function PlacementsPage() {
     redirect("/admin/dashboard");
   }
 
-  const [currentPlacements, availableImages] = await Promise.all([
-    getPublicImagePlacements(),
+  const [{ placements: currentPlacements, slots }, availableImages] = await Promise.all([
+    getAdminPlacements(),
     getAvailableCmsImages(),
   ]);
 
@@ -34,7 +34,7 @@ export default async function PlacementsPage() {
 
       <PlacementsManager
         initialPlacements={currentPlacements}
-        defaultPlacements={DEFAULT_PLACEMENTS}
+        defaultPlacements={slots}
         availableImages={availableImages}
         canUpdate={hasPermission(admin, PERMISSIONS.CONTENT_UPDATE)}
         canUploadMedia={hasPermission(admin, PERMISSIONS.MEDIA_UPLOAD)}

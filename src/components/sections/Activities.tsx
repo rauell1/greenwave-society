@@ -5,8 +5,20 @@ import { Badge } from "@/components/ui/badge";
 import { FadeIn } from "@/components/ui/fade-in";
 
 import { DEFAULT_ACTIVITIES, type Activity } from "@/lib/cms/activity-defaults";
+import { activityPlacement } from "@/lib/cms/placement-keys";
 
-export function Activities({ activities = DEFAULT_ACTIVITIES }: { activities?: Activity[] }) {
+export function Activities({
+  activities = DEFAULT_ACTIVITIES,
+  placements,
+}: {
+  activities?: Activity[];
+  /** Photos picked on the admin Placements page replace the activity's own image. */
+  placements?: Record<string, { src: string; alt: string }>;
+}) {
+  activities = activities.map((activity) => {
+    const placement = activity.imageUrl ? activityPlacement(placements, activity) : undefined;
+    return placement?.src ? { ...activity, imageUrl: placement.src, imageAlt: placement.alt || activity.imageAlt } : activity;
+  });
   return (
     <section id="activities" className="py-24 sm:py-32 bg-secondary/20 relative overflow-hidden">
       {/* Decorative background shape */}
@@ -55,7 +67,7 @@ export function Activities({ activities = DEFAULT_ACTIVITIES }: { activities?: A
                   {/* Right Column: Content Card */}
                   <div className="flex-1 bg-background rounded-[1.5rem] border border-primary/10 overflow-hidden hover:shadow-[0_20px_50px_oklch(var(--primary)/5%)] transition-all duration-300 group-hover:border-primary/20 flex flex-col">
                     {a.imageUrl && (
-                      <div className="relative aspect-[16/9] sm:aspect-[21/9] w-full bg-muted overflow-hidden">
+                      <div className="relative aspect-[21/9] w-full bg-muted overflow-hidden">
                         <Image
                           src={a.imageUrl}
                           alt={a.imageAlt || a.title}

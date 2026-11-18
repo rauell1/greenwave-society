@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { authorizeRoute } from "@/lib/auth/route-authorization";
 import { PERMISSIONS } from "@/lib/auth/permissions";
-import { getPublicImagePlacements, getAvailableCmsImages, saveImagePlacements, DEFAULT_PLACEMENTS } from "@/lib/cms/placements";
+import { getAdminPlacements, getAvailableCmsImages, saveImagePlacements, DEFAULT_PLACEMENTS } from "@/lib/cms/placements";
 import { AUDIT_ACTIONS, logAuditEvent } from "@/lib/audit/audit-service";
 import { IMAGE_SRC_HINT, isAllowedImageSrc } from "@/lib/media/image-src";
 
@@ -9,14 +9,14 @@ export async function GET() {
   const auth = await authorizeRoute(PERMISSIONS.CONTENT_READ);
   if (!auth.ok) return auth.response;
 
-  const [currentPlacements, availableImages] = await Promise.all([
-    getPublicImagePlacements(),
+  const [{ placements: currentPlacements, slots }, availableImages] = await Promise.all([
+    getAdminPlacements(),
     getAvailableCmsImages(),
   ]);
 
   return NextResponse.json({
     placements: currentPlacements,
-    defaultPlacements: DEFAULT_PLACEMENTS,
+    defaultPlacements: slots,
     availableImages,
   });
 }
@@ -27,10 +27,18 @@ export async function PUT(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { placements } = body as { placements: Record<string, { src: string; alt: string }> };
+    const { placements: submitted } = body as { placements: Record<string, { src?: unknown; alt?: unknown }> };
 
-    if (!placements || typeof placements !== "object") {
+    if (!submitted || typeof submitted !== "object") {
       return NextResponse.json({ error: "Invalid placements object" }, { status: 400 });
+    }
+    // A missing description is saved as empty (the page then uses the slot's default text).
+    const placements: Record<string, { src: string; alt: string }> = {};
+    for (const [key, value] of Object.entries(submitted)) {
+      placements[key] = {
+        src: typeof value?.src === "string" ? value.src : (value?.src as string),
+        alt: typeof value?.alt === "string" ? value.alt : "",
+      };
     }
 
     // An image from a host next/image cannot load breaks every page that shows the slot.

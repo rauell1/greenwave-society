@@ -1,4 +1,6 @@
 export interface Activity {
+  /** CMS slug of the activity entry; absent for the built-in defaults. */
+  slug?: string;
   title: string;
   desc: string;
   date: string;

@@ -218,6 +218,7 @@ export const getPublicHomepageContent = cache(async (): Promise<PublicHomepageCo
         if (!metadata.success) return [];
         return [
           {
+            slug: entry.slug,
             title: entry.title,
             desc: entry.excerpt || entry.body,
             date: metadata.data.date,
