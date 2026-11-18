@@ -9,8 +9,15 @@ Sentry.init({
 
   environment: process.env.NODE_ENV,
 
-  // Define how likely traces are sampled. Full sampling in dev; 20% in production to control volume/cost.
-  tracesSampleRate: process.env.NODE_ENV === "production" ? 0.2 : 1,
+  // Define how likely traces are sampled. Full sampling in dev; 10% in production:
+  // tracing adds CPU time to each request, which counts against the Workers limit.
+  // Errors are still reported in full.
+  tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1,
+
+  // The runtime module hooks are not available on Cloudflare Workers; trying to
+  // install them logs "Failed to register diagnostics-channel injection hooks"
+  // on every cold start.
+  enableRuntimeChannelInjection: false,
 
   dataCollection: {
     // To disable sending user data and HTTP bodies, uncomment the lines below. For more info visit:

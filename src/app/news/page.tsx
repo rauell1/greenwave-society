@@ -54,7 +54,9 @@ export const metadata: Metadata = {
   },
 };
 
-export const revalidate = 60;
+// Admin edits refresh these pages at once (src/lib/cms/revalidate.ts and the
+// placement and gallery actions); the hourly refresh is only a backstop.
+export const revalidate = 3600;
 
 export default async function NewsPage() {
   const articles = await getPublishedNews();

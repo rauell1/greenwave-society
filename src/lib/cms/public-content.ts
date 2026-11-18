@@ -6,6 +6,7 @@ import { DEFAULT_ACTIVITIES, type Activity } from "./activity-defaults";
 import { activityMetadataSchema, impactStatsSchema, type ImpactStats } from "./content";
 import { DEFAULT_SITE_PAGES } from "./site-pages";
 import { logger } from "@/lib/logger";
+import { fallbackDuringBuild } from "@/lib/cms/fallback";
 
 function parseMetadata(value: string | null): Record<string, unknown> | null {
   try {
@@ -317,7 +318,7 @@ export const getPublicHomepageContent = cache(async (): Promise<PublicHomepageCo
     return result;
   } catch (error) {
     logger.error("Unable to load published homepage content", error as Error);
-    return fallback;
+    return fallbackDuringBuild(error, fallback);
   }
 });
 
@@ -346,7 +347,7 @@ export const getPublicPageContent = cache(
       logger.warn(`Could not load CMS page content for slug '${slug}', using fallback`, {
         error: String(error),
       });
-      return fallback;
+      return fallbackDuringBuild(error, fallback);
     }
   }
 );

@@ -17,10 +17,23 @@ describe("published homepage content", () => {
     expect(content.activities.map(activity => activity.date)).toEqual(["2026-10-01", "2026-01-01"]);
     expect(mocks.find.mock.calls[0][0].where).toMatchObject({ status: "published", publishedAt: { not: null } });
   });
-  it("keeps the existing website usable for malformed data and database outages", async () => {
+  it("keeps the existing website usable for malformed data", async () => {
     mocks.find.mockResolvedValue([{ type: "impact", slug: "impact-stats", metadata: "{invalid" }]);
     expect((await getPublicHomepageContent()).impact).toEqual(IMPACT_STATS);
+  });
+
+  it("uses the defaults for a database outage while the site is built", async () => {
+    vi.stubEnv("NEXT_PHASE", "phase-production-build");
+    try {
+      mocks.find.mockRejectedValue(new Error("offline"));
+      expect((await getPublicHomepageContent()).activities.length).toBeGreaterThan(0);
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
+  it("throws for a database outage at runtime, so the cached page is kept", async () => {
     mocks.find.mockRejectedValue(new Error("offline"));
-    expect((await getPublicHomepageContent()).activities.length).toBeGreaterThan(0);
+    await expect(getPublicHomepageContent()).rejects.toThrow("offline");
   });
 });

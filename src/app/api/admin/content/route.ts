@@ -1,3 +1,4 @@
+import { revalidatePublicContent } from "@/lib/cms/revalidate";
 import { NextRequest, NextResponse } from "next/server";
 import { authorizeRoute } from "@/lib/auth/route-authorization";
 import { PERMISSIONS } from "@/lib/auth/permissions";
@@ -44,5 +45,6 @@ export async function POST(request: NextRequest) {
     return created;
   });
   await logAuditEvent({ action: AUDIT_ACTIONS.CONTENT_CREATED, actor: admin.email, actorUserId: admin.id, resourceType: "cms_content", resourceId: item.id, outcome: "SUCCESS", afterState: { type: item.type, slug: item.slug, title: item.title, status: item.status } });
+  revalidatePublicContent(item.slug);
   return NextResponse.json({ item }, { status: 201 });
 }
