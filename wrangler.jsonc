@@ -38,7 +38,9 @@
   // Page cache for open-next.config.ts. The deploy creates the bucket if it
   // does not exist (the Cloudflare API token needs Workers R2 Storage: Edit).
   "r2_buckets": [
-    { "binding": "NEXT_INC_CACHE_R2_BUCKET", "bucket_name": "greenwave-next-cache" }
+    { "binding": "NEXT_INC_CACHE_R2_BUCKET", "bucket_name": "greenwave-next-cache" },
+    // Web-sized site photos (cloudflare-worker.ts); HD originals stay in Neon.
+    { "binding": "SITE_IMAGES", "bucket_name": "greenwave-site-images" }
   ],
   // Tag cache for revalidatePath/revalidateTag (open-next.config.ts).
   "kv_namespaces": [

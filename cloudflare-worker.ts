@@ -32,6 +32,11 @@ type Env = {
   AWS_REGION?: string;
   OBJECT_STORAGE_BUCKET?: string;
   IMAGES?: ImagesBinding;
+  SITE_IMAGES?: SiteImageBucket;
+};
+/** The parts of an R2 bucket binding used here. */
+type SiteImageBucket = {
+  get(key: string): Promise<{ body: ReadableStream; size: number; httpMetadata?: { contentType?: string } } | null>;
 };
 type Context = { waitUntil(promise: Promise<unknown>): void };
 
@@ -101,17 +106,29 @@ async function serveSiteImage(request: Request, image: StoredImageRequest, env: 
   const cached = await cache.match(cacheKey);
   if (cached) return head(cached);
 
-  const storage = storageClient(env);
-  if (!storage) {
-    // Not configured here: fall back to the Next.js route.
-    const route = siteImageRoute(new URL(request.url));
-    return head(await openNextWorker.fetch(new Request(new URL(route!, request.url)), env, ctx));
+  // Web-sized copies (WebP, at most 1600px wide) live in the R2 bucket bound
+  // as SITE_IMAGES, next to the Worker. The HD originals stay in Neon object
+  // storage, which is also used for anything not copied to R2 (for example
+  // photos uploaded in the admin since the copy).
+  let source: { body: ReadableStream; type: string; length: string | null } | null = null;
+  const copy = env.SITE_IMAGES ? await env.SITE_IMAGES.get(image.key) : null;
+  if (copy) {
+    source = { body: copy.body, type: copy.httpMetadata?.contentType || "application/octet-stream", length: String(copy.size) };
+  } else {
+    const storage = storageClient(env);
+    if (!storage) {
+      // Not configured here: fall back to the Next.js route.
+      const route = siteImageRoute(new URL(request.url));
+      return head(await openNextWorker.fetch(new Request(new URL(route!, request.url)), env, ctx));
+    }
+    const objectUrl = `${storage.endpoint}/${encodeURIComponent(storage.bucket)}/${image.key.split("/").map(encodeURIComponent).join("/")}`;
+    const fetched = await storage.client.fetch(objectUrl, { method: "GET" });
+    if (fetched.status === 404) return new Response("Not found", { status: 404 });
+    if (!fetched.ok || !fetched.body) return new Response("Image unavailable", { status: 502 });
+    source = { body: fetched.body, type: fetched.headers.get("content-type") || "application/octet-stream", length: fetched.headers.get("content-length") };
   }
-  const objectUrl = `${storage.endpoint}/${encodeURIComponent(storage.bucket)}/${image.key.split("/").map(encodeURIComponent).join("/")}`;
-  const original = await storage.client.fetch(objectUrl, { method: "GET" });
-  if (original.status === 404) return new Response("Not found", { status: 404 });
-  if (!original.ok || !original.body) return new Response("Image unavailable", { status: 502 });
-  const type = original.headers.get("content-type") || "application/octet-stream";
+  const original = { body: source.body, headers: new Headers({ "content-type": source.type, ...(source.length ? { "content-length": source.length } : {}) }) };
+  const type = source.type;
 
   let response: Response | null = null;
   if (image.width && env.IMAGES && /^image\/(jpeg|png|webp)$/.test(type)) {
