@@ -54,7 +54,8 @@ export const metadata: Metadata = {
   },
 };
 
-export const revalidate = 60;
+// Admin changes refresh this page at once; the 10 minute refresh is a backstop.
+export const revalidate = 600;
 
 export default async function GraduationCohortPage() {
   const feature = (await getPublicImagePlacements()).graduationFeature;

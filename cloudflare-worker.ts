@@ -111,7 +111,9 @@ async function serveSiteImage(request: Request, image: StoredImageRequest, env: 
   // storage, which is also used for anything not copied to R2 (for example
   // photos uploaded in the admin since the copy).
   let source: { body: ReadableStream; type: string; length: string | null } | null = null;
-  const copy = env.SITE_IMAGES ? await env.SITE_IMAGES.get(image.key) : null;
+  // The copies are WebP, so a browser that does not accept WebP gets the
+  // original from Neon instead.
+  const copy = env.SITE_IMAGES && webp ? await env.SITE_IMAGES.get(image.key) : null;
   if (copy) {
     source = { body: copy.body, type: copy.httpMetadata?.contentType || "application/octet-stream", length: String(copy.size) };
   } else {

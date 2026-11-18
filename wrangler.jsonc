@@ -9,10 +9,11 @@
   "main": "cloudflare-worker.ts",
   "compatibility_date": "2026-11-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
-  // Run the Worker near its database and APIs rather than near each visitor.
-  // Without this, every query from a page in Nairobi would cross to the
-  // database region and back, which is slower than Vercel's single region.
-  "placement": { "mode": "smart" },
+  // No Smart Placement: the public pages are served from the page cache, so
+  // the Worker runs at the visitor's nearest Cloudflare location (Nairobi for
+  // most visitors). With Smart Placement it ran in London, adding that round
+  // trip to every page, cached or not. Database queries (admin pages, page
+  // refreshes) go through Hyperdrive, which keeps the connections warm.
   "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
   // Daily at 05:00 UTC (08:00 EAT): scheduled event emails.
   "triggers": { "crons": ["0 5 * * *"] },
