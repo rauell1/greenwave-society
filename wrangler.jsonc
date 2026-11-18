@@ -1,6 +1,9 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "greenwave-society",
+  // The Cloudflare account (not a secret). Set here so a deploy does not
+  // depend on the CLOUDFLARE_ACCOUNT_ID repository secret.
+  "account_id": "0ea45b97dde8b01ea8d1a07fd58165c9",
   // OpenNext refreshes stale cached pages (revalidate) by calling this Worker
   // through this binding; without it the refresh is skipped and every
   // request renders the page again.
