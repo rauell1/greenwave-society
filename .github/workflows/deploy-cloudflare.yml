@@ -44,3 +44,6 @@ jobs:
         run: npx wrangler deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          # The account ID is not a secret (also in wrangler.jsonc). Set here so
+          # a wrong CLOUDFLARE_ACCOUNT_ID repository secret cannot break a deploy.
+          CLOUDFLARE_ACCOUNT_ID: 0ea45b97dde8b01ea8d1a07fd58165c9
