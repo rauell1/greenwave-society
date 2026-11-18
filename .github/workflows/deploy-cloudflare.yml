@@ -15,8 +15,6 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    # The Cloudflare token is saved as a secret of the Production environment.
-    environment: Production
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v5
