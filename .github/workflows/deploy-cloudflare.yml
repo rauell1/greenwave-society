@@ -40,6 +40,19 @@ jobs:
           NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL }}
           NEXT_PUBLIC_ENABLE_ANALYTICS: ${{ vars.NEXT_PUBLIC_ENABLE_ANALYTICS }}
           NEXT_PUBLIC_GA_MEASUREMENT_ID: ${{ vars.NEXT_PUBLIC_GA_MEASUREMENT_ID }}
+      # Shows whether the token Cloudflare receives is valid (token ID and
+      # status from Cloudflare, plus its length and whether it holds spaces or
+      # line breaks). The token itself is never printed.
+      - name: Check Cloudflare token
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          t="$CLOUDFLARE_API_TOKEN"
+          echo "length: ${#t}"
+          case "$t" in *[[:space:]]*) echo "contains whitespace: yes";; *) echo "contains whitespace: no";; esac
+          case "$t" in Bearer*|bearer*) echo "starts with Bearer: yes";; *) echo "starts with Bearer: no";; esac
+          curl -s -H "Authorization: Bearer $t" https://api.cloudflare.com/client/v4/user/tokens/verify \
+            | python3 -c 'import json,sys; r=json.load(sys.stdin); print("verify:", r.get("success"), (r.get("result") or {}).get("id"), (r.get("result") or {}).get("status"), [e.get("code") for e in r.get("errors") or []], [e.get("message") for e in r.get("errors") or []])'
       - name: Deploy
         run: npx wrangler deploy
         env:
