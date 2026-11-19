@@ -89,8 +89,9 @@ checks complement manual browser checks; they do not validate live payments.
 
 ## Deployment
 
-Vercel uses its native build output. Self-hosted deployments use `npm run build`
-and `npm start`; this project does not produce a standalone server bundle.
+Production runs on Cloudflare Workers through the OpenNext adapter.
+`.github/workflows/deploy-cloudflare.yml` builds and deploys every push to `main`
+(see [Cloudflare deployment](docs/cloudflare-deployment.md)).
 Apply the additive shared-rate-limit migration **before deploying this release**:
 
 ```powershell
@@ -112,3 +113,34 @@ Operational references:
 
 Keep secrets in local environment files or the deployment platform. Environment
 files are ignored by Git; `.env.example` contains placeholders only.
+
+## Project information
+
+| | |
+|---|---|
+| Live site | https://greenwavesociety.org |
+| Hosting | Cloudflare Workers |
+| Default branch | `main` |
+| Repository | Public |
+
+### Stack
+
+- Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, Radix UI
+- Prisma 7 with Neon PostgreSQL through Cloudflare Hyperdrive
+- Cloudflare R2 and Images for photos
+- Resend email, M-PESA payments, Sentry
+- Vitest for tests
+
+### Deployment
+
+Production runs on Cloudflare Workers at https://greenwavesociety.org. `.github/workflows/deploy-cloudflare.yml` builds and deploys on every push to `main`, using the `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` repository secrets. Public build-time values are repository variables; runtime secrets are Worker secrets.
+
+### Contributing and security
+
+- How to set up, test and submit changes: [CONTRIBUTING.md](CONTRIBUTING.md)
+- How to report a vulnerability: [SECURITY.md](SECURITY.md)
+- Expected behaviour in project spaces: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+
+### Licence
+
+No open-source licence has been granted. The code, content and brand assets belong to the project owner and all rights are reserved. Ask the owner before reusing any part of this repository.
