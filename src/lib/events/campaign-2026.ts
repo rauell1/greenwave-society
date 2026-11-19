@@ -84,7 +84,7 @@ Questions: ${CAMPAIGN_CONTACT}`,
 
 // Posters live in public/posters/campaign-2026 and are shown on the event pages.
 export const EVENT_POSTERS: Record<string, { src: string; alt: string }> = {
-  "charity-walk": { src: "/posters/campaign-2026/charity-walk.jpg", alt: "Greenwave Charity Walk poster, Sunday 22 November 2026 (Postponed)" },
+  "charity-walk": { src: "/posters/campaign-2026/charity-walk.jpg", alt: "Greenwave Charity Walk poster, Sunday 22 November 2026" },
   "young-entrepreneurs-networking-brunch": { src: "/posters/campaign-2026/young-entrepreneurs-networking-brunch.jpg", alt: "Young Entrepreneurs Networking Brunch poster, Sunday 29 November 2026, 9:00 AM to 12:00 PM" },
   "skills-for-change-workshop": { src: "/posters/campaign-2026/skills-for-change-workshop.jpg", alt: "Skills for Change Workshop poster, Saturday 5 December 2026" },
   "sports-tournament": { src: "/posters/campaign-2026/sports-tournament.jpg", alt: "Greenwave Sports Tournament poster, Saturday 12 December 2026" },
