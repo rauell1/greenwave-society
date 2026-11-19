@@ -391,6 +391,7 @@ export async function getAvailableCmsImages(): Promise<AvailableCmsImage[]> {
   } catch {
     const defaultPosters = [
       "/posters/campaign-2026/charity-walk.jpg",
+      "/posters/campaign-2026/charity-walk-clean.jpg",
       "/posters/campaign-2026/young-entrepreneurs-networking-brunch.jpg",
       "/posters/campaign-2026/skills-for-change-workshop.jpg",
       "/posters/campaign-2026/sports-tournament.jpg",

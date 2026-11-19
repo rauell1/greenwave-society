@@ -8,6 +8,7 @@ import graduationManifest from "../../../docs/graduation-photos-manifest.json";
 import { getDb } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { listObjectKeys, mediaFileUrl, objectStorageConfigured } from "@/lib/object-storage";
+import { isAllowedImageSrc } from "@/lib/media/image-src";
 import { SITE_IMAGE_PREFIX } from "@/lib/site-images";
 
 /** Site photos in object storage, as "/images/<file>" paths with their filenames. */
@@ -76,7 +77,11 @@ export async function listAllPhotos(): Promise<LibraryPhoto[]> {
       take: 5000,
       orderBy: { createdAt: "desc" },
     });
-    for (const asset of assets) map.set(asset.url, { src: asset.url, filename: asset.filename, source: "blob" });
+    for (const asset of assets) {
+      if (isAllowedImageSrc(asset.url)) {
+        map.set(asset.url, { src: asset.url, filename: asset.filename, source: "blob" });
+      }
+    }
   } catch (err) {
     logger.warn("Could not query cmsMediaAsset for the photo library", { err: String(err) });
   }
