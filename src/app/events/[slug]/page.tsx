@@ -10,9 +10,11 @@ import { serializeJsonLd } from "@/lib/seo";
 import { eventHref, getPublicEvent, hasCustomEventPage } from "@/lib/events/public-events";
 import { formatNairobi, isTimeToBeConfirmed } from "@/lib/events/nairobi-time";
 import { getEventPoster } from "@/lib/events/posters";
+import { getEventPhotoAlbum } from "@/lib/events/event-albums";
 import Image from "next/image";
 import { EventRegistrationForm } from "./EventRegistrationForm";
 import { ShareEventLink } from "@/components/events/ShareEventLink";
+import { EventPhotoGallery } from "@/components/events/EventPhotoGallery";
 
 export const dynamic = "force-dynamic";
 
@@ -45,6 +47,7 @@ export default async function EventPage({ params }: Props) {
   const { event, window, placesLeft } = found;
   const timeTbc = isTimeToBeConfirmed(event.startsAt, event.endsAt);
   const poster = await getEventPoster(event);
+  const album = getEventPhotoAlbum(event);
   const sameDay = formatNairobi(event.startsAt, { dateStyle: "short" }) === formatNairobi(event.endsAt, { dateStyle: "short" });
   const closedMessage =
     event.status === "cancelled" ? "This event has been cancelled." :
@@ -98,6 +101,16 @@ export default async function EventPage({ params }: Props) {
               )}
             </aside>
           </div>
+          {album && (
+            <div className="mx-auto max-w-6xl px-4 sm:px-6">
+              <EventPhotoGallery
+                title={album.title}
+                subtitle={album.subtitle}
+                eventTitle={event.title}
+                photos={album.photos}
+              />
+            </div>
+          )}
         </main>
         <Footer />
         <ScrollToTop />
