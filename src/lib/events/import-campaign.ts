@@ -24,9 +24,10 @@ export async function importCampaignEvents(admin: { id: string; email: string })
   for (const event of await missingCampaignEvents()) {
     const startsAt = fromNairobiParts(event.date, event.startTime ?? "00:00")!;
     const endsAt = fromNairobiParts(event.date, event.endTime ?? "23:59")!;
+    const status = event.status ?? "published";
     await getDb().$transaction(async tx => {
       const row = await tx.cmsEvent.create({
-        data: { slug: event.slug, title: event.title, description: event.description, location: null, timezone: "Africa/Nairobi", startsAt, endsAt, status: "published", publishedAt: new Date(), createdById: admin.id, updatedById: admin.id },
+        data: { slug: event.slug, title: event.title, description: event.description, location: null, timezone: "Africa/Nairobi", startsAt, endsAt, status, publishedAt: status === "published" ? new Date() : null, createdById: admin.id, updatedById: admin.id },
       });
       await tx.auditLog.create({ data: { action: AUDIT_ACTIONS.EVENT_CREATED, actor: admin.email, actorUserId: admin.id, resourceType: "cms_event", resourceId: row.id, outcome: "SUCCESS", afterState: JSON.stringify({ slug: row.slug, title: row.title, status: row.status, source: "campaign-2026" }) } });
     });

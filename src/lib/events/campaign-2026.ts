@@ -12,6 +12,7 @@ export interface CampaignEvent {
   date: string; // YYYY-MM-DD in Africa/Nairobi
   startTime?: string; // HH:mm; omitted when the time is still to be confirmed
   endTime?: string;
+  status?: "draft" | "published";
   description: string;
 }
 
@@ -20,6 +21,7 @@ export const CAMPAIGN_2026_EVENTS: CampaignEvent[] = [
     slug: "charity-walk",
     title: "Greenwave Charity Walk",
     date: "2026-11-22",
+    status: "draft",
     description: `Walk with us for conservation, healthy living and accessible green spaces, then stay for a short environmental awareness session on conservation, air pollution and the importance of accessible green spaces.
 
 Open to fitness enthusiasts, environmental advocates, students, families, community groups and corporate teams.
