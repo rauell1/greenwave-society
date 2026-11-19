@@ -3,6 +3,7 @@ import "server-only";
 import { z } from "zod";
 import { getDb } from "@/lib/db";
 import { isAllowedImageSrc } from "@/lib/media/image-src";
+import { eventPlacementKey } from "@/lib/cms/placement-keys";
 import { POSTER_HEIGHT, POSTER_WIDTH, posterFor } from "./campaign-2026";
 
 // Admins replace or remove an event's poster from its admin page. The choice is stored as a CMS
@@ -37,21 +38,35 @@ function bundledPoster(event: { slug: string; title: string; startsAt: Date }): 
   return poster ? { ...poster, width: POSTER_WIDTH, height: POSTER_HEIGHT } : null;
 }
 
-function resolve(event: { slug: string; title: string; startsAt: Date }, stored: StoredPoster | null): EventPoster | null {
+function resolve(
+  event: { slug: string; title: string; startsAt: Date },
+  stored: StoredPoster | null,
+  placement?: { src?: string; alt?: string } | null,
+): EventPoster | null {
   if (stored && "hidden" in stored) return null;
   if (stored) return { src: stored.src, alt: stored.alt || `${event.title} poster`, width: stored.width ?? POSTER_WIDTH, height: stored.height ?? POSTER_HEIGHT };
+  if (placement?.src && isAllowedImageSrc(placement.src)) {
+    return { src: placement.src, alt: placement.alt || `${event.title} poster`, width: POSTER_WIDTH, height: POSTER_HEIGHT };
+  }
   return bundledPoster(event);
 }
 
 /** Posters for several events at once, keyed by event id (events without one are left out). */
 export async function getEventPosters(events: { id: string; slug: string; title: string; startsAt: Date }[]) {
-  const rows = events.length
-    ? await getDb().cmsContent.findMany({ where: { type: CONTENT_TYPE, slug: { in: events.map(event => event.id) } }, select: { slug: true, metadata: true } }).catch(() => [])
-    : [];
+  const [rows, placementRow] = events.length
+    ? await Promise.all([
+        getDb().cmsContent.findMany({ where: { type: CONTENT_TYPE, slug: { in: events.map(event => event.id) } }, select: { slug: true, metadata: true } }).catch(() => []),
+        getDb().cmsContent.findUnique({ where: { type_slug: { type: "placement", slug: "frontend-images" } }, select: { metadata: true } }).catch(() => null),
+      ])
+    : [[], null];
+  let frontendPlacements: Record<string, { src?: string; alt?: string }> = {};
+  try {
+    if (placementRow?.metadata) frontendPlacements = JSON.parse(placementRow.metadata) as Record<string, { src?: string; alt?: string }>;
+  } catch { /* ignore malformed placement JSON */ }
   const stored = new Map(rows.map(row => [row.slug, parseStored(row.metadata)]));
   const posters = new Map<string, EventPoster>();
   for (const event of events) {
-    const poster = resolve(event, stored.get(event.id) ?? null);
+    const poster = resolve(event, stored.get(event.id) ?? null, frontendPlacements[eventPlacementKey(event.id)]);
     if (poster) posters.set(event.id, poster);
   }
   return posters;

@@ -17,6 +17,10 @@ export function activityPlacementKey(activity: { title: string; slug?: string })
   return `activity:${slugify(activity.title) || "untitled"}`;
 }
 
+export function eventPlacementKey(eventId: string): string {
+  return `event:${eventId}`;
+}
+
 /** The title-based key used before activities were keyed by slug; still read so earlier saves keep working. */
 export function legacyActivityPlacementKey(activity: { title: string }): string {
   return `activity:${slugify(activity.title) || "untitled"}`;

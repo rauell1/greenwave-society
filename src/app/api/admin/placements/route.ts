@@ -46,7 +46,7 @@ export async function PUT(request: NextRequest) {
     const invalid = Object.entries(placements).filter(([key, value]) => {
       if (typeof value?.src !== "string" || typeof value.alt !== "string") return true;
       const src = value.src.trim();
-      return src ? !isAllowedImageSrc(src) : DEFAULT_PLACEMENTS[key]?.src !== "";
+      return src ? !isAllowedImageSrc(src) : (DEFAULT_PLACEMENTS[key]?.src !== "" && !key.startsWith("event:"));
     });
     if (invalid.length) {
       return NextResponse.json({ error: `These images cannot be used: ${invalid.map(([key]) => key).join(", ")}. ${IMAGE_SRC_HINT}` }, { status: 400 });

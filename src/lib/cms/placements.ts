@@ -8,8 +8,10 @@ import { readdir } from "node:fs/promises";
 import path from "node:path";
 import { fallbackDuringBuild } from "@/lib/cms/fallback";
 import { listAllPhotos } from "./repo-images";
-import { activityPlacement, activityPlacementKey, UNUSED_PLACEMENT_SLOTS } from "./placement-keys";
+import { activityPlacement, activityPlacementKey, eventPlacementKey, UNUSED_PLACEMENT_SLOTS } from "./placement-keys";
 import { getPublicHomepageContent } from "./public-content";
+import { getEventPosters } from "@/lib/events/posters";
+import { eventHref } from "@/lib/events/public-events";
 
 export interface PlacementSlotConfig {
   id: string;
@@ -257,8 +259,23 @@ const quoted = (text: string) => `"${text.trim()}"`;
  * admin can tell which photo they are replacing. Slots no page reads are left
  * out, and every Activities timeline photo gets its own slot.
  */
+async function listEventsForPlacements() {
+  try {
+    const db = getDb();
+    if (!db?.cmsEvent?.findMany) return [];
+    return await db.cmsEvent.findMany({
+      orderBy: { startsAt: "desc" },
+      take: 100,
+      select: { id: true, slug: true, title: true, status: true, startsAt: true },
+    });
+  } catch {
+    return [];
+  }
+}
+
 export async function getPlacementSlots(): Promise<Record<string, PlacementSlot>> {
-  const content = await getPublicHomepageContent();
+  const [content, events] = await Promise.all([getPublicHomepageContent(), listEventsForPlacements()]);
+  const eventPosters = events.length ? await getEventPosters(events) : new Map();
   const slots: Record<string, PlacementSlot> = {};
   for (const [key, slot] of Object.entries(DEFAULT_PLACEMENTS)) {
     if (!UNUSED_PLACEMENT_SLOTS.has(key)) slots[key] = { ...slot };
@@ -299,6 +316,19 @@ export async function getPlacementSlots(): Promise<Record<string, PlacementSlot>
       aspectRatio: "aspect-[21/9]",
     };
   }
+
+  for (const event of events) {
+    const poster = eventPosters.get(event.id);
+    slots[eventPlacementKey(event.id)] = {
+      name: `Event poster: ${quoted(event.title)}`,
+      section: "Events & Graduation",
+      description: `Poster for ${quoted(event.title)} (${event.status}) on /events and its event page.`,
+      src: poster?.src ?? "",
+      alt: poster?.alt ?? `${event.title} poster`,
+      route: eventHref(event.slug),
+      aspectRatio: "aspect-[4/5]",
+    };
+  }
   return slots;
 }
 
@@ -319,6 +349,11 @@ export async function getAdminPlacements(): Promise<{
     const picked = activityPlacement(saved, activity);
     if (picked) placements[key] = picked;
   }
+  for (const [key, slot] of Object.entries(slots)) {
+    if (key.startsWith("event:") && slot.src && !placements[key]?.src) {
+      placements[key] = { src: slot.src, alt: slot.alt };
+    }
+  }
   return { placements, slots };
 }
 
@@ -336,7 +371,7 @@ export async function getAvailableCmsImages(): Promise<AvailableCmsImage[]> {
     map.set(photo.src, { url: photo.src, filename: photo.filename, source: photo.source });
   }
 
-  // 4. Read posters in public/posters
+  // 4. Read posters in public/posters and public/posters/campaign-2026
   try {
     const postersDir = path.join(process.cwd(), "public/posters");
     const posterFiles = await readdir(postersDir);
@@ -344,6 +379,13 @@ export async function getAvailableCmsImages(): Promise<AvailableCmsImage[]> {
       if (/\.(png|jpe?g|webp)$/i.test(file)) {
         const url = `/posters/${file}`;
         map.set(url, { url, filename: file, source: "poster" });
+      }
+    }
+    const campaignFiles = await readdir(path.join(postersDir, "campaign-2026")).catch(() => [] as string[]);
+    for (const file of campaignFiles) {
+      if (/\.(png|jpe?g|webp)$/i.test(file)) {
+        const url = `/posters/campaign-2026/${file}`;
+        map.set(url, { url, filename: `campaign-2026/${file}`, source: "poster" });
       }
     }
   } catch {
@@ -396,6 +438,15 @@ export async function saveImagePlacements(
       updatedById: adminId,
     },
   });
+
+  const eventIdsWithPlacement = Object.entries(placements)
+    .filter(([key, value]) => key.startsWith("event:") && Boolean(value?.src?.trim()))
+    .map(([key]) => key.slice("event:".length));
+  if (eventIdsWithPlacement.length > 0) {
+    await db.cmsContent.deleteMany({
+      where: { type: "event-poster", slug: { in: eventIdsWithPlacement } },
+    });
+  }
 
   revalidatePath("/");
   revalidatePath("/team");
