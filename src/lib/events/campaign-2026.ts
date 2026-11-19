@@ -82,7 +82,7 @@ Questions: ${CAMPAIGN_CONTACT}`,
 
 // Posters live in public/posters/campaign-2026 and are shown on the event pages.
 export const EVENT_POSTERS: Record<string, { src: string; alt: string }> = {
-  "charity-walk": { src: "/posters/campaign-2026/charity-walk.jpg", alt: "Greenwave Charity Walk poster, Sunday 22 November 2026" },
+  "charity-walk": { src: "/posters/campaign-2026/charity-walk.jpg", alt: "Greenwave Charity Walk poster, Sunday 22 November 2026 (Postponed)" },
   "young-entrepreneurs-networking-brunch": { src: "/posters/campaign-2026/young-entrepreneurs-networking-brunch.jpg", alt: "Young Entrepreneurs Networking Brunch poster, Sunday 29 November 2026, 9:00 AM to 12:00 PM" },
   "skills-for-change-workshop": { src: "/posters/campaign-2026/skills-for-change-workshop.jpg", alt: "Skills for Change Workshop poster, Saturday 5 December 2026" },
   "sports-tournament": { src: "/posters/campaign-2026/sports-tournament.jpg", alt: "Greenwave Sports Tournament poster, Saturday 12 December 2026" },
@@ -92,10 +92,8 @@ export const EVENT_POSTERS: Record<string, { src: string; alt: string }> = {
 const TRIVIA_POSTER = { src: "/posters/campaign-2026/trivia-and-games-night.jpg", alt: "Trivia & Games Night poster, Wednesday 18 November 2026" };
 export const TRIVIA_DATE = "2026-11-18";
 
-// Posters are cropped above the poster's WHEN / WHERE / TICKETS strip (venue and time were
-// placeholders), so they are 1080x1125.
-export const POSTER_WIDTH = 1080;
-export const POSTER_HEIGHT = 1125;
+export const POSTER_WIDTH = 819;
+export const POSTER_HEIGHT = 1024;
 
 /** The campaign poster for an event: by slug, or the hand-made Trivia night by title and date. */
 export function posterFor(event: { slug: string; title: string; startsAt: Date }) {
