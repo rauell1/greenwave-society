@@ -28,5 +28,5 @@ export const publicAttendeeSchema = z.object({
 }).refine(value => value.registerAs !== "vendor" || Boolean(value.businessName && value.businessName.length >= 2), { message: "Enter your business name", path: ["businessName"] });
 export const attendanceSchema = z.object({ attendanceStatus: z.enum(["not_checked_in", "checked_in", "no_show"]) });
 export function registrationStatus(capacity: number | null, confirmedCount: number) { return capacity !== null && confirmedCount >= capacity ? "waitlisted" : "registered"; }
-const EVENT_TRANSITIONS: Record<string, readonly string[]> = { draft: ["published", "cancelled"], published: ["cancelled", "completed"], cancelled: [], completed: [] };
+const EVENT_TRANSITIONS: Record<string, readonly string[]> = { draft: ["published", "cancelled"], published: ["draft", "cancelled", "completed"], cancelled: [], completed: [] };
 export function canTransitionEvent(from: string, to: string) { return EVENT_TRANSITIONS[from]?.includes(to) ?? false; }

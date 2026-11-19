@@ -21,13 +21,13 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   }
   const careersAccessPromise = requireExecutiveCareersAccess(PERMISSIONS.CAREERS_READ);
   const canReadMembers = hasPermission(admin, PERMISSIONS.MEMBERS_READ);
-  const [enabledFeatures, careersAccess, executiveMember, pendingMembers] = await Promise.all([
+  const [enabledFeatures, careersAccess, executiveMember, pendingMembers, pendingCareers] = await Promise.all([
     getEnabledCmsFeatures(),
     careersAccessPromise,
     isExecutiveCommitteeMember(admin),
     canReadMembers ? getDb().memberRegistration.count({ where: { status: "pending" } }) : Promise.resolve(0),
+    careersAccessPromise.then((ok) => (ok ? getDb().careerApplication.count({ where: { status: "new" } }) : 0)),
   ]);
-  const pendingCareers = careersAccess ? await getDb().careerApplication.count({ where: { status: "new" } }) : 0;
 
   return (
     <div className="flex min-h-screen bg-gray-50">

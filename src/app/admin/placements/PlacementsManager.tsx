@@ -580,7 +580,7 @@ export default function PlacementsManager({
                       <button
                         key={img.url}
                         onClick={() => handleSelectImage(activePickerSlot, img.url)}
-                        className={`relative rounded-xl overflow-hidden border-2 text-left group transition-all aspect-video bg-slate-100 cursor-pointer ${
+                        className={`relative rounded-xl overflow-hidden border-2 text-left group transition-all aspect-video bg-slate-100 cursor-pointer [content-visibility:auto] [contain-intrinsic-size:180px] ${
                           isSelected ? "border-emerald-600 ring-2 ring-emerald-600/20" : "border-slate-200 hover:border-slate-400"
                         }`}
                       >

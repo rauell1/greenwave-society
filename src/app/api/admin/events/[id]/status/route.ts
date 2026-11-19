@@ -5,7 +5,7 @@ import { PERMISSIONS } from "@/lib/auth/permissions";
 import { getDb } from "@/lib/db";
 import { AUDIT_ACTIONS } from "@/lib/audit/audit-service";
 import { canTransitionEvent } from "@/lib/events/validation";
-const schema = z.object({ status: z.enum(["published", "cancelled", "completed"]) });
+const schema = z.object({ status: z.enum(["draft", "published", "cancelled", "completed"]) });
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const auth = await authorizeRoute(PERMISSIONS.EVENTS_PUBLISH); if (!auth.ok) return auth.response;
   const parsed = schema.safeParse(await request.json()); if (!parsed.success) return NextResponse.json({ error: "Invalid status" }, { status: 400 });

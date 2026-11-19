@@ -37,36 +37,51 @@ function fileName(key: string): string {
   return key.slice(key.lastIndexOf("/") + 1);
 }
 
+const OBJECT_LIST_TTL_MS = 5 * 60 * 1000;
+let cachedBucketPhotos: { expiresAt: number; items: LibraryPhoto[] } | undefined;
+
+async function listBucketPhotos(): Promise<LibraryPhoto[]> {
+  if (!objectStorageConfigured()) return [];
+  const now = Date.now();
+  if (cachedBucketPhotos && cachedBucketPhotos.expiresAt > now) {
+    return cachedBucketPhotos.items;
+  }
+  const items: LibraryPhoto[] = [];
+  const [images, media] = await Promise.allSettled([listObjectKeys(SITE_IMAGE_PREFIX), listObjectKeys("media/")]);
+  if (images.status === "fulfilled") {
+    for (const key of images.value) {
+      if (!PHOTO_EXTENSION.test(key) || DUPLICATE_SIZE_FOLDER.test(key)) continue;
+      items.push({ src: `/${key}`, filename: fileName(key), source: "repo" });
+    }
+  } else {
+    logger.warn("Could not list site photos in object storage", { err: String(images.reason) });
+  }
+  if (media.status === "fulfilled") {
+    for (const key of media.value) {
+      if (!PHOTO_EXTENSION.test(key)) continue;
+      items.push({ src: mediaFileUrl(key), filename: fileName(key), source: "blob" });
+    }
+  } else {
+    logger.warn("Could not list uploads in object storage", { err: String(media.reason) });
+  }
+  if (images.status === "fulfilled" || media.status === "fulfilled") {
+    cachedBucketPhotos = { expiresAt: now + OBJECT_LIST_TTL_MS, items };
+  }
+  return items;
+}
+
 /**
  * Every photo the admin pickers can offer: everything in the storage bucket
- * under images/ and media/, every upload recorded in the media library, and
- * the bundled manifest (used when the bucket cannot be listed).
+ * under images/ and media/ (cached for 5 minutes), every upload recorded in
+ * the media library, and the bundled manifest (used when the bucket cannot be listed).
  */
 export async function listAllPhotos(): Promise<LibraryPhoto[]> {
   const map = new Map<string, LibraryPhoto>();
 
   for (const { src, filename } of REPO_IMAGES) map.set(src, { src, filename, source: "repo" });
 
-  if (objectStorageConfigured()) {
-    const [images, media] = await Promise.allSettled([listObjectKeys(SITE_IMAGE_PREFIX), listObjectKeys("media/")]);
-    if (images.status === "fulfilled") {
-      for (const key of images.value) {
-        if (!PHOTO_EXTENSION.test(key) || DUPLICATE_SIZE_FOLDER.test(key)) continue;
-        const src = `/${key}`;
-        if (!map.has(src)) map.set(src, { src, filename: fileName(key), source: "repo" });
-      }
-    } else {
-      logger.warn("Could not list site photos in object storage", { err: String(images.reason) });
-    }
-    if (media.status === "fulfilled") {
-      for (const key of media.value) {
-        if (!PHOTO_EXTENSION.test(key)) continue;
-        const src = mediaFileUrl(key);
-        if (!map.has(src)) map.set(src, { src, filename: fileName(key), source: "blob" });
-      }
-    } else {
-      logger.warn("Could not list uploads in object storage", { err: String(media.reason) });
-    }
+  for (const item of await listBucketPhotos()) {
+    if (!map.has(item.src)) map.set(item.src, item);
   }
 
   // Uploads recorded in the media library keep their original filenames.

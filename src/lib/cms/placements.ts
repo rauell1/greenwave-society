@@ -273,7 +273,7 @@ async function listEventsForPlacements() {
   }
 }
 
-export async function getPlacementSlots(): Promise<Record<string, PlacementSlot>> {
+export const getPlacementSlots = cache(async (): Promise<Record<string, PlacementSlot>> => {
   const [content, events] = await Promise.all([getPublicHomepageContent(), listEventsForPlacements()]);
   const eventPosters = events.length ? await getEventPosters(events) : new Map();
   const slots: Record<string, PlacementSlot> = {};
@@ -330,7 +330,7 @@ export async function getPlacementSlots(): Promise<Record<string, PlacementSlot>
     };
   }
   return slots;
-}
+});
 
 /**
  * The slots and their current values for the admin Placements page. A photo

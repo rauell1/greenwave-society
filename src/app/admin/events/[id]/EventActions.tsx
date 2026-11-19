@@ -20,6 +20,7 @@ interface EventActionsProps {
 
 const LIFECYCLE_ACTIONS = [
   { status: "published", label: "Publish event", from: ["draft"], primary: true },
+  { status: "draft", label: "Move to draft", from: ["published"], confirm: "Move this event back to draft? It will be hidden from the public Events page until published again." },
   { status: "completed", label: "Mark as completed", from: ["published"] },
   { status: "cancelled", label: "Cancel event", from: ["draft", "published"], confirm: "Cancel this event? It will show as cancelled on the website and sign-up closes." },
 ] as { status: string; label: string; from: string[]; primary?: boolean; confirm?: string }[];

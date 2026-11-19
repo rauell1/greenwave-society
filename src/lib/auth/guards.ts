@@ -1,4 +1,5 @@
 import "server-only";
+import { cache } from "react";
 import { getAdminSession } from "./session";
 import { getAdminUserById, getAdminUserByEmail } from "../dal/admin";
 import { AdminUserDto } from "./types";
@@ -6,9 +7,9 @@ import { PermissionKey } from "./permissions";
 import { hasPermission } from "./policy";
 
 /**
- * Validates the current session and retrieves the admin user.
+ * Validates the current session and retrieves the admin user (deduplicated per request).
  */
-export async function getCurrentAdmin(): Promise<AdminUserDto | null> {
+export const getCurrentAdmin = cache(async (): Promise<AdminUserDto | null> => {
   const session = await getAdminSession();
   if (!session) return null;
 
@@ -24,7 +25,7 @@ export async function getCurrentAdmin(): Promise<AdminUserDto | null> {
   if (!adminUser || !adminUser.isActive) return null;
 
   return adminUser;
-}
+});
 
 /**
  * Requires an authenticated admin session, throwing or redirecting if unauthorized.
