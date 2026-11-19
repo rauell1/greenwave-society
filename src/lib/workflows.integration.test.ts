@@ -250,7 +250,7 @@ describe("public event registration against PostgreSQL", () => {
     const walk = (await db.cmsEvent.findUnique({ where: { slug: "charity-walk" } }))!;
     const params = { params: Promise.resolve({ id: walk.id }) };
     expect((await getEventPoster(walk))?.src).toBe("/posters/campaign-2026/charity-walk.jpg");
-    const blob = "https://abc123.public.blob.vercel-storage.com/media/new-walk-poster.webp";
+    const blob = "/media-files/media/new-walk-poster.webp";
     expect((await changePoster(request("/poster", { action: "set", src: blob, alt: "New walk poster", width: 1080, height: 1350 }), params)).status).toBe(200);
     expect(await getEventPoster(walk)).toMatchObject({ src: blob, alt: "New walk poster", height: 1350 });
     expect((await changePoster(request("/poster", { action: "set", src: "https://example.com/x.jpg" }), params)).status).toBe(400);

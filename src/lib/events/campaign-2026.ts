@@ -87,6 +87,8 @@ export const EVENT_POSTERS: Record<string, { src: string; alt: string }> = {
   "skills-for-change-workshop": { src: "/posters/campaign-2026/skills-for-change-workshop.jpg", alt: "Skills for Change Workshop poster, Saturday 5 December 2026" },
   "sports-tournament": { src: "/posters/campaign-2026/sports-tournament.jpg", alt: "Greenwave Sports Tournament poster, Saturday 12 December 2026" },
   "community-picnic": { src: "/posters/campaign-2026/community-picnic.jpg", alt: "Greenwave Community Picnic poster, Saturday 19 December 2026" },
+  "graduation-cohort-1-2026": { src: "/posters/empower360-cohort-1-graduation-flyer.png", alt: "YPG: Young Person's Guide to Systems Change Cohort I Graduation flyer" },
+  "suicide-prevention-awareness-2026": { src: "/images/g-3.jpg", alt: "Suicide Prevention Awareness Session" },
 };
 
 const TRIVIA_POSTER = { src: "/posters/campaign-2026/trivia-and-games-night.jpg", alt: "Trivia & Games Night poster, Wednesday 18 November 2026" };
