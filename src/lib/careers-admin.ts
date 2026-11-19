@@ -1,4 +1,5 @@
 import "server-only";
+import { cache } from "react";
 import { requirePermission } from "@/lib/auth/guards";
 import { PERMISSIONS } from "@/lib/auth/permissions";
 import { SYSTEM_ROLES, type PermissionKey } from "@/lib/auth/permissions";
@@ -12,11 +13,11 @@ export async function isExecutiveCommitteeMember(admin: AdminUserDto) {
   return Boolean(await getDb().executiveLeader.findUnique({ where: { email: admin.email }, select: { id: true } }));
 }
 
-export async function requireExecutiveCareersAccess(permission: PermissionKey) {
+export const requireExecutiveCareersAccess = cache(async (permission: PermissionKey) => {
   const admin = await requirePermission(permission).catch(() => null);
   if (!admin) return null;
   return (await isExecutiveCommitteeMember(admin)) ? admin : null;
-}
+});
 
 export async function requireCareersManager() {
   return requireExecutiveCareersAccess(PERMISSIONS.CAREERS_READ);

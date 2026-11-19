@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Playfair_Display, Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
@@ -21,6 +22,7 @@ const jakarta = Plus_Jakarta_Sans({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -249,21 +251,6 @@ export default function RootLayout({
   return (
     <html lang="en-KE" suppressHydrationWarning>
       <head>
-        {/* Google tag (gtag.js) */}
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-B54FTH27MB" />
-        <script
-          id="google-tag-setup"
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'G-B54FTH27MB');
-            `,
-          }}
-        />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {/* Geo targeting for Kenya / Nairobi */}
         <meta name="geo.region" content="KE-110" />
         <meta name="geo.placename" content="Nairobi, Kenya" />
@@ -282,6 +269,16 @@ export default function RootLayout({
         <Toaster />
         <CookieBanner />
         <ScriptInjector />
+        {/* Google tag (gtag.js) deferred after hydration */}
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-B54FTH27MB" strategy="afterInteractive" />
+        <Script id="google-tag-setup" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-B54FTH27MB');
+          `}
+        </Script>
       </body>
     </html>
   );

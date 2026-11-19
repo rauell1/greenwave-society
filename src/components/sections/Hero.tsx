@@ -133,6 +133,7 @@ export function Hero({
                   alt={placements?.heroSecondary?.alt || "Greenwave Society youth celebrating at a community event in Kenya"}
                   fill
                   priority
+                  fetchPriority="high"
                   quality={80}
                   sizes="(max-width: 768px) 75vw, 40vw"
                   className="object-cover"
@@ -145,6 +146,7 @@ export function Hero({
                   src={placements?.heroPrimary?.src || "/images/20260827_135241.jpg"}
                   alt={placements?.heroPrimary?.alt || "Greenwave Society members collaborating during the Members' Meet and Connect in Kenya"}
                   fill
+                  priority
                   quality={80}
                   sizes="(max-width: 768px) 60vw, 30vw"
                   className="object-cover"
