@@ -9,6 +9,7 @@ import { eventHref, getPublicEvents } from "@/lib/events/public-events";
 import { formatNairobi, isTimeToBeConfirmed } from "@/lib/events/nairobi-time";
 import { VOLUNTEER_POSTER, CAMPAIGN_CONTACT } from "@/lib/events/campaign-2026";
 import { getEventPosters, type EventPoster } from "@/lib/events/posters";
+import { getPublicImagePlacements } from "@/lib/cms/placements";
 import Image from "next/image";
 
 export const metadata: Metadata = {
@@ -51,8 +52,9 @@ function EventCard({ event, past, poster }: { event: ListedEvent; past?: boolean
 }
 
 export default async function EventsPage() {
-  const { upcoming, past } = await getPublicEvents();
+  const [{ upcoming, past }, placements] = await Promise.all([getPublicEvents(), getPublicImagePlacements()]);
   const posters = await getEventPosters([...upcoming, ...past]);
+  const volunteerPoster = placements?.eventsVolunteerCall?.src ? placements.eventsVolunteerCall : VOLUNTEER_POSTER;
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <Navbar />
@@ -84,7 +86,7 @@ export default async function EventsPage() {
               </div>
             </div>
             <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl">
-              <Image src={VOLUNTEER_POSTER.src} alt={VOLUNTEER_POSTER.alt} fill sizes="280px" className="object-cover" />
+              <Image src={volunteerPoster.src} alt={volunteerPoster.alt} fill sizes="280px" className="object-cover" />
             </div>
           </section>
 

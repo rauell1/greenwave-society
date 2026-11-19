@@ -160,6 +160,15 @@ export const DEFAULT_PLACEMENTS: Record<string, { src: string; alt: string; name
     route: "/events/graduation-cohort-1",
     aspectRatio: "aspect-[21/9]",
   },
+  eventsVolunteerCall: {
+    name: "Events page: Call for Volunteers poster",
+    section: "Events & Graduation",
+    description: "The poster shown in the 'Call for volunteers' section on the public /events page.",
+    src: "/posters/campaign-2026/volunteer-call.jpg",
+    alt: "Call for volunteers: six Greenwave community events, November to December 2026",
+    route: "/events",
+    aspectRatio: "aspect-[4/5]",
+  },
   teamMartinKyalo: {
     name: "Team Photo - Martin Kyalo",
     section: "Team Photos",
@@ -392,6 +401,7 @@ export async function saveImagePlacements(
   revalidatePath("/team");
   revalidatePath("/about");
   revalidatePath("/programs");
+  revalidatePath("/events");
   revalidatePath("/events/graduation-cohort-1");
   revalidatePath("/events/community-market");
   revalidatePath("/media-kit");

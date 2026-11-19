@@ -305,6 +305,15 @@ export default function PlacementsManager({
         </div>
       </div>
 
+      {sectionFilter === "Events & Graduation" && (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-emerald-200 bg-emerald-50/70 px-4 py-3 text-xs text-emerald-950">
+          <span>Individual event posters, dates, and Draft/Published visibility are managed on the Events page.</span>
+          <Link href="/admin/events" className="inline-flex items-center gap-1 font-semibold text-emerald-800 underline hover:text-emerald-950">
+            Open Admin Events <ExternalLink className="h-3.5 w-3.5" />
+          </Link>
+        </div>
+      )}
+
       {displayedSlots.length === 0 && (
         <div className="p-8 text-center bg-white rounded-2xl border border-slate-200 text-xs text-slate-500">
           No image slots match your current filter.
