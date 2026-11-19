@@ -390,15 +390,32 @@ export async function getAvailableCmsImages(): Promise<AvailableCmsImage[]> {
     }
   } catch {
     const defaultPosters = [
-      "empower360-cohort-1-graduation-flyer.png",
-      "empower360-market-vendor-flyer.png",
-      "empower360-graduation-story.png",
-      "empower360-market-vendor-story.png",
+      "/posters/campaign-2026/charity-walk.jpg",
+      "/posters/campaign-2026/young-entrepreneurs-networking-brunch.jpg",
+      "/posters/campaign-2026/skills-for-change-workshop.jpg",
+      "/posters/campaign-2026/sports-tournament.jpg",
+      "/posters/campaign-2026/community-picnic.jpg",
+      "/posters/campaign-2026/trivia-and-games-night.jpg",
+      "/posters/campaign-2026/volunteer-call.jpg",
+      "/posters/empower360-cohort-1-graduation-flyer.png",
+      "/posters/empower360-market-vendor-flyer.png",
+      "/posters/empower360-graduation-story.png",
+      "/posters/empower360-market-vendor-story.png",
+      "/posters/poster_community_market_web.png",
+      "/posters/poster_option_1_stage_web.png",
+      "/posters/poster_option_2_portrait_web.png",
+      "/posters/poster_option_3_documentary_web.png",
+      "/posters/v2-empower360-community-market-flyer.png",
+      "/posters/v2-empower360-graduation-stage-flyer.png",
+      "/posters/v2-empower360-graduation-story.png",
+      "/posters/v2-empower360-market-vendor-story.png",
     ];
-    for (const file of defaultPosters) {
-      const url = `/posters/${file}`;
-      map.set(url, { url, filename: file, source: "poster" });
+    for (const url of defaultPosters) {
+      map.set(url, { url, filename: url.replace(/^\/posters\//, ""), source: "poster" });
     }
+  }
+  if (!map.has("/images/events/8.png")) {
+    map.set("/images/events/8.png", { url: "/images/events/8.png", filename: "events/8.png (Call For Vendors)", source: "poster" });
   }
 
   return Array.from(map.values());

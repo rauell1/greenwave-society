@@ -19,7 +19,9 @@ import {
   HardDrive,
   CloudUpload,
   FileImage,
-  Eye
+  Eye,
+  Maximize2,
+  Minimize2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -59,6 +61,8 @@ export default function PlacementsManager({
   const [modalFilter, setModalFilter] = useState<ModalFilter>("all");
   const [modalPage, setModalPage] = useState(1);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const [isModalMaximized, setIsModalMaximized] = useState(false);
+  const [showAllImages, setShowAllImages] = useState(false);
   const modalPageSize = 24;
 
   const [isSaving, setIsSaving] = useState(false);
@@ -210,10 +214,11 @@ export default function PlacementsManager({
     });
   }, [availableImages, searchTerm, modalFilter]);
 
-  const totalModalPages = Math.max(1, Math.ceil(filteredImages.length / modalPageSize));
+  const effectivePageSize = showAllImages ? Math.max(1, filteredImages.length) : modalPageSize;
+  const totalModalPages = Math.max(1, Math.ceil(filteredImages.length / effectivePageSize));
   const safeModalPage = Math.min(modalPage, totalModalPages);
-  const modalStartIndex = (safeModalPage - 1) * modalPageSize;
-  const modalEndIndex = Math.min(modalStartIndex + modalPageSize, filteredImages.length);
+  const modalStartIndex = (safeModalPage - 1) * effectivePageSize;
+  const modalEndIndex = Math.min(modalStartIndex + effectivePageSize, filteredImages.length);
   const currentModalImages = filteredImages.slice(modalStartIndex, modalEndIndex);
 
   return (
@@ -448,8 +453,8 @@ export default function PlacementsManager({
 
       {/* Image Chooser Modal */}
       {activePickerSlot && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-5xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden border border-slate-200">
+        <div className={`fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center ${isModalMaximized ? "p-2" : "p-4"}`}>
+          <div className={`bg-white flex flex-col shadow-2xl overflow-hidden border border-slate-200 w-full transition-all ${isModalMaximized ? "rounded-2xl max-w-[98vw] h-[95vh] max-h-[95vh]" : "rounded-3xl max-w-5xl max-h-[90vh]"}`}>
             {/* Modal Header */}
             <div className="p-5 border-b border-slate-100 flex items-center justify-between gap-4">
               <div>
@@ -472,6 +477,16 @@ export default function PlacementsManager({
                     <CloudUpload className="w-3.5 h-3.5 text-emerald-400" /> Upload New Photo
                   </Button>
                 )}
+
+                <button
+                  type="button"
+                  onClick={() => setIsModalMaximized((v) => !v)}
+                  title={isModalMaximized ? "Restore modal size" : "Maximize modal"}
+                  aria-label={isModalMaximized ? "Restore modal size" : "Maximize modal"}
+                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors"
+                >
+                  {isModalMaximized ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                </button>
 
                 <button
                   onClick={() => setActivePickerSlot(null)}
@@ -558,7 +573,7 @@ export default function PlacementsManager({
                   )}
                 </div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                <div className={`grid gap-3 ${isModalMaximized ? "grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8" : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"}`}>
                   {currentModalImages.map((img) => {
                     const isSelected = placements[activePickerSlot]?.src === img.url;
                     return (
@@ -603,7 +618,22 @@ export default function PlacementsManager({
                 Showing <strong>{filteredImages.length === 0 ? 0 : modalStartIndex + 1}</strong> - <strong>{modalEndIndex}</strong> of <strong>{filteredImages.length}</strong> available photos
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
+                {filteredImages.length > modalPageSize && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setShowAllImages((v) => !v);
+                      setModalPage(1);
+                    }}
+                    className="text-xs h-7 px-2.5"
+                  >
+                    {showAllImages ? `Paginate (${modalPageSize})` : `Show all (${filteredImages.length})`}
+                  </Button>
+                )}
+
                 {totalModalPages > 1 && (
                   <div className="flex items-center gap-1 mr-2">
                     <Button
